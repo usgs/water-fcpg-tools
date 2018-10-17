@@ -150,7 +150,7 @@ assert os.path.isdir(outDir) == True
 assert os.path.isdir(paramPath) == True
 
 params = pd.DataFrame()
-params['path'] = glob.glob(os.path.join(paramPath,'*.tiff'))[0:2] #list the source datasets
+params['path'] = glob.glob(os.path.join(paramPath,'*.tiff'))[0] #list the source datasets
 
 def get_param_name(path):
     name = path.split('.tiff')[0].split('/')[-1]
@@ -260,11 +260,11 @@ params['accumData'] = outPathsData
 params['accumNoData'] = outPathsNoData
 
 for param,dataPath,noDataPath in zip(params.name, params.accumData, params.accumNoData):
-    try:
-        print('Computing CPGS for %s'%(param))
-        make_cpg(param,dataPath,noDataPath)
-    except:
-        print('Error Computing CPGS for %s'%(param))
+    #try:
+    print('Computing CPGS for %s'%(param))
+    make_cpg(param,dataPath,noDataPath)
+    #except:
+    #    print('Error Computing CPGS for %s'%(param))
 
 # delete the temp dir
 shutil.rmtree(tempDir)
