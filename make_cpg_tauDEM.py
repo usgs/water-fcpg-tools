@@ -50,14 +50,14 @@ def make_cpg(param,dataPath,noDataPath,tempDir=tempDir,facPath=facPath,outDir = 
     CPGpath = os.path.join(outDir,param+'_%s_cpg.tiff'%(reg))
 
     with rs.open(dataPath) as ds: # load accumulated data and no data rasters
-        data = np.array(ds.read(1),dtype=np.float32)
+        data = np.array(ds.read(1),dtype=np.float64)
         profile = ds.profile
 
     with rs.open(noDataPath) as ds:
-        noData = np.array(ds.read(1),dtype=np.float32)
+        noData = np.array(ds.read(1),dtype=np.float64)
 
     with rs.open(facPath) as ds: # flow accumulation raster
-        accum = np.array(ds.read(1),dtype=np.float32)
+        accum = np.array(ds.read(1),dtype=np.float64)
         accumNoData = ds.nodata # pull the accumulated area no data value
 
     accum[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
@@ -104,19 +104,27 @@ def fill_noData(df,append=[],fillVal=[],tempDir=tempDir):
     noDataOut = 0
 
     with rs.open(path) as ds: # read data
-        dat = ds.read(1)
+        dat = np.array(ds.read(1), dtype=np.float64)
         profile = ds.profile
         noData = ds.nodata
 
+    print(noData)
+
     if fillVal == 1:
-        dat[dat!=noData] = 0 # make data values zero
-        dat[dat==noData] = 1 # make noData values 1 to be accumulated later
-        dat.dtype = dat.astype(np.uint8) # byte data type
-        noDataOut = 1
+        # make noData values 1, make data values 0
+        assert noData != 0, 'NoData Error'
+
+        outDat = np.zeros_like(dat) # create empty array
+        outDat[:] = 1 # fill all with ones
+        outDat[dat != noData] = 0 # where the original data is not noData, fill with zero
+        
+        outDat = outDat.astype(np.uint8, copy=False) # byte data type
+        noDataOut = 255
     
     elif fillVal == 0:
+        # make noData values 0, keep data values the same.
         dat[dat==noData] = 0 # make noData values zero
-        noDataOut = 0
+        noDataOut = -9999
 
     # update geoTiff profile
     profile.update({'dtype':dat.dtype,
@@ -263,4 +271,4 @@ for param,dataPath,noDataPath in zip(params.name, params.accumData, params.accum
     #    print('Error Computing CPGS for %s'%(param))
 
 # delete the temp dir
-shutil.rmtree(tempDir)
+#shutil.rmtree(tempDir)
