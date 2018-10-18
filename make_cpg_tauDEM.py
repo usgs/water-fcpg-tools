@@ -150,7 +150,7 @@ assert os.path.isdir(outDir) == True
 assert os.path.isdir(paramPath) == True
 
 params = pd.DataFrame()
-params['path'] = glob.glob(os.path.join(paramPath,'*.tiff'))[0] #list the source datasets
+params['path'] = glob.glob(os.path.join(paramPath,'*.tiff'))[0:1] #list the source datasets
 
 def get_param_name(path):
     name = path.split('.tiff')[0].split('/')[-1]
