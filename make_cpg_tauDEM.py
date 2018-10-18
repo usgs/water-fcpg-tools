@@ -50,24 +50,20 @@ def make_cpg(param,dataPath,noDataPath,tempDir=tempDir,facPath=facPath,outDir = 
     CPGpath = os.path.join(outDir,param+'_%s_cpg.tiff'%(reg))
 
     with rs.open(dataPath) as ds: # load accumulated data and no data rasters
-        data = ds.read(1)
+        data = np.array(ds.read(1),dtype=np.float32)
         profile = ds.profile
 
     with rs.open(noDataPath) as ds:
-        noData = ds.read(1)
+        noData = np.array(ds.read(1),dtype=np.float32)
 
     with rs.open(facPath) as ds: # flow accumulation raster
-        accum = ds.read(1)
+        accum = np.array(ds.read(1),dtype=np.float32)
         accumNoData = ds.nodata # pull the accumulated area no data value
 
     accum[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
 
     dataCPG = data / ((accum + 1.) - (noData + 1.)) # make data CPG
     noDataCPG = noData / (accum + 1.) # make noData CPG
-
-    # control the data type
-    dataCPG.dtype = np.float32
-    noDataCPG.dtype = np.float32
 
     # fill edges with no data
     dataCPG[np.isnan(accum)] = outNoData
@@ -115,7 +111,7 @@ def fill_noData(df,append=[],fillVal=[],tempDir=tempDir):
     if fillVal == 1:
         dat[dat!=noData] = 0 # make data values zero
         dat[dat==noData] = 1 # make noData values 1 to be accumulated later
-        dat.dtype = np.uint8 # byte data type
+        dat.dtype = dat.astype(np.uint8) # byte data type
         noDataOut = 1
     
     elif fillVal == 0:
