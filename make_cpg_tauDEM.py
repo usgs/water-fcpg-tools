@@ -61,7 +61,8 @@ def make_cpg(param,dataPath,noDataPath,tempDir=tempDir,facPath=facPath,outDir = 
         accumNoData = ds.nodata # pull the accumulated area no data value
 
     accum[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
-
+    accum[accum < 0] = 0 # zero negative accumulations
+    
     dataCPG = data / ((accum + 1.) - (noData + 1.)) # make data CPG
     noDataCPG = noData / (accum + 1.) # make noData CPG
 
