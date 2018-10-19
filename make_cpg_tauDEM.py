@@ -50,25 +50,39 @@ def make_cpg(param,dataPath,noDataPath,tempDir=tempDir,facPath=facPath,outDir = 
     CPGpath = os.path.join(outDir,param+'_%s_cpg.tiff'%(reg))
 
     with rs.open(dataPath) as ds: # load accumulated data and no data rasters
-        data = np.array(ds.read(1),dtype=np.float64)
+        data = ds.read(1)
         profile = ds.profile
 
     with rs.open(noDataPath) as ds:
-        noData = np.array(ds.read(1),dtype=np.float64)
+        noData = ds.read(1)
 
     with rs.open(facPath) as ds: # flow accumulation raster
-        accum = np.array(ds.read(1),dtype=np.float64)
+        accum = ds.read(1)
         accumNoData = ds.nodata # pull the accumulated area no data value
 
-    accum[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
-    accum[accum < 0] = 0 # zero negative accumulations
+    accum2 = accum.astype(np.float32)
+    accum2[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
     
-    dataCPG = data / ((accum + 1.) - (noData + 1.)) # make data CPG
-    noDataCPG = noData / (accum + 1.) # make noData CPG
+    # zero negative accumulations
+    accum[accum < 0] = 0 
+    noData[noData < 0] = 0
+    data[data < 0] = 0
 
-    # fill edges with no data
-    dataCPG[np.isnan(accum)] = outNoData
-    noDataCPG[np.isnan(accum)] = outNoData
+    corrAccum = (accum - noData) # compute corrected accumulation
+    addition = np.min(tmp) # find the minumum value, since the denominator cannot be zero
+
+    if addition > 0: # if the minumum value is positive, make addition zero
+        addition = 1
+    else: # otherwise, make the addition the absolute value of the minimim to bring the corrAccum min to + 1
+        addition = np.abs(addition) + 1
+
+    dataCPG = data / (corrAccum + addition) # make data CPG, correct for negative values if any
+    
+    noDataCPG = noData / (corrAccum + addition) # make noData CPG
+
+    # fill edges with no data, not sure this is the correc thing to do.
+    dataCPG[np.isnan(accum2)] = outNoData
+    noDataCPG[np.isnan(accum2)] = outNoData
 
     profile.update({'dtype':dataCPG.dtype,
                 'compress':'LZW',
