@@ -5,7 +5,7 @@
 #SBATCH --tasks-per-node=4
 #SBATCH -p normal                         # the partition you want to use, for this case prod is best
 #SBATCH --account=wymtwsc        # your account
-#SBATCH --time=04:00:00           # Overestimated guess at time
+#SBATCH --time=00:45:00           # Overestimated guess at time
 #SBATCH --mail-type=ALL         # Send email on all events
 #SBATCH --mail-user=tbarnhart@usgs.gov
 #SBATCH -o %j.log                    # Sets output log file to %j ( will be the jobId returned by sbatch)  
