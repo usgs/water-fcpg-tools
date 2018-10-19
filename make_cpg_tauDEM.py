@@ -104,27 +104,22 @@ def fill_noData(df,append=[],fillVal=[],tempDir=tempDir):
     noDataOut = 0
 
     with rs.open(path) as ds: # read data
-        dat = np.array(ds.read(1), dtype=np.float64)
+        dat = ds.read(1) # let the driver dictate the data type
         profile = ds.profile
         noData = ds.nodata
 
-    print(noData)
+    dat[dat==noData] = 0 # make noData values zero
+    dat[dat<= 0] = 0 # make weird fill values zero
+    noDataOut = -9999
 
     if fillVal == 1:
-        # make noData values 1, make data values 0
-        assert noData != 0, 'NoData Error'
+        outDat = np.zeros_like(dat, dtype = np.uint8) # make binary copy raster
+        outDat[:] = 1 # fill with ones
+        outDat[dat != 0] = 0 # dat raster values not equal to zero are filled with zeros in the binary raster
 
-        outDat = np.zeros_like(dat) # create empty array
-        outDat[:] = 1 # fill all with ones
-        outDat[dat != noData] = 0 # where the original data is not noData, fill with zero
-        
-        outDat = outDat.astype(np.uint8, copy=False) # byte data type
+        dat = outDat # copy the output raster back to the data raster
+        del outDat
         noDataOut = 255
-    
-    elif fillVal == 0:
-        # make noData values 0, keep data values the same.
-        dat[dat==noData] = 0 # make noData values zero
-        noDataOut = -9999
 
     # update geoTiff profile
     profile.update({'dtype':dat.dtype,
