@@ -187,10 +187,10 @@ for rast in [fdrPath,facPath]: # extract min and max raster bounds
         ymaxs.append(ds.bounds[3])
 
 # summarize the extents to the largest possible
-xmin = np.min(xmins)
-xmax = np.max(xmaxs)
-ymin = np.min(ymins)
-ymax = np.max(ymaxs)
+xmin = np.max(xmins)
+xmax = np.min(xmaxs)
+ymin = np.max(ymins)
+ymax = np.min(ymaxs)
 
 # test that raster extents are equal
 for rast in [fdrPath,facPath]:
@@ -261,7 +261,7 @@ for param,dataPath,noDataPath in zip(params.name, params.dataPath, params.noData
         tauParams['outFl'] = os.path.join(tempDir,param+'_noData_accum.tiff')
         tauParams['weight'] = noDataPath
 
-        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight}'.format(**tauParams)
+        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams)
         print(cmd)
         subprocess.call(cmd, shell = True)
         outPathsNoData.append(tauParams['outFl']) # save accumulated no data path
