@@ -247,7 +247,7 @@ for param,dataPath,noDataPath in zip(params.name, params.dataPath, params.noData
         tauParams['outFl'] = os.path.join(tempDir,param+'_fill_accum.tiff')
         tauParams['weight'] = dataPath
         
-        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight}' -nc.format(**tauParams)
+        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams)
         subprocess.call(cmd, shell = True)
         outPathsData.append(tauParams['outFl']) # save accumualted data path
     except:
