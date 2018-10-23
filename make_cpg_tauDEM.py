@@ -116,13 +116,14 @@ def fill_noData(df,append=[],fillVal=[],tempDir=tempDir):
     path = df.sourcePath
     fillPath = os.path.join(tempDir,param+'_%s.tiff'%(append))
 
-    noDataOut = 0
+    print('Filling %s with %s'%(param,fillVal))
 
     with rs.open(path) as ds: # read data
         dat = ds.read(1) # let the driver dictate the data type
         profile = ds.profile
         noData = ds.nodata
 
+    dat = dat.astype(np.float32) # make sure the data type can accept the no data value
     dat[dat==noData] = 0 # make noData values zero
     dat[dat<= 0] = 0 # make weird fill values zero
     noDataOut = -9999
