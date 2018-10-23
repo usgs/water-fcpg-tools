@@ -69,7 +69,7 @@ def make_cpg(param,dataPath,noDataPath,tempDir=tempDir,facPath=facPath,outDir = 
     data[data < 0] = 0
 
     corrAccum = (accum - noData) # compute corrected accumulation
-    addition = np.min(tmp) # find the minumum value, since the denominator cannot be zero
+    addition = np.min(corrAccum) # find the minumum value, since the denominator cannot be zero
 
     if addition > 0: # if the minumum value is positive, make addition zero
         addition = 1
@@ -247,7 +247,7 @@ for param,dataPath,noDataPath in zip(params.name, params.dataPath, params.noData
         tauParams['outFl'] = os.path.join(tempDir,param+'_fill_accum.tiff')
         tauParams['weight'] = dataPath
         
-        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight}'.format(**tauParams)
+        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight}' -nc.format(**tauParams)
         subprocess.call(cmd, shell = True)
         outPathsData.append(tauParams['outFl']) # save accumualted data path
     except:
