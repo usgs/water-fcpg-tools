@@ -5,19 +5,19 @@ Scripts to make headwaters continuous parameter grids (CPGs) by HUC2 regions for
 
 ### Current Usage:
 
-`sbatch submit_make_cpg_taudem.sh <region>`
+`sbatch submit_make_cpg_tauDEM.sh <region>`
 
-Where `<region` is the HUC2 region you would like to create CPGs for. The submission script will request a computing allocation from Yeti, initialize the correct computing environment, and run `make_cpg_taudem.py`.
+Where `<region` is the HUC2 region you would like to create CPGs for. The submission script will request a computing allocation from Yeti, initialize the correct computing environment, and run `make_cpg_tauDEM.py`.
 
 ### Configuration:
 
-Edit `submit_make_cpg_taudem.sh` to change the number of nodes and cores you want to check out and the anticipated processing time.
+Edit `submit_make_cpg_tauDEM.sh` to change the number of nodes and cores you want to check out and the anticipated processing time.
 
 Edit `make_cpg_tauDEM.py` to change where the script searches for input parameter datasets, flow accumulation grids (currently NHDv2.1), and flow direction grids (currently NHDv2.1).
 
 ### Dependencies:
 
-Dependencies for this work are largely taken care of via the Module commands on Yeti executed in `submit_make_cpg_taudem.sh`; however, the user will need their own conda Python 3.6 environment on Yeti. Below is an outline of the general dependencies.
+Dependencies for this work are largely taken care of via the Module commands on Yeti executed in `submit_make_cpg_tauDEM.sh`; however, the user will need their own conda Python 3.6 environment on Yeti. Below is an outline of the general dependencies.
 
 For CPGs Creation:
 
@@ -35,7 +35,7 @@ For Gauge Snapping / basin delineation:
 - GRASS 7.4 
 
 ### To Do:
-- Functionize more of `make_cpg_taudem.py`
+- Functionize more of `make_cpg_tauDEM.py`
 - Add search and FDR/FAC paths as inputs
 - Break out CPG method into script separate from the library
 - Write documentation
