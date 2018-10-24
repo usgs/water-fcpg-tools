@@ -91,7 +91,8 @@ def make_cpg(param,dataPath,noDataPath,tempDir=tempDir,facPath=facPath,outDir = 
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
                 'nodata':outNoData,
-                'count':2})
+                'count':2,
+                'bigtiff':True})
 
     with rs.open(CPGpath, 'w', **profile) as dst:
         dst.write(dataCPG,1)
@@ -144,7 +145,8 @@ def fill_noData(df,append=[],fillVal=[],tempDir=tempDir):
                     'tiled':True,
                     'sparse_ok':True,
                     'num_threads':'ALL_CPUS',
-                    'nodata':noDataOut})
+                    'nodata':noDataOut,
+                    'bigtiff':True})
 
     with rs.open(fillPath, 'w', **profile) as dst: # write out the dataset
         dst.write(dat,1)
@@ -217,7 +219,7 @@ for param,path in zip(params.name,params.path): # crop input datasets to common 
         cropParams['outFl'] = os.path.join(tempDir,param+'.tiff') # create temp output file
 
         print('Cropping %s to temporary directory.'%(param))
-        cmd = 'gdalwarp -wo NUM_THREADS=ALL_CPUS -co TILED=YES -co COMPRESS=LZW -co NUM_THREADS=ALL_CPUS -co SPARSE_OK=TRUE -co PROFILE=GeoTIFF -multi -tr 30 30 -te {xmin} {ymin} {xmax} {ymax} {inFl} {outFl}'.format(**cropParams)
+        cmd = 'gdalwarp -wo NUM_THREADS=ALL_CPUS -co TILED=YES -co COMPRESS=LZW -co NUM_THREADS=ALL_CPUS -co SPARSE_OK=TRUE -co PROFILE=GeoTIFF -co BIGTIFF=YES -multi -tr 30 30 -te {xmin} {ymin} {xmax} {ymax} {inFl} {outFl}'.format(**cropParams)
         subprocess.call(cmd, shell = True)
         outPaths.append(cropParams['outFl']) # save the output path
     except:
