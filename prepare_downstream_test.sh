@@ -13,6 +13,8 @@ for huc in {1402000102,1402000101,1402000201}; do
 
     gdalwarp -overwrite -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -t_srs EPSG:42303 -cutline ./downstream_cpg_test_boundary_proj_buff.shp -crop_to_cutline -cwhere "HUC10='${huc}'" ../NHDplusV21_facfdr/region_14_fdr_tau.tiff ./fdr_${huc}_tau.tiff
 
+    gdalwarp -overwrite -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -t_srs EPSG:42303 -cutline ./downstream_cpg_test_boundary_proj.shp -crop_to_cutline -cwhere "HUC10='${huc}'" ../NHDplusV21/NHDPlusHydrodem14a/hydrodem/hdr.adf ./hydroDEM_${huc}.tiff
+
     for fl in `ls -1 ../cpg_datasets/*.tiff`; do
         name=$(basename "$fl") # extract the trailing file name
 
