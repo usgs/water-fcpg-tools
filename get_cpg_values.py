@@ -5,7 +5,7 @@ import sys
 import gdal
 
 reg = sys.argv[1] # pull the region from the command line arguments
-
+print('Starting Region %s'%reg)
 def get_val(dat,gt=[],rb=[]):
     ''' Grab cell value based on data frame x and y variables.
     dat = dataframe containing x and y 
@@ -33,8 +33,15 @@ for fl in cpgs: # iterate through each CPG
     gt = src_ds.GetGeoTransform() # extract geotransform
     rb = src_ds.GetRasterBand(1) # extract raster band
 
-    dat[CPG] = dat.apply(get_val,gt=gt,rb=rb,axis=1) # query the maps
+    dat[CPG] = dat.apply(get_val,gt=gt,rb=rb,axis=1) # query the map
+
+    rb = src_ds.GetRasterBand(2) # extract noData band
+
+    dat['%s_noData'%CPG] = dat.apply(get_val,gt=gt,rb=rb,axis=1) # query the map
+
     print('Completed %s'%CPG)
+
+
 
 outfl = './data/CATCHMENT_cpgDat_reg_%s.csv'%(reg)
 print('Writing output to: %s'%(outfl))
