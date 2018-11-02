@@ -18,7 +18,7 @@ with rs.open(infl,'r') as src:
     profile = src.profile
 
 print('Altering %s to np.NaN'%srcND)
-dat.dtype=np.float64 # change data type
+dat = dat.astype(np.float64) # change data type
 dat[dat==srcND] = np.NaN
 
 print('Rescaling data by %s'%scale)
