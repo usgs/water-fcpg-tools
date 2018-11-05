@@ -10,7 +10,7 @@ import shutil
 
 reg = sys.argv[1] # pull the region
 jobID = sys.argv[2] # pull the slurm job ID
-cores = int(sys.argv[3]) - 1 # pull the number of cores available
+cores = int(sys.argv[3]) # pull the number of cores available
 
 fdrPath = './data/NHDplusV21_facfdr/region_%s_fdr_tau.tiff'%(reg) # path to the flow direction raster
 facPath = './data/NHDplusV21_facfdr/region_%s_fac.vrt'%(reg)
@@ -127,6 +127,10 @@ def fill_noData(df,append=[],fillVal=[],tempDir=tempDir):
     dat = dat.astype(np.float32) # make sure the data type can accept the no data value
     dat[dat==noData] = 0 # make noData values zero
     dat[dat<= 0] = 0 # make weird fill values zero
+
+    if np.isnan(dat).sum() > 0: # if the dataset contains NaNs
+        dat[np.isnan(dat)] = 0 # fill them with zeros
+
     noDataOut = -9999
 
     if fillVal == 1:
