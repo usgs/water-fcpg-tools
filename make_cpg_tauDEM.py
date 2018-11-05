@@ -125,11 +125,12 @@ def fill_noData(df,append=[],fillVal=[],tempDir=tempDir):
         noData = ds.nodata
 
     dat = dat.astype(np.float32) # make sure the data type can accept the no data value
-    dat[dat==noData] = 0 # make noData values zero
-    dat[dat<= 0] = 0 # make weird fill values zero
-
+    
     if np.isnan(dat).sum() > 0: # if the dataset contains NaNs
         dat[np.isnan(dat)] = 0 # fill them with zeros
+    
+    dat[dat==noData] = 0 # make noData values zero
+    dat[dat<= 0] = 0 # make weird fill values zero
 
     noDataOut = -9999
 
