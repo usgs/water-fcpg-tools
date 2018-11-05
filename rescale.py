@@ -18,18 +18,19 @@ with rs.open(infl,'r') as src:
     profile = src.profile
 
 print('Altering %s to np.NaN'%srcND)
-dat = dat.astype(np.float64) # change data type
+dat = dat.astype(np.float32) # change data type
 dat[dat==srcND] = np.NaN
 
 print('Rescaling data by %s'%scale)
 dat = dat/scale
 
-profile.update({'dtype':'float64',
+profile.update({'dtype':dat.dtype,
                 'compress':'LZW',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
-                'num_threads':'ALL_CPUS'}) # update geotiff profile with creation options.
+                'num_threads':'ALL_CPUS',
+		'bigtiff':'IF_SAFER'}) # update geotiff profile with creation options.
 
 print('Writing output to %s'%outfl)
 with rs.open(outfl, 'w', **profile) as dst:
