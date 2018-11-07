@@ -24,7 +24,7 @@ def get_val(dat,gt=[],rb=[]):
 
 cpgs = glob.glob('./data/cpg_datasets/output_cpg/*_%s_cpg.tiff'%(reg)) # pull a list of cpgs
 
-dat = pd.read_csv('./data/CATCHMENT_region_%s.csv'%(reg)) # load the dataset
+dat = pd.read_csv('./data/CATCHMENT_gauges/CATCHMENT_reg_%s_snapped_ID.csv'%(reg)) # load the dataset
 
 for fl in cpgs: # iterate through each CPG
     CPG = fl.split('/')[-1].split('_%s'%reg)[0] # get CPG name
@@ -43,7 +43,7 @@ for fl in cpgs: # iterate through each CPG
 
 
 
-outfl = './data/CATCHMENT_cpgDat_reg_%s.csv'%(reg)
+outfl = './data/CATCHMENT_snapped_cpgDat_reg_%s.csv'%(reg)
 print('Writing output to: %s'%(outfl))
 dat.to_csv(outfl,index=False,header=True,index_label=False)
 print('Done!')
