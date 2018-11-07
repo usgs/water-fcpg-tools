@@ -10,7 +10,7 @@ import shutil
 
 reg = sys.argv[1] # pull the region
 jobID = sys.argv[2] # pull the slurm job ID
-cores = int(sys.argv[3]) - 1 # pull the number of cores available
+cores = int(sys.argv[3]) # pull the number of cores available
 
 fdrPath = './data/NHDplusV21_facfdr/region_%s_fdr_tau.tiff'%(reg) # path to the flow direction raster
 facPath = './data/NHDplusV21_facfdr/region_%s_fac.vrt'%(reg)
@@ -91,7 +91,8 @@ def make_cpg(param,dataPath,noDataPath,tempDir=tempDir,facPath=facPath,outDir = 
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
                 'nodata':outNoData,
-                'count':2})
+                'count':2,
+                'bigtiff':'IF_SAFER'})
 
     with rs.open(CPGpath, 'w', **profile) as dst:
         dst.write(dataCPG,1)
@@ -124,8 +125,13 @@ def fill_noData(df,append=[],fillVal=[],tempDir=tempDir):
         noData = ds.nodata
 
     dat = dat.astype(np.float32) # make sure the data type can accept the no data value
+    
+    if np.isnan(dat).sum() > 0: # if the dataset contains NaNs
+        dat[np.isnan(dat)] = 0 # fill them with zeros
+    
     dat[dat==noData] = 0 # make noData values zero
     dat[dat<= 0] = 0 # make weird fill values zero
+
     noDataOut = -9999
 
     if fillVal == 1:
@@ -144,7 +150,8 @@ def fill_noData(df,append=[],fillVal=[],tempDir=tempDir):
                     'tiled':True,
                     'sparse_ok':True,
                     'num_threads':'ALL_CPUS',
-                    'nodata':noDataOut})
+                    'nodata':noDataOut,
+                    'bigtiff':'IF_SAFER'})
 
     with rs.open(fillPath, 'w', **profile) as dst: # write out the dataset
         dst.write(dat,1)
@@ -217,7 +224,7 @@ for param,path in zip(params.name,params.path): # crop input datasets to common 
         cropParams['outFl'] = os.path.join(tempDir,param+'.tiff') # create temp output file
 
         print('Cropping %s to temporary directory.'%(param))
-        cmd = 'gdalwarp -wo NUM_THREADS=ALL_CPUS -co TILED=YES -co COMPRESS=LZW -co NUM_THREADS=ALL_CPUS -co SPARSE_OK=TRUE -co PROFILE=GeoTIFF -multi -tr 30 30 -te {xmin} {ymin} {xmax} {ymax} {inFl} {outFl}'.format(**cropParams)
+        cmd = 'gdalwarp -wo NUM_THREADS=ALL_CPUS -co TILED=YES -co COMPRESS=LZW -co NUM_THREADS=ALL_CPUS -co SPARSE_OK=TRUE -co PROFILE=GeoTIFF -co BIGTIFF=IF_SAFER -multi -tr 30 30 -te {xmin} {ymin} {xmax} {ymax} {inFl} {outFl}'.format(**cropParams)
         subprocess.call(cmd, shell = True)
         outPaths.append(cropParams['outFl']) # save the output path
     except:
