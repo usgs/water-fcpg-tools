@@ -15,4 +15,4 @@
 source activate py27
 module load gis/grass-7.4-spack
 
-grass74 ./grass/reg${1}/PERMANENT --exec sh snap_gauges.sh $1 $2
+grass74 ../DEM_processing/grass/reg${1}/PERMANENT --exec sh snap_gauges.sh $1 $2 $3
