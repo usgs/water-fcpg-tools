@@ -15,4 +15,4 @@
 source activate py27 # load correct python environment
 module load gis/grass-7.4-spack # load GRASS
 
-grass74 ./grass/reg${1}/PERMANENT --exec python2 -u ./extract_watersheds_lowmem.py ${1} # open grass and run the program
+grass74 ../DEM_processing/grass/reg${1}/PERMANENT --exec python2 -u ./extract_watersheds_lowmem.py ${1} # open grass and run the program

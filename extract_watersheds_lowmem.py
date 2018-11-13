@@ -19,7 +19,7 @@ workspace = '/home/tbarnhart/projects/DEM_processing/data'
 drainDirPath = os.path.join('./data','NHDplusV21_facfdr','region_%s_fdr_grass.tiff'%(reg))
 elevPath = os.path.join('./data','NHDplusV21','region_%s.vrt'%(reg)) # path to elevation data
 
-fl = os.path.join(workspace,'CATCHMENT_gauges/CATCHMENT_reg_%s_snapped_ID.csv'%reg)
+fl = os.path.join(workspace,'CATCHMENT_gauges/CATCHMENT_region_%s_snapped_fixed.csv'%reg)
 gauges = pd.read_csv(fl)
 
 # now for the GRASS code
