@@ -7,7 +7,7 @@ reg=$1
 dist=$2
 thresh=$3
 
-r.external in=/home/tbarnhart/projects/DEM_processing/data/NHDplusV21_facfdr/region_${reg}_fac.vrt out=accum --overwrite -o --quiet
+r.in.gdal in=/home/tbarnhart/projects/DEM_processing/data/NHDplusV21_facfdr/region_${reg}_fac.vrt out=accum --overwrite -o --quiet
 
 g.region rast=accum
 
@@ -17,3 +17,4 @@ r.stream.snap in=gauges out=gauges_snap stream=str accumulation=accum threshold=
 
 v.out.ogr in=gauges_snap type=point out=./data/CATCHMENT_gauges/CATCUMENT_region_${reg}.shp format=ESRI_Shapefile --overwrite --quiet 
 
+r.out.gdal in=str out=./data/reg${reg}_str.tiff --overwrite createopt="SPARSE_OK=TRUE,COMPRESS=LZW,TILED=YES,PROFILE=GeoTIFF"
