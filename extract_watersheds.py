@@ -16,7 +16,7 @@ reg = sys.argv[1] # extract coommand line argument 1, region to process
 workspace = '/home/tbarnhart/projects/DEM_processing/data'
 drainDirPath = os.path.join(workspace,'NHDplusV21_facfdr','region_%s_fdr_grass.tiff'%(reg))
 
-fl = os.path.join(workspace,'CATCHMENT_gauges/CATCHMENT_reg_%s_snapped_ID.csv'%reg)
+fl = os.path.join(workspace,'CATCHMENT_gauges/CATCHMENT_region_%s_snapped_fixed.csv'%reg)
 gauges = pd.read_csv(fl)
 
 # now for the GRASS code
@@ -29,8 +29,11 @@ v_out_ogr = Module('v.out.ogr')
 g_region = Module('g.region') # command to set processing region extent and resolution
 v_db_addcol = Module('v.db.addcolumn')
 v_to_db = Module('v.to.db')
+v_in_ascii = Module('v.in.ascii')
+r_in_gdal = Module('r.in.gdal')
+r_stream_basins = Module('r.stream.basins')
 
-r_external(input=drainDirPath,output='dir', o = True, overwrite = True) # bring in the drainage direction raster
+r_in_gdal(input=drainDirPath,output='dir', o = True, overwrite = True, quiet = True) # bring in the drainage direction raster
 g_region(raster = 'dir', res = 30) # set region resolution and extent
 #r_external() # link the accumulation raster
 
@@ -43,8 +46,16 @@ for ID,x,y in zip(gauges.Gage_no,gauges.x,gauges.y):
         continue
 
     else:
+        cmd = 'echo \"%s|%s|%s\" > ./scratch/reg%s.tmp'%(1,x,y,reg)
+        subprocess.call(cmd, shell=True) # send coordinates to text file
 
-        r_water_outlet(input = 'dir', output = 'watershed', coordinates =(x,y), overwrite=True, quiet = True) # delineate watershed
+        # load the pour point
+        v_in_ascii(input = './scratch/reg%s.tmp'%reg, output='pour', x=2, y=3, overwrite=True, quiet = True)
+
+        # delineat the basin
+        r_stream_basins(direction='dir',points='pour', basins='watershed', overwrite=True, quiet=True, memory=11800)
+
+        #r_water_outlet(input = 'dir', output = 'watershed', coordinates =(x,y), overwrite=True, quiet = True) # delineate watershed
         r_to_vect(input = 'watershed', output = 'boundary', type = 'area', overwrite=True, quiet = True) # convert raster to vector
 
         # compute area of watershed
