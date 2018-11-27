@@ -62,6 +62,6 @@ for ID,x,y in zip(gauges.Gage_no,gauges.x,gauges.y):
         v_db_addcol(map='boundary', columns='area_sqkm double precision', quiet = True)
         v_to_db(map='boundary', option='area', columns='area_sqkm', units='kilometers', quiet = True)
 
-        v_out_ogr(e = True, input = 'boundary', type = 'area', output = outfl, overwrite=True, format = 'ESRI_Shapefile', quiet = True) # export the watershed boundary to a temporary file
+        v_out_ogr(e = True, input = 'boundary', type = 'area', output = outfl, overwrite=True, format = 'ESRI_Shapefile', quiet = True, c = True) # export the watershed boundary to a temporary file
 
         print('Gauge No. %s in Region %s complete.'%(ID,reg))
