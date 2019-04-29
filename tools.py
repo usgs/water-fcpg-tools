@@ -7,7 +7,7 @@ import gdal
 import subprocess
 import glob
 import shutil
-
+import traceback
 
 
 def tauDrainDir(inRast, outRast):
@@ -100,6 +100,6 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
        
     except:
         print('Error Accumulating Data')
-        
+    traceback.print_exc()
 
     
