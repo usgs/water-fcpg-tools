@@ -91,8 +91,9 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
         print('Accumulating Data')
         tauParams['cores'] = cores
         tauParams['fdr'] = fdr
-        tauParams['outFl'] = os.path.join(outRast)
+        tauParams['outFl'] = outRast
         tauParams['weight'] = paramRast
+        print('I got here')
         
         cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams)
         subprocess.call(cmd, shell = True)
