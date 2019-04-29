@@ -38,7 +38,7 @@ def make_cpg(param,dataPath,noDataPath,tempDir=tempDir,facPath=facPath,outDir = 
         param - parameter name that output filenames are based off of
         dataPath - path to the accumulated parameter data raster
         noDataPath - path to the accumulated no data raster
-        tempDir - temperary direcotyr, Default: tempDir variable defined above
+        tempDir - temperary directory, Default: tempDir variable defined above
         facPath - flow accumulation grid path, Default: facPath variable defined above
         outDir - output directory, Default: outDir variable defined above
         reg - region, Default: reg variable defined above 
@@ -80,7 +80,7 @@ def make_cpg(param,dataPath,noDataPath,tempDir=tempDir,facPath=facPath,outDir = 
     
     noDataCPG = noData / (corrAccum + addition) # make noData CPG
 
-    # fill edges with no data, not sure this is the correc thing to do.
+    # fill edges with no data, not sure this is the correct thing to do.
     dataCPG[np.isnan(accum2)] = outNoData
     noDataCPG[np.isnan(accum2)] = outNoData
 
