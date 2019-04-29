@@ -98,10 +98,12 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
         tauParams['weight'] = paramRast
         
         cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams)
+        print(cmd)
         subprocess.call(cmd, shell = True)
-       
+        
+       print('Parameter accumulation written to: %s'%outRast)
     except:
         print('Error Accumulating Data')
-    traceback.print_exc()
+        traceback.print_exc()
 
     
