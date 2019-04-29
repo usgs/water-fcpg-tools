@@ -2,6 +2,12 @@ import rasterio as rs
 import numpy as np
 import sys
 import os
+import pandas as pd
+import gdal
+import subprocess
+import glob
+import shutil
+
 
 
 def tauDrainDir(inRast, outRast):
@@ -67,3 +73,32 @@ def grassDrainDir(inRast, outRast):
         dst.write(grassDir,1)
 
     print('GRASS drainage direction written to: %s'%outRast)
+
+
+def accumulateParam(paramRast, fdr, outRast, cores = 1):
+    """
+    Inputs:
+        paramRast - Raster of parameter values to acumulate
+        fdr - flow direction raster in tauDEM format
+        cores - number of cores to use parameter accumulation
+
+    Outputs:
+        outRast - raster of accumulated parameter values
+    """
+
+    # first accumulate the parameter
+    try:
+        print('Accumulating Data')
+        tauParams['cores'] = cores
+        tauParams['fdr'] = fdr
+        tauParams['outFl'] = os.path.join(outRast)
+        tauParams['weight'] = paramRast
+        
+        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams)
+        subprocess.call(cmd, shell = True)
+       
+    except:
+        print('Error Accumulating Data')
+        
+
+    
