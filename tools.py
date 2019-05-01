@@ -34,6 +34,7 @@ def tauDrainDir(inRast, outRast):
     tauDir = dat.copy()
     # remap NHDplus flow direction to TauDEM flow Direction
     # east is ok
+    tauDir[dat == 1] = 1 # stauDirheast
     tauDir[dat == 2] = 8 # stauDirheast
     tauDir[dat == 4] =  7 # stauDirh
     tauDir[dat == 8] = 6 # stauDirhwest
