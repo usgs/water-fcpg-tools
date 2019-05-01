@@ -28,13 +28,14 @@ def tauDrainDir(inRast, outRast):
 
     # edit the metadata
     meta.update({'driver':'GTiff'})
+    meta.update({'nodata':-1})
 
     #print(meta)
 
     tauDir = dat.copy()
     # remap NHDplus flow direction to TauDEM flow Direction
     # east is ok
-    tauDir[dat == 1] = 1 # stauDirheast
+    tauDir[dat == 1] = 1 # east
     tauDir[dat == 2] = 8 # stauDirheast
     tauDir[dat == 4] =  7 # stauDirh
     tauDir[dat == 8] = 6 # stauDirhwest
@@ -42,6 +43,7 @@ def tauDrainDir(inRast, outRast):
     tauDir[dat == 32] = 4 # northwest
     tauDir[dat == 64] = 3 # north
     tauDir[dat == 128] = 2 # northeast
+    tauDir[dat == -2147483648] = -1 # no data
     
     with rs.open(outRast,'w',**meta) as dst:
         dst.write(tauDir,1)
