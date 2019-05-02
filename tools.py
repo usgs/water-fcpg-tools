@@ -138,8 +138,9 @@ def make_cpg(accumParam, fac, outRast):
         accum = ds.read(1)
         accumNoData = ds.nodata # pull the accumulated area no data value
 
-    accum2 = accum.astype(np.float32)
+    accum2 = accum
     accum2[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
+    accum2 = accum2.astype(np.float32)
     
     # zero negative accumulations Should we throw some sort of warning if there is a negative accumulation?
     if np.min(accum) < 0:
@@ -163,7 +164,7 @@ def make_cpg(accumParam, fac, outRast):
     noDataCPG = noData / (corrAccum + addition) # make noData CPG
     """
     
-    dataCPG = data / (accum + 1)# make data CPG
+    dataCPG = data / (accum2 + 1)# make data CPG
     
     #noDataCPG = noData / (corrAccum + addition) # make noData CPG
     
