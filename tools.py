@@ -139,7 +139,7 @@ def make_cpg(accumParam, fac, outRast):
         accumNoData = ds.nodata # pull the accumulated area no data value
         print("No Data Value:%s"%str(ds.nodata))
         
-    accum2 = accum2.astype(np.float32)
+    accum2 = accum.astype(np.float32)
     accum2[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
     
     
