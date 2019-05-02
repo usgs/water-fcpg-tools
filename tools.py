@@ -137,10 +137,11 @@ def make_cpg(accumParam, fac, outRast):
     with rs.open(fac) as ds: # flow accumulation raster
         accum = ds.read(1)
         accumNoData = ds.nodata # pull the accumulated area no data value
-
-    accum2 = accum
-    accum2[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
+        print("No Data Value:%s"%str(ds.nodata))
+        
     accum2 = accum2.astype(np.float32)
+    accum2[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
+    
     
     # zero negative accumulations Should we throw some sort of warning if there is a negative accumulation?
     if np.min(accum) < 0:
