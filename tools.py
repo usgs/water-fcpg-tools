@@ -144,6 +144,7 @@ def make_cpg(accumParam, fac, outRast):
     # zero negative accumulations Should we throw some sort of warning if there is a negative accumulation?
     if np.min(accum) < 0:
         print("Warning: Negative accumulation value")
+        print("Minimum value:%s"%str(np.min(accum)))
     """
     accum[accum < 0] = 0 
     noData[noData < 0] = 0
@@ -161,7 +162,8 @@ def make_cpg(accumParam, fac, outRast):
     
     noDataCPG = noData / (corrAccum + addition) # make noData CPG
     """
-    dataCPG = data / accum # make data CPG
+    
+    dataCPG = data / (accum + 1)# make data CPG
     
     #noDataCPG = noData / (corrAccum + addition) # make noData CPG
     
