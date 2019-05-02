@@ -111,3 +111,75 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
         traceback.print_exc()
 
     
+def make_cpg(accumParam, fac, outRast):
+    '''
+    Inputs:
+        
+        daccumParam - path to the accumulated parameter data raster
+        
+        fac - flow accumulation grid path
+        outRast - output file
+        
+
+    Outputs:
+        Parameter and NoData CPGS as bands 1 and 2 of a file in the output directory.
+    '''
+    outNoData = -9999
+    
+
+    with rs.open(accumParam) as ds: # load accumulated data and no data rasters
+        data = ds.read(1)
+        profile = ds.profile
+
+    #with rs.open(noDataPath) as ds:
+     #   noData = ds.read(1)
+
+    with rs.open(fac) as ds: # flow accumulation raster
+        accum = ds.read(1)
+        accumNoData = ds.nodata # pull the accumulated area no data value
+
+    accum2 = accum.astype(np.float32)
+    accum2[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
+    
+    # zero negative accumulations Should we throw some sort of warning if there is a negative accumulation?
+    if np.min(accum) < 0:
+        print("Warning: Negative accumulation value")
+    """
+    accum[accum < 0] = 0 
+    noData[noData < 0] = 0
+    data[data < 0] = 0
+
+    corrAccum = (accum - noData) # compute corrected accumulation
+    addition = np.min(corrAccum) # find the minumum value, since the denominator cannot be zero
+
+    if addition > 0: # if the minumum value is positive, make addition zero
+        addition = 1
+    else: # otherwise, make the addition the absolute value of the minimim to bring the corrAccum min to + 1
+        addition = np.abs(addition) + 1
+    
+    dataCPG = data / (corrAccum + addition) # make data CPG, correct for negative values if any
+    
+    noDataCPG = noData / (corrAccum + addition) # make noData CPG
+    """
+    dataCPG = data / accum # make data CPG
+    
+    #noDataCPG = noData / (corrAccum + addition) # make noData CPG
+    
+    # fill edges with no data, not sure this is the correct thing to do.
+    dataCPG[np.isnan(accum2)] = outNoData
+    #noDataCPG[np.isnan(accum2)] = outNoData
+
+    profile.update({'dtype':dataCPG.dtype,
+                'compress':'LZW',
+                'profile':'GeoTIFF',
+                'tiled':True,
+                'sparse_ok':True,
+                'num_threads':'ALL_CPUS',
+                'nodata':outNoData,
+                'count':2,
+                'bigtiff':'IF_SAFER'})
+
+    with rs.open(outRast, 'w', **profile) as dst:
+        dst.write(dataCPG,1)
+        #dst.write(noDataCPG,2)
+
