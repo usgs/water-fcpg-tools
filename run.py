@@ -1,13 +1,20 @@
 from tools import *
 
 #Yeti Paths
-testFDR = "../100500010101/fdr100500010101.tif"
-testOutput = "../100500010101/work/taufdr100500010101.tif"
+fdr = "../100500010101/fdr100500010101.tif"
+fac = "../100500010101/fac100500010101.tif"
+taufdr = "../100500010101/work/taufdr100500010101.tif"
 
 
-tauDrainDir(testFDR, testOutput)
+
 
 paramRast = "../100500010101/dem100500010101.tif"
-outRast = "../100500010101/work/demAccum100500010101.tif"
+accumParam = "../100500010101/work/demAccum100500010101.tif"
 
-accumulateParam(paramRast, testOutput, outRast, cores = 1)
+
+tauDrainDir(fdr, taufdr)
+
+accumulateParam(paramRast, taufdr, accumParam, cores = 1)
+
+
+make_cpg(accumParam, fac, outRast)
