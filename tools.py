@@ -9,6 +9,13 @@ import glob
 import shutil
 import traceback
 
+def getNHDPlusRaster(HUC, path):
+    """
+    Inputs:
+        HUC - HUC code of region to download
+        path - path to store raster files
+    """
+
 
 def tauDrainDir(inRast, outRast):
     """
