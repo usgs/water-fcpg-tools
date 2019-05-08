@@ -1,11 +1,11 @@
 from tools import *
 
 print(sys.argv)
-jobID = sys.argv[1] # pull the slurm job ID
-cores = int(sys.argv[2]) # pull the number of cores available
+#jobID = sys.argv[1] # pull the slurm job ID
+#cores = int(sys.argv[2]) # pull the number of cores available
 
-print("jobID:%s"%jobID)
-print("Available Cores:%s"%cores)
+#print("jobID:%s"%jobID)
+#print("Available Cores:%s"%cores)
 
 #Inputs
 fdr = "../100500010101b/fdr100500010101b.tif"
@@ -22,7 +22,7 @@ CPG = "../100500010101b/work/elevCPG100500010101b.tif"
 
 tauDrainDir(fdr, taufdr)
 
-accumulateParam(paramRast, taufdr, accumParam, cores)
+accumulateParam(paramRast, taufdr, accumParam, cores=32)
 
 
 make_cpg(accumParam, fac, CPG)
