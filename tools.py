@@ -8,6 +8,7 @@ import subprocess
 import glob
 import shutil
 import traceback
+import urllib
 
 def getNHDPlusRaster(HUC, path):
     """
@@ -194,3 +195,18 @@ def make_cpg(accumParam, fac, outRast):
         dst.write(dataCPG,1)
         #dst.write(noDataCPG,2)
 
+def resampleParam(inParam, fdr, outParam, resampleMethod):
+    ds=gdal.Open(fdr) #Open flow direction raster
+    prj=ds.GetProjection() #Get projection of the flow direction raster
+    x = ds.RasterXSize
+    y = ds.RasterYSize
+    DataType = ds.GetRasterBand(1).DataType
+    DataType = gdal.GetDataTypeName(DataType)
+
+    ds = gdal.Warp(outParam, inParam, dstSRS='EPSG:4326', outputType=gdal.GDT_Int16, xRes=x, yRes=y, resampleAlg=resampleMethod)
+
+def downloadNHDPlusRaster(HUC4, filePath):
+    compressedFile = os.join(filePath, HUC4, "_RASTER.7z")
+    urllib.urlretrieve ("https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHDPlus/HU4/HighResolution/GDB/NHDPLUS_H_%s_HU4_RASTER.7z"%str(HUC4), compressedFile)
+
+    os.system( '7z x compressedFile -o filePath')
