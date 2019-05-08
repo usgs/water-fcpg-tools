@@ -196,6 +196,19 @@ def make_cpg(accumParam, fac, outRast):
         #dst.write(noDataCPG,2)
 
 def resampleParam(inParam, fdr, outParam, resampleMethod):
+    '''
+    Inputs:
+        
+        inParam - input parameter data raster
+        fdr - flow direction raster
+        
+        outParam - output file for resampled parameter raster
+        resampleMethod - resampling method 
+
+    Outputs:
+        Parameter and NoData CPGS as bands 1 and 2 of a file in the output directory.
+    '''
+
     ds=gdal.Open(fdr) #Open flow direction raster
     prj=ds.GetProjection() #Get projection of the flow direction raster
     x = ds.RasterXSize
