@@ -7,7 +7,7 @@
 #SBATCH --account=wymtwsc        # your account
 #SBATCH --time=16:00:00           # Overestimated guess at time
 #SBATCH --mail-type=ALL         # Send email on all events
-#SBATCH --mail-user=tbarnhart@usgs.gov
+#SBATCH --mail-user=ssiefken@usgs.gov
 #SBATCH -o %j.log                    # Sets output log file to %j ( will be the jobId returned by sbatch)  
 #SBATCH --mem=128000            #memory in MB 
 
