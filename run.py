@@ -1,6 +1,6 @@
 from tools import *
 
-
+print(sys.argv)
 jobID = sys.argv[1] # pull the slurm job ID
 cores = int(sys.argv[2]) # pull the number of cores available
 
