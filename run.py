@@ -8,16 +8,16 @@ print(sys.argv)
 #print("Available Cores:%s"%cores)
 
 #Inputs
-fdr = "../100500010101b/fdr100500010101b.tif"
-fac = "../100500010101b/fac100500010101b.tif"
-paramRast = "../100500010101b/dem100500010101b.tif"
+fdr = "../1005/fdr1005.tif"
+fac = "../1005/fac1005.tif"
+paramRast = "../1005/dem1005.tif"
 
 #Intermediate Ouputs
-taufdr = "../100500010101b/work/taufdr100500010101b.tif"
-accumParam = "../100500010101b/work/demAccum100500010101b.tif"
+taufdr = "../1005/work/taufdr1005.tif"
+accumParam = "../1005/work/demAccum1005.tif"
 
 #CPG Output
-CPG = "../100500010101b/work/elevCPG100500010101b.tif"
+CPG = "../1005/work/elevCPG1005.tif"
 
 
 tauDrainDir(fdr, taufdr)
