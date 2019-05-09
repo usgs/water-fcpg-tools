@@ -222,7 +222,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     print("y cell:%s"%ysize)
 
 
-    rs.warp.reproject(inParam, outParam, dst_transform = fdrtransform, dstcrs = fdrcrs, resampling = resampleMethod)
+    rs.warp.reproject(inParam, outParam, dst_transform = fdrtransform, dstcrs = fdrcrs, resampling = Resampling.bilinear)
 
 
 
