@@ -208,7 +208,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     Outputs:
         Parameter and NoData CPGS as bands 1 and 2 of a file in the output directory.
     '''
-    from rasterio.warp import reproject
+    from rasterio.warp import reproject, Resampling
 
     with rs.open(inParam) as ds: # load parameter raster
         data = ds.read(1)
