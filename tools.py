@@ -210,10 +210,10 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     '''
     from rasterio.warp import reproject, Resampling
 
-   # with rs.open(inParam) as ds: # load parameter raster
-   #     inParamRaster = ds.read(1)
-   #     profile = ds.profile
-   inParamRaster = rs.open(inParam)
+    # with rs.open(inParam) as ds: # load parameter raster
+    #     inParamRaster = ds.read(1)
+    #     profile = ds.profile
+    inParamRaster = rs.open(inParam)
 
     fdrRaster = rs.open(fdr)# load flow direction raster
   
