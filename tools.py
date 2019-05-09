@@ -214,6 +214,10 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     src_crs = inParamRaster.crs
     src_transform = inParamRaster.transform
 
+    with rs.open(inParam) as ds: # load accumulated data and no data rasters
+        inParamRaster = ds.read(1)
+        #profile = ds.profile
+
     fdrRaster = rs.open(fdr)# load flow direction raster
   
     
