@@ -243,7 +243,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     with rs.open(outParam, 'w', **profile) as dst:
         reproject(inParamRaster, rs.band(dst, 1), src_transform=src_transform, dst_transform=fdrtransform, src_crs=src_crs, dst_crs = fdrcrs, src_nodata=src_nodata, dst_nodata=fdrnodata, resampling = Resampling.bilinear)
 
-    projectedParam = rs.open(outParam)
+    print(fdrtransform)
     
     #out_img, out_transform = mask(projectedParam, [fdrRaster], nodata=fdrnodata, crop=True)
 
