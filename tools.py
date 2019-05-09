@@ -195,7 +195,7 @@ def make_cpg(accumParam, fac, outRast):
         dst.write(dataCPG,1)
         #dst.write(noDataCPG,2)
 
-def resampleParam(inParam, fdr, outParam, resampleMethod):
+def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
     '''
     Inputs:
         
@@ -219,14 +219,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     else:
         print("Invalid resampling method")
 
-    #inParamRaster = rs.open(inParam)
-    """
-    src_crs = inParamRaster.crs
-    src_transform = inParamRaster.transform
-    src_nodata = inParamRaster.nodata
-    src_width = inParamRaster.width
-    src_height = inParamRaster.height
-    """
+   
 
     fdrRaster = rs.open(fdr)# load flow direction raster
   
@@ -255,7 +248,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     
     #Reproject and Resample raster
     with rs.open(outParam, 'w', **profile) as dst:
-        reproject(inParamRaster, rs.band(dst, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod)
+        reproject(inParamRaster, rs.band(dst, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod, num_threads=threads)
 
 
     
