@@ -211,7 +211,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     from rasterio.warp import reproject, Resampling
 
     with rs.open(inParam) as ds: # load parameter raster
-        data = ds.read(1)
+        inParamRaster = ds.read(1)
         profile = ds.profile
 
     fdrRaster = rs.open(fdr)# load flow direction raster
@@ -224,7 +224,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     print("y cell:%s"%ysize)
 
 
-    reproject(inParam, outParam, dst_transform = fdrtransform, dstcrs = fdrcrs, resampling = Resampling.bilinear)
+    reproject(inParamRaster, outParam, dst_transform = fdrtransform, dstcrs = fdrcrs, resampling = Resampling.bilinear)
 
 
 
