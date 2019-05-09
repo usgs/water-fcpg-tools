@@ -203,7 +203,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
         fdr - flow direction raster
         
         outParam - output file for resampled parameter raster
-        resampleMethod - resampling method 
+        resampleMethod (str)- resampling method, either bilinear or nearest neighbor
 
     Outputs:
         Parameter and NoData CPGS as bands 1 and 2 of a file in the output directory.
