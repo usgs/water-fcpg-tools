@@ -213,7 +213,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
         profile = ds.profile
 
 
-    ith rs.open(fdr) as ds: # load flow direction raster
+    with rs.open(fdr) as ds: # load flow direction raster
         data = ds.read(1)
         profile = ds.profile
         print(profile)
