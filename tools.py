@@ -216,12 +216,12 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
   
     
     crs = fdrRaster.crs #Get flow direction coordinate system
-    #xsize = fdrRaster.affine[0]
-    #ysize = -1* fdrRaster.affine[4]
-
     xsize, ysize = fdrRaster.res
+    transform = fdrRaster.transform
     print("x cell:%s"%xsize)
     print("y cell:%s"%ysize)
+
+
     #rs.warp.reproject(inParam, outParam, )
 
 
