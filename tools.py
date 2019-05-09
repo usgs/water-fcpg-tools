@@ -211,7 +211,15 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     from rasterio.warp import reproject, Resampling, calculate_default_transform
     from rasterio.mask import mask
 
-    inParamRaster = rs.open(inParam)
+    #Set resampling method
+    if resampleMethod == "bilinear":
+        rasterioMethod = Resampling.bilinear
+    elif resampleMethod == "nearest":
+        rasterioMethod = Resampling.nearest
+    else:
+        print("Invalid resampling method")
+
+    #inParamRaster = rs.open(inParam)
     """
     src_crs = inParamRaster.crs
     src_transform = inParamRaster.transform
@@ -222,7 +230,6 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
 
     fdrRaster = rs.open(fdr)# load flow direction raster
   
-    
     fdrcrs = fdrRaster.crs #Get flow direction coordinate system
     xsize, ysize = fdrRaster.res
     fdrtransform = fdrRaster.transform
@@ -244,21 +251,13 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
                 'nodata': fdrnodata,
                 })
 
-    
-    print("x cell:%s"%xsize)
-    print("y cell:%s"%ysize)
-    
 
     
     #Reproject and Resample raster
     with rs.open(outParam, 'w', **profile) as dst:
-        reproject(inParamRaster, rs.band(dst, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = Resampling.bilinear)
+        reproject(inParamRaster, rs.band(dst, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod)
 
-    print(fdrtransform)
 
-    test = rs.open(outParam)
-
-    print(test.transform)
     
     #out_img, out_transform = mask(projectedParam, [fdrRaster], nodata=fdrnodata, crop=True)
 
