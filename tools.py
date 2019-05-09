@@ -230,7 +230,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     
 
     with rs.open(inParam) as src: # load accumulated data and no data rasters
-        trans, w, h = calculate_default_transform(src.crs, fdrcrs, src.width, src.height, *src.bounds)
+        trans, w, h = calculate_default_transform(src.crs, fdrcrs, src.width, src.height, *src.bounds, resolution=(xsize,ysize))
         inParamRaster = src.read(1)
         profile = src.profile.copy()
 
