@@ -245,8 +245,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
 
     projectedParam = rs.open(outParam)
     
-    out_img, out_transform = mask(projectedParam, [fdrRaster], nodata=fdrnodata, crop=True)
-
+    #out_img, out_transform = mask(projectedParam, [fdrRaster], nodata=fdrnodata, crop=True)
 
 
 
