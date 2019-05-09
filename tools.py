@@ -217,11 +217,6 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     src_nodata = inParamRaster.nodata
     src_width = inParamRaster.width
     src_height = inParamRaster.height
-    
-
-    with rs.open(inParam) as ds: # load accumulated data and no data rasters
-        inParamRaster = ds.read(1)
-        profile = ds.profile.copy()
 
     fdrRaster = rs.open(fdr)# load flow direction raster
   
@@ -231,13 +226,13 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     fdrtransform = fdrRaster.transform
     fdrnodata = fdrRaster.nodata
     
-   
-    
-    print("x cell:%s"%xsize)
-    print("y cell:%s"%ysize)
-    trans, w, h = calculate_default_transform(src_crs, fdrcrs, src_width, src_height, *inParamRaster.bounds)
 
-    profile.update({
+    with rs.open(inParam) as src: # load accumulated data and no data rasters
+        trans, w, h = calculate_default_transform(src.crs, fdrcrs, src.width, src.height, *src.bounds
+        inParamRaster = ds.read(1)
+        profile = ds.profile.copy()
+
+        profile.update({
                 'profile':'GeoTIFF',
                 'crs':fdrcrs,
                 'transform':trans,
@@ -246,6 +241,13 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
                 'num_threads':'ALL_CPUS',
                 'nodata': fdrnodata,
                 })
+
+    
+    print("x cell:%s"%xsize)
+    print("y cell:%s"%ysize)
+    
+
+    
     #Reproject and Resample raster
     with rs.open(outParam, 'w', **profile) as dst:
         reproject(inParamRaster, rs.band(dst, 1), src_transform=src_transform, dst_transform=fdrtransform, src_crs=src_crs, dst_crs = fdrcrs, src_nodata=src_nodata, dst_nodata=fdrnodata, resampling = Resampling.bilinear)
