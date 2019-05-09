@@ -26,10 +26,13 @@ accumParam = "../1005/work/PRISMAccum1005.tif"
 #CPG Output
 CPG = "../1005/work/PRISMCPG1005.tif"
 
-
+print("Create tauDEM Drainage Directions...")
 tauDrainDir(fdr, taufdr)
+
+print("Resampling Parameter Raster...")
 resampleParam(paramRast, fdr, rprjParam, resampleMethod="bilinear", threads=2)
 
+print("Accumulating Parameter...")
 accumulateParam(rprjParam, taufdr, accumParam, cores)
 
 
