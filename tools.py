@@ -212,14 +212,12 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
         data = ds.read(1)
         profile = ds.profile
 
-
-fdrRaster = rs.open(fdr)# load flow direction raster
+    fdrRaster = rs.open(fdr)# load flow direction raster
   
     
     crs = fdrRaster.crs #Get flow direction coordinate system
     xsize = fdrRaster.affine[0]
     ysize = -1* fdrRaster.affine[4]
-
     print("x cell:%s"%xsize)
     print("y cell:%s"%ysize)
     #rs.warp.reproject(inParam, outParam, )
