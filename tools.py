@@ -213,13 +213,12 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
         profile = ds.profile
 
 
-    with rs.open(fdr) as ds: # load flow direction raster
-        data = ds.read(1)
-        profile = ds.profile
+fdrRaster = rs.open(fdr)# load flow direction raster
+  
     
-    crs = profile.crs #Get flow direction coordinate system
-    xsize = profile.transform[0]
-    ysize = -1* profile.transform[4]
+    crs = fdrRaster.crs #Get flow direction coordinate system
+    xsize = fdrRaster.affine[0]
+    ysize = -1* fdrRaster.affine[4]
 
     print("x cell:%s"%xsize)
     print("y cell:%s"%ysize)
