@@ -208,15 +208,17 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     Outputs:
         Parameter and NoData CPGS as bands 1 and 2 of a file in the output directory.
     '''
+    with rs.open(inParam) as ds: # load parameter raster
+        data = ds.read(1)
+        profile = ds.profile
 
-    ds=gdal.Open(fdr) #Open flow direction raster
-    prj=ds.GetProjection() #Get projection of the flow direction raster
-    x = ds.RasterXSize
-    y = ds.RasterYSize
-    DataType = ds.GetRasterBand(1).DataType
-    DataType = gdal.GetDataTypeName(DataType)
 
-    ds = gdal.Warp(outParam, inParam, dstSRS='EPSG:4326', outputType=gdal.GDT_Int16, xRes=x, yRes=y, resampleAlg=resampleMethod)
+    ith rs.open(fdr) as ds: # load flow direction raster
+        data = ds.read(1)
+        profile = ds.profile
+        print(profile)
+
+
 
 def downloadNHDPlusRaster(HUC4, filePath):
     compressedFile = os.join(filePath, HUC4, "_RASTER.7z")
