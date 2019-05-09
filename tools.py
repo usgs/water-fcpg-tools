@@ -237,7 +237,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     print("y cell:%s"%ysize)
     trans, w, h = calculate_default_transform(src_crs, fdrcrs, src_width, src_height, *inParamRaster.bounds)
 
-     profile.update({
+    profile.update({
                 'profile':'GeoTIFF',
                 'crs':fdrcrs,
                 'transform':trans,
