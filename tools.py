@@ -208,6 +208,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     Outputs:
         Parameter and NoData CPGS as bands 1 and 2 of a file in the output directory.
     '''
+    from rasterio.warp import reproject
+
     with rs.open(inParam) as ds: # load parameter raster
         data = ds.read(1)
         profile = ds.profile
@@ -222,7 +224,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     print("y cell:%s"%ysize)
 
 
-    rs.warp.reproject(inParam, outParam, dst_transform = fdrtransform, dstcrs = fdrcrs, resampling = Resampling.bilinear)
+    reproject(inParam, outParam, dst_transform = fdrtransform, dstcrs = fdrcrs, resampling = Resampling.bilinear)
 
 
 
