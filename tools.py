@@ -227,7 +227,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     print("x cell:%s"%xsize)
     print("y cell:%s"%ysize)
 
-    with rs.open(outParam, 'w'. **kwargs) as dst:
+    with rs.open(outParam, 'w', **kwargs) as dst:
         reproject(inParamRaster, rs.band(dst, 1), src_transform=src_transform, dst_transform=fdrtransform, src_crs=src_crs, dst_crs = fdrcrs, resampling = Resampling.bilinear)
 
 
