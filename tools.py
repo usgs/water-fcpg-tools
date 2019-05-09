@@ -225,7 +225,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod):
     xsize, ysize = fdrRaster.res
     fdrtransform = fdrRaster.transform
 
-    profile.update({'
+    profile.update({
                 'profile':'GeoTIFF',
                 'crs':fdrcrs,
                 'transform':fdrtransform,
