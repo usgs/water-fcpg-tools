@@ -3,11 +3,10 @@
 # Theodore Barnhart | August 22, 2018 | tbarnhart@usgs.gov
 from __future__ import print_function #python 2/3
 from grass.pygrass.modules import Module
+import grass.script.array as garray
 import sys
-import subprocess
 import os
 import pandas as pd
-from pyproj import Proj, transform
 import numpy as np
 
 reg = sys.argv[1] # extract coommand line argument 1, region to process
@@ -16,7 +15,7 @@ reg = sys.argv[1] # extract coommand line argument 1, region to process
 workspace = '/home/tbarnhart/projects/DEM_processing/data'
 drainDirPath = os.path.join(workspace,'NHDplusV21_facfdr','region_%s_fdr_grass.tiff'%(reg))
 
-fl = os.path.join(workspace,'CATCHMENT_gauges/CATCHMENT_region_%s_snapped_fixed.csv'%reg)
+fl = os.path.join(workspace,'CATCHMENT_gauges/CATCHMENT_region_%s_snapped_fixed.csv'%reg) # load the dataframe with upstream gageNos / Cats
 gauges = pd.read_csv(fl)
 
 # now for the GRASS code
@@ -32,10 +31,34 @@ v_to_db = Module('v.to.db')
 v_in_ascii = Module('v.in.ascii')
 r_in_gdal = Module('r.in.gdal')
 r_stream_basins = Module('r.stream.basins')
+v_in_ogr = Module('v.in.ogr')
 
 r_in_gdal(input=drainDirPath,output='dir', o = True, overwrite = True, quiet = True) # bring in the drainage direction raster
 g_region(raster = 'dir', res = 30) # set region resolution and extent
 #r_external() # link the accumulation raster
+
+v_in_ogr(input = '', output = 'gagues_fixed',)
+
+# delineate all basins
+r_stream_basins(direction = 'dir', points = 'gauges_fixed', basins = 'watersheds', mememory = 11800)
+
+# iterate through each point and gather each upstream basin
+
+watershed = garray.array()
+watersheds.read('watersheds')
+
+watershed = garray.array()
+
+for cat,upstream in zip(gages.cat,gages.upstreamCats):
+    upstream.extend(cat) # add the current cat label to the upstream labels.
+    watershed[...] = np.zeros_like(watersheds)
+    for cat in upstream:
+        watershed[watersheds == cat] = 1 # set upstream values to 1
+
+    watershed.write('watershed') # write out to GRASS
+
+    # now convert to shapefile and export
+    
 
 for ID,x,y in zip(gauges.Gage_no,gauges.x,gauges.y):
     print('Starting Gauge No. %s in Region %s.'%(ID,reg))
