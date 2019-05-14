@@ -282,8 +282,11 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
                 'compress': 'lzw',
                 })
 
+    print("Writing masked parameter raster...")
+    #Save the masked raster
     with rs.open(outParam, 'w', **profile) as dst:
         dst.write(maskedRaster)
+        print("Masked parameter raster saved to: %s"%outParam)
 
 
 """
