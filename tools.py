@@ -208,8 +208,9 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
     Outputs:
         Parameter and NoData CPGS as bands 1 and 2 of a file in the output directory.
     '''
-    from rasterio.warp import reproject, Resampling, calculate_default_transform, features, mask
+    from rasterio.warp import reproject, Resampling, calculate_default_transform
     from rasterio.mask import mask
+    from rasterio.features import shapes
 
     #Set resampling method
     if resampleMethod == "bilinear":
