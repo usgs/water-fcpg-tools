@@ -214,7 +214,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
     '''
     from rasterio.warp import reproject, Resampling, calculate_default_transform
     from rasterio.mask import mask
-    from rasterio.features import shapes
+    from rasterio.features import shapes, dataset_features
 
     #Set resampling method
     if resampleMethod == "bilinear":
@@ -261,7 +261,9 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
 
 
     #Create mask from fdr
-    domain, value = shapes(fdrRaster.read(1), transform=fdrtransform)
+
+    #domain, value = shapes(fdrRaster.read(1), transform=fdrtransform)
+    domain = dataset_features(fdrRaster, 1)
 
 
     #Mask the parameter raster
