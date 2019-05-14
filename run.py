@@ -3,7 +3,7 @@ from tools import *
 print(sys.argv)
 
 cores = 1 #Default number of cores to use
-
+"""
 if len(sys.argv == 3):
 
     jobID = sys.argv[1] # pull the slurm job ID
@@ -11,7 +11,7 @@ if len(sys.argv == 3):
 
     print("jobID:%s"%jobID)
     print("Available Cores:%s"%cores)
-
+"""
 #Inputs
 fdr = "../1005/fdr1005.tif"
 fac = "../1005/fac1005.tif"
