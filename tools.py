@@ -248,6 +248,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
                 'num_threads':'ALL_CPUS',
                 'nodata': fdrnodata,
                 })
+        print(profile)
         print("Original Transform:")
         print(src.transform)
         print("Flow Direction Transform:")
