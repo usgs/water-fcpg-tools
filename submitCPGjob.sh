@@ -17,6 +17,6 @@ module load gdal/2.2.2-gcc
 
 
 
-python -u ./run.py $SLURM_JOB_ID $SLURM_NTASKS
+python -u ./runPRISMCPG.py $SLURM_JOB_ID $SLURM_NTASKS
 
 echo $SLURM_NTASKS
