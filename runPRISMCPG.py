@@ -13,7 +13,7 @@ try:
     print("jobID:%s"%jobID)
     print("Available Cores:%s"%cores)
 
-except TypeError:
+except:
     print("Number of Cores set to 1")
     pass
 
