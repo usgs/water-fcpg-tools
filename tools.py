@@ -250,9 +250,9 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
         print(fdrtransform)
     
     #Reproject and Resample raster
-    #with rs.open(rProj, 'w', **profile) as dst:
-     #   reproject(inParamRaster, rs.band(dst, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod, num_threads=threads)
-    rProj = reproject(inParamRaster, rs.band(rProj, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod, num_threads=threads)
+    with rs.open(outParam, 'w', **profile) as dst:
+        reproject(inParamRaster, rs.band(dst, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod, num_threads=threads)
+    #rProj = reproject(inParamRaster, rs.band(rProj, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod, num_threads=threads)
 
 
     #Create mask from fdr
@@ -260,10 +260,10 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
 
 
     #Mask the parameter raster
+    rproj = rs.open(outParam)
+    maskedRaster, maskedTransform = mask.mask(rproj, domain, crop=True)
 
-    maskedRaster, maskedTransform = mask.mask(rProj, domain, crop=True)
-
-    rofile.update({
+    profile.update({
                 'profile':'GeoTIFF',
                 'crs':fdrcrs,
                 'transform':maskedTransform,
