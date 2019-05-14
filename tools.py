@@ -27,7 +27,7 @@ def tauDrainDir(inRast, outRast):
         outRast - Flow direction raster for tauDEM
     """
 
-    print('Reclassifying Flow Directions')
+    print('Reclassifying Flow Directions...')
 
     # load input data
     with rs.open(inRast) as ds:
@@ -256,7 +256,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
 
 
     #Create mask from fdr
-    domain = features.shapes(fdrRaster, transform=fdrtransform)
+    domain = shapes(fdrRaster, transform=fdrtransform)
 
 
     #Mask the parameter raster
@@ -271,6 +271,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
                 'width': maskedRaster.shape[2],
                 'num_threads':'ALL_CPUS',
                 'nodata': fdrnodata,
+                'compress': 'lzw',
                 })
 
     with rs.open(outParam, 'w', **profile) as dst:
