@@ -261,7 +261,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
 
     #Mask the parameter raster
     rproj = rs.open(outParam)
-    maskedRaster, maskedTransform = mask.mask(rproj, domain, crop=True)
+    maskedRaster, maskedTransform = mask(rproj, domain, crop=True)
 
     profile.update({
                 'profile':'GeoTIFF',
