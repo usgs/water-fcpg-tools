@@ -1,6 +1,7 @@
 from tools import *
 
 print(sys.argv)
+print(type(sys.argv))
 
 cores = 1 #Default number of cores to use
 
