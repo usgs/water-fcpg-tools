@@ -254,7 +254,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
         print(fdrtransform)
     
     #Reproject and Resample raster
-    with rs.open(outParam, 'r', **profile) as dst:
+    with rs.open(outParam, 'w', **profile) as dst:
         reproject(inParamRaster, rs.band(dst, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod, num_threads=threads)
     #rProj = reproject(inParamRaster, rs.band(rProj, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod, num_threads=threads)
 
