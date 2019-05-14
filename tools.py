@@ -208,7 +208,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
     Outputs:
         Parameter and NoData CPGS as bands 1 and 2 of a file in the output directory.
     '''
-    from rasterio.warp import reproject, Resampling, calculate_default_transform
+    from rasterio.warp import reproject, Resampling, calculate_default_transform, features, mask
     from rasterio.mask import mask
 
     #Set resampling method
@@ -249,12 +249,38 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
         print(fdrtransform)
     
     #Reproject and Resample raster
-    with rs.open(outParam, 'w', **profile) as dst:
+    with rs.open(rProj, 'w', **profile) as dst:
         reproject(inParamRaster, rs.band(dst, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod, num_threads=threads)
 
+
+    #Create mask from fdr
+    domain = features.shapes(fdrRaster, transform=fdrtransform)
+
+
+    #Mask the parameter raster
+
+    maskedRaster, maskedTransform = mask.mask(rProj, domain, crop=True)
+
+    rofile.update({
+                'profile':'GeoTIFF',
+                'crs':fdrcrs,
+                'transform':maskedTransform,
+                'height': maskedRaster.shape[1],
+                'width': maskedRaster.shape[2],
+                'num_threads':'ALL_CPUS',
+                'nodata': fdrnodata,
+                })
+
+    with rs.open(outParam, 'w', **profile) as dst:
+        dst.write(maskedRaster)
+
+
+"""
     test = rs.open(outParam)
     
     print(test.transform)
+"""
+
     #out_img, out_transform = mask(projectedParam, [fdrRaster], nodata=fdrnodata, crop=True)
 
 
