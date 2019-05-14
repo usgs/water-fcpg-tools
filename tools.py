@@ -28,6 +28,7 @@ def tauDrainDir(inRast, outRast):
     """
 
     print('Reclassifying Flow Directions...')
+    import time
 
     # load input data
     with rs.open(inRast) as ds:
@@ -43,6 +44,7 @@ def tauDrainDir(inRast, outRast):
     tauDir = dat.copy()
     # remap NHDplus flow direction to TauDEM flow Direction
     # east is ok
+    start = time.time()
     tauDir[dat == 1] = 1 # east
     tauDir[dat == 2] = 8 # stauDirheast
     tauDir[dat == 4] =  7 # stauDirh
@@ -52,7 +54,9 @@ def tauDrainDir(inRast, outRast):
     tauDir[dat == 64] = 3 # north
     tauDir[dat == 128] = 2 # northeast
     tauDir[dat == -2147483648] = -1 # no data
-    
+    print("Reclassifying Time:")
+    end = time.time()
+    print(start-end)
     with rs.open(outRast,'w',**meta) as dst:
         dst.write(tauDir,1)
 
