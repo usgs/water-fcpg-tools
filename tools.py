@@ -261,7 +261,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
 
 
     #Create mask from fdr
-    domain, value = shapes(fdrRaster, transform=fdrtransform)
+    domain, value = shapes(fdrRaster.read(1), transform=fdrtransform)
 
 
     #Mask the parameter raster
