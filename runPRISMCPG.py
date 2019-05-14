@@ -5,13 +5,13 @@ print(sys.argv)
 cores = 1 #Default number of cores to use
 
 try:
-    if len(sys.argv == 3):
+    
 
-        jobID = sys.argv[1] # pull the slurm job ID
-        cores = int(sys.argv[2]) # pull the number of cores available
+    jobID = sys.argv[1] # pull the slurm job ID
+    cores = int(sys.argv[2]) # pull the number of cores available
 
-        print("jobID:%s"%jobID)
-        print("Available Cores:%s"%cores)
+    print("jobID:%s"%jobID)
+    print("Available Cores:%s"%cores)
 
 except TypeError:
     print("Number of Cores set to 1")
