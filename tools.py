@@ -112,7 +112,7 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
         tauParams['outFl'] = outRast
         tauParams['weight'] = paramRast
         
-        cmd = 'mpiexec -n {cores} AreaD8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams)
+        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams)
         print(cmd)
         result = subprocess.run(cmd, shell = True)
         result.stdout
