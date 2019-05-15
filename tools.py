@@ -213,8 +213,6 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         Parameter and NoData CPGS as bands 1 and 2 of a file in the output directory.
     '''
 
-    
-
 
 
 
@@ -223,16 +221,6 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     from rasterio.features import shapes, dataset_features, bounds
     from rasterio.coords import BoundingBox
 
-    #Set resampling method
-    """
-    if resampleMethod == "bilinear":
-        rasterioMethod = Resampling.bilinear
-    elif resampleMethod == "nearest":
-        rasterioMethod = Resampling.nearest
-    else:
-        print("Invalid resampling method")
-    """
-   
 
     fdrRaster = rs.open(fdr)# load flow direction raster
   
@@ -264,10 +252,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         'fdrcrs': fdrcrs
         }
         
-        print(warpParams)
         
         cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -tap -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -r {resampleMethod} {inParam} {outParam}'.format(**warpParams)
-        #cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -r {resampleMethod} {inParam} {outParam}'.format(**warpParams)
         print(cmd)
         result = subprocess.run(cmd, shell = True)
         result.stdout
@@ -341,14 +327,6 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
 
 
     """
-    test = rs.open(outParam)
-    
-    print(test.transform)
-
-   
-
-    #out_img, out_transform = mask(projectedParam, [fdrRaster], nodata=fdrnodata, crop=True)
-
 
 
 
