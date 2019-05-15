@@ -266,7 +266,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         
         
         #cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -n {cores} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -r {resampleMethod} {inParam} {outParam}'.format(**warpParams)
-        cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -n {cores} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -r {resampleMethod} {inParam} {outParam}'.format(**warpParams)
+        cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -r {resampleMethod} {inParam} {outParam}'.format(**warpParams)
         print(cmd)
         result = subprocess.run(cmd, shell = True)
         result.stdout
