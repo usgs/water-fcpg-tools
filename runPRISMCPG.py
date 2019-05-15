@@ -36,7 +36,7 @@ print("Create tauDEM Drainage Directions...")
 tauDrainDir(fdr, taufdr)
 
 print("Resampling Parameter Raster...")
-resampleParam(paramRast, fdr, rprjParam, resampleMethod="bilinear", threads=1)
+resampleParam(paramRast, fdr, rprjParam, resampleMethod="bilinear", cores=1)
 
 print("Accumulating Parameter...")
 accumulateParam(rprjParam, taufdr, accumParam, cores)
