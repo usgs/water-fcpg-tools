@@ -216,8 +216,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
     from rasterio.mask import mask
     from rasterio.features import shapes, dataset_features, bounds
     from rasterio.coords import BoundingBox
-    from Shapely.geometry import box
-    import geopandas as gpd
+    #from Shapely.geometry import box
+    #import geopandas as gpd
 
     #Set resampling method
     if resampleMethod == "bilinear":
