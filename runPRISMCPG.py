@@ -19,8 +19,8 @@ except:
 
 
 #Inputs
-fdr = "../1005/fdr1005.tif"
-fac = "../1005/fac1005.tif"
+fdr = "../1005/rawfdr1005.tif"
+fac = "../1005/rawfac1005.tif"
 #paramRast = "../1005/dem1005.tif"
 paramRast = "../1005/2015PRISM_Milk.tif"
 
