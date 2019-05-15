@@ -244,7 +244,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     fdrXmin = fdrRaster.transform[2]
     fdrXmax = fdrXmin + xsize*fdrRaster.width
     fdrYmin = fdrRaster.transform[5]
-    fdrYmax = fdrYmin + ysize*fdrRaster.height
+    fdrYmax = fdrYmin - ysize*fdrRaster.height
 
     # GDAL Warp
     try:
