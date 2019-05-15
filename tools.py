@@ -243,8 +243,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     #Get bounding coordinates of the flow direction raster
     fdrXmin = fdrRaster.transform[2]
     fdrXmax = fdrXmin + xsize*fdrRaster.width
-    fdrYmin = fdrRaster.transform[5]
-    fdrYmax = fdrYmin + ysize*fdrRaster.height
+    fdrYmax = fdrRaster.transform[5]
+    fdrYmin = fdrYmin - ysize*fdrRaster.height
 
     # GDAL Warp
     try:
