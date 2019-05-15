@@ -33,14 +33,14 @@ accumParam = "../1005/work/PRISMAccum1005.tif"
 CPG = "../1005/work/PRISMCPG1005.tif"
 
 print("Create tauDEM Drainage Directions...")
-tauDrainDir(fdr, taufdr)
+#tauDrainDir(fdr, taufdr)
 
 print("Resampling Parameter Raster...")
 resampleParam(paramRast, fdr, rprjParam, resampleMethod="bilinear", cores=1)
 
 print("Accumulating Parameter...")
-accumulateParam(rprjParam, taufdr, accumParam, cores)
+#accumulateParam(rprjParam, taufdr, accumParam, cores)
 
 
-make_cpg(accumParam, fac, CPG)
+#make_cpg(accumParam, fac, CPG)
 
