@@ -214,7 +214,10 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
     '''
     from rasterio.warp import reproject, Resampling, calculate_default_transform
     from rasterio.mask import mask
-    from rasterio.features import shapes, dataset_features
+    from rasterio.features import shapes, dataset_features, bounds
+    from rasterio.coords import BoundingBox
+    from Shapely.geometry import box
+    import geopandas as gpd
 
     #Set resampling method
     if resampleMethod == "bilinear":
@@ -232,6 +235,12 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
     xsize, ysize = fdrRaster.res
     fdrtransform = fdrRaster.transform
     fdrnodata = fdrRaster.nodata
+    #Get bounding coordinates of the flow direction raster
+    fdrXmin = fdrRaster.transform[2]
+    fdrXmax = fdrXmin + xsize*fdrRaster.width
+    fdrYmin = fdrRaster.transform[5]
+    fdrYmax = fdrXmin + ysize*fdrRaster.height
+
     
 
     with rs.open(inParam) as src: # load accumulated data and no data rasters
@@ -255,9 +264,16 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
         print(fdrtransform)
     
     #Reproject and Resample raster
-    #with rs.open(outParam, 'w', **profile) as dst:
-        #reproject(inParamRaster, rs.band(dst, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod, num_threads=threads)
+    with rs.open(outParam, 'w', **profile) as dst:
+        reproject(inParamRaster, rs.band(dst, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod, num_threads=threads)
     #rProj = reproject(inParamRaster, rs.band(rProj, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod, num_threads=threads)
+
+    #Clip Parameter raster to fdr
+
+    #clipBox = box(fdrXmin, fdrYmin, fdrXmax, fdrYmax) #Create shapely bounding box
+    #projClipBox = gpd.GeoDataFrame({'geometry': clipBox}, index=[0], crs=from_epsg(4326))
+
+
 
 
     #Create mask from fdr
