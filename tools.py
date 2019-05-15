@@ -262,6 +262,18 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     except:
         print('Error Reprojecting Parameter Raster')
         traceback.print_exc()
+    
+    #Align pixels
+    resampledRaster = rs.open(outParam)
+
+    print("Flow Direction Transform:")
+    print(fdrtransform)
+
+    print("Resampled Parameter Transform:")
+    print(resampledRaster.transform)
+
+    
+
 
     """
     with rs.open(inParam) as src: # load accumulated data and no data rasters
