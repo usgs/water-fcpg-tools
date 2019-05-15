@@ -199,7 +199,7 @@ def make_cpg(accumParam, fac, outRast):
         dst.write(dataCPG,1)
         #dst.write(noDataCPG,2)
 
-def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
+def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     '''
     Inputs:
         
@@ -212,21 +212,26 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
     Outputs:
         Parameter and NoData CPGS as bands 1 and 2 of a file in the output directory.
     '''
+
+    
+
+
+
+
     from rasterio.warp import reproject, Resampling, calculate_default_transform
     from rasterio.mask import mask
     from rasterio.features import shapes, dataset_features, bounds
     from rasterio.coords import BoundingBox
-    #from Shapely.geometry import box
-    #import geopandas as gpd
 
     #Set resampling method
+    """
     if resampleMethod == "bilinear":
         rasterioMethod = Resampling.bilinear
     elif resampleMethod == "nearest":
         rasterioMethod = Resampling.nearest
     else:
         print("Invalid resampling method")
-
+    """
    
 
     fdrRaster = rs.open(fdr)# load flow direction raster
@@ -241,8 +246,36 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
     fdrYmin = fdrRaster.transform[5]
     fdrYmax = fdrXmin + ysize*fdrRaster.height
 
-    
+    # GDAL Warp
+    try:
+        print('Resampling and Reprojecting Parameter Raster...')
+        warpParams = {
+        'inParam': inParam,
+        'outParam': outParam,
+        'fdr':fdr,
+        'cores':cores, 
+        'resampleMethod': resampleMethod,
+        'xsize': xsize, 
+        'ysize': ysize, 
+        'fdrXmin': fdrXmin,
+        'fdrXmax': fdrXmax,
+        'fdrYmin': fdrYmin,
+        'fdrYmax': fdrYmax,
+        'fdrcrs': fdrcrs
+        }
+        
+        
+        cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -n {cores} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -r {resampleMethod} inParam outParam'.format(**warpParams)
+        print(cmd)
+        result = subprocess.run(cmd, shell = True)
+        result.stdout
+        
+        print('Parameter reprojected to: %s'%outParam)
+    except:
+        print('Error Reprojecting Parameter Raster')
+        traceback.print_exc()
 
+    """
     with rs.open(inParam) as src: # load accumulated data and no data rasters
         trans, w, h = calculate_default_transform(src.crs, fdrcrs, src.width, src.height, *src.bounds, resolution=(xsize,ysize))
         inParamRaster = src.read(1)
@@ -310,6 +343,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", threads=1):
     
     print(test.transform)
 """
+    """
 
     #out_img, out_transform = mask(projectedParam, [fdrRaster], nodata=fdrnodata, crop=True)
 
