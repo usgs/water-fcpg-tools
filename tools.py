@@ -213,28 +213,20 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         Parameter and NoData CPGS as bands 1 and 2 of a file in the output directory.
     '''
 
-
-
-
-    from rasterio.warp import reproject, Resampling, calculate_default_transform
-    from rasterio.mask import mask
-    from rasterio.features import shapes, dataset_features, bounds
-    from rasterio.coords import BoundingBox
-
-
-    fdrRaster = rs.open(fdr)# load flow direction raster
+    fdrRaster = rs.open(fdr)# load flow direction raster in Rasterio
   
     fdrcrs = fdrRaster.crs #Get flow direction coordinate system
-    xsize, ysize = fdrRaster.res
-    fdrtransform = fdrRaster.transform
-    fdrnodata = fdrRaster.nodata
+    xsize, ysize = fdrRaster.res #Get flow direction cell size
+    fdrtransform = fdrRaster.transform #Get flow direction affine transform
+    fdrnodata = fdrRaster.nodata #Get flow direction no data value
+
     #Get bounding coordinates of the flow direction raster
     fdrXmin = fdrRaster.transform[2]
     fdrXmax = fdrXmin + xsize*fdrRaster.width
     fdrYmax = fdrRaster.transform[5]
     fdrYmin = fdrYmax - ysize*fdrRaster.height
 
-    # GDAL Warp
+    # Resample, reproject, and clip the parameter raster with GDAL
     try:
         print('Resampling and Reprojecting Parameter Raster...')
         warpParams = {
@@ -252,7 +244,6 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         'fdrcrs': fdrcrs
         }
         
-        
         cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -r {resampleMethod} {inParam} {outParam}'.format(**warpParams)
         print(cmd)
         result = subprocess.run(cmd, shell = True)
@@ -263,84 +254,6 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         print('Error Reprojecting Parameter Raster')
         traceback.print_exc()
     
-    #Align pixels
-    resampledRaster = rs.open(outParam)
-
-    print("Flow Direction Transform:")
-    print(fdrtransform)
-
-    print("Resampled Parameter Transform:")
-    print(resampledRaster.transform)
-
-    
-
-
-    """
-    with rs.open(inParam) as src: # load accumulated data and no data rasters
-        trans, w, h = calculate_default_transform(src.crs, fdrcrs, src.width, src.height, *src.bounds, resolution=(xsize,ysize))
-        inParamRaster = src.read(1)
-        profile = src.profile.copy()
-
-        profile.update({
-                'profile':'GeoTIFF',
-                'crs':fdrcrs,
-                'transform':trans,
-                'width': w,
-                'height': h,
-                'num_threads':'ALL_CPUS',
-                'nodata': fdrnodata,
-                })
-        print(profile)
-        print("Original Transform:")
-        print(src.transform)
-        print("Flow Direction Transform:")
-        print(fdrtransform)
-    
-    #Reproject and Resample raster
-    with rs.open(outParam, 'w', **profile) as dst:
-        reproject(inParamRaster, rs.band(dst, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod, num_threads=threads)
-    #rProj = reproject(inParamRaster, rs.band(rProj, 1), src_transform=src.transform, dst_transform=fdrtransform, src_crs=src.crs, dst_crs = fdrcrs, src_nodata=src.nodata, dst_nodata=fdrnodata, resampling = rasterioMethod, num_threads=threads)
-
-    #Clip Parameter raster to fdr
-
-    #clipBox = box(fdrXmin, fdrYmin, fdrXmax, fdrYmax) #Create shapely bounding box
-    #projClipBox = gpd.GeoDataFrame({'geometry': clipBox}, index=[0], crs=from_epsg(4326))
-
-
-
-
-    #Create mask from fdr
-
-    #domain, value = shapes(fdrRaster.read(1), transform=fdrtransform)
-    domain = dataset_features(fdrRaster, 1)
-
-
-    #Mask the parameter raster
-    with rs.open(outParam) as rproj:
-        print(rproj.profile)
-        maskedRaster, maskedTransform = mask(rproj, domain, crop=True)
-
-    profile.update({
-                'profile':'GeoTIFF',
-                'crs':fdrcrs,
-                'transform':maskedTransform,
-                'height': maskedRaster.shape[1],
-                'width': maskedRaster.shape[2],
-                'num_threads':'ALL_CPUS',
-                'nodata': fdrnodata,
-                'compress': 'lzw',
-                })
-
-    print("Writing masked parameter raster...")
-    #Save the masked raster
-    with rs.open(outParam, 'w', **profile) as dst:
-        dst.write(maskedRaster)
-        print("Masked parameter raster saved to: %s"%outParam)
-
-
-    """
-
-
 
 def downloadNHDPlusRaster(HUC4, filePath):
     compressedFile = os.join(filePath, HUC4, "_RASTER.7z")
