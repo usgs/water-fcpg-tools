@@ -283,8 +283,6 @@ def cat2bin(inCat, outWorkspace):
     cats = np.unique(dat)
     cats = np.delete(cats, np.where(cats ==  nodata))
 
-    nodata = 0 #reset the no data value
-
     # edit the metadata
     profile.update({'dtype':'int8',
                 'compress':'LZW',
@@ -292,14 +290,15 @@ def cat2bin(inCat, outWorkspace):
                 'tiled':True,
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
-                'nodata':nodata,
+                'nodata':-1,#Use -1 as no data value
                 'bigtiff':'IF_SAFER'})
 
     #Create binary rasters for each category
     for n in cats:
         catData = dat.copy()
-        catData[dat != n] = nodata
+        catData[(dat != n) & (dat != nodata)] = 0
         catData[dat == n] = 1
+        catData[dat == nodata] = -1 #Use -1 as no data value
         catData = catData.astype('int8')#8 bit integer is sufficient for zeros and ones
 
         catRasterName = baseName + str(n) + ext
