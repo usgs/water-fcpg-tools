@@ -39,7 +39,7 @@ print("Create tauDEM Drainage Directions...")
 tauDrainDir(fdr, taufdr)
 
 print("Resampling Rasters...")
-resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=1)
+resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
 
 print("Accumulating Parameters...")
 accumulateParam(demRast, taufdr, accumDEM, cores)
