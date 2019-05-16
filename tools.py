@@ -283,10 +283,10 @@ def cat2bin(inCat, outWorkspace):
     cats = np.unique(dat)
     cats = np.delete(cats, np.where(cats ==  nodata))
 
-    #nodata = -1 #reset the no data value
+    nodata = 0 #reset the no data value
 
     # edit the metadata
-    profile.update({
+    profile.update({'dtype':'int8',
                 'compress':'LZW',
                 'profile':'GeoTIFF',
                 'tiled':True,
@@ -299,6 +299,7 @@ def cat2bin(inCat, outWorkspace):
     for n in cats:
         catData = dat.copy()
         catData[dat != n] = nodata
+        catData[dat == n] = 1
 
         catRasterName = baseName + str(n) + ext
         catRaster = os.path.join(outWorkspace, catRasterName)
