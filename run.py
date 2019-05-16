@@ -18,21 +18,33 @@ except TypeError:
     pass
 
 #Inputs
-fdr = "../1005/fdr1005.tif"
-fac = "../1005/fac1005.tif"
-paramRast = "../1005/dem1005.tif"
+fdr = "../10f/fdr10f.tif"
+fac = "../10f/fac10f.tif"
+demRast = "../10f/dem10f.tif"
+PRISMRast = "../10f/PRISM2015.tif"
 
 #Intermediate Ouputs
-taufdr = "../1005/work/taufdr1005.tif"
-accumParam = "../1005/work/demAccum1005.tif"
+taufdr = "../10f/work/taufdr10f.tif"
+accumDEM = "../10f/work/demAccum10f.tif"
+
+rprjPRISM = "../10f/work/PRISMrprj10f.tif"
+accumPRISM = "../10f/work/PRISMAccum10f.tif"
+
 
 #CPG Output
-CPG = "../1005/work/elevCPG1005.tif"
+elevCPG = "../10f/work/elevCPG10f.tif"
+PRISMCPG = "../10f/work/PRISMCPG10f.tif"
 
-
+print("Create tauDEM Drainage Directions...")
 tauDrainDir(fdr, taufdr)
 
-accumulateParam(paramRast, taufdr, accumParam, cores)
+print("Resampling Rasters...")
+resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=1)
 
+print("Accumulating Parameters...")
+accumulateParam(demRast, taufdr, accumDEM, cores)
+accumulateParam(PRISMRast, taufdr, accumPRISM, cores)
 
-make_cpg(accumParam, fac, CPG)
+print("Creating CPGs...")
+make_cpg(accumDEM, fac, elevCPG)
+make_cpg(accumPRISM, fac, PRISMCPG)
