@@ -304,7 +304,7 @@ def cat2bin(inCat, outWorkspace):
         catRaster = os.path.join(outWorkspace, catRasterName)
 
         print("Saving %s"%catRaster)
-        with rs.open(catRaster,'w',**meta) as dst:
+        with rs.open(catRaster,'w',**profile) as dst:
             dst.write(catData,1)
 
     
