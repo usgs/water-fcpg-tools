@@ -9,7 +9,7 @@ inCat = "../100500010101/LandCoverMT.tif"
 
 
 
-cat2bin(inCat, outWorkspace)
+
 
 
 
@@ -29,6 +29,9 @@ accumPRISM = "../100500010101/work/PRISMAccum100500010101.tif"
 #CPG Output
 elevCPG = "../100500010101/work/elevCPG100500010101.tif"
 PRISMCPG = "../100500010101/work/PRISMCPG100500010101.tif"
+
+print("Creating Binary Parameter Grids...")
+cat2bin(inCat, outWorkspace)
 
 print("Create tauDEM Drainage Directions...")
 tauDrainDir(fdr, taufdr)
