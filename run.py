@@ -25,9 +25,10 @@ PRISMRast = "../10f/PRISM2015.tif"
 
 #Intermediate Ouputs
 taufdr = "../10f/work/taufdr10f.tif"
-accumDEM = "../10f/work/demAccum10f.tif"
 
 rprjPRISM = "../10f/work/PRISMrprj10f.tif"
+
+accumDEM = "../10f/work/demAccum10f.tif"
 accumPRISM = "../10f/work/PRISMAccum10f.tif"
 
 
