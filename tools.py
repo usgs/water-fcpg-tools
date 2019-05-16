@@ -286,7 +286,7 @@ def cat2bin(inCat, outWorkspace):
         catData = dat.copy()
         catData[dat != n] = nodata
 
-        catRasterName = baseName + n + ext
+        catRasterName = baseName + str(n) + ext
         catRaster = os.path.join(outWorkspace, catRasterName)
 
         with rs.open(catRaster,'w',**meta) as dst:
