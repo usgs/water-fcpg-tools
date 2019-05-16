@@ -30,6 +30,8 @@ accum149 = "../100500010101/work/149Accum100500010101.tif"
 #CPG Output
 elevCPG = "../100500010101/work/elevCPG100500010101.tif"
 PRISMCPG = "../100500010101/work/PRISMCPG100500010101.tif"
+CPG149 = "../100500010101/work/149CPG100500010101.tif"
+
 
 print("Creating Binary Parameter Grids...")
 #cat2bin(inCat, outWorkspace)
@@ -49,4 +51,4 @@ accumulateParam(rprj149, taufdr, accum149, cores)
 print("Creating CPGs...")
 make_cpg(accumDEM, fac, elevCPG)
 make_cpg(accumPRISM, fac, PRISMCPG)
-make_cpg(accum149, fac, 149CPG)
+make_cpg(accum149, fac, CPG149)
