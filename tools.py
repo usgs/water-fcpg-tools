@@ -266,7 +266,7 @@ def cat2bin(inCat, outWorkspace):
     Outputs:
         Binary rasters for each parameter category
     '''
-
+    print("Creating binaries for %s"%inCat)
     nodata = -1 #Set the no data value
 
     baseName = os.path.splitext(os.path.basename(inCat))[0] #Get name of input file without extention
@@ -289,6 +289,7 @@ def cat2bin(inCat, outWorkspace):
         catRasterName = baseName + str(n) + ext
         catRaster = os.path.join(outWorkspace, catRasterName)
 
+        print("Saving %s"%catRaster)
         with rs.open(catRaster,'w',**meta) as dst:
             dst.write(catData,1)
 
