@@ -267,7 +267,7 @@ def cat2bin(inCat, outWorkspace):
         Binary rasters for each parameter category
     '''
     print("Creating binaries for %s"%inCat)
-    nodata = -1 #Set the no data value
+    
 
     baseName = os.path.splitext(os.path.basename(inCat))[0] #Get name of input file without extention
     ext = ".tif" #File extension
@@ -275,14 +275,28 @@ def cat2bin(inCat, outWorkspace):
     # load input data
     with rs.open(inCat) as ds:
         dat = ds.read(1)
-        meta = ds.meta.copy() # save the metadata for output later
+        profile = ds.profile.copy() # save the metadata for output later
+        nodata = ds.nodata
+    
+
+    
+    cats = np.unique(dat)
+    cats = np.delete(cats, np.where(cats ==  nodata))
+
+    #nodata = -1 #reset the no data value
 
     # edit the metadata
-    meta.update({'driver':'GTiff'})
-    meta.update({'nodata':nodata})
+    profile.update({
+                'compress':'LZW',
+                'profile':'GeoTIFF',
+                'tiled':True,
+                'sparse_ok':True,
+                'num_threads':'ALL_CPUS',
+                'nodata':nodata,
+                'bigtiff':'IF_SAFER'})
 
     #Create binary rasters for each category
-    for n in np.unique(dat):
+    for n in cats:
         catData = dat.copy()
         catData[dat != n] = nodata
 
