@@ -210,7 +210,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         resampleMethod (str)- resampling method, either bilinear or nearest neighbor
 
     Outputs:
-        Parameter and NoData CPGS as bands 1 and 2 of a file in the output directory.
+        Resampled, reprojected, and clipped parameter raster
     '''
 
     fdrRaster = rs.open(fdr)# load flow direction raster in Rasterio
@@ -253,7 +253,52 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     except:
         print('Error Reprojecting Parameter Raster')
         traceback.print_exc()
+
+
+def cat2bin(inCat, outWorkspace):
+    '''
+    Inputs:
+        
+        inCat - input catagorical parameter raster
+        outWorkspace - workspace to save binary raster outputs
+        
+
+    Outputs:
+        Binary rasters for each parameter category
+    '''
+
+    nodata = -1 #Set the no data value
+
+    baseName = os.path.splitext(os.path.basename(inCat))[0] #Get name of input file without extention
+    ext = ".tif" #File extension
+
+    # load input data
+    with rs.open(inCat) as ds:
+        dat = ds.read(1)
+        meta = ds.meta.copy() # save the metadata for output later
+
+    # edit the metadata
+    meta.update({'driver':'GTiff'})
+    meta.update({'nodata':nodata}
+
+    #Create binary rasters for each category
+    for n in nup.unique(dat):
+        catData = dat.copy()
+        catData[dat != n] = nodata
+
+        catRasterName = baseName + n + ext
+        catRaster = os.path.join(outWorkspace, catRasterName)
+
+        with rs.open(catRaster,'w',**meta) as dst:
+            dst.write(catData,1)
+
     
+    
+
+
+
+
+
 
 def downloadNHDPlusRaster(HUC4, filePath):
     compressedFile = os.join(filePath, HUC4, "_RASTER.7z")
