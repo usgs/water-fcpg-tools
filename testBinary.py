@@ -32,14 +32,14 @@ elevCPG = "../100500010101/work/elevCPG100500010101.tif"
 PRISMCPG = "../100500010101/work/PRISMCPG100500010101.tif"
 
 print("Creating Binary Parameter Grids...")
-cat2bin(inCat, outWorkspace)
+#cat2bin(inCat, outWorkspace)
 
 print("Create tauDEM Drainage Directions...")
 tauDrainDir(fdr, taufdr)
 
 print("Resampling Rasters...")
 resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
-resampleParam("../100500010101/work/LandCoverMT270.tif", fdr, rprj270, resampleMethod="nearest", cores=cores)
+resampleParam("../100500010101/work/LandCoverMT270.tif", fdr, rprj270, resampleMethod="near", cores=cores)
 
 print("Accumulating Parameters...")
 accumulateParam(demRast, taufdr, accumDEM, cores)
