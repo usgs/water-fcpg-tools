@@ -43,7 +43,7 @@ resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
 
 print("Accumulating Parameters...")
 accumulateParam(demRast, taufdr, accumDEM, cores)
-accumulateParam(PRISMRast, taufdr, accumPRISM, cores)
+accumulateParam(rprjPRISM, taufdr, accumPRISM, cores)
 
 print("Creating CPGs...")
 make_cpg(accumDEM, fac, elevCPG)
