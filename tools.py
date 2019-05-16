@@ -300,6 +300,7 @@ def cat2bin(inCat, outWorkspace):
         catData = dat.copy()
         catData[dat != n] = nodata
         catData[dat == n] = 1
+        catData = catData.astype('int8')#8 bit integer is sufficient for zeros and ones
 
         catRasterName = baseName + str(n) + ext
         catRaster = os.path.join(outWorkspace, catRasterName)
