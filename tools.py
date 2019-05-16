@@ -279,7 +279,7 @@ def cat2bin(inCat, outWorkspace):
 
     # edit the metadata
     meta.update({'driver':'GTiff'})
-    meta.update({'nodata':nodata}
+    meta.update({'nodata':nodata})
 
     #Create binary rasters for each category
     for n in np.unique(dat):
