@@ -1,5 +1,6 @@
 from tools import *
 
+cores = 1
 #Inputs
 fdr = "../100500010101/fdr100500010101.tif"
 fac = "../100500010101/fac100500010101.tif"
