@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=CPG # name that you chose
 #SBATCH -c 1 # cpus per task
-#SBATCH -n 32 # number of tasks
+#SBATCH -n 16 # number of tasks
 #SBATCH --tasks-per-node=16
 #SBATCH -p normal                         # the partition you want to use, for this case prod is best
 #SBATCH --account=wymtwsc        # your account
@@ -17,6 +17,6 @@ module load gdal/2.2.2-gcc
 source activate py36
 
 
-python -u ./runPRISMCPG.py $SLURM_JOB_ID $SLURM_NTASKS
+python -u ./run.py $SLURM_JOB_ID $SLURM_NTASKS
 
 echo $SLURM_NTASKS
