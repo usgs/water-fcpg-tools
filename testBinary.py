@@ -34,7 +34,7 @@ CPG149 = "../100500010101/work/149CPG100500010101.tif"
 
 
 print("Creating Binary Parameter Grids...")
-#cat2bin(inCat, outWorkspace)
+cat2bin(inCat, outWorkspace)
 
 print("Create tauDEM Drainage Directions...")
 tauDrainDir(fdr, taufdr)
