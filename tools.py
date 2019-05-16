@@ -282,7 +282,7 @@ def cat2bin(inCat, outWorkspace):
     meta.update({'nodata':nodata}
 
     #Create binary rasters for each category
-    for n in nup.unique(dat):
+    for n in np.unique(dat):
         catData = dat.copy()
         catData[dat != n] = nodata
 
