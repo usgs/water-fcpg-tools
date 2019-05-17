@@ -49,7 +49,13 @@ print("Accumulating Parameters...")
 #accumulateParam(rprjPRISM, taufdr, accumPRISM, cores)
 #accumulateParam(rprj149, taufdr, accum149, cores)
 
+accumulatedList = accumulateParams(resampledList, fdr, outWorkspace, cores=cores, appStr="accum")
+
+
+
 print("Creating CPGs...")
 make_cpg(accumDEM, fac, elevCPG)
 make_cpg(accumPRISM, fac, PRISMCPG)
-make_cpg(accum149, fac, CPG149)
+#make_cpg(accum149, fac, CPG149)
+
+CPGList = make_cpgs(accumulatedList, fac, outWorkspace, appStr="CPG")
