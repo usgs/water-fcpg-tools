@@ -45,9 +45,9 @@ resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
 resampledList = resampleParams(binaryList, fdr, outWorkspace, resampleMethod="bilinear", cores=cores, appStr="rprj")
 
 print("Accumulating Parameters...")
-accumulateParam(demRast, taufdr, accumDEM, cores)
-accumulateParam(rprjPRISM, taufdr, accumPRISM, cores)
-accumulateParam(rprj149, taufdr, accum149, cores)
+#accumulateParam(demRast, taufdr, accumDEM, cores)
+#accumulateParam(rprjPRISM, taufdr, accumPRISM, cores)
+#accumulateParam(rprj149, taufdr, accum149, cores)
 
 print("Creating CPGs...")
 make_cpg(accumDEM, fac, elevCPG)
