@@ -34,14 +34,15 @@ CPG149 = "../100500010101/work/149CPG100500010101.tif"
 
 
 print("Creating Binary Parameter Grids...")
-cat2bin(inCat, outWorkspace)
+binaryList = cat2bin(inCat, outWorkspace)
 
 print("Creating tauDEM Drainage Directions...")
 tauDrainDir(fdr, taufdr)
 
 print("Resampling Rasters...")
 resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
-resampleParam("../100500010101/work/LandCoverMT149.tif", fdr, rprj149, resampleMethod="near", cores=cores)
+#resampleParam("../100500010101/work/LandCoverMT149.tif", fdr, rprj149, resampleMethod="near", cores=cores)
+resampledList = resampleParams(binaryList, fdr, outWorkspace, resampleMethod="bilinear", cores=cores, appStr="rprj")
 
 print("Accumulating Parameters...")
 accumulateParam(demRast, taufdr, accumDEM, cores)
