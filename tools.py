@@ -267,6 +267,9 @@ def cat2bin(inCat, outWorkspace):
         
     Outputs:
         Binary rasters for each parameter category
+
+    Returns:
+        List of filepaths to output files
     '''
     print("Creating binaries for %s"%inCat)
     
@@ -284,6 +287,8 @@ def cat2bin(inCat, outWorkspace):
     
     cats = np.unique(dat)
     cats = np.delete(cats, np.where(cats ==  nodata))
+
+    fileList = [] #Initialize list of output files
 
     # edit the metadata
     profile.update({'dtype':'int8',
@@ -305,10 +310,13 @@ def cat2bin(inCat, outWorkspace):
 
         catRasterName = baseName + str(n) + ext
         catRaster = os.path.join(outWorkspace, catRasterName)
+        fileList.append(catRaster)
 
         print("Saving %s"%catRaster)
         with rs.open(catRaster,'w',**profile) as dst:
             dst.write(catData,1)
+        
+    return fileList
 
     
     
