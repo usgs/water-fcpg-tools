@@ -257,7 +257,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         print('Error Reprojecting Parameter Raster')
         traceback.print_exc()
 
-def resampleParams(inParam, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj"):
+def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj"):
     '''
     Inputs:
         
@@ -278,11 +278,11 @@ def resampleParams(inParam, fdr, outWorkspace, resampleMethod="bilinear", cores=
 
     fileList = [] #Initialize list of output files
 
-    for param in inParam:
+    for param in inParams:
 
         baseName = os.path.splitext(os.path.basename(param))[0] #Get name of input file without extention
 
-        appStr = "rprj"
+        
         ext = ".tif" #File extension
 
         outPath = os.path.join(outWorkspace, baseName + appStr + ext)
@@ -292,7 +292,37 @@ def resampleParams(inParam, fdr, outWorkspace, resampleMethod="bilinear", cores=
 
     return fileList
 
+def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum")
+    '''
+    Inputs:
+        
+        paramRasts - list of input parameter rasters to accumulate
+        fdr - flow direction raster
+        
+        outWorkspace - output directory for accumulation rasters
+        cores = number of cores to use
+        appStr = string of text to append to filename
 
+    Outputs:
+        raster of accumulated parameter values
+
+    Returns:
+        list of fielpaths to resampled rasters
+    '''
+
+    fileList = [] #Initialize list of output files
+
+    for param in paramRasts:
+
+        baseName = os.path.splitext(os.path.basename(param))[0] #Get name of input file without extention
+        ext = ".tif" #File extension
+
+        outPath = os.path.join(outWorkspace, baseName + appStr + ext)
+        fileList.append(outPath)
+
+        accumulateParam(param, fdr, outRast, cores ) #Run the flow accumulation function for the parameter raster
+
+    return fileList
 
 
 
