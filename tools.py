@@ -285,7 +285,7 @@ def resampleParams(inParam, fdr, outWorkspace, resampleMethod="bilinear", cores=
         appStr = "rprj"
         ext = ".tif" #File extension
 
-        outPath = os.path.join(outWorkspace, baseName, appStr, ext)
+        outPath = os.path.join(outWorkspace, baseName + appStr, ext)
         fileList.append(outPath)
 
         resampleParam(param, fdr, outPath, resampleMethod, cores) #Run the resample function for the parameter raster
