@@ -257,6 +257,44 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         print('Error Reprojecting Parameter Raster')
         traceback.print_exc()
 
+def resampleParams(inParam, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj"):
+    '''
+    Inputs:
+        
+        inParam - list of input parameter rasters
+        fdr - flow direction raster
+        
+        outWorkspace - output directory for resampled rasters
+        resampleMethod (str)- resampling method, either bilinear or nearest neighbor
+        cores = number of cores to use
+        appStr = String of text to append to filename
+
+    Outputs:
+        Resampled, reprojected, and clipped parameter rasters
+
+    Returns:
+        List of fielpaths to resampled rasters
+    '''
+
+    fileList = [] #Initialize list of output files
+
+    for param in inParam:
+
+        baseName = os.path.splitext(os.path.basename(param))[0] #Get name of input file without extention
+
+        appStr = "rprj"
+        ext = ".tif" #File extension
+
+        outPath = os.path.join(outWorkspace, baseName, app, ext)
+        fileList.append(outPath)
+
+        resampleParam(param, fdr, outPath, resampleMethod, cores) #Run the resample function for the parameter raster
+
+    return fileList
+
+
+
+
 
 def cat2bin(inCat, outWorkspace):
     '''
