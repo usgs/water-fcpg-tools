@@ -325,7 +325,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
     return fileList
 
 def make_cpgs(accumParams, fac, outWorkspace, appStr="CPG"):
-     '''
+    '''
     Inputs:
         
         accumParams - list of accumulated parameter rasters to create CPGs from
@@ -340,6 +340,7 @@ def make_cpgs(accumParams, fac, outWorkspace, appStr="CPG"):
     Returns:
         list of fielpaths to parameter CPGs
     '''
+
     fileList = [] #Initialize list of output files
 
     for param in accumParams:
