@@ -10,13 +10,6 @@ import shutil
 import traceback
 import urllib
 
-def getNHDPlusRaster(HUC, path):
-    """
-    Inputs:
-        HUC - HUC code of region to download
-        path - path to store raster files
-    """
-
 
 def tauDrainDir(inRast, outRast):
     """
@@ -33,13 +26,20 @@ def tauDrainDir(inRast, outRast):
     # load input data
     with rs.open(inRast) as ds:
         dat = ds.read(1)
-        meta = ds.meta.copy() # save the metadata for output later
+        profile = ds.profile.copy() # save the metadata for output later
 
     # edit the metadata
-    meta.update({'driver':'GTiff'})
-    meta.update({'nodata':-1})
+    profile.update({'dtype':'int8',
+                'compress':'LZW',
+                'profile':'GeoTIFF',
+                'tiled':True,
+                'sparse_ok':True,
+                'num_threads':'ALL_CPUS',
+                'nodata':-1,
+                'count':2,
+                'bigtiff':'IF_SAFER'})
 
-    #print(meta)
+    
 
     tauDir = dat.copy()
     # remap NHDplus flow direction to TauDEM flow Direction
@@ -54,10 +54,13 @@ def tauDrainDir(inRast, outRast):
     tauDir[dat == 64] = 3 # north
     tauDir[dat == 128] = 2 # northeast
     tauDir[dat == -2147483648] = -1 # no data
+    tauDir = tauDir.astype('int8')#8 bit integer is sufficient for flow directions
     print("Reclassifying Time:")
     end = time.time()
     print(start-end)
-    with rs.open(outRast,'w',**meta) as dst:
+
+
+    with rs.open(outRast,'w',**profile) as dst:
         dst.write(tauDir,1)
 
     print('TauDEM drainage direction written to: %s'%outRast)
@@ -262,7 +265,6 @@ def cat2bin(inCat, outWorkspace):
         inCat - input catagorical parameter raster
         outWorkspace - workspace to save binary raster outputs
         
-
     Outputs:
         Binary rasters for each parameter category
     '''
