@@ -307,7 +307,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum")
         raster of accumulated parameter values
 
     Returns:
-        list of fielpaths to resampled rasters
+        list of fielpaths to accumulated parameter rasters
     '''
 
     fileList = [] #Initialize list of output files
@@ -320,11 +320,39 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum")
         outPath = os.path.join(outWorkspace, baseName + appStr + ext)
         fileList.append(outPath)
 
-        accumulateParam(param, fdr, outRast, cores ) #Run the flow accumulation function for the parameter raster
+        accumulateParam(param, fdr, outPath, cores) #Run the flow accumulation function for the parameter raster
 
     return fileList
 
+def make_cpgs(accumParams, fac, outWorkspace, appStr="CPG"):
+     '''
+    Inputs:
+        
+        accumParams - list of accumulated parameter rasters to create CPGs from
+        fac - flow accumulation raster
+        
+        outWorkspace - output directory for CPGs
+        appStr = string of text to append to filename
 
+    Outputs:
+        CPG
+
+    Returns:
+        list of fielpaths to parameter CPGs
+    '''
+    fileList = [] #Initialize list of output files
+
+    for param in accumParams:
+
+        baseName = os.path.splitext(os.path.basename(param))[0] #Get name of input file without extention
+        ext = ".tif" #File extension
+
+        outPath = os.path.join(outWorkspace, baseName + appStr + ext)
+        fileList.append(outPath)
+
+        make_cpg(param, fac, outPath) #Run the CPG function for the accumulated parameter raster
+
+    return fileList
 
 def cat2bin(inCat, outWorkspace):
     '''
