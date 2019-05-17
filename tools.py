@@ -292,7 +292,7 @@ def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores
 
     return fileList
 
-def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum")
+def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
     '''
     Inputs:
         
