@@ -272,7 +272,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     fdrYmax = fdrRaster.transform[5]
     fdrYmin = fdrYmax - ysize*fdrRaster.height
 
-    resampledNoData = -9999
+    resampledNoData = -1
 
     # Resample, reproject, and clip the parameter raster with GDAL
     try:
