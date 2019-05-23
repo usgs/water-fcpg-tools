@@ -132,8 +132,8 @@ def accumulateParam(paramRast, fdr, outRast, outNoDataRast = None, cores = 1):
                 'bigtiff':'IF_SAFER'})
     
     #Save updated parameter raster
-    #with rs.open(paramRast, 'w', **profile) as dst:
-    #   dst.write(data,1)
+    with rs.open(paramRast, 'w', **profile) as dst:
+       dst.write(data,1)
 
     #Deal with no data values
 
@@ -292,11 +292,10 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     fdrnodata = fdrRaster.nodata #Get flow direction no data value
 
     paramRaster = rs.open(inParam)# load parameter raster in Rasterio
-
     paramNoData = paramRaster.nodata
-    print(paramRaster.dtypes)
     paramType = paramRaster.dtypes[0] #Get datatype of first band
 
+    # Choose an appropriate gdal data type for the parameter
     if paramType == 'int8' or dtype == 'int16':
         outType = 'Int16' # Convert 8 bit integers to 16 bit in gdal
     elif paramType == 'int32':
