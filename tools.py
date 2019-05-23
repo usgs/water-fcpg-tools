@@ -117,7 +117,7 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
         directionNoData = ds.nodata # pull the accumulated area no data value
 
 
-    data[direction == directionNoData] = directionNoData # Replace numpy NaNs with no data value
+    data[direction == directionNoData] = paramNoData # Replace numpy NaNs with no data value
 
     # Updata parameter raster profile
     profile.update({
@@ -127,7 +127,6 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
                 'nodata':paramNoData,
-                'count':2,
                 'bigtiff':'IF_SAFER'})
 
     with rs.open(paramRast, 'w', **profile) as dst:
