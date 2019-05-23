@@ -132,8 +132,8 @@ def accumulateParam(paramRast, fdr, outRast, outNoDataRast = None, cores = 1):
                 'bigtiff':'IF_SAFER'})
     
     #Save updated parameter raster
-    with rs.open(paramRast, 'w', **profile) as dst:
-        dst.write(data,1)
+    #with rs.open(paramRast, 'w', **profile) as dst:
+    #   dst.write(data,1)
 
     #Deal with no data values
 
