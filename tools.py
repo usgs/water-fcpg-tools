@@ -219,6 +219,11 @@ def make_cpg(accumParam, fac, outRast, maxVal = None):
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
     #noDataCPG[np.isnan(accum2)] = outNoData
 
+    # Mask the large values in CPG with flow accumulation
+
+    if maxVal != None:
+        dataCPG[dataCPG > maxVal] = outNoData #Set values larger than max value to no data
+
     # Updata raster profile
     profile.update({'dtype':dataCPG.dtype,
                 'compress':'LZW',
