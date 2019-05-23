@@ -96,7 +96,7 @@ def grassDrainDir(inRast, outRast):
 def accumulateParam(paramRast, fdr, outRast, cores = 1):
     """
     Inputs:
-        paramRast - Raster of parameter values to acumulate
+        paramRast - Raster of parameter values to acumulate, this file is modified by the function
         fdr - flow direction raster in tauDEM format
         cores - number of cores to use parameter accumulation
 
@@ -104,7 +104,37 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
         outRast - raster of accumulated parameter values
     """
 
-    # first accumulate the parameter
+    #Mask the parameter rasters with the no data values from the flow direction grid
+    #If parameter isn't masked tauDEM will accumulate parameter to the east where flow direction is set to no data
+
+    with rs.open(paramRast) as ds: # load parameter raster
+        data = ds.read(1)
+        profile = ds.profile
+        paramNoData = ds.nodata
+
+    with rs.open(fdr) as ds: # load flow direction raster
+        direction = ds.read(1)
+        directionNoData = ds.nodata # pull the accumulated area no data value
+
+
+    data[direction == directionNoData] = directionNoData # Replace numpy NaNs with no data value
+
+    # Updata parameter raster profile
+    profile.update({
+                'compress':'LZW',
+                'profile':'GeoTIFF',
+                'tiled':True,
+                'sparse_ok':True,
+                'num_threads':'ALL_CPUS',
+                'nodata':paramNoData,
+                'count':2,
+                'bigtiff':'IF_SAFER'})
+
+    with rs.open(paramRast, 'w', **profile) as dst:
+        dst.write(data,1)
+
+    #Use tauDEM to accumulate the parameter
+
     try:
         print('Accumulating Data')
         tauParams = {
@@ -115,9 +145,9 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
         tauParams['outFl'] = outRast
         tauParams['weight'] = paramRast
         
-        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams)
+        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
-        result = subprocess.run(cmd, shell = True)
+        result = subprocess.run(cmd, shell = True) # Run shell command
         result.stdout
         
         print('Parameter accumulation written to: %s'%outRast)
@@ -126,7 +156,7 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
         traceback.print_exc()
 
     
-def make_cpg(accumParam, fac, outRast):
+def make_cpg(accumParam, fac, outRast, maxVal = None):
     '''
     Inputs:
         
@@ -134,6 +164,7 @@ def make_cpg(accumParam, fac, outRast):
         
         fac - flow accumulation grid path
         outRast - output file
+        maxVal - Value above which the CPG will be masked
         
 
     Outputs:
@@ -152,7 +183,7 @@ def make_cpg(accumParam, fac, outRast):
     with rs.open(fac) as ds: # flow accumulation raster
         accum = ds.read(1)
         accumNoData = ds.nodata # pull the accumulated area no data value
-        print("No Data Value:%s"%str(ds.nodata))
+        #print("No Data Value:%s"%str(ds.nodata))
         
     accum2 = accum.astype(np.float32)
     accum2[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
@@ -185,9 +216,10 @@ def make_cpg(accumParam, fac, outRast):
     #noDataCPG = noData / (corrAccum + addition) # make noData CPG
     
     
-    dataCPG[np.isnan(dataCPG)] = outNoData
+    dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
     #noDataCPG[np.isnan(accum2)] = outNoData
 
+    # Updata raster profile
     profile.update({'dtype':dataCPG.dtype,
                 'compress':'LZW',
                 'profile':'GeoTIFF',
