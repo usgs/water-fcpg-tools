@@ -272,6 +272,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     fdrYmax = fdrRaster.transform[5]
     fdrYmin = fdrYmax - ysize*fdrRaster.height
 
+    resampledNoData = -9999
+
     # Resample, reproject, and clip the parameter raster with GDAL
     try:
         print('Resampling and Reprojecting Parameter Raster...')
@@ -287,10 +289,11 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         'fdrXmax': fdrXmax,
         'fdrYmin': fdrYmin,
         'fdrYmax': fdrYmax,
-        'fdrcrs': fdrcrs
+        'fdrcrs': fdrcrs, 
+        'nodata': resampledNoData
         }
         
-        cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -r {resampleMethod} {inParam} {outParam}'.format(**warpParams)
+        cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -r {resampleMethod} -dstnodata {nodata} {inParam} {outParam}'.format(**warpParams)
         print(cmd)
         result = subprocess.run(cmd, shell = True)
         result.stdout
