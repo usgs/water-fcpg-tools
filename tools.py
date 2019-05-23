@@ -295,7 +295,18 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
 
     paramNoData = paramRaster.nodata
     print(paramRaster.dtypes)
-    outputType = paramRaster.dtypes[0] #Get datatype of first band
+    paramType = paramRaster.dtypes[0] #Get datatype of first band
+
+    if paramType == 'int8' or dtype == 'int16':
+        outType = 'Int16' # Convert 8 bit integers to 16 bit in gdal
+    elif paramType == 'int32':
+        outType = 'Int32'
+    elif paramType == 'int64':
+        outType = 'Int64'
+    else:
+        print("Warning: Unsupported data type %s"%paramType)
+        print("Defaulting to CFloat64")
+        outType = 'CFloat64' # Try a 64 bit complex floating point if all else fails
 
     #Get bounding coordinates of the flow direction raster
     fdrXmin = fdrRaster.transform[2]
@@ -322,7 +333,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         'fdrYmax': fdrYmax,
         'fdrcrs': fdrcrs, 
         'nodata': paramNoData,
-        'datatype': 'Float32' #Set data type to 32 bit float for now
+        'datatype': outType
         }
         
         cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
