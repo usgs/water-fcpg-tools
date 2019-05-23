@@ -119,6 +119,12 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
 
     data[direction == directionNoData] = paramNoData # Replace numpy NaNs with no data value
 
+    basinNoDataCount = len(data[(data == paramNoData) && (direction != directionNoData)]) # Count number of cells with flow direction but no parameter value
+    
+    if basinNoDataCount > 0:
+        print('Warning: No data parameter values exist in basin')
+    
+
     # Updata parameter raster profile
     profile.update({
                 'compress':'LZW',
