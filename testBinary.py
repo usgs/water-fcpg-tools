@@ -45,9 +45,9 @@ print("Resampling Rasters...")
 resampledList = resampleParams(binaryList, taufdr, outWorkspace, resampleMethod="bilinear", cores=cores, appStr="rprj")
 
 print("Accumulating Parameters...")
-#accumulateParam(demRast, taufdr, accumDEM, cores)
-#accumulateParam(rprjPRISM, taufdr, accumPRISM, cores)
-#accumulateParam(rprj149, taufdr, accum149, cores)
+#accumulateParam(demRast, taufdr, accumDEM, cores=cores)
+#accumulateParam(rprjPRISM, taufdr, accumPRISM, cores=cores)
+#accumulateParam(rprj149, taufdr, accum149, cores=cores)
 
 accumulatedList = accumulateParams(resampledList, taufdr, outWorkspace, cores=cores, appStr="accum")
 
