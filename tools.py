@@ -266,13 +266,18 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     fdrtransform = fdrRaster.transform #Get flow direction affine transform
     fdrnodata = fdrRaster.nodata #Get flow direction no data value
 
+    paramRaster = rs.open(inParam)# load parameter raster in Rasterio
+
+    paramNoData = paramRaster.nodata
+    outputType = paramRaster.dtype #Get datatype of first band
+
     #Get bounding coordinates of the flow direction raster
     fdrXmin = fdrRaster.transform[2]
     fdrXmax = fdrXmin + xsize*fdrRaster.width
     fdrYmax = fdrRaster.transform[5]
     fdrYmin = fdrYmax - ysize*fdrRaster.height
 
-    resampledNoData = -1
+    
 
     # Resample, reproject, and clip the parameter raster with GDAL
     try:
@@ -290,10 +295,11 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         'fdrYmin': fdrYmin,
         'fdrYmax': fdrYmax,
         'fdrcrs': fdrcrs, 
-        'nodata': resampledNoData
+        'nodata': paramNoData,
+        'datatype': outputType
         }
         
-        cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -r {resampleMethod} -dstnodata {nodata} {inParam} {outParam}'.format(**warpParams)
+        cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -r {resampleMethod} -dstnodata {nodata} -ot {outputType} {inParam} {outParam}'.format(**warpParams)
         print(cmd)
         result = subprocess.run(cmd, shell = True)
         result.stdout
