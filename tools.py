@@ -119,12 +119,7 @@ def accumulateParam(paramRast, fdr, outRast, outNoDataRast = None, cores = 1):
 
     print(paramNoData)
     print(directionNoData)
-    data[direction == directionNoData] = paramNoData # Replace numpy NaNs with no data value
-
-    
-
-
-    
+    data[direction == directionNoData] = paramNoData # Set parameter values outside of basin to no data
 
     # Update parameter raster profile
     profile.update({
@@ -135,7 +130,8 @@ def accumulateParam(paramRast, fdr, outRast, outNoDataRast = None, cores = 1):
                 'num_threads':'ALL_CPUS',
                 'nodata':paramNoData,
                 'bigtiff':'IF_SAFER'})
-
+    
+    #Save updated parameter raster
     with rs.open(paramRast, 'w', **profile) as dst:
         dst.write(data,1)
 
@@ -152,6 +148,21 @@ def accumulateParam(paramRast, fdr, outRast, outNoDataRast = None, cores = 1):
             noDataArray[(data == paramNoData) & (direction != directionNoData)] = 1 #Set no data values in basin to 1
             noDataArray[(data == paramNoData) & (direction == directionNoData)] = -1 #Set no data values outside of basin to -1
             noDataArray[(data != paramNoData)] = 0 #Set values with data to 0
+
+            # Update profile for no data raster
+            profile.update({
+                    'dtype':'int8',
+                    'compress':'LZW',
+                    'profile':'GeoTIFF',
+                    'tiled':True,
+                    'sparse_ok':True,
+                    'num_threads':'ALL_CPUS',
+                    'nodata':-1,
+                    'bigtiff':'IF_SAFER'})
+            
+            #Save updated no data raster
+            with rs.open(outNoDataRast, 'w', **profile) as dst:
+                dst.write(noDataArray,1)
 
     #Use tauDEM to accumulate the parameter
 
