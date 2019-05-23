@@ -269,7 +269,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     paramRaster = rs.open(inParam)# load parameter raster in Rasterio
 
     paramNoData = paramRaster.nodata
-    outputType = paramRaster.dtype #Get datatype of first band
+    outputType = paramRaster.dtypes["1"] #Get datatype of first band
 
     #Get bounding coordinates of the flow direction raster
     fdrXmin = fdrRaster.transform[2]
