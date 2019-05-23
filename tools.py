@@ -184,8 +184,8 @@ def make_cpg(accumParam, fac, outRast):
     
     #noDataCPG = noData / (corrAccum + addition) # make noData CPG
     
-    # fill edges with no data, not sure this is the correct thing to do.
-    dataCPG[np.isnan(accum2)] = outNoData
+    
+    dataCPG[np.isnan(dataCPG)] = outNoData
     #noDataCPG[np.isnan(accum2)] = outNoData
 
     profile.update({'dtype':dataCPG.dtype,
