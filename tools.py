@@ -93,11 +93,12 @@ def grassDrainDir(inRast, outRast):
     print('GRASS drainage direction written to: %s'%outRast)
 
 
-def accumulateParam(paramRast, fdr, outRast, cores = 1):
+def accumulateParam(paramRast, fdr, outRast, outNoDataRast = None, cores = 1):
     """
     Inputs:
         paramRast - Raster of parameter values to acumulate, this file is modified by the function
         fdr - flow direction raster in tauDEM format
+        outNoDataRast - raster of accumulated no data values
         cores - number of cores to use parameter accumulation
 
     Outputs:
@@ -120,10 +121,9 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
     print(directionNoData)
     data[direction == directionNoData] = paramNoData # Replace numpy NaNs with no data value
 
-    basinNoDataCount = len(data[(data == paramNoData) & (direction != directionNoData)]) # Count number of cells with flow direction but no parameter value
     
-    if basinNoDataCount > 0:
-        print('Warning: No data parameter values exist in basin')
+
+
     
 
     # Update parameter raster profile
@@ -138,6 +138,20 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
 
     with rs.open(paramRast, 'w', **profile) as dst:
         dst.write(data,1)
+
+    #Deal with no data values
+
+    basinNoDataCount = len(data[(data == paramNoData) & (direction != directionNoData)]) # Count number of cells with flow direction but no parameter value
+    
+    if basinNoDataCount > 0:
+        print('Warning: No data parameter values exist in basin')
+
+        #If a no data fiel path is given, accumulate no data values
+        if outNoDataRast != None:
+            noDataArray = data.copy()
+            noDataArray[(data == paramNoData) & (direction != directionNoData)] = 1 #Set no data values in basin to 1
+            noDataArray[(data == paramNoData) & (direction == directionNoData)] = -1 #Set no data values outside of basin to -1
+            noDataArray[(data != paramNoData)] = 0 #Set values with data to 0
 
     #Use tauDEM to accumulate the parameter
 
@@ -269,7 +283,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     paramRaster = rs.open(inParam)# load parameter raster in Rasterio
 
     paramNoData = paramRaster.nodata
-    outputType = paramRaster.dtypes["1"] #Get datatype of first band
+    print(paramRaster.dtypes)
+    outputType = paramRaster.dtypes[0] #Get datatype of first band
 
     #Get bounding coordinates of the flow direction raster
     fdrXmin = fdrRaster.transform[2]
