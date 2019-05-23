@@ -116,7 +116,8 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
         direction = ds.read(1)
         directionNoData = ds.nodata # pull the accumulated area no data value
 
-
+    print(paramNoData)
+    print(directionNoData)
     data[direction == directionNoData] = paramNoData # Replace numpy NaNs with no data value
 
     basinNoDataCount = len(data[(data == paramNoData) && (direction != directionNoData)]) # Count number of cells with flow direction but no parameter value
@@ -125,7 +126,7 @@ def accumulateParam(paramRast, fdr, outRast, cores = 1):
         print('Warning: No data parameter values exist in basin')
     
 
-    # Updata parameter raster profile
+    # Update parameter raster profile
     profile.update({
                 'compress':'LZW',
                 'profile':'GeoTIFF',
