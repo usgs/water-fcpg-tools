@@ -322,7 +322,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         'fdrYmax': fdrYmax,
         'fdrcrs': fdrcrs, 
         'nodata': paramNoData,
-        'datatype': Float32 #Set data type to 32 bit float for now
+        'datatype': 'Float32' #Set data type to 32 bit float for now
         }
         
         cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -r {resampleMethod} -dstnodata {nodata} -ot {outputType} {inParam} {outParam}'.format(**warpParams)
