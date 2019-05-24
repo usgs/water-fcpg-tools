@@ -182,7 +182,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
         traceback.print_exc()
 
     
-def make_cpg(accumParam, fac, outRast, noDataRast = None, maxVal = None):
+def make_cpg(accumParam, fac, outRast, noDataRast = None, minVal = None):
     '''
     Inputs:
         
@@ -190,7 +190,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, maxVal = None):
         
         fac - flow accumulation grid path
         outRast - output file
-        maxVal - Value above which the CPG will be masked
+        minVal - Value of flow accumulation below which the CPG values will be set to no data
         
 
     Outputs:
@@ -231,24 +231,9 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, maxVal = None):
     if np.min(corrAccum) < 0:
         print("Warning: Negative accumulation value")
         print("Minimum value:%s"%str(np.min(acorrAccum)))
-    """
-    accum[accum < 0] = 0 
-    noData[noData < 0] = 0
-    data[data < 0] = 0
+ 
 
-    corrAccum = (accum - noData) # compute corrected accumulation
-    addition = np.min(corrAccum) # find the minumum value, since the denominator cannot be zero
 
-    if addition > 0: # if the minumum value is positive, make addition zero
-        addition = 1
-    else: # otherwise, make the addition the absolute value of the minimim to bring the corrAccum min to + 1
-        addition = np.abs(addition) + 1
-    
-    dataCPG = data / (corrAccum + addition) # make data CPG, correct for negative values if any
-    
-    noDataCPG = noData / (corrAccum + addition) # make noData CPG
-    """
-    
     dataCPG = data / (corrAccum + 1) # make data CPG
     
     
@@ -256,8 +241,8 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, maxVal = None):
 
     # Mask the large values in CPG with flow accumulation
 
-    if maxVal != None:
-        dataCPG[dataCPG > maxVal] = outNoData #Set values larger than max value to no data
+    if minVal != None:
+        dataCPG[corrAccum < minVal] = outNoData #Set values smaller than threshold to no data
 
     # Updata raster profile
     profile.update({'dtype':dataCPG.dtype,
@@ -418,7 +403,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
 
     return fileList
 
-def make_cpgs(accumParams, fac, outWorkspace, appStr="CPG"):
+def make_cpgs(accumParams, fac, outWorkspace, minVal=None, appStr="CPG"):
     '''
     Inputs:
         
@@ -445,7 +430,7 @@ def make_cpgs(accumParams, fac, outWorkspace, appStr="CPG"):
         outPath = os.path.join(outWorkspace, baseName + appStr + ext)
         fileList.append(outPath)
 
-        make_cpg(param, fac, outPath) #Run the CPG function for the accumulated parameter raster
+        make_cpg(param, fac, outPath, minVal=minVal) #Run the CPG function for the accumulated parameter raster
 
     return fileList
 
