@@ -9,7 +9,7 @@ import glob
 import shutil
 import traceback
 import urllib
-from multiprocessing import Pool
+from multiprocessing import Pool as processPool
 
 def tauDrainDir(inRast, outRast):
     """
@@ -493,7 +493,7 @@ def cat2bin(inCat, outWorkspace):
             dst.write(catData,1)
     """
 
-    pool = ThreadPool()
+    pool = processPool()
 
     # Use pool.map() to create binaries in parallel
     fileList = pool.map(binarizeCat, cats)
