@@ -90,7 +90,7 @@ def grassDrainDir(inRast, outRast):
     print('GRASS drainage direction written to: %s'%outRast)
 
 
-def accumulateParam(paramRast, fdr, mskRast, accumRast, outNoDataRast = None, cores = 1):
+def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
     """
     Inputs:
         paramRast - Raster of parameter values to acumulate, this file is modified by the function
@@ -103,9 +103,6 @@ def accumulateParam(paramRast, fdr, mskRast, accumRast, outNoDataRast = None, co
         accumRast - raster of accumulated parameter values
     """
 
-    #Mask the parameter rasters with the no data values from the flow direction grid
-    #If parameter isn't masked tauDEM will accumulate parameter to the east where flow direction is set to no data
-
     with rs.open(paramRast) as ds: # load parameter raster
         data = ds.read(1)
         profile = ds.profile
@@ -115,24 +112,6 @@ def accumulateParam(paramRast, fdr, mskRast, accumRast, outNoDataRast = None, co
         direction = ds.read(1)
         directionNoData = ds.nodata # pull the accumulated area no data value
 
-    print(paramNoData)
-    print(directionNoData)
-    print(len(data[direction == directionNoData]))
-    #data[direction == directionNoData] = paramNoData # Set parameter values outside of basin to no data
-
-    # Update parameter raster profile
-    profile.update({
-                'compress':'LZW',
-                'profile':'GeoTIFF',
-                'tiled':True,
-                'sparse_ok':True,
-                'num_threads':'ALL_CPUS',
-                'nodata':paramNoData,
-                'bigtiff':'IF_SAFER'})
-    
-    #Save updated parameter raster
-    with rs.open(mskRast, 'w', **profile) as dst:
-       dst.write(data,1)
 
     #Deal with no data values
 
@@ -404,11 +383,10 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
         baseName = os.path.splitext(os.path.basename(param))[0] #Get name of input file without extention
         ext = ".tif" #File extension
 
-        mskPath = os.path.join(outWorkspace, baseName + "msk" + ext)
         outPath = os.path.join(outWorkspace, baseName + "msk" + appStr + ext)
         fileList.append(outPath)
 
-        accumulateParam(param, fdr, mskPath, outPath, cores) #Run the flow accumulation function for the parameter raster
+        accumulateParam(param, fdr, outPath, cores) #Run the flow accumulation function for the parameter raster
 
     return fileList
 
