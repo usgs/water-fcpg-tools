@@ -59,4 +59,4 @@ print("Creating CPGs...")
 #make_cpg(accumPRISM, fac, PRISMCPG)
 #make_cpg(accum149, fac, CPG149)
 
-CPGList = make_cpgs(accumulatedList, fac, outWorkspace, appStr="CPG")
+CPGList = make_cpgs(accumulatedList, fac, outWorkspace, minVal=20, appStr="CPG")
