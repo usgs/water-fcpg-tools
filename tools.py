@@ -406,7 +406,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
         baseName = os.path.splitext(os.path.basename(param))[0] #Get name of input file without extention
         ext = ".tif" #File extension
 
-        mskpath = os.path.join(outWorkspace, baseName + "msk" + ext)
+        mskPath = os.path.join(outWorkspace, baseName + "msk" + ext)
         outPath = os.path.join(outWorkspace, baseName + "msk" + appStr + ext)
         fileList.append(outPath)
 
