@@ -496,7 +496,7 @@ def cat2bin(inCat, outWorkspace):
     pool = processPool()
 
     # Use pool.map() to create binaries in parallel
-    fileList = pool.map(binarizeCat, cats)
+    fileList = pool.map(binarizeCat, cats, dat, nodata, outWorkspace, baseName, ext)
 
     #close the pool and wait for the work to finish
     pool.close()
@@ -506,7 +506,7 @@ def cat2bin(inCat, outWorkspace):
 
 
 
-def binarizeCat(data, val, nodata, outWorkspace, baseName, ext):
+def binarizeCat(val, data, nodata, outWorkspace, baseName, ext):
 
     '''
     Inputs:
