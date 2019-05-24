@@ -476,7 +476,7 @@ def cat2bin(inCat, outWorkspace):
                 'bigtiff':'IF_SAFER'})
 
     #Create binary rasters for each category
-    """
+    
     for n in cats:
         catData = dat.copy()
         catData[(dat != n) & (dat != nodata)] = 0
@@ -501,6 +501,7 @@ def cat2bin(inCat, outWorkspace):
     #close the pool and wait for the work to finish
     pool.close()
     pool.join()
+    """
     
     return fileList
 
