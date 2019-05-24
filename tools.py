@@ -45,7 +45,7 @@ def tauDrainDir(inRast, outRast):
     # remap NHDplus flow direction to TauDEM flow Direction
     # east is ok
     start = time.time()
-    tauDir[dat == 1] = 1 # east
+    #tauDir[dat == 1] = 1 # east
     tauDir[dat == 2] = 8 # stauDirheast
     tauDir[dat == 4] =  7 # stauDirh
     tauDir[dat == 8] = 6 # stauDirhwest
@@ -53,7 +53,6 @@ def tauDrainDir(inRast, outRast):
     tauDir[dat == 32] = 4 # northwest
     tauDir[dat == 64] = 3 # north
     tauDir[dat == 128] = 2 # northeast
-    #tauDir[dat == -2147483648] = -1 # no data
     tauDir[dat == inNoData] = -1 # no data
     tauDir = tauDir.astype('int8')#8 bit integer is sufficient for flow directions
     print("Reclassifying Time:")
@@ -121,9 +120,7 @@ def accumulateParam(paramRast, fdr, mskRast, accumRast, outNoDataRast = None, co
 
     print(paramNoData)
     print(directionNoData)
-    print(direction)
     print(len(data[direction == directionNoData]))
-    print(len(direction[direction == directionNoData]))
     data[direction == directionNoData] = paramNoData # Set parameter values outside of basin to no data
 
     # Update parameter raster profile
