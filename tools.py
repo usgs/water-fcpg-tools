@@ -125,6 +125,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
             noDataArray[(data == paramNoData) & (direction != directionNoData)] = 1 #Set no data values in basin to 1
             noDataArray[(data == paramNoData) & (direction == directionNoData)] = -1 #Set no data values outside of basin to -1
             noDataArray[(data != paramNoData)] = 0 #Set values with data to 0
+            noDataArray = noDataArray.astype(np.int8)
 
             # Update profile for no data raster
             profile.update({
@@ -194,7 +195,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
         
 
     Outputs:
-        Parameter and NoData CPGS as bands 1 and 2 of a file in the output directory.
+        outRast - Parameter CPG 
     '''
     outNoData = -9999
     
@@ -256,7 +257,6 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
 
     with rs.open(outRast, 'w', **profile) as dst:
         dst.write(dataCPG,1)
-        #dst.write(noDataCPG,2)
 
 def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     '''
@@ -493,7 +493,41 @@ def cat2bin(inCat, outWorkspace):
         
     return fileList
 
+
+def binarizeCat(data, val, nodata, outWorkspace, baseName, ext):
+
+    '''
+    Inputs:
+        
+        data - numpy arrary of raster data to convert to binary
+        val - raster value to extract binary for
+        nodata - raster no data value
+        outWorkspace - workspace to save binary raster outputs
+        baseName - base name for the raster output
+        ext - file extension for raster output
+        
+    Outputs:
+        Binary raster the specified parameter value
+
+    Returns:
+        Filepath to output files
+    '''
+
+    catData = data.copy()
+    catData[(data != val) & (data != nodata)] = 0
+    catData[data == val] = 1
+    catData[data == nodata] = -1 #Use -1 as no data value
+    catData = catData.astype('int8')#8 bit integer is sufficient for zeros and ones
+
+    catRasterName = baseName + str(val) + ext
+    catRaster = os.path.join(outWorkspace, catRasterName)
+
+    print("Saving %s"%catRaster)
+    with rs.open(catRaster,'w',**profile) as dst:
+        dst.write(catData,1)
     
+
+    return catRaster # Return the path to the raster created
     
 
 
