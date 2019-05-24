@@ -93,7 +93,7 @@ def grassDrainDir(inRast, outRast):
     print('GRASS drainage direction written to: %s'%outRast)
 
 
-def accumulateParam(paramRast, fdr, outRast, outNoDataRast = None, cores = 1):
+def accumulateParam(paramRast, fdr, mskRast, accumRast, outNoDataRast = None, cores = 1):
     """
     Inputs:
         paramRast - Raster of parameter values to acumulate, this file is modified by the function
@@ -102,7 +102,8 @@ def accumulateParam(paramRast, fdr, outRast, outNoDataRast = None, cores = 1):
         cores - number of cores to use parameter accumulation
 
     Outputs:
-        outRast - raster of accumulated parameter values
+        mskRast - parameter raster masked to flow direction raster
+        accumRast - raster of accumulated parameter values
     """
 
     #Mask the parameter rasters with the no data values from the flow direction grid
@@ -132,7 +133,7 @@ def accumulateParam(paramRast, fdr, outRast, outNoDataRast = None, cores = 1):
                 'bigtiff':'IF_SAFER'})
     
     #Save updated parameter raster
-    with rs.open(paramRast, 'w', **profile) as dst:
+    with rs.open(mskRast, 'w', **profile) as dst:
        dst.write(data,1)
 
     #Deal with no data values
@@ -173,15 +174,15 @@ def accumulateParam(paramRast, fdr, outRast, outNoDataRast = None, cores = 1):
         'cores':cores
         }
         
-        tauParams['outFl'] = outRast
-        tauParams['weight'] = paramRast
+        tauParams['outFl'] = accumRast
+        tauParams['weight'] = mskRast
         
         cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         result.stdout
         
-        print('Parameter accumulation written to: %s'%outRast)
+        print('Parameter accumulation written to: %s'%accumRast)
     except:
         print('Error Accumulating Data')
         traceback.print_exc()
