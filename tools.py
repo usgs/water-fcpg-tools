@@ -29,22 +29,12 @@ def tauDrainDir(inRast, outRast):
         inNoData = ds.nodata
         profile = ds.profile.copy() # save the metadata for output later
 
-    # edit the metadata
-    profile.update({'dtype':'int8',
-                'compress':'LZW',
-                'profile':'GeoTIFF',
-                'tiled':True,
-                'sparse_ok':True,
-                'num_threads':'ALL_CPUS',
-                'nodata':-1,
-                'bigtiff':'IF_SAFER'})
 
-    
 
     tauDir = dat.copy()
     # remap NHDplus flow direction to TauDEM flow Direction
     # east is ok
-    start = time.time()
+    
     #tauDir[dat == 1] = 1 # east
     tauDir[dat == 2] = 8 # stauDirheast
     tauDir[dat == 4] =  7 # stauDirh
@@ -54,11 +44,17 @@ def tauDrainDir(inRast, outRast):
     tauDir[dat == 64] = 3 # north
     tauDir[dat == 128] = 2 # northeast
     tauDir[dat == inNoData] = -1 # no data
-    tauDir = tauDir.astype('int8')#8 bit integer is sufficient for flow directions
-    print("Reclassifying Time:")
-    end = time.time()
-    print(start-end)
+    #tauDir = tauDir.astype('int8')#8 bit integer is sufficient for flow directions
 
+    # edit the metadata
+    profile.update({'dtype':'int8',
+                'compress':'LZW',
+                'profile':'GeoTIFF',
+                'tiled':True,
+                'sparse_ok':True,
+                'num_threads':'ALL_CPUS',
+                'nodata':-1,
+                'bigtiff':'IF_SAFER'})
 
     with rs.open(outRast,'w',**profile) as dst:
         dst.write(tauDir,1)
