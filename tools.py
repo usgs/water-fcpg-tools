@@ -121,6 +121,7 @@ def accumulateParam(paramRast, fdr, mskRast, accumRast, outNoDataRast = None, co
     print(paramNoData)
     print(directionNoData)
     print(len(data[direction == directionNoData]))
+    print(len(direction[direction == directionNoData]))
     data[direction == directionNoData] = paramNoData # Set parameter values outside of basin to no data
 
     # Update parameter raster profile
