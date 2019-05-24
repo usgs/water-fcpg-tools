@@ -219,6 +219,9 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, maxVal = None):
         accumNoData2[accumNoData == noDataNoData] = np.NaN
 
         corrAccum = accum2 - accumNoData2 # Compute corrected accumulation
+    
+    else:
+        corrAccum = accum2 # No correction required
         
 
 
@@ -473,8 +476,8 @@ def cat2bin(inCat, outWorkspace):
     
 
     
-    cats = np.unique(dat)
-    cats = np.delete(cats, np.where(cats ==  nodata))
+    cats = np.unique(dat) # Get unique values in raster
+    cats = np.delete(cats, np.where(cats ==  nodata)) # Remove no data value from list
 
     fileList = [] #Initialize list of output files
 
