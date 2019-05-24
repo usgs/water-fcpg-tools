@@ -114,7 +114,6 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
 
 
     #Deal with no data values
-
     basinNoDataCount = len(data[(data == paramNoData) & (direction != directionNoData)]) # Count number of cells with flow direction but no parameter value
     
     if basinNoDataCount > 0:
@@ -138,32 +137,28 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
                     'nodata':-1,
                     'bigtiff':'IF_SAFER'})
             
-            #Save no data raster
+            # Save no data raster
             with rs.open(outNoDataRast, 'w', **profile) as dst:
                 dst.write(noDataArray,1)
-        
-
-            #Use tauDEM to accumulate no data values
-
+    
+            # Use tauDEM to accumulate no data values
             try:
                 print('Accumulating NO Data Values')
                 tauParams = {
                 'fdr':fdr,
-                'cores':cores
+                'cores':cores, 
+                'outFl':outNoDataRast,
                 }
-                
-                tauParams['outFl'] = outNoDataRast
                 
                 cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
                 print(cmd)
                 result = subprocess.run(cmd, shell = True) # Run shell command
                 result.stdout
+                print('Parameter no data accumulation written to: %s'%outNoDataRast)
                 
-                print('Parameter accumulation written to: %s'%accumRast)
             except:
                 print('Error Accumulating Data')
                 traceback.print_exc()
-
 
 
     #Use tauDEM to accumulate the parameter
@@ -171,18 +166,17 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
         print('Accumulating Data')
         tauParams = {
         'fdr':fdr,
-        'cores':cores
+        'cores':cores, 
+        'outFl':accumRast, 
+        'weight':paramRast
         }
-        
-        tauParams['outFl'] = accumRast
-        tauParams['weight'] = mskRast
         
         cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         result.stdout
-        
         print('Parameter accumulation written to: %s'%accumRast)
+
     except:
         print('Error Accumulating Data')
         traceback.print_exc()
