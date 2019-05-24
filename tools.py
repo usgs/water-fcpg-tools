@@ -120,7 +120,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
     if basinNoDataCount > 0:
         print('Warning: No data parameter values exist in basin')
 
-        #If a no data fiel path is given, accumulate no data values
+        #If a no data file path is given, accumulate no data values
         if outNoDataRast != None:
             noDataArray = data.copy()
             noDataArray[(data == paramNoData) & (direction != directionNoData)] = 1 #Set no data values in basin to 1
@@ -138,12 +138,35 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
                     'nodata':-1,
                     'bigtiff':'IF_SAFER'})
             
-            #Save updated no data raster
+            #Save no data raster
             with rs.open(outNoDataRast, 'w', **profile) as dst:
                 dst.write(noDataArray,1)
+        
+
+            #Use tauDEM to accumulate no data values
+
+            try:
+                print('Accumulating NO Data Values')
+                tauParams = {
+                'fdr':fdr,
+                'cores':cores
+                }
+                
+                tauParams['outFl'] = outNoDataRast
+                
+                cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
+                print(cmd)
+                result = subprocess.run(cmd, shell = True) # Run shell command
+                result.stdout
+                
+                print('Parameter accumulation written to: %s'%accumRast)
+            except:
+                print('Error Accumulating Data')
+                traceback.print_exc()
+
+
 
     #Use tauDEM to accumulate the parameter
-
     try:
         print('Accumulating Data')
         tauParams = {
