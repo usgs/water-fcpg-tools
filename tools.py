@@ -476,7 +476,7 @@ def cat2bin(inCat, outWorkspace):
                 'bigtiff':'IF_SAFER'})
 
     #Create binary rasters for each category
-    
+    """
     for n in cats:
         catData = dat.copy()
         catData[(dat != n) & (dat != nodata)] = 0
@@ -492,16 +492,16 @@ def cat2bin(inCat, outWorkspace):
         with rs.open(catRaster,'w',**profile) as dst:
             dst.write(catData,1)
     """
-
+    from functools import partial
     pool = processPool()
 
     # Use pool.map() to create binaries in parallel
-    fileList = pool.map(binarizeCat, cats, dat, nodata, outWorkspace, baseName, ext)
+    fileList = pool.map(partial(binarizeCat,  dat, nodata, outWorkspace, baseName, ext), cats)
 
     #close the pool and wait for the work to finish
     pool.close()
     pool.join()
-    """
+    
     
     return fileList
 
