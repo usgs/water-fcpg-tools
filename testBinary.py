@@ -34,29 +34,26 @@ CPG149 = "../100500010101/work/149CPG100500010101.tif"
 
 
 print("Creating Binary Parameter Grids...")
-#binaryList = cat2bin(inCat, outWorkspace)
-binaryList = ["../100500010101/work/LandCoverMT311.tif"]
+binaryList = cat2bin(inCat, outWorkspace)
+#binaryList = ["../100500010101/work/LandCoverMT311.tif"]
 
 print("Creating tauDEM Drainage Directions...")
 tauDrainDir(fdr, taufdr)
 
 print("Resampling Rasters...")
-#resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
-#resampleParam("../100500010101/work/LandCoverMT149.tif", fdr, rprj149, resampleMethod="near", cores=cores)
+resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
 resampledList = resampleParams(binaryList, taufdr, outWorkspace, resampleMethod="near", cores=cores, appStr="rprj")
 
 print("Accumulating Parameters...")
-#accumulateParam(demRast, taufdr, accumDEM, cores=cores)
-#accumulateParam(rprjPRISM, taufdr, accumPRISM, cores=cores)
-#accumulateParam(rprj149, taufdr, accum149, cores=cores)
+accumulateParam(demRast, taufdr, accumDEM, cores=cores)
+accumulateParam(rprjPRISM, taufdr, accumPRISM, cores=cores)
 
 accumulatedList = accumulateParams(resampledList, taufdr, outWorkspace, cores=cores, appStr="accum")
 
 
 
 print("Creating CPGs...")
-#make_cpg(accumDEM, fac, elevCPG)
-#make_cpg(accumPRISM, fac, PRISMCPG)
-#make_cpg(accum149, fac, CPG149)
+make_cpg(accumDEM, fac, elevCPG)
+make_cpg(accumPRISM, fac, PRISMCPG)
 
 CPGList = make_cpgs(accumulatedList, fac, outWorkspace, minVal=100, appStr="CPG")
