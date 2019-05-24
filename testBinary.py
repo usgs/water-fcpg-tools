@@ -53,7 +53,7 @@ accumulatedList = accumulateParams(resampledList, taufdr, outWorkspace, cores=co
 
 
 print("Creating CPGs...")
-make_cpg(accumDEM, fac, elevCPG)
-make_cpg(accumPRISM, fac, PRISMCPG)
+make_cpg(accumDEM, fac, elevCPG, minAccum=100)
+make_cpg(accumPRISM, fac, PRISMCPG, minAccum=100)
 
-CPGList = make_cpgs(accumulatedList, fac, outWorkspace, minVal=100, appStr="CPG")
+CPGList = make_cpgs(accumulatedList, fac, outWorkspace, minAccum=100, appStr="CPG")
