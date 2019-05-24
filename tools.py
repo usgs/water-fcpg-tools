@@ -292,8 +292,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         outType = 'Int64'
     else:
         print("Warning: Unsupported data type %s"%paramType)
-        print("Defaulting to CFloat64")
-        outType = 'CFloat64' # Try a 64 bit complex floating point if all else fails
+        print("Defaulting to Float64")
+        outType = 'Float64' # Try a 64 bit complex floating point if all else fails
 
     #Get bounding coordinates of the flow direction raster
     fdrXmin = fdrRaster.transform[2]
