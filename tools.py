@@ -186,7 +186,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, maxVal = None):
     '''
     Inputs:
         
-        daccumParam - path to the accumulated parameter data raster
+        accumParam - path to the accumulated parameter data raster
         
         fac - flow accumulation grid path
         outRast - output file
@@ -202,9 +202,6 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, maxVal = None):
     with rs.open(accumParam) as ds: # load accumulated data and no data rasters
         data = ds.read(1)
         profile = ds.profile
-
-    #with rs.open(noDataPath) as ds:
-     #   noData = ds.read(1)
 
     with rs.open(fac) as ds: # flow accumulation raster
         accum = ds.read(1)
@@ -249,7 +246,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, maxVal = None):
     noDataCPG = noData / (corrAccum + addition) # make noData CPG
     """
     
-    dataCPG = data / (corrAccum + 1)# make data CPG
+    dataCPG = data / (corrAccum + 1) # make data CPG
     
     
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
