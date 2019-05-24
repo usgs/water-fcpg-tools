@@ -411,7 +411,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
         baseName = os.path.splitext(os.path.basename(param))[0] #Get name of input file without extention
         ext = ".tif" #File extension
 
-        outPath = os.path.join(outWorkspace, baseName + "msk" + appStr + ext)
+        outPath = os.path.join(outWorkspace, baseName + appStr + ext)
         fileList.append(outPath)
 
         accumulateParam(param, fdr, outPath, cores) #Run the flow accumulation function for the parameter raster
