@@ -26,6 +26,7 @@ def tauDrainDir(inRast, outRast):
     # load input data
     with rs.open(inRast) as ds:
         dat = ds.read(1)
+        inNoData = ds.nodata
         profile = ds.profile.copy() # save the metadata for output later
 
     # edit the metadata
@@ -36,7 +37,6 @@ def tauDrainDir(inRast, outRast):
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
                 'nodata':-1,
-                'count':2,
                 'bigtiff':'IF_SAFER'})
 
     
@@ -53,7 +53,8 @@ def tauDrainDir(inRast, outRast):
     tauDir[dat == 32] = 4 # northwest
     tauDir[dat == 64] = 3 # north
     tauDir[dat == 128] = 2 # northeast
-    tauDir[dat == -2147483648] = -1 # no data
+    #tauDir[dat == -2147483648] = -1 # no data
+    tauDir[dat == inNoData] = -1 # no data
     tauDir = tauDir.astype('int8')#8 bit integer is sufficient for flow directions
     print("Reclassifying Time:")
     end = time.time()
