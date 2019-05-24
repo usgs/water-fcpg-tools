@@ -9,7 +9,7 @@ import glob
 import shutil
 import traceback
 import urllib
-
+from multiprocessing import Pool
 
 def tauDrainDir(inRast, outRast):
     """
@@ -476,6 +476,7 @@ def cat2bin(inCat, outWorkspace):
                 'bigtiff':'IF_SAFER'})
 
     #Create binary rasters for each category
+    """
     for n in cats:
         catData = dat.copy()
         catData[(dat != n) & (dat != nodata)] = 0
@@ -490,8 +491,19 @@ def cat2bin(inCat, outWorkspace):
         print("Saving %s"%catRaster)
         with rs.open(catRaster,'w',**profile) as dst:
             dst.write(catData,1)
-        
+    """
+
+    pool = ThreadPool()
+
+    # Use pool.map() to create binaries in parallel
+    fileList = pool.map(binarizeCat, cats)
+
+    #close the pool and wait for the work to finish
+    pool.close()
+    pool.join()
+    
     return fileList
+
 
 
 def binarizeCat(data, val, nodata, outWorkspace, baseName, ext):
