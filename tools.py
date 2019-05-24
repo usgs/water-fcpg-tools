@@ -182,7 +182,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
         traceback.print_exc()
 
     
-def make_cpg(accumParam, fac, outRast, maxVal = None):
+def make_cpg(accumParam, fac, outRast, noDataRast = None, maxVal = None):
     '''
     Inputs:
         
@@ -209,16 +209,28 @@ def make_cpg(accumParam, fac, outRast, maxVal = None):
     with rs.open(fac) as ds: # flow accumulation raster
         accum = ds.read(1)
         accumNoData = ds.nodata # pull the accumulated area no data value
-        #print("No Data Value:%s"%str(ds.nodata))
-        
+
     accum2 = accum.astype(np.float32)
     accum2[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
+
+    if noDataRast != None:
+        with rs.open(noDataRast) as ds: # accumulated no data raster
+            accumNoData = ds.read(1)
+            noDataNoData = ds.nodata # pull the accumulated no data no data value
+        
+        accumNoData2 = accumNoData.astype(np.float32)
+        accumNoData2[accumNoData == noDataNoData] = np.NaN
+
+        corrAccum = accum2 - accumNoData2 # Compute corrected accumulation
+        
+
+
     
     
-    # zero negative accumulations Should we throw some sort of warning if there is a negative accumulation?
-    if np.min(accum2) < 0:
+    # Throw warning if there is a negative accumulation
+    if np.min(corrAccum) < 0:
         print("Warning: Negative accumulation value")
-        print("Minimum value:%s"%str(np.min(accum2)))
+        print("Minimum value:%s"%str(np.min(acorrAccum)))
     """
     accum[accum < 0] = 0 
     noData[noData < 0] = 0
@@ -237,13 +249,10 @@ def make_cpg(accumParam, fac, outRast, maxVal = None):
     noDataCPG = noData / (corrAccum + addition) # make noData CPG
     """
     
-    dataCPG = data / (accum2 + 1)# make data CPG
-    
-    #noDataCPG = noData / (corrAccum + addition) # make noData CPG
+    dataCPG = data / (corrAccum + 1)# make data CPG
     
     
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
-    #noDataCPG[np.isnan(accum2)] = outNoData
 
     # Mask the large values in CPG with flow accumulation
 
@@ -339,6 +348,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     except:
         print('Error Reprojecting Parameter Raster')
         traceback.print_exc()
+    
+
 
 def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj"):
     '''
