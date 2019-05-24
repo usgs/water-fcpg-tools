@@ -182,7 +182,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
         traceback.print_exc()
 
     
-def make_cpg(accumParam, fac, outRast, noDataRast = None, minVal = None):
+def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     '''
     Inputs:
         
@@ -190,7 +190,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minVal = None):
         
         fac - flow accumulation grid path
         outRast - output file
-        minVal - Value of flow accumulation below which the CPG values will be set to no data
+        minAccum - Value of flow accumulation below which the CPG values will be set to no data
         
 
     Outputs:
@@ -239,10 +239,9 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minVal = None):
     
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
 
-    # Mask the large values in CPG with flow accumulation
-
-    if minVal != None:
-        dataCPG[corrAccum < minVal] = outNoData #Set values smaller than threshold to no data
+    # Replace values in cells with small flow accumulation with no data
+    if minAccum != None:
+        dataCPG[corrAccum < minAccum] = outNoData #Set values smaller than threshold to no data
 
     # Updata raster profile
     profile.update({'dtype':dataCPG.dtype,
@@ -403,7 +402,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
 
     return fileList
 
-def make_cpgs(accumParams, fac, outWorkspace, minVal=None, appStr="CPG"):
+def make_cpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="CPG"):
     '''
     Inputs:
         
@@ -430,7 +429,7 @@ def make_cpgs(accumParams, fac, outWorkspace, minVal=None, appStr="CPG"):
         outPath = os.path.join(outWorkspace, baseName + appStr + ext)
         fileList.append(outPath)
 
-        make_cpg(param, fac, outPath, minVal=minVal) #Run the CPG function for the accumulated parameter raster
+        make_cpg(param, fac, outPath, minAccum=minAccum) #Run the CPG function for the accumulated parameter raster
 
     return fileList
 
