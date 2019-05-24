@@ -285,7 +285,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     paramType = paramRaster.dtypes[0] #Get datatype of first band
 
     # Choose an appropriate gdal data type for the parameter
-    if paramType == 'int8' or dtype == 'int16':
+    if paramType == 'int8' or paramType == 'int16':
         outType = 'Int16' # Convert 8 bit integers to 16 bit in gdal
     elif paramType == 'int32':
         outType = 'Int32'
