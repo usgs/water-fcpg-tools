@@ -120,7 +120,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         print('Warning: No data parameter values exist in basin')
 
         #If a no data file path is given, accumulate no data values
-        if outNoDataRast != None & outNoDataAccum != None:
+        if (outNoDataRast != None) & (outNoDataAccum != None):
             noDataArray = data.copy()
             noDataArray[(data == paramNoData) & (direction != directionNoData)] = 1 #Set no data values in basin to 1
             noDataArray[(data == paramNoData) & (direction == directionNoData)] = -1 #Set no data values outside of basin to -1
