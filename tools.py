@@ -141,6 +141,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
             # Save no data raster
             with rs.open(outNoDataRast, 'w', **profile) as dst:
                 dst.write(noDataArray,1)
+                print('Parameter No Data raster written to: %s'%outNoDataRast)
     
             # Use tauDEM to accumulate no data values
             try:
