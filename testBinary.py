@@ -49,7 +49,7 @@ resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
 
 print("Accumulating Parameters...")
 #accumulateParam(demRast, taufdr, accumDEM, cores=cores)
-accumulateParam(rprjPRISM, taufdr, accumPRISM, cores=cores)
+accumulateParam(rprjPRISM, taufdr, accumPRISM, outNoDataRast=PRISMnodata, outNoDataAccum=PRISMnodataaccum, cores=cores)
 
 #accumulatedList = accumulateParams(resampledList, taufdr, outWorkspace, cores=cores, appStr="accum")
 
