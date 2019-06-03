@@ -19,6 +19,7 @@ inCat = "../1005/LandCoverMT.tif"
 #Intermediate Ouputs
 outWorkspace = "../1005/work"
 taufdr = "../1005/work/taufdr1005.tif"
+taufac = "../1005/work/taufac1005.tif"
 
 rprjPRISM = "../1005/work/PRISMrprj1005.tif"
 rprj149 = "../1005/work/149rprj1005.tif"
@@ -42,6 +43,9 @@ print("Creating Binary Parameter Grids...")
 
 print("Creating tauDEM Drainage Directions...")
 tauDrainDir(fdr, taufdr)
+tauFlowAccum(taufdr, taufac, cores=cores)
+
+
 
 print("Resampling Rasters...")
 resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
