@@ -391,7 +391,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
     '''
 
     fileList = [] #Initialize list of output files
-
+    """
     for param in paramRasts:
 
         baseName = os.path.splitext(os.path.basename(param))[0] #Get name of input file without extention
@@ -401,7 +401,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
         fileList.append(outPath)
 
         accumulateParam(param, fdr, outPath, cores) #Run the flow accumulation function for the parameter raster
-
+    """
 
     processCores = min(4, cores) # Set number of cores used by each process to 4 or the number of available cores
     numProcess = floor(cores / processCores) # Compute the number of processes to create
