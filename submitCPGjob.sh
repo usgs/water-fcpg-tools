@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=CPG # name that you chose
 #SBATCH -c 1 # cpus per task
-#SBATCH -n 16 # number of tasks
-#SBATCH --tasks-per-node=16
+#SBATCH -n 32 # number of tasks
+#SBATCH --tasks-per-node=32
 #SBATCH -p normal                         # the partition you want to use, for this case prod is best
 #SBATCH --account=wymtwsc        # your account
-#SBATCH --time=8:00:00           # Overestimated guess at time
+#SBATCH --time=4:00:00           # Overestimated guess at time
 #SBATCH --mail-type=ALL         # Send email on all events
 #SBATCH --mail-user=ssiefken@usgs.gov
 #SBATCH -o %j.log                    # Sets output log file to %j ( will be the jobId returned by sbatch)  
