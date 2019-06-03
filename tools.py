@@ -242,8 +242,6 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
 
     # Replace values in cells with small flow accumulation with no data
     if minAccum != None:
-        print(corrAccum)
-        print(minAccum)
         dataCPG[corrAccum < minAccum] = outNoData #Set values smaller than threshold to no data
 
     # Updata raster profile
