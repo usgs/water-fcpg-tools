@@ -393,7 +393,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
     '''
 
     fileList = [] #Initialize list of output files
-    """
+    
     for param in paramRasts:
 
         baseName = os.path.splitext(os.path.basename(param))[0] #Get name of input file without extention
@@ -420,7 +420,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
     #close the pool and wait for the work to finish
     pool.close()
     pool.join()
-    
+    """
 
 
 
