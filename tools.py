@@ -90,7 +90,7 @@ def grassDrainDir(inRast, outRast):
     print('GRASS drainage direction written to: %s'%outRast)
 
 
-def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
+def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, cores = 1):
     """
     Inputs:
         paramRast - Raster of parameter values to acumulate, this file is modified by the function
@@ -120,7 +120,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
         print('Warning: No data parameter values exist in basin')
 
         #If a no data file path is given, accumulate no data values
-        if outNoDataRast != None:
+        if outNoDataRast != None & outNoDataAccum != None:
             noDataArray = data.copy()
             noDataArray[(data == paramNoData) & (direction != directionNoData)] = 1 #Set no data values in basin to 1
             noDataArray[(data == paramNoData) & (direction == directionNoData)] = -1 #Set no data values outside of basin to -1
@@ -142,14 +142,15 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, cores = 1):
             with rs.open(outNoDataRast, 'w', **profile) as dst:
                 dst.write(noDataArray,1)
                 print('Parameter No Data raster written to: %s'%outNoDataRast)
-    
+            
             # Use tauDEM to accumulate no data values
             try:
-                print('Accumulating NO Data Values')
+                print('Accumulating No Data Values')
                 tauParams = {
                 'fdr':fdr,
                 'cores':cores, 
-                'outFl':outNoDataRast,
+                'outFl':outNoDataAccum,
+                'weight':outNoDataRast
                 }
                 
                 cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
@@ -401,7 +402,10 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
         outPath = os.path.join(outWorkspace, baseName + appStr + ext)
         fileList.append(outPath)
 
-        accumulateParam(param, fdr, outPath, cores) #Run the flow accumulation function for the parameter raster
+        nodataPath = os.path.join(outWorkspace, baseName + "nodata" + ext) 
+        nodataAccumPath = os.path.join(outWorkspace, baseName + "nodataaccum" + ext) 
+
+        accumulateParam(param, fdr, outPath, outNoDataRast=nodataPath, outNoDataAccum=nodataAccumPath, cores=cores) #Run the flow accumulation function for the parameter raster
 
     """
     processCores = min(4, cores) # Set number of cores used by each process to 4 or the number of available cores
