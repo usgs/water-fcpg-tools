@@ -419,7 +419,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
 
     #close the pool and wait for the work to finish
     pool.close()
-    pool.join(
+    pool.join()
     
 
 
