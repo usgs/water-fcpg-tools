@@ -410,7 +410,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
     pool = processPool(processes=numProcess)
 
     # Use pool.map() to call tauDEM accumulation in parallel
-    fileList = pool.map(partial(accumulateParam, fdr, outPath, cores), paramRasts)
+    fileList = pool.map(partial(accumulateParam, fdr, outPath, processCores), paramRasts)
 
     #close the pool and wait for the work to finish
     pool.close()
