@@ -2,11 +2,11 @@ from tools import *
 
 cores = 1
 #Inputs
-fdr = "../100500010101/fdr100500010101.tif"
-fac = "../100500010101/fac100500010101.tif"
-demRast = "../100500010101/dem100500010101.tif"
-PRISMRast = "../100500010101/PRISM2015.tif"
-inCat = "../100500010101/LandCoverMT.tif"
+fdr = "../1005/fdr1005.tif"
+fac = "../1005/fac1005.tif"
+demRast = "../1005/dem1005.tif"
+PRISMRast = "../1005/PRISM2015.tif"
+inCat = "../1005/LandCoverMT.tif"
 
 
 
@@ -17,20 +17,20 @@ inCat = "../100500010101/LandCoverMT.tif"
 
 
 #Intermediate Ouputs
-outWorkspace = "../100500010101/work"
-taufdr = "../100500010101/work/taufdr100500010101.tif"
+outWorkspace = "../1005/work"
+taufdr = "../1005/work/taufdr1005.tif"
 
-rprjPRISM = "../100500010101/work/PRISMrprj100500010101.tif"
-rprj149 = "../100500010101/work/149rprj100500010101.tif"
+rprjPRISM = "../1005/work/PRISMrprj1005.tif"
+rprj149 = "../1005/work/149rprj1005.tif"
 
-accumDEM = "../100500010101/work/demAccum100500010101.tif"
-accumPRISM = "../100500010101/work/PRISMAccum100500010101.tif"
-accum149 = "../100500010101/work/149Accum100500010101.tif"
+accumDEM = "../1005/work/demAccum1005.tif"
+accumPRISM = "../1005/work/PRISMAccum1005.tif"
+accum149 = "../1005/work/149Accum1005.tif"
 
 #CPG Output
-elevCPG = "../100500010101/work/elevCPG100500010101.tif"
-PRISMCPG = "../100500010101/work/PRISMCPG100500010101.tif"
-CPG149 = "../100500010101/work/149CPG100500010101.tif"
+elevCPG = "../1005/work/elevCPG1005.tif"
+PRISMCPG = "../1005/work/PRISMCPG1005.tif"
+CPG149 = "../1005/work/149CPG1005.tif"
 
 
 print("Creating Binary Parameter Grids...")
