@@ -27,6 +27,9 @@ accumDEM = "../1005/work/demAccum1005.tif"
 accumPRISM = "../1005/work/PRISMAccum1005.tif"
 accum149 = "../1005/work/149Accum1005.tif"
 
+PRISMnodata = "../1005/work/PRISMnodata1005.tif"
+PRISMnodataaccum = "../1005/work/PRISMnodataaccum1005.tif"
+
 #CPG Output
 elevCPG = "../1005/work/elevCPG1005.tif"
 PRISMCPG = "../1005/work/PRISMCPG1005.tif"
