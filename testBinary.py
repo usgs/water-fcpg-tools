@@ -42,13 +42,13 @@ tauDrainDir(fdr, taufdr)
 
 print("Resampling Rasters...")
 resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
-resampledList = resampleParams(binaryList, taufdr, outWorkspace, resampleMethod="near", cores=cores, appStr="rprj")
+#resampledList = resampleParams(binaryList, taufdr, outWorkspace, resampleMethod="near", cores=cores, appStr="rprj")
 
 print("Accumulating Parameters...")
 accumulateParam(demRast, taufdr, accumDEM, cores=cores)
 accumulateParam(rprjPRISM, taufdr, accumPRISM, cores=cores)
 
-accumulatedList = accumulateParams(resampledList, taufdr, outWorkspace, cores=cores, appStr="accum")
+#accumulatedList = accumulateParams(resampledList, taufdr, outWorkspace, cores=cores, appStr="accum")
 
 
 
@@ -56,4 +56,4 @@ print("Creating CPGs...")
 make_cpg(accumDEM, fac, elevCPG, minAccum=100)
 make_cpg(accumPRISM, fac, PRISMCPG, minAccum=100)
 
-CPGList = make_cpgs(accumulatedList, fac, outWorkspace, minAccum=100, appStr="CPG")
+#CPGList = make_cpgs(accumulatedList, fac, outWorkspace, minAccum=100, appStr="CPG")
