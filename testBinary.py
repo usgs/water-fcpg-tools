@@ -1,6 +1,6 @@
 from tools import *
 
-cores = 1
+cores = 32
 #Inputs
 fdr = "../1005/fdr1005.tif"
 fac = "../1005/fac1005.tif"
