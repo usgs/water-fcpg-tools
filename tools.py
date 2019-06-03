@@ -290,6 +290,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         outType = 'Int32'
     elif paramType == 'int64':
         outType = 'Int64'
+    elif paraType == 'float32':
+        outType = 'Float32'
     else:
         print("Warning: Unsupported data type %s"%paramType)
         print("Defaulting to Float64")
