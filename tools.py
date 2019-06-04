@@ -612,7 +612,7 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
 
 
 def downloadNHDPlusRaster(HUC4, fileDir):
-    compressedFile = os.path.join(fileDir, HUC4, "_RASTER.7z")
+    compressedFile = os.path.join(fileDir, str(HUC4) + "_RASTER.7z")
     urllib.request.urlretrieve("https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHDPlus/HU4/HighResolution/GDB/NHDPLUS_H_%s_HU4_RASTER.7z"%str(HUC4), compressedFile)
 
     os.system( '7z x compressedFile -o fileDir')
