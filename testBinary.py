@@ -42,7 +42,7 @@ print("Creating Binary Parameter Grids...")
 #binaryList = ["../100500010101/work/LandCoverMT311.tif"]
 
 print("Creating tauDEM Drainage Directions...")
-tauDrainDir(fdr, taufdr)
+#tauDrainDir(fdr, taufdr)
 #tauFlowAccum(taufdr, taufac, cores=cores)
 
 
