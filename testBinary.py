@@ -43,7 +43,7 @@ print("Creating Binary Parameter Grids...")
 
 print("Creating tauDEM Drainage Directions...")
 tauDrainDir(fdr, taufdr)
-tauFlowAccum(taufdr, taufac, cores=cores)
+#tauFlowAccum(taufdr, taufac, cores=cores)
 
 
 
@@ -53,7 +53,7 @@ resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
 
 print("Accumulating Parameters...")
 #accumulateParam(demRast, taufdr, accumDEM, cores=cores)
-accumulateParam(rprjPRISM, taufdr, accumPRISM, outNoDataRast=PRISMnodata, outNoDataAccum=PRISMnodataaccum, cores=cores)
+#accumulateParam(rprjPRISM, taufdr, accumPRISM, outNoDataRast=PRISMnodata, outNoDataAccum=PRISMnodataaccum, cores=cores)
 
 #accumulatedList = accumulateParams(resampledList, taufdr, outWorkspace, cores=cores, appStr="accum")
 
@@ -61,6 +61,6 @@ accumulateParam(rprjPRISM, taufdr, accumPRISM, outNoDataRast=PRISMnodata, outNoD
 
 print("Creating CPGs...")
 #make_cpg(accumDEM, fac, elevCPG, minAccum=100)
-make_cpg(accumPRISM, fac, PRISMCPG, minAccum=100)
+make_cpg(accumPRISM, taufac, PRISMCPG, minAccum=100)
 
 #CPGList = make_cpgs(accumulatedList, fac, outWorkspace, minAccum=100, appStr="CPG")
