@@ -7,6 +7,7 @@ taufdr = "../data/tauDEM/taufdr1002"
 taufac = "../data/tauDEM/taufac1002"
 workDir = "../work/1002"
 outDir = "../CPGs/1002"
+HUC = "1002"
 
 cores = 16
 
@@ -23,4 +24,12 @@ for cov in covList:
     resampledList = resampleParams(covList, taufdr, workDir, resampleMethod="bilinear", cores=cores, appStr="rprj")
     accumulatedList = accumulateParams(resampledList, taufdr, workDir, cores=cores, appStr="accum")
     CPGList = make_cpgs(accumulatedList, taufac, outDir, minAccum=100, appStr="CPG")
+
+
+    rprjFile = os.path.join(workDir, paramName + "rprj.tif")
+    accumFile = os.path.join(workDir, paramName + "accum.tif")
+    CPGFile = os.path.join(outDir, paramName + "_HUC" + HUC +"_CPG.tif")
+    resampleParam(cov, taufdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
+    accumulateParam(rprjPRISM, taufdr, accumPRISM, outNoDataRast=PRISMnodata, outNoDataAccum=PRISMnodataaccum, cores=cores)
+    make_cpg(accumPRISM, taufac, PRISMCPG, noDataRast=PRISMnodata, minAccum=100)
 
