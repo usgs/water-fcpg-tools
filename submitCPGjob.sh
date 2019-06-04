@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=CPG # name that you chose
 #SBATCH -c 1 # cpus per task
-#SBATCH -n 16 # number of tasks
+#SBATCH -n 8 # number of tasks
 #SBATCH --tasks-per-node=8
 #SBATCH -p normal                         # the partition you want to use, for this case prod is best
 #SBATCH --account=wymtwsc        # your account
