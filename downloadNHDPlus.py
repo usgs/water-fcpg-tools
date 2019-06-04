@@ -1,6 +1,6 @@
 from tools import *
 
-HUClist = ["1003"]
+HUClist = ["1004"]
 
 fileDir = "../data/NHDPlus"
 
