@@ -43,18 +43,18 @@ def tauDrainDir(inRast, outRast):
     tauDir[dat == 32] = 4 # northwest
     tauDir[dat == 64] = 3 # north
     tauDir[dat == 128] = 2 # northeast
-    tauDir[dat == inNoData] = -1 # no data
-    #tauDir = tauDir.astype('int8')#8 bit integer is sufficient for flow directions
+    tauDir[dat == inNoData] = 0 # no data
+    tauDir = tauDir.astype('int8')#8 bit integer is sufficient for flow directions
 
     # edit the metadata
     profile.update({
-                #'dtype':'int8',
+                'dtype':'int8',
                 'compress':'LZW',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
-                'nodata':-1,
+                'nodata':0,
                 'bigtiff':'IF_SAFER'})
 
     with rs.open(outRast,'w',**profile) as dst:
