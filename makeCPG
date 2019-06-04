@@ -1,12 +1,13 @@
 from tools import *
 
 
-
+"""
 paramRast = "../data/cov/source_var_dd_mm_yyyy.tif"
 taufdr = "../data/tauDEM/taufdr1002" #Name must be in format taufdrXXXX.tif, where XXXX is a HUC code of any length
 taufac = "../data/tauDEM/taufac1002"
 workDir = "../work/1002"
 outDir = "../CPGs/1002"
+"""
 
 #Set up Inputs
 paramRast = sys.argv[0] #Path to parameter raster with name in format of "source_var_dd_mm_yyyy.tif"
