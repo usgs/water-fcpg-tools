@@ -617,7 +617,7 @@ def downloadNHDPlusRaster(HUC4, fileDir):
     urllib.request.urlretrieve("https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHDPlus/HU4/HighResolution/GDB/NHDPLUS_H_%s_HU4_RASTER.7z"%str(HUC4), compressedFile)
 
     print("Extracting File...")
-    os.system("7za x " + compressedFile "-o" + fileDir)
+    os.system("7za x %s -o%s"%compressedFile%fileDir)
 
     
 
