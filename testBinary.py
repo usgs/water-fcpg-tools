@@ -48,7 +48,7 @@ tauDrainDir(fdr, taufdr)
 
 
 print("Resampling Rasters...")
-resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
+#resampleParam(PRISMRast, fdr, rprjPRISM, resampleMethod="bilinear", cores=cores)
 #resampledList = resampleParams(binaryList, taufdr, outWorkspace, resampleMethod="near", cores=cores, appStr="rprj")
 
 print("Accumulating Parameters...")
