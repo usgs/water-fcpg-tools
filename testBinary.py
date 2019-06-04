@@ -3,7 +3,7 @@ from tools import *
 cores = 32
 #Inputs
 fdr = "../1005/fdr1005.tif"
-fac = "../1005/fac1005.tif"
+#fac = "../1005/fac1005.tif"
 demRast = "../1005/dem1005.tif"
 PRISMRast = "../1005/PRISM2015.tif"
 inCat = "../1005/LandCoverMT.tif"
@@ -60,7 +60,7 @@ print("Accumulating Parameters...")
 
 
 print("Creating CPGs...")
-#make_cpg(accumDEM, fac, elevCPG, minAccum=100)
+#make_cpg(accumDEM, taufac, elevCPG, minAccum=100)
 make_cpg(accumPRISM, taufac, PRISMCPG, minAccum=100)
 
-#CPGList = make_cpgs(accumulatedList, fac, outWorkspace, minAccum=100, appStr="CPG")
+#CPGList = make_cpgs(accumulatedList, taufac, outWorkspace, minAccum=100, appStr="CPG")
