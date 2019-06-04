@@ -248,7 +248,10 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     accum2 = accum.astype(np.float32)
     accum2[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
 
+
+
     if noDataRast != None:
+        print("Correcting CPG for no data values")
         with rs.open(noDataRast) as ds: # accumulated no data raster
             accumNoData = ds.read(1)
             noDataNoData = ds.nodata # pull the accumulated no data no data value
