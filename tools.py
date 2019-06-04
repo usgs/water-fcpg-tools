@@ -297,7 +297,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
                 'bigtiff':'IF_SAFER'})
 
     with rs.open(outRast, 'w', **profile) as dst:
-        dst.write(corrAccum,1)
+        dst.write(dataCPG,1)
 
 def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     '''
