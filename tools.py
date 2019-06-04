@@ -617,7 +617,7 @@ def downloadNHDPlusRaster(HUC4, fileDir):
 
     os.system( '7z x compressedFile -o fileDir')
 
-    return compressedFile
+    
 
 
 
