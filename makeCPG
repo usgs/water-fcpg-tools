@@ -1,0 +1,26 @@
+from tools import *
+
+
+
+inDir = "../data/cov"
+taufdr = "../data/tauDEM/taufdr1002"
+taufac = "../data/tauDEM/taufac1002"
+workDir = "../work/1002"
+outDir = "../CPGs/1002"
+
+cores = 16
+
+covList = [] #Initialize list of covariates
+
+for path, subdirs, files in os.walk(inDir):
+    for name in files:
+        covList.append(os.path.join(path, name))
+
+
+
+for cov in covList:
+
+    resampledList = resampleParams(covList, taufdr, workDir, resampleMethod="bilinear", cores=cores, appStr="rprj")
+    accumulatedList = accumulateParams(resampledList, taufdr, workDir, cores=cores, appStr="accum")
+    CPGList = make_cpgs(accumulatedList, taufac, outDir, minAccum=100, appStr="CPG")
+
