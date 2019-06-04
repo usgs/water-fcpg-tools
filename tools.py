@@ -269,8 +269,8 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     
     
     # Throw warning if there is a negative accumulation
-    print(np.min(corrAccum))
-    if np.min(corrAccum) < 0:
+    print(np.nanmin(corrAccum))
+    if np.nanmin(corrAccum) < 0:
         print("Warning: Negative accumulation value")
         print("Minimum value:%s"%str(np.min(acorrAccum)))
  
