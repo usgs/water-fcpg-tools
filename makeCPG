@@ -26,13 +26,19 @@ try:
 except:
         print("Error - Flow direction raster has inappropriate name")
 
-
+#Prepare some file paths to things which will be created
 rprjFile = os.path.join(workDir, paramName + "rprj.tif") #Create filepath for reprojected parameter file
 accumFile = os.path.join(workDir, paramName + "accum.tif") #Create filepath for accumulated parameter file
+nodataFile = os.path.join(workDir, paramName + "nodata.tif") #Create filepath for parameter no data file
+nodataaccumFile = os.path.join(workDir, paramName + "accumnodata.tif") #Create filepath for parameter accumulated no data file
 CPGFile = os.path.join(outDir, paramName + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
 
 
-resampleParam(cov, taufdr, rprjPRISM, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
-accumulateParam(rprjPRISM, taufdr, accumPRISM, outNoDataRast=PRISMnodata, outNoDataAccum=PRISMnodataaccum, cores=cores) #Accumulate parameter
-make_cpg(accumPRISM, taufac, PRISMCPG, noDataRast=PRISMnodata, minAccum=100) #Create parameter CPG
+resampleParam(cov, taufdr, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
+accumulateParam(rprjPRISM, taufdr, accumFile, outNoDataRast=nodataFile, outNoDataAccum=nodataaccumFile, cores=cores) #Accumulate parameter
 
+if os.path.isfile(nodataaccumFile):
+        #If no data accumulation file was created, use it in call to create CPG
+        make_cpg(accumPRISM, taufac, CPGFile, noDataRast=nodataaccumFile, minAccum=100) #Create parameter CPG
+else:
+        make_cpg(accumPRISM, taufac, CPGFile,  minAccum=100) #Create parameter CPG
