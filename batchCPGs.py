@@ -1,7 +1,5 @@
 from tools import *
 
-print(sys.argv)
-
 #Check if system arguments were provided
 if len(sys.argv) > 1:
     inDir = sys.argv[0] #Input directory in which to search for parameter rasters
@@ -31,13 +29,11 @@ for path, subdirs, files in os.walk(inDir):
 print("The following covariate files were located in the specified directory:")
 print(covList)
 
-
 for cov in covList:
 
     covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
 
     #Create batch job which runs python script
-    
     jobfile = os.path.join(workDir, "{0}.slurm".format(str(covname))) # Create path to slurm job file, consider adding timestamp in name?
 
     with open(jobfile, 'w+') as f:
