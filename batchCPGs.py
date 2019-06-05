@@ -3,8 +3,8 @@ from tools import *
 
 
 inDir = "../data/tauDEM"
-taufdr = "../data/tauDEM/taufdr1002"
-taufac = "../data/tauDEM/taufac1002"
+taufdr = "../data/tauDEM/taufdr1002.tif"
+taufac = "../data/tauDEM/taufac1002.tif"
 workDir = "../work"
 outDir = "../CPGs/1002"
 HUC = "1002"
