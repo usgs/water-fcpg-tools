@@ -15,7 +15,7 @@ taufdr = sys.argv[1] #Path to tauDEM flow direction grid with in format of "tauf
 taufac = sys.argv[2] #Path to tauDEM flow accumulation grid
 workDir = sys.argv[3] #Path to working directory
 outDir = sys.argv[4] #Path to output directory for CPG files
-cores = sys.argv[5] #Number of cores to use 
+cores = int(sys.argv[5]) #Number of cores to use 
 
 
 #Get name of input parameter without extention
@@ -34,7 +34,8 @@ nodataFile = os.path.join(workDir, paramName + "nodata.tif") #Create filepath fo
 nodataaccumFile = os.path.join(workDir, paramName + "accumnodata.tif") #Create filepath for parameter accumulated no data file
 CPGFile = os.path.join(outDir, paramName + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
 
-
+#Run the CPG tools
+"""
 resampleParam(cov, taufdr, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
 accumulateParam(rprjFile, taufdr, accumFile, outNoDataRast=nodataFile, outNoDataAccum=nodataaccumFile, cores=cores) #Accumulate parameter
 
@@ -43,3 +44,4 @@ if os.path.isfile(nodataaccumFile):
         make_cpg(accumFile, taufac, CPGFile, noDataRast=nodataaccumFile, minAccum=100) #Create parameter CPG
 else:
         make_cpg(accumFile, taufac, CPGFile,  minAccum=100) #Create parameter CPG
+"""
