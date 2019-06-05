@@ -1,15 +1,21 @@
 from tools import *
 
+if sys.argv[0] != None:
+    inDir = sys.argv[0] #Input directory in which to search for parameter rasters
+    taufdr = sys.argv[1] #Flow direction grid in tauDEM format
+    taufac = sys.argv[2] #Flow accumulation grid in tauDEM format
+    workDir = sys.argv[3] #Working directory to save intermediate files
+    outDir = sys.argv[4] #Output directory to save CPGs
+    cores = sys.argv[5] #Number of cores to use for each slurm job
 
-
-inDir = "../data/tauDEM"
-taufdr = "../data/tauDEM/taufdr1002.tif"
-taufac = "../data/tauDEM/taufac1002.tif"
-workDir = "../work"
-outDir = "../CPGs/1002"
-HUC = "1002"
-
-cores = 16
+else:
+    #If inputs aren't specified in system args, set them in the script
+    inDir = "../data/tauDEM" 
+    taufdr = "../data/tauDEM/taufdr1002.tif" 
+    taufac = "../data/tauDEM/taufac1002.tif" 
+    workDir = "../work"
+    outDir = "../CPGs/1002"
+    cores = 16
 
 covList = [] #Initialize list of covariates
 
