@@ -17,6 +17,12 @@ workDir = sys.argv[3] #Path to working directory
 outDir = sys.argv[4] #Path to output directory for CPG files
 cores = int(sys.argv[5]) #Number of cores to use 
 
+print(paramRast)
+print(taufdr)
+print(taufac)
+print(workDir)
+print(outDir)
+print(cores)
 
 #Get name of input parameter without extention
 paramName = os.path.splitext(os.path.basename(param))[0] 
