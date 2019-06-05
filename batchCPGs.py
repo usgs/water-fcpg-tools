@@ -31,7 +31,7 @@ for cov in covList:
     
     jobfile = os.path.join(workDir, "{0}.slurm".format(str(covname))) # Create path to slurm job file, consider adding timestamp in name?
 
-    with open(jobfile) as f:
+    with open(jobfile, 'w+') as f:
         
         #Write slurm job details
         f.writelines("#!/bin/bash")
