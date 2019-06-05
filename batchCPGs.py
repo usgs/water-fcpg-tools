@@ -2,7 +2,8 @@ from tools import *
 
 print(sys.argv)
 
-if sys.argv[0] != None:
+#Check if system arguments were provided
+if len(sys.argv) > 1:
     inDir = sys.argv[0] #Input directory in which to search for parameter rasters
     taufdr = sys.argv[1] #Flow direction grid in tauDEM format
     taufac = sys.argv[2] #Flow accumulation grid in tauDEM format
