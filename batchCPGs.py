@@ -2,7 +2,7 @@ from tools import *
 
 
 
-inDir = "../data/cov"
+inDir = "../data/tauDEM"
 taufdr = "../data/tauDEM/taufdr1002"
 taufac = "../data/tauDEM/taufac1002"
 workDir = "../work/1002"
@@ -15,10 +15,12 @@ covList = [] #Initialize list of covariates
 
 for path, subdirs, files in os.walk(inDir):
     for name in files:
+
         covList.append(os.path.join(path, name))
 
+print(covList)
 
-
+"""
 for cov in covList:
 
     covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
@@ -49,5 +51,6 @@ for cov in covList:
 
         #Run the python script
         f.writelines("python -u ./makeCPG.py {0} {1} \n".format(arg1, arg2, ...))
-
+"""
+    #os.system("sbatch %s" %jobfile) #Send command to console
 
