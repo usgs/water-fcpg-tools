@@ -34,13 +34,13 @@ for cov in covList:
     with open(jobfile, 'w+') as f:
         
         #Write slurm job details
-        f.writelines("#!/bin/bash")
+        f.writelines("#!/bin/bash\n")
         f.writelines("#SBATCH --job-name=%s.job\n" %covname)
         f.writelines("#SBATCH -c 1\n") # cpus per task
         f.writelines("#SBATCH -n {0}\n".format(cores)) # number of tasks
         #f.writelines("#SBATCH --tasks-per-node=8\n") # Set number of tasks per node
         f.writelines("#SBATCH -p normal\n") # the partition you want to use, for this case prod is best
-        f.writelines("#SBATCH --account=wymtwsc") # your account
+        f.writelines("#SBATCH --account=wymtwsc\n") # your account
         f.writelines("#SBATCH --time=04:00:00\n") # Overestimated guess at time
         f.writelines("#SBATCH --mem=128000\n") #memory in MB
         f.writelines("#SBATCH --mail-type=ALL\n") # Send email on all events
