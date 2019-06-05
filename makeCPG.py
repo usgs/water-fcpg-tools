@@ -25,7 +25,7 @@ print(outDir)
 print(cores)
 
 #Get name of input parameter without extention
-paramName = os.path.splitext(os.path.basename(param))[0] 
+paramName = os.path.splitext(os.path.basename(paramRast))[0] 
 
 #Get HUC number from tau flow direction raster name
 try:
