@@ -5,7 +5,7 @@ from tools import *
 inDir = "../data/tauDEM"
 taufdr = "../data/tauDEM/taufdr1002"
 taufac = "../data/tauDEM/taufac1002"
-workDir = "../work/1002"
+workDir = "../work"
 outDir = "../CPGs/1002"
 HUC = "1002"
 
@@ -16,13 +16,13 @@ covList = [] #Initialize list of covariates
 for path, subdirs, files in os.walk(inDir):
     for name in files:
         #Check if file is .tif, and if so add it to covariate list
-        print(os.path.splitext(name)[1])
         if os.path.splitext(name)[1] == ".tif":
                 covList.append(os.path.join(path, name))
 
+print("The following covariate files were located in the specified directory:")
 print(covList)
 
-"""
+
 for cov in covList:
 
     covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
@@ -53,6 +53,6 @@ for cov in covList:
 
         #Run the python script
         f.writelines("python -u ./makeCPG.py {0} {1} \n".format(arg1, arg2, ...))
-"""
+
     #os.system("sbatch %s" %jobfile) #Send command to console
 
