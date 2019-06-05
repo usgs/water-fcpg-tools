@@ -15,7 +15,7 @@ covList = [] #Initialize list of covariates
 
 for path, subdirs, files in os.walk(inDir):
     for name in files:
-
+        print(name)
         covList.append(os.path.join(path, name))
 
 print(covList)
