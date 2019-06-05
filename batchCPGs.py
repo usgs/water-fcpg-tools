@@ -52,7 +52,7 @@ for cov in covList:
         f.writelines("source activate py36\n")
 
         #Run the python script
-        f.writelines("python -u ./makeCPG.py {0} {1} \n".format(arg1, arg2, ...))
+        #f.writelines("python -u ./makeCPG.py {0} {1} \n".format(arg1, arg2, ...))
 
     #os.system("sbatch %s" %jobfile) #Send command to console
 
