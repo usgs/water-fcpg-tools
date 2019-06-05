@@ -1,5 +1,5 @@
 from tools import *
-
+import os
 
 """
 paramRast = "../data/cov/source_var_dd_mm_yyyy.tif"
