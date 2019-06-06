@@ -3,8 +3,8 @@ import os
 
 
 paramRast = "../data/cov/gridMET_PRmm/gridMET_PRmm_31_12_2017.tif"
-taufdr = "../data/tauDEM/taufdr1002" #Name must be in format taufdrXXXX.tif, where XXXX is a HUC code of any length
-taufac = "../data/tauDEM/taufac1002"
+taufdr = "../data/tauDEM/taufdr1002.tif" #Name must be in format taufdrXXXX.tif, where XXXX is a HUC code of any length
+taufac = "../data/tauDEM/taufac1002.tif"
 workDir = "../work/1002"
 outDir = "../CPGs/1002"
 cores = 16
