@@ -327,9 +327,11 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     paramType = paramRaster.dtypes[0] #Get datatype of first band
 
     # Convert flow direction spatial reference from wkt to proj4 
+    print("Flow Direction WKT: " + str(fdrcrs))
     SR = osr.SpatialReference()
     SR.ImportFromWkt(fdrcrs)
     fdrcrs = SR.ExportToProj4()
+    print("Flow Direction proj4: " + str(fdrcrs))
 
     # Choose an appropriate gdal data type for the parameter
     if paramType == 'int8' or paramType == 'int16':
