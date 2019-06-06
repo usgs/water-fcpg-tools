@@ -11,8 +11,8 @@ with rs.open(netCDFpath) as ds: # load parameter raster
         profile = ds.profile
         paramNoData = ds.nodata
         meta = ds.meta
-        print(ds.subdatasets)
         desc = ds.descriptions
+        print(ds.tags())
 
 print(numBands)
 print(profile)
