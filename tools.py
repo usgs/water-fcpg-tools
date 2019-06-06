@@ -329,7 +329,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     # Convert flow direction spatial reference from wkt to proj4 
     print("Flow Direction WKT: " + str(fdrcrs))
     SR = osr.SpatialReference()
-    SR.ImportFromWkt(str(fdrcrs)
+    SR.ImportFromWkt(str(fdrcrs))
     fdrcrs = SR.ExportToProj4()
     print("Flow Direction proj4: " + str(fdrcrs))
 
