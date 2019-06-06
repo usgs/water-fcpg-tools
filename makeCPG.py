@@ -41,7 +41,7 @@ nodataaccumFile = os.path.join(workDir, paramName + "accumnodata.tif") #Create f
 CPGFile = os.path.join(outDir, paramName + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
 
 #Run the CPG tools
-"""
+
 resampleParam(cov, taufdr, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
 accumulateParam(rprjFile, taufdr, accumFile, outNoDataRast=nodataFile, outNoDataAccum=nodataaccumFile, cores=cores) #Accumulate parameter
 
@@ -50,4 +50,3 @@ if os.path.isfile(nodataaccumFile):
         make_cpg(accumFile, taufac, CPGFile, noDataRast=nodataaccumFile, minAccum=100) #Create parameter CPG
 else:
         make_cpg(accumFile, taufac, CPGFile,  minAccum=100) #Create parameter CPG
-"""
