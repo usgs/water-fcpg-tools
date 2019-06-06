@@ -48,10 +48,10 @@ for band in data:
                 'num_threads':'ALL_CPUS',
                 'bigtiff':'IF_SAFER'})
 
-    with rs.open(fileName, 'w', **profile) as dst:
-        dst.write(band,1)
+        with rs.open(fileName, 'w', **profile) as dst:
+                dst.write(band,1)
 
-        print("Writing: " + fileName)
+                print("Writing: " + fileName)
 
 
 
