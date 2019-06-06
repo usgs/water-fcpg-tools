@@ -10,6 +10,7 @@ import shutil
 import traceback
 import urllib.request
 from multiprocessing import Pool as processPool
+from osgeo import osr
 
 def tauDrainDir(inRast, outRast):
     """
@@ -325,7 +326,10 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     paramNoData = paramRaster.nodata
     paramType = paramRaster.dtypes[0] #Get datatype of first band
 
-
+    # Convert flow direction spatial reference from wkt to proj4 
+    SR = osr.SpatialReference()
+    SR.ImportFromWkt(fdrcrs)
+    fdrcrs = SR.ExportToProj4()
 
     # Choose an appropriate gdal data type for the parameter
     if paramType == 'int8' or paramType == 'int16':
