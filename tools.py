@@ -328,11 +328,16 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
 
     # Convert flow direction spatial reference from wkt to proj4 
     print("Flow Direction WKT: " + str(fdrcrs))
+    """
     SR = osr.SpatialReference()
     SR.ImportFromWkt(str(fdrcrs))
     fdrcrs = SR.ExportToProj4()
-    print("Flow Direction proj4: " + str(fdrcrs))
+    """"
+    
 
+    fdrcrs = "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
+    print("Flow Direction proj4: " + str(fdrcrs))
+    
     # Choose an appropriate gdal data type for the parameter
     if paramType == 'int8' or paramType == 'int16':
         outType = 'Int16' # Convert 8 bit integers to 16 bit in gdal
