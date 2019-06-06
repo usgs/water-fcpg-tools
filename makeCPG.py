@@ -43,7 +43,7 @@ CPGFile = os.path.join(outDir, paramName + "_HUC" + HUC +"_CPG.tif") #Create fil
 
 #Run the CPG tools
 
-resampleParam(cov, taufdr, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
+resampleParam(paramRast, taufdr, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
 accumulateParam(rprjFile, taufdr, accumFile, outNoDataRast=nodataFile, outNoDataAccum=nodataaccumFile, cores=cores) #Accumulate parameter
 
 if os.path.isfile(nodataaccumFile):
