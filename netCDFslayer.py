@@ -30,7 +30,7 @@ for band in data:
         
         date = day0 + datetime.timedelta(days=day) #Compute the date associated with the band
 
-        fileName = baseName + "_" + .strftime('%d_%m_%Y') + ".tif" #Create the name for the output file
+        fileName = baseName + "_" + datetime.strftime('%d_%m_%Y') + ".tif" #Create the name for the output file
 
         print(fileName)
 
