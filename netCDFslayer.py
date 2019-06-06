@@ -1,12 +1,15 @@
 import rasterio as rs
 import numpy as np
 import datetime
+import os
 
 # Script to destroy the netCDF file Roy got from gridMET
 
 netCDFpath = "../data/cov/gridMET_PRmm.tif"
 
 baseName = "gridMET_PRmm"
+
+outDir = "../data/cov/gridMET_PRmm"
 
 with rs.open(netCDFpath) as ds: # load parameter raster
         numBands = ds.count
@@ -15,6 +18,8 @@ with rs.open(netCDFpath) as ds: # load parameter raster
         paramNoData = ds.nodata
         tags = ds.tags()
 
+print(profile)
+
 day0 = datetime.datetime.strptime("01-01-1900", "%d-%m-%Y") #Set the day time is counted from
 
 
@@ -22,10 +27,7 @@ days = tags["NETCDF_DIM_time_VALUES"] #Get the list of dates associated with eac
 days = days.replace("{", "")
 days = days.replace("}", "")
 days = days.split(",")
-print(type(days))
 
-
-print(days)
 
 i = 0 
 
@@ -35,9 +37,21 @@ for band in data:
         
         date = day0 + datetime.timedelta(days=day) #Compute the date associated with the band
 
-        fileName = baseName + "_" + date.strftime('%d_%m_%Y') + ".tif" #Create the name for the output file
+        fileName = os.path.join(outDir, baseName + "_" + date.strftime('%d_%m_%Y') + ".tif") #Create the name for the output file
 
-        print(fileName)
+        #Update raster profile
+        profile.update({
+                'compress':'LZW',
+                'profile':'GeoTIFF',
+                'tiled':True,
+                'sparse_ok':True,
+                'num_threads':'ALL_CPUS',
+                'bigtiff':'IF_SAFER'})
+
+    with rs.open(fileName, 'w', **profile) as dst:
+        dst.write(band,1)
+
+        print("Writing: " + fileName)
 
 
 
