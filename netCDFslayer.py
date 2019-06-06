@@ -44,6 +44,7 @@ for band in data:
                 'compress':'LZW',
                 'profile':'GeoTIFF',
                 'tiled':True,
+                'count':1,
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
                 'bigtiff':'IF_SAFER'})
