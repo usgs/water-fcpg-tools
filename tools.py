@@ -285,7 +285,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     if minAccum != None:
         dataCPG[corrAccum < minAccum] = outNoData #Set values smaller than threshold to no data
 
-    # Updata raster profile
+    # Update raster profile
     profile.update({'dtype':dataCPG.dtype,
                 'compress':'LZW',
                 'profile':'GeoTIFF',
@@ -320,9 +320,12 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     fdrtransform = fdrRaster.transform #Get flow direction affine transform
     fdrnodata = fdrRaster.nodata #Get flow direction no data value
 
+
     paramRaster = rs.open(inParam)# load parameter raster in Rasterio
     paramNoData = paramRaster.nodata
     paramType = paramRaster.dtypes[0] #Get datatype of first band
+
+
 
     # Choose an appropriate gdal data type for the parameter
     if paramType == 'int8' or paramType == 'int16':
@@ -605,6 +608,17 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
 
     return catRaster # Return the path to the raster created
     
+
+
+
+
+    
+
+
+
+
+
+
 
 
 
