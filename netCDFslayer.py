@@ -12,6 +12,9 @@ with rs.open(netCDFpath) as ds: # load parameter raster
         paramNoData = ds.nodata
         tags = ds.tags()
 
+dates = tags["NETCDF_DIM_time_VALUES"]
+print(dates)
+
 i = 0 
 
 for band in data:
