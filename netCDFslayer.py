@@ -22,7 +22,7 @@ days = tags["NETCDF_DIM_time_VALUES"] #Get the list of dates associated with eac
 print(type(days))
 
 
-print(days)
+print(days.split(","))
 
 i = 0 
 
