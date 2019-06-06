@@ -17,6 +17,6 @@ module load gdal/2.2.2-gcc
 source activate py36
 
 
-python -u ./maketauDEMfiles.py $SLURM_JOB_ID $SLURM_NTASKS
+python -u ./makeCPG.py $SLURM_JOB_ID $SLURM_NTASKS
 
 echo $SLURM_NTASKS
