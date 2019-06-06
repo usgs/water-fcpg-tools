@@ -17,8 +17,9 @@ with rs.open(netCDFpath) as ds: # load parameter raster
 
 day0 = datetime.datetime.strptime("01-01-1900", "%d-%m-%Y") #Set the day time is counted from
 
-print(type(days))
+
 days = tags["NETCDF_DIM_time_VALUES"] #Get the list of dates associated with each band and convert to list
+print(type(days))
 
 
 print(days)
