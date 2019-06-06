@@ -17,4 +17,4 @@ with rs.open(netCDFpath) as ds: # load parameter raster
 print(numBands)
 print(profile)
 print(meta)
-print(descriptions)
+print(desc)
