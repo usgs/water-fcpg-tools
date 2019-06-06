@@ -31,7 +31,7 @@ i = 0
 
 for band in data:
 
-        day = days[i] #Get the days since beginning associated with the band
+        day = int(days[i]) #Get the days since beginning associated with the band
         
         date = day0 + datetime.timedelta(days=day) #Compute the date associated with the band
 
