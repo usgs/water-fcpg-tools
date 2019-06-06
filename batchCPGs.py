@@ -1,4 +1,5 @@
 from tools import *
+import time
 
 #Check if system arguments were provided
 if len(sys.argv) > 1:
@@ -11,7 +12,7 @@ if len(sys.argv) > 1:
 
 else:
     #If inputs aren't specified in system args, set them in the script
-    inDir = "../data/tauDEM" 
+    inDir = "../data/cov/gridMET_PRmm" 
     taufdr = "../data/tauDEM/taufdr1002.tif" 
     taufac = "../data/tauDEM/taufac1002.tif" 
     workDir = "../work"
@@ -58,6 +59,7 @@ for cov in covList:
 
         #Run the python script
         f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5}\n".format(cov, taufdr, taufac, workDir, outDir, cores))
-
+    
     #os.system("sbatch {0}".format(jobfile)) #Send command to console
 
+    time.sleep(10) #Wait 10s between submitting jobs
