@@ -1,12 +1,13 @@
 from tools import *
 import os
 
-"""
-paramRast = "../data/cov/source_var_dd_mm_yyyy.tif"
+
+paramRast = "../data/cov/gridMET_PRmm/gridMET_PRmm_31_12_2017.tif"
 taufdr = "../data/tauDEM/taufdr1002" #Name must be in format taufdrXXXX.tif, where XXXX is a HUC code of any length
 taufac = "../data/tauDEM/taufac1002"
 workDir = "../work/1002"
 outDir = "../CPGs/1002"
+cores = 16
 """
 
 #Set up Inputs
@@ -16,7 +17,7 @@ taufac = sys.argv[2] #Path to tauDEM flow accumulation grid
 workDir = sys.argv[3] #Path to working directory
 outDir = sys.argv[4] #Path to output directory for CPG files
 cores = int(sys.argv[5]) #Number of cores to use 
-
+"""
 print(paramRast)
 print(taufdr)
 print(taufac)
