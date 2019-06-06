@@ -20,6 +20,8 @@ day0 = datetime.datetime.strptime("01-01-1900", "%d-%m-%Y") #Set the day time is
 
 days = tags["NETCDF_DIM_time_VALUES"] #Get the list of dates associated with each band and convert to list
 
+print(list(days))
+
 print(days)
 
 i = 0 
