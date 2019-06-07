@@ -210,6 +210,8 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         'weight':paramRast
         }
         
+        print(os.path.isfile(paramRast))
+        print(os.path.isfile(fdr))
         cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
