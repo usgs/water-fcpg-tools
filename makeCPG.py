@@ -28,9 +28,11 @@ print(cores)
 #Get name of input parameter without extention
 paramName = os.path.splitext(os.path.basename(paramRast))[0] 
 
+
+print()
 #Get HUC number from tau flow direction raster name
 try:
-        HUC = os.path.splitext(os.path.basename(taufdr))[0].split("taufdr")[0]
+        HUC = os.path.splitext(os.path.basename(taufdr))[0].split("taufdr")[1]
 except:
         print("Error - Flow direction raster has inappropriate name")
 
