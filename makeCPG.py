@@ -7,7 +7,7 @@ taufdr = os.path.abspath("../data/tauDEM/taufdr1002.tif") #Name must be in forma
 taufac = os.path.abspath("../data/tauDEM/taufac1002.tif")
 workDir = os.path.abspath("../work/1002")
 outDir = os.path.abspath("../CPGs/1002")
-cores = 16
+cores = 8
 """
 
 #Set up Inputs
