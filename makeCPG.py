@@ -11,12 +11,12 @@ cores = 8
 """
 
 #Set up Inputs
-paramRast = sys.argv[0] #Path to parameter raster with name in format of "source_var_dd_mm_yyyy.tif"
-taufdr = sys.argv[1] #Path to tauDEM flow direction grid with in format of "taufdrXXXX.tif", where XXXX is a HUC code of any length
-taufac = sys.argv[2] #Path to tauDEM flow accumulation grid
-workDir = sys.argv[3] #Path to working directory
-outDir = sys.argv[4] #Path to output directory for CPG files
-cores = int(sys.argv[5]) #Number of cores to use 
+paramRast = sys.argv[1] #Path to parameter raster with name in format of "source_var_dd_mm_yyyy.tif"
+taufdr = sys.argv[2] #Path to tauDEM flow direction grid with in format of "taufdrXXXX.tif", where XXXX is a HUC code of any length
+taufac = sys.argv[3] #Path to tauDEM flow accumulation grid
+workDir = sys.argv[4] #Path to working directory
+outDir = sys.argv[5] #Path to output directory for CPG files
+cores = int(sys.argv[6]) #Number of cores to use 
 
 print(paramRast)
 print(taufdr)
