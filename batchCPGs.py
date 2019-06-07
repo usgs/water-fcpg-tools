@@ -15,7 +15,7 @@ else:
     inDir = "../data/cov/gridMET_PRmm" 
     taufdr = "../data/tauDEM/taufdr1002.tif" 
     taufac = "../data/tauDEM/taufac1002.tif" 
-    workDir = "../work"
+    workDir = "../work/1002"
     outDir = "../CPGs/1002"
     cores = 32
 
