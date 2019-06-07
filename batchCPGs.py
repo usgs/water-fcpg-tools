@@ -37,6 +37,7 @@ for cov in covList:
     #Create batch job which runs python script
     jobfile = os.path.join(workDir, "{0}.slurm".format(str(covname))) # Create path to slurm job file, consider adding timestamp in name?
 
+
     with open(jobfile, 'w+') as f:
         
         #Write slurm job details
@@ -59,7 +60,9 @@ for cov in covList:
 
         #Run the python script
         f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5}\n".format(cov, taufdr, taufac, workDir, outDir, cores))
-    
-    #os.system("sbatch {0}".format(jobfile)) #Send command to console
+        
+    print("Launch batch job for: " + str(covname))
+
+    os.system("sbatch {0}".format(jobfile)) #Send command to console
 
     time.sleep(100) #Wait 10s between submitting jobs
