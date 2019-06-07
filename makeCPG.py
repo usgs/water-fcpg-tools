@@ -37,10 +37,10 @@ except:
         print("Error - Flow direction raster has inappropriate name")
 
 #Prepare some file paths to things which will be created
-rprjFile = os.path.join(workDir, paramName + "rprj.tif") #Create filepath for reprojected parameter file
-accumFile = os.path.join(workDir, paramName + "accum.tif") #Create filepath for accumulated parameter file
-nodataFile = os.path.join(workDir, paramName + "nodata.tif") #Create filepath for parameter no data file
-nodataaccumFile = os.path.join(workDir, paramName + "accumnodata.tif") #Create filepath for parameter accumulated no data file
+rprjFile = os.path.join(workDir, paramName + "_HUC" + HUC + "rprj.tif") #Create filepath for reprojected parameter file
+accumFile = os.path.join(workDir, paramName + "_HUC" + HUC + "accum.tif") #Create filepath for accumulated parameter file
+nodataFile = os.path.join(workDir, paramName + "_HUC" + HUC + "nodata.tif") #Create filepath for parameter no data file
+nodataaccumFile = os.path.join(workDir, paramName + "_HUC" + HUC + "accumnodata.tif") #Create filepath for parameter accumulated no data file
 CPGFile = os.path.join(outDir, paramName + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
 
 #Run the CPG tools
