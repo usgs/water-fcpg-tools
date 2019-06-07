@@ -7,7 +7,7 @@ taufdr = "../data/tauDEM/taufdr1002.tif" #Name must be in format taufdrXXXX.tif,
 taufac = "../data/tauDEM/taufac1002.tif"
 workDir = "../work/1002"
 outDir = "../CPGs/1002"
-cores = 16
+cores = 1
 """
 
 #Set up Inputs
