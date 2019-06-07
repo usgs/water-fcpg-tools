@@ -1,7 +1,7 @@
 from tools import *
 import os
 
-
+"""
 paramRast = os.path.abspath("../data/cov/gridMET_PRmm/gridMET_PRmm_31_12_2017.tif")
 taufdr = os.path.abspath("../data/tauDEM/taufdr1002.tif") #Name must be in format taufdrXXXX.tif, where XXXX is a HUC code of any length
 taufac = os.path.abspath("../data/tauDEM/taufac1002.tif")
@@ -17,7 +17,7 @@ taufac = sys.argv[2] #Path to tauDEM flow accumulation grid
 workDir = sys.argv[3] #Path to working directory
 outDir = sys.argv[4] #Path to output directory for CPG files
 cores = int(sys.argv[5]) #Number of cores to use 
-"""
+
 print(paramRast)
 print(taufdr)
 print(taufac)
