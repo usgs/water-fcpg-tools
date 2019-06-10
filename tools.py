@@ -280,10 +280,10 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
         print("Warning: Negative accumulation value")
         print("Minimum value:%s"%str(np.min(acorrAccum)))
  
-
+    print(np.nanmin(data))
 
     dataCPG = data / (corrAccum + 1) # make data CPG
-    print(np.nanmin(data[data != outNoData]))
+    print(np.nanmin(dataCPG))
     
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
 
