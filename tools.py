@@ -245,13 +245,12 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
         profile = ds.profile
         inNoData = ds.nodata
 
-    #data = data.astype(np.float32) #Convert to 32 bit float
-    data[data == inNoData] = 0 # fill this with no data values where appropriate
+    data = data.astype(np.float32) #Convert to 32 bit float
+    data[data == inNoData] = np.NaN # fill with no data values where appropriate
 
     with rs.open(fac) as ds: # flow accumulation raster
         accum = ds.read(1)
         facNoData = ds.nodata # pull the accumulated area no data value
-
 
 
     if noDataRast != None:
@@ -260,13 +259,11 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
             accumNoData = ds.read(1)
             noDataNoData = ds.nodata # pull the accumulated no data no data value
             
-        print(np.max(accumNoData))
-        #accumNoData2 = accumNoData.astype(np.float32)
         accumNoData[accumNoData == noDataNoData] = 0 #Set no data values to zero
 
         corrAccum = accum - accumNoData # Compute corrected accumulation
-        corrAccum = corrAccum.astype(np.float32)
-        corrAccum[accum == facNoData] = np.NaN # fill this with no data values where appropriate
+        corrAccum = corrAccum.astype(np.float32) # Convert to 32 bit float
+        corrAccum[accum == facNoData] = np.NaN # fill with no data values where appropriate
         
     else:
         accum2 = accum.astype(np.float32)
@@ -277,12 +274,10 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     
     
     # Throw warning if there is a negative accumulation
-    print(np.nanmin(corrAccum))
     if np.nanmin(corrAccum) < 0:
         print("Warning: Negative accumulation value")
         print("Minimum value:%s"%str(np.min(corrAccum)))
  
-    print(np.nanmin(data))
 
     dataCPG = data / (corrAccum + 1) # make data CPG
     print(np.nanmin(dataCPG))
