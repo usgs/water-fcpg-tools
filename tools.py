@@ -261,7 +261,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
             noDataNoData = ds.nodata # pull the accumulated no data no data value
         
         #accumNoData2 = accumNoData.astype(np.float32)
-        accumNoData[accumNoData == noDataNoData] = 0 #Set no data values to zero
+        #accumNoData[accumNoData == noDataNoData] = 0 #Set no data values to zero
 
 
         corrAccum = accum - accumNoData # Compute corrected accumulation
@@ -271,7 +271,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     
     else:
         accum2 = accum.astype(np.float32)
-        accum2[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
+        accum2[accum == facNoData] = np.NaN # fill this with no data values where appropriate
         corrAccum = accum2 # No correction required
         
 
