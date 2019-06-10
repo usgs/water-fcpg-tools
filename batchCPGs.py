@@ -47,7 +47,7 @@ for cov in covList:
         f.writelines("#SBATCH -c 1\n") # cpus per task
         f.writelines("#SBATCH -n {0}\n".format(cores)) # number of tasks
         f.writelines("#SBATCH --tasks-per-node=16\n") # Set number of tasks per node
-        f.writelines("#SBATCH -o {0}/slurm-%A_%a.out\n".format(logDir)) # Set log file name 
+        f.writelines("#SBATCH -o {0}/slurm-%A.out\n".format(logDir)) # Set log file name 
         f.writelines("#SBATCH -p normal\n") # the partition you want to use, for this case prod is best
         f.writelines("#SBATCH --account=wymtwsc\n") # your account
         f.writelines("#SBATCH --time=01:00:00\n") # Overestimated guess at time
