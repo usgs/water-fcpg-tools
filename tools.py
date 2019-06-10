@@ -299,6 +299,8 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
 
     with rs.open(outRast, 'w', **profile) as dst:
         dst.write(dataCPG,1)
+    
+    print("CPG file written to: {0}".format(outRast))
 
 def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     '''
