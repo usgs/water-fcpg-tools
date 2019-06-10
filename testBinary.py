@@ -61,6 +61,6 @@ print("Accumulating Parameters...")
 
 print("Creating CPGs...")
 #make_cpg(accumDEM, taufac, elevCPG, minAccum=100)
-make_cpg(accumPRISM, taufac, PRISMCPG, noDataRast=PRISMnodata, minAccum=100)
+make_cpg(accumPRISM, taufac, PRISMCPG, noDataRast=PRISMnodataaccum, minAccum=100)
 
 #CPGList = make_cpgs(accumulatedList, taufac, outWorkspace, minAccum=100, appStr="CPG")
