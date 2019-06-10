@@ -245,8 +245,8 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
         profile = ds.profile
         inNoData = ds.nodata
 
-    data = data.astype(np.float32) #Convert to 32 bit float
-    data[data == inNoData] = np.NaN # fill this with no data values where appropriate
+    #data = data.astype(np.float32) #Convert to 32 bit float
+    data[data == inNoData] = 0 # fill this with no data values where appropriate
 
     with rs.open(fac) as ds: # flow accumulation raster
         accum = ds.read(1)
