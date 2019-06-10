@@ -267,7 +267,6 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
         corrAccum = accum - accumNoData # Compute corrected accumulation
         corrAccum = corrAccum.astype(np.float32)
         corrAccum[accum == facNoData] = np.NaN # fill this with no data values where appropriate
-        corrAccum[accum == facNoData] = outNoData
         
     else:
         accum2 = accum.astype(np.float32)
