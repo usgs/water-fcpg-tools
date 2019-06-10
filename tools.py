@@ -268,7 +268,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
         corrAccum = accum2 # No correction required
         
     print("Minimum Corrected Accumulation:")
-    print(str(min(corrAccum))
+    print(str(min(corrAccum)))
 
     
     
