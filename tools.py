@@ -243,6 +243,10 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     with rs.open(accumParam) as ds: # load accumulated data and no data rasters
         data = ds.read(1)
         profile = ds.profile
+        inNoData = ds.nodata
+
+    data = data.astype(np.float32) #Convert to 32 bit float
+    data[data == inNoData] = np.NaN # fill this with no data values where appropriate
 
     with rs.open(fac) as ds: # flow accumulation raster
         accum = ds.read(1)
@@ -279,7 +283,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
 
 
     dataCPG = data / (corrAccum + 1) # make data CPG
-    print(np.nanmin(data))
+    print(np.nanmin(data[data != outNoData]))
     
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
 
@@ -295,7 +299,6 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
                 'nodata':outNoData,
-                'count':2,
                 'bigtiff':'IF_SAFER'})
 
     with rs.open(outRast, 'w', **profile) as dst:
