@@ -260,7 +260,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
             accumNoData = ds.read(1)
             noDataNoData = ds.nodata # pull the accumulated no data no data value
             
-        print(noDataNoData)
+        print(max(accumNoData))
         #accumNoData2 = accumNoData.astype(np.float32)
         accumNoData[accumNoData == noDataNoData] = 0 #Set no data values to zero
 
