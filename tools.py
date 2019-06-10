@@ -250,7 +250,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
 
     with rs.open(fac) as ds: # flow accumulation raster
         accum = ds.read(1)
-        accumNoData = ds.nodata # pull the accumulated area no data value
+        facNoData = ds.nodata # pull the accumulated area no data value
 
 
 
@@ -266,7 +266,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
 
         corrAccum = accum - accumNoData # Compute corrected accumulation
         corrAccum = corrAccum.astype(np.float32)
-        corrAccum[accum == accumNoData] = np.NaN # fill this with no data values where appropriate
+        corrAccum[accum == facNoData] = np.NaN # fill this with no data values where appropriate
 
     
     else:
