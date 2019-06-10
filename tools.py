@@ -280,7 +280,6 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
  
 
     dataCPG = data / (corrAccum + 1) # make data CPG
-    print(np.nanmin(dataCPG))
     
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
 
