@@ -13,10 +13,10 @@ if len(sys.argv) > 1:
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/gridMET_PRmm" 
-    taufdr = "../data/tauDEM/taufdr1002.tif" 
-    taufac = "../data/tauDEM/taufac1002.tif" 
-    workDir = "../work/1002"
-    outDir = "../CPGs/1002"
+    taufdr = "../data/tauDEM/taufdr1003.tif" 
+    taufac = "../data/tauDEM/taufac1003.tif" 
+    workDir = "../work/1003"
+    outDir = "../CPGs/1003"
     cores = 32
 
 covList = [] #Initialize list of covariates
