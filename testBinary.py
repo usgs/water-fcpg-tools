@@ -33,7 +33,7 @@ PRISMnodataaccum = "../1005/work/PRISMnodataaccum1005.tif"
 
 #CPG Output
 elevCPG = "../1005/work/elevCPG1005.tif"
-PRISMCPG = "../1005/work/PRISMCPG1005.tif"
+PRISMCPG = "../1005/work/PRISMcorrAccum1005.tif"
 CPG149 = "../1005/work/149CPG1005.tif"
 
 
