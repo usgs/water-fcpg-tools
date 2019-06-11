@@ -36,7 +36,6 @@ def tauDrainDir(inRast, outRast):
     # remap NHDplus flow direction to TauDEM flow Direction
     # east is ok
     
-    #tauDir[dat == 1] = 1 # east
     tauDir[dat == 2] = 8 # stauDirheast
     tauDir[dat == 4] =  7 # stauDirh
     tauDir[dat == 8] = 6 # stauDirhwest
@@ -60,10 +59,10 @@ def tauDrainDir(inRast, outRast):
 
     with rs.open(outRast,'w',**profile) as dst:
         dst.write(tauDir,1)
+        print('TauDEM drainage direction written to: %s'%outRast)
 
-    print('TauDEM drainage direction written to: %s'%outRast)
+    
 
-#print(np.shape(tauDir))
 
 def grassDrainDir(inRast, outRast):
     """
