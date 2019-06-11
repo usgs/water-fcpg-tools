@@ -27,7 +27,7 @@ for cov in covList:
     
     newName = source + "_" + var + "_" + str(year) + "_" + str(month) + "_" + str(day) + "_" + HUC + "_" + CPG + ext
 
-    newPath = os.join(inDir, newName)
+    newPath = os.path.join(inDir, newName)
 
     print(cov)
     print(newPath)
