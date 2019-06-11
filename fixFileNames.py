@@ -2,6 +2,8 @@ import os
 
 inDir = "../CPGs/1003"
 
+covList = [] # Initialize list
+
 for path, subdirs, files in os.walk(inDir):
     for name in files:
         #Check if file is .tif, and if so add it to covariate list
