@@ -1,6 +1,6 @@
 import os
 
-inDir = "../data/cov/gridMET_PRmm"
+inDir = "../CPGs/1003"
 
 for path, subdirs, files in os.walk(inDir):
     for name in files:
@@ -20,7 +20,10 @@ for cov in covList:
     day = nameParts[2]
     month = nameParts[3]
     year = nameParts[4]
+    HUC = nameParts[5]
+    CPG = nameParts[6]
     
-    newName = source + "_" + var + "_" year + "_" + month + "_" + day + ext
+    newName = source + "_" + var + "_" year + "_" + month + "_" + day + "_" + HUC + "_" CPG + ext
 
+    print(oldName)
     print(newName)
