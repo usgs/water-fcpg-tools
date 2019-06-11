@@ -64,30 +64,6 @@ def tauDrainDir(inRast, outRast):
     
 
 
-def grassDrainDir(inRast, outRast):
-    """
-    Inputs:
-        inRast - Flow direction raster from NHDPlus
-
-    Outputs:
-        outRast - Flow direction raster for GRASS
-    """
-
-    grassDir = dat.copy()
-    # remap NHDplus flow direction to GRASS flow direction
-    grassDir[dat == 128] = 1 # northeast
-    grassDir[dat == 64] = 2 # north
-    grassDir[dat == 32] = 3 # northwest
-    grassDir[dat == 16] = 4 # west
-    grassDir[dat == 8] = 5 # southwest
-    grassDir[dat == 4] = 6 # south
-    grassDir[dat == 2] = 7 # southeast
-    grassDir[dat == 1] = 8 # east
-
-    with rs.open(outRast,'w',**meta) as dst:
-        dst.write(grassDir,1)
-
-    print('GRASS drainage direction written to: %s'%outRast)
 
 def tauFlowAccum(fdr, accumRast, cores = 1):
     """
