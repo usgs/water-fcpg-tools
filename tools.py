@@ -65,41 +65,6 @@ def tauDrainDir(inRast, outRast):
 
 
 
-def tauFlowAccum(fdr, accumRast, cores = 1):
-    """
-    Inputs:
-        fdr - flow direction raster in tauDEM format
-        cores - number of cores to use parameter accumulation
-
-    Outputs:
-        accumRast - flow accumulation raster
-    """
-
-
-    with rs.open(fdr) as ds: # load flow direction raster
-        direction = ds.read(1)
-        directionNoData = ds.nodata # pull the accumulated area no data value
-
-
-    
-    #Use tauDEM to compute the flow accumulation
-    try:
-        print('Accumulating Data')
-        tauParams = {
-        'fdr':fdr,
-        'cores':cores, 
-        'outFl':accumRast, 
-        }
-        
-        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
-        print(cmd)
-        result = subprocess.run(cmd, shell = True) # Run shell command
-        result.stdout
-        print('Parameter accumulation written to: %s'%accumRast)
-
-    except:
-        print('Error Computing tauDEM Flow Accumulation')
-        traceback.print_exc()
 
 def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, cores = 1):
     """
@@ -191,7 +156,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         result.stdout
-        print('Parameter accumulation written to: %s'%accumRast)
+        print('tauDEM accumulation complete')
 
     except:
         print('Error Accumulating Data')
