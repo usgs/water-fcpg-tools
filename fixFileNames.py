@@ -1,6 +1,6 @@
 import os
 
-inDir = ""
+inDir = "../data/cov/gridMET_PRmm"
 
 for path, subdirs, files in os.walk(inDir):
     for name in files:
