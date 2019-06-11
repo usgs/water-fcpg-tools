@@ -9,6 +9,7 @@ import glob
 import shutil
 import traceback
 import urllib.request
+import datetime
 from multiprocessing import Pool as processPool
 from osgeo import osr
 
@@ -157,8 +158,9 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
+        print("tauDEM command run {0}".format(datetime.datetime.now()))
         result.stdout
-        print('tauDEM accumulation complete')
+        print("tauDEM accumulation complete {0}".format(datetime.datetime.now()))
 
     except:
         print('Error Accumulating Data')
