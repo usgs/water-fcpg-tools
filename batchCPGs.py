@@ -15,9 +15,9 @@ else:
     inDir = "../data/cov/gridMET_PRmm" 
     taufdr = "../data/tauDEM/taufdr1003.tif" 
     taufac = "../data/tauDEM/taufac1003.tif" 
-    workDir = "../work/1003"
-    outDir = "../CPGs/1003"
-    logDir = "../logs/1003"
+    workDir = "../work/1004"
+    outDir = "../CPGs/1004"
+    logDir = "../logs/1004"
     cores = 32
 
 covList = [] #Initialize list of covariates
@@ -52,7 +52,7 @@ for cov in covList:
         f.writelines("#SBATCH --account=wymtwsc\n") # your account
         f.writelines("#SBATCH --time=01:00:00\n") # Overestimated guess at time
         f.writelines("#SBATCH --mem=128000\n") #memory in MB
-        f.writelines("#SBATCH --mail-type=ALL\n") # Send email only for failure events
+        f.writelines("#SBATCH --mail-type=ALL\n") # Send email only for all events
         f.writelines("#SBATCH --mail-user=ssiefken@usgs.gov\n")
 
         #Set up python environment for job
