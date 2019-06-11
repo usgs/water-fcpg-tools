@@ -3,13 +3,14 @@ import time
 
 #Check if system arguments were provided
 if len(sys.argv) > 1:
-    inDir = sys.argv[0] #Input directory in which to search for parameter rasters
-    taufdr = sys.argv[1] #Flow direction grid in tauDEM format
-    taufac = sys.argv[2] #Flow accumulation grid in tauDEM format
-    workDir = sys.argv[3] #Working directory to save intermediate files
-    outDir = sys.argv[4] #Output directory to save CPGs
-    cores = sys.argv[5] #Number of cores to use for each slurm job
-
+    inDir = sys.argv[1] #Input directory in which to search for parameter rasters
+    taufdr = sys.argv[2] #Flow direction grid in tauDEM format
+    taufac = sys.argv[3] #Flow accumulation grid in tauDEM format
+    workDir = sys.argv[4] #Working directory to save intermediate files
+    outDir = sys.argv[5] #Output directory to save CPGs
+    logDir = sys.argv[6] #Directory to save slurm log files
+    cores = sys.argv[7] #Number of cores to use for each slurm job
+    accumThresh = sys.argv[8] #Number of cells in flow accumulation grid below which CPG will be set to no data
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/gridMET_PRmm" 
@@ -19,6 +20,7 @@ else:
     outDir = "../CPGs/1004"
     logDir = "../logs/1004"
     cores = 32
+    accumThresh = 1000
 
 covList = [] #Initialize list of covariates
 
@@ -61,10 +63,10 @@ for cov in covList:
         f.writelines("source activate py36\n")
 
         #Run the python script
-        f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5}\n".format(cov, taufdr, taufac, workDir, outDir, cores))
+        f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5} {6}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh))
         
     print("Launching batch job for: " + str(covname))
 
     os.system("sbatch {0}".format(jobfile)) #Send command to console
 
-    time.sleep(15) #Wait 10s between submitting jobs
+    time.sleep(1500) #Wait 10s between submitting jobs
