@@ -56,6 +56,7 @@ for cov in covList:
         f.writelines("#SBATCH --mem=128000\n") #memory in MB
         f.writelines("#SBATCH --mail-type=ALL\n") # Send email only for all events
         f.writelines("#SBATCH --mail-user=ssiefken@usgs.gov\n")
+        f.writelines("#SBATCH --exclusive\n") # Require exclusive use of nodes
 
         #Set up python environment for job
         f.writelines("module load gis/TauDEM-5.3.8-gcc-mpich\n")
