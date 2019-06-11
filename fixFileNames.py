@@ -27,5 +27,5 @@ for cov in covList:
     
     newName = source + "_" + var + "_" + str(year) + "_" + str(month) + "_" + str(day) + "_" + HUC + "_" + CPG + ext
 
-    print(oldName)
+    print(cov)
     print(newName)
