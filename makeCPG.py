@@ -12,7 +12,7 @@ cores = 8
 """
 print("Starting {0}".format(datetime.datetime.now()))
 #Set up Inputs
-print(sys.argv)
+#print(sys.argv)
 paramRast = sys.argv[1] #Path to parameter raster with name in format of "source_var_dd_mm_yyyy.tif"
 taufdr = sys.argv[2] #Path to tauDEM flow direction grid with in format of "taufdrXXXX.tif", where XXXX is a HUC code of any length
 taufac = sys.argv[3] #Path to tauDEM flow accumulation grid
