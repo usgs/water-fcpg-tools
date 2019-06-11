@@ -23,7 +23,7 @@ for cov in covList:
     HUC = nameParts[5]
     CPG = nameParts[6]
     
-    newName = source + "_" + var + "_" year + "_" + month + "_" + day + "_" + HUC + "_" CPG + ext
+    newName = source + "_" + var + "_" str(yea)r + "_" + str(month) + "_" + str(day) + "_" + HUC + "_" CPG + ext
 
     print(oldName)
     print(newName)
