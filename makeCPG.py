@@ -1,5 +1,6 @@
 from tools import *
 import os
+import datetime
 
 """
 paramRast = os.path.abspath("../data/cov/gridMET_PRmm/gridMET_PRmm_31_12_2017.tif")
@@ -9,7 +10,7 @@ workDir = os.path.abspath("../work/1002")
 outDir = os.path.abspath("../CPGs/1002")
 cores = 8
 """
-
+print(datetime.datetime.now())
 #Set up Inputs
 paramRast = sys.argv[1] #Path to parameter raster with name in format of "source_var_dd_mm_yyyy.tif"
 taufdr = sys.argv[2] #Path to tauDEM flow direction grid with in format of "taufdrXXXX.tif", where XXXX is a HUC code of any length
@@ -46,12 +47,14 @@ nodataaccumFile = os.path.join(workDir, paramName + "_HUC" + HUC + "accumnodata.
 CPGFile = os.path.join(outDir, paramName + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
 
 #Run the CPG tools
-
+print("Calling resample function {0}".format(datetime.datetime.now()))
 resampleParam(paramRast, taufdr, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
+print("Calling flow accumulation function {0}".format(datetime.datetime.now()))
 accumulateParam(rprjFile, taufdr, accumFile, outNoDataRast=nodataFile, outNoDataAccum=nodataaccumFile, cores=cores) #Accumulate parameter
-
+print("Calling make_cpg function {0}".format(datetime.datetime.now()))
 if os.path.isfile(nodataaccumFile):
         #If no data accumulation file was created, use it in call to create CPG
         make_cpg(accumFile, taufac, CPGFile, noDataRast=nodataaccumFile, minAccum=accumThresh) #Create parameter CPG
 else:
         make_cpg(accumFile, taufac, CPGFile,  minAccum=accumThresh) #Create parameter CPG
+print("Finished {0}".format(datetime.datetime.now()))
