@@ -261,6 +261,11 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     with rs.open(fdr) as ds: # load flow direction raster in Rasterio
         fdrcrs = ds.crs #Get flow direction coordinate system
         xsize, ysize = ds.res #Get flow direction cell size
+        #Get bounding coordinates of the flow direction raster
+        fdrXmin = ds.transform[2]
+        fdrYmax = ds.transform[5]
+        fdrXmax = fdrXmin + xsize*ds.width
+        fdrYmin = fdrYmax - ysize*ds.height
 
     with rs.open(inParam) as ds: # load parameter raster in Rasterio
         paramNoData = ds.nodata
@@ -293,12 +298,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         print("Defaulting to Float64")
         outType = 'Float64' # Try a 64 bit complex floating point if all else fails
 
-    #Get bounding coordinates of the flow direction raster
-    fdrXmin = fdrRaster.transform[2]
-    fdrXmax = fdrXmin + xsize*fdrRaster.width
-    fdrYmax = fdrRaster.transform[5]
-    fdrYmin = fdrYmax - ysize*fdrRaster.height
-
+    
     
 
     # Resample, reproject, and clip the parameter raster with GDAL
