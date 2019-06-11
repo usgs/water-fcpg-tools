@@ -88,6 +88,10 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         direction = ds.read(1)
         directionNoData = ds.nodata # pull the accumulated area no data value
 
+    if not os.path.isfile(paramRast):
+        print("Error - Parameter raster file is missing!")
+    if not os.path.isfile(fdr):
+        print("Error - Flow direction file is missing!")
 
     #Deal with no data values
     basinNoDataCount = len(data[(data == paramNoData) & (direction != directionNoData)]) # Count number of cells with flow direction but no parameter value
@@ -142,7 +146,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
 
     #Use tauDEM to accumulate the parameter
     try:
-        print('Accumulating Data')
+        print('Accumulating Data...')
         tauParams = {
         'fdr':fdr,
         'cores':cores, 
@@ -150,8 +154,6 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         'weight':paramRast
         }
         
-        print(os.path.isfile(paramRast))
-        print(os.path.isfile(fdr))
         cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
