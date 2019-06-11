@@ -19,13 +19,14 @@ outDir = sys.argv[5] #Path to output directory for CPG files
 cores = int(sys.argv[6]) #Number of cores to use 
 accumThresh = int(sys.argv[7]) #Number of cells in flow accumulation grid below which CPG will be set to no data
 
-print(paramRast)
-print(taufdr)
-print(taufac)
-print(workDir)
-print(outDir)
-print(cores)
-print(accumThresh)
+print("Starting CPG process for:")
+print("Parameter Raster: {0}".format(paramRast))
+print("Flow Driection Grid: {0}".format(taufdr))
+print("Flow Accumulation Grid: {0}".format(taufac))
+print("Working Directory: {0}".format(workDir))
+print("Output Directory: {0}".format(outDir))
+print("Number of Cores: {0}".format(cores))
+print("Accumulation Threshold: {0} cells".format(accumThresh))
 
 #Get name of input parameter without extention
 paramName = os.path.splitext(os.path.basename(paramRast))[0] 
