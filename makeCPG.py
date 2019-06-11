@@ -18,6 +18,7 @@ taufac = sys.argv[3] #Path to tauDEM flow accumulation grid
 workDir = sys.argv[4] #Path to working directory
 outDir = sys.argv[5] #Path to output directory for CPG files
 cores = int(sys.argv[6]) #Number of cores to use 
+print(cores)
 accumThresh = int(sys.argv[7]) #Number of cells in flow accumulation grid below which CPG will be set to no data
 
 print("Starting CPG process for:")
