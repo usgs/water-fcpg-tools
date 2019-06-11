@@ -17,6 +17,7 @@ taufac = sys.argv[3] #Path to tauDEM flow accumulation grid
 workDir = sys.argv[4] #Path to working directory
 outDir = sys.argv[5] #Path to output directory for CPG files
 cores = int(sys.argv[6]) #Number of cores to use 
+accumThresh = int(sys.argv[7]) #Number of cells in flow accumulation grid below which CPG will be set to no data
 
 print(paramRast)
 print(taufdr)
@@ -24,12 +25,12 @@ print(taufac)
 print(workDir)
 print(outDir)
 print(cores)
+print(accumThresh)
 
 #Get name of input parameter without extention
 paramName = os.path.splitext(os.path.basename(paramRast))[0] 
 
 
-print()
 #Get HUC number from tau flow direction raster name
 try:
         HUC = os.path.splitext(os.path.basename(taufdr))[0].split("taufdr")[1]
@@ -50,6 +51,6 @@ accumulateParam(rprjFile, taufdr, accumFile, outNoDataRast=nodataFile, outNoData
 
 if os.path.isfile(nodataaccumFile):
         #If no data accumulation file was created, use it in call to create CPG
-        make_cpg(accumFile, taufac, CPGFile, noDataRast=nodataaccumFile, minAccum=100) #Create parameter CPG
+        make_cpg(accumFile, taufac, CPGFile, noDataRast=nodataaccumFile, minAccum=accumThresh) #Create parameter CPG
 else:
-        make_cpg(accumFile, taufac, CPGFile,  minAccum=1000) #Create parameter CPG
+        make_cpg(accumFile, taufac, CPGFile,  minAccum=accumThresh) #Create parameter CPG
