@@ -256,17 +256,14 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         Resampled, reprojected, and clipped parameter raster
     '''
 
-    fdrRaster = rs.open(fdr)# load flow direction raster in Rasterio
-  
-    fdrcrs = fdrRaster.crs #Get flow direction coordinate system
-    xsize, ysize = fdrRaster.res #Get flow direction cell size
-    fdrtransform = fdrRaster.transform #Get flow direction affine transform
-    fdrnodata = fdrRaster.nodata #Get flow direction no data value
+    with rs.open(fdr) as ds: # load flow direction raster in Rasterio
+        fddrcrs = ds.crs #Get flow direction coordinate system
+        xsize, ysize = ds.res #Get flow direction cell size
 
+    with rs.open(inParam) as ds: # load parameter raster in Rasterio
+        paramNoData = ds.nodata
+        paramType = ds.dtypes[0] #Get datatype of first band
 
-    paramRaster = rs.open(inParam)# load parameter raster in Rasterio
-    paramNoData = paramRaster.nodata
-    paramType = paramRaster.dtypes[0] #Get datatype of first band
 
     # Convert flow direction spatial reference from wkt to proj4 
     print("Flow Direction WKT: " + str(fdrcrs))
@@ -276,9 +273,9 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     fdrcrs = SR.ExportToProj4()
     """
     
-
+    #Over ride the output coordinate system to make it work with USGS Albers projection
     fdrcrs = "\"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs\""
-    print("Flow Direction proj4: " + str(fdrcrs))
+    #print("Flow Direction proj4: " + str(fdrcrs))
     
     # Choose an appropriate gdal data type for the parameter
     if paramType == 'int8' or paramType == 'int16':
