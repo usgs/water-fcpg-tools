@@ -1,7 +1,7 @@
 import os
 
-#inDir = "../CPGs/1003"
-inDir = "../data/cov/gridMET_PRmm" 
+inDir = "../CPGs/1003"
+#inDir = "../data/cov/gridMET_PRmm" 
 
 covList = [] # Initialize list
 
@@ -26,13 +26,13 @@ for cov in covList:
     #HUC = nameParts[5]
     #CPG = nameParts[6]
     
-    #newName = source + "_" + var + "_" + str(year) + "_" + str(month) + "_" + str(day) + "_" + HUC + "_" + CPG + ext
+    newName = source + "_" + var + "_" + str(year) + "_" + str(month) + "_" + str(day) + "_" + HUC + "_" + CPG + ext
     
-    newName = source + "_" + var + "_" + str(year) + "_" + str(month) + "_" + str(day) + ext
+    #newName = source + "_" + var + "_" + str(year) + "_" + str(month) + "_" + str(day) + ext
 
     newPath = os.path.join(inDir, newName)
 
     print(cov)
     print(newPath)
 
-    os.rename(cov, newPath)
+    #os.rename(cov, newPath)
