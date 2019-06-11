@@ -259,7 +259,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     '''
 
     with rs.open(fdr) as ds: # load flow direction raster in Rasterio
-        fddrcrs = ds.crs #Get flow direction coordinate system
+        fdrcrs = ds.crs #Get flow direction coordinate system
         xsize, ysize = ds.res #Get flow direction cell size
 
     with rs.open(inParam) as ds: # load parameter raster in Rasterio
