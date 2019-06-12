@@ -14,12 +14,12 @@ if len(sys.argv) > 1:
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/gridMET_PRmm" 
-    taufdr = "../data/tauDEM/taufdr1004.tif" 
-    taufac = "../data/tauDEM/taufac1004.tif" 
-    workDir = "../work/1004"
-    outDir = "../CPGs/1004"
-    logDir = "../logs/1004"
-    cores = 32
+    taufdr = "../data/tauDEM/taufdr1007.tif" 
+    taufac = "../data/tauDEM/taufac1007.tif" 
+    workDir = "../work/1007"
+    outDir = "../CPGs/1007"
+    logDir = "../logs/1007"
+    cores = 16
     accumThresh = 1000
 
 covList = [] #Initialize list of covariates
@@ -52,7 +52,7 @@ for cov in covList:
         f.writelines("#SBATCH -o {0}/slurm-%A.out\n".format(logDir)) # Set log file name 
         f.writelines("#SBATCH -p normal\n") # the partition you want to use, for this case prod is best
         f.writelines("#SBATCH --account=wymtwsc\n") # your account
-        f.writelines("#SBATCH --time=01:00:00\n") # Overestimated guess at time
+        f.writelines("#SBATCH --time=02:00:00\n") # Overestimated guess at time
         f.writelines("#SBATCH --mem=128000\n") #memory in MB
         f.writelines("#SBATCH --mail-type=ALL\n") # Send email only for all events
         f.writelines("#SBATCH --mail-user=ssiefken@usgs.gov\n")
