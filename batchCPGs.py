@@ -14,13 +14,14 @@ if len(sys.argv) > 1:
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/gridMET_PRmm" 
-    taufdr = "../data/tauDEM/taufdr1007.tif" 
-    taufac = "../data/tauDEM/taufac1007.tif" 
-    workDir = "../work/1007"
-    outDir = "../CPGs/1007"
-    logDir = "../logs/1007"
+    taufdr = "../data/tauDEM/taufdr1008.tif" 
+    taufac = "../data/tauDEM/taufac1008.tif" 
+    workDir = "../work/1008"
+    outDir = "../CPGs/1008"
+    logDir = "../logs/1008"
     cores = 20
     accumThresh = 1000
+    overwrite = True
 
 covList = [] #Initialize list of covariates
 
@@ -52,7 +53,7 @@ for cov in covList:
         f.writelines("#SBATCH -o {0}/slurm-%A.out\n".format(logDir)) # Set log file name 
         f.writelines("#SBATCH -p normal\n") # the partition you want to use, for this case prod is best
         f.writelines("#SBATCH --account=wymtwsc\n") # your account
-        f.writelines("#SBATCH --time=00:30:00\n") # Overestimated guess at time
+        f.writelines("#SBATCH --time=01:00:00\n") # Overestimated guess at time
         f.writelines("#SBATCH --mem=128000\n") #memory in MB
         f.writelines("#SBATCH --mail-type=ALL\n") # Send email only for all events
         f.writelines("#SBATCH --mail-user=ssiefken@usgs.gov\n")
@@ -64,7 +65,7 @@ for cov in covList:
         f.writelines("source activate py36\n")
 
         #Run the python script
-        f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5} {6}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh))
+        f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5} {6} {7}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh, overwrite))
         
     print("Launching batch job for: " + str(covname))
 
