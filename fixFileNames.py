@@ -35,4 +35,4 @@ for cov in covList:
     print(cov)
     print(newPath)
 
-    #os.rename(cov, newPath)
+    os.rename(cov, newPath)
