@@ -23,8 +23,8 @@ for cov in covList:
     day = nameParts[2]
     month = nameParts[3]
     year = nameParts[4]
-    #HUC = nameParts[5]
-    #CPG = nameParts[6]
+    HUC = nameParts[5]
+    CPG = nameParts[6]
     
     newName = source + "_" + var + "_" + str(year) + "_" + str(month) + "_" + str(day) + "_" + HUC + "_" + CPG + ext
     
