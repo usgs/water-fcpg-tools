@@ -1,6 +1,6 @@
 import os
 
-inDir = "../CPGs/1003"
+inDir = "../CPGs/1002"
 #inDir = "../data/cov/gridMET_PRmm" 
 
 covList = [] # Initialize list
@@ -35,4 +35,4 @@ for cov in covList:
     print(cov)
     print(newPath)
 
-    os.rename(cov, newPath)
+    #os.rename(cov, newPath)
