@@ -183,7 +183,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     '''
     outNoData = -9999
     
-
+    print("Reading accumulated parameter file {0}".format(datetime.datetime.now()))
     with rs.open(accumParam) as ds: # load accumulated data and no data rasters
         data = ds.read(1)
         profile = ds.profile
@@ -192,6 +192,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     data = data.astype(np.float32) #Convert to 32 bit float
     data[data == inNoData] = np.NaN # fill with no data values where appropriate
 
+    print("Reading basin flow accumulation file {0}".format(datetime.datetime.now()))
     with rs.open(fac) as ds: # flow accumulation raster
         accum = ds.read(1)
         facNoData = ds.nodata # pull the accumulated area no data value
@@ -222,7 +223,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
         print("Warning: Negative accumulation value")
         print("Minimum value:%s"%str(np.min(corrAccum)))
  
-
+    print("Computing CPG values {0}".format(datetime.datetime.now()))
     dataCPG = data / (corrAccum + 1) # make data CPG
     
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
@@ -241,6 +242,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
                 'nodata':outNoData,
                 'bigtiff':'IF_SAFER'})
 
+    print("Saving CPG raster {0}".format(datetime.datetime.now()))
     with rs.open(outRast, 'w', **profile) as dst:
         dst.write(dataCPG,1)
     
