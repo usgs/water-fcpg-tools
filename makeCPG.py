@@ -19,8 +19,8 @@ taufac = sys.argv[3] #Path to tauDEM flow accumulation grid
 workDir = sys.argv[4] #Path to working directory
 outDir = sys.argv[5] #Path to output directory for CPG files
 cores = int(sys.argv[6]) #Number of cores to use 
-print(cores)
 accumThresh = int(sys.argv[7]) #Number of cells in flow accumulation grid below which CPG will be set to no data
+overwrite = bool(sys.argv[8]) #Whether to overwrite CPGs or not 
 
 print("Starting CPG process for:")
 print("Parameter Raster: {0}".format(paramRast))
@@ -48,15 +48,18 @@ nodataFile = os.path.join(workDir, paramName + "_HUC" + HUC + "nodata.tif") #Cre
 nodataaccumFile = os.path.join(workDir, paramName + "_HUC" + HUC + "accumnodata.tif") #Create filepath for parameter accumulated no data file
 CPGFile = os.path.join(outDir, paramName + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
 
-#Run the CPG tools
-print("Calling resample function {0}".format(datetime.datetime.now()))
-resampleParam(paramRast, taufdr, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
-print("Calling flow accumulation function {0}".format(datetime.datetime.now()))
-accumulateParam(rprjFile, taufdr, accumFile, outNoDataRast=nodataFile, outNoDataAccum=nodataaccumFile, cores=cores) #Accumulate parameter
-print("Calling make_cpg function {0}".format(datetime.datetime.now()))
-if os.path.isfile(nodataaccumFile):
-        #If no data accumulation file was created, use it in call to create CPG
-        make_cpg(accumFile, taufac, CPGFile, noDataRast=nodataaccumFile, minAccum=accumThresh) #Create parameter CPG
+if os.path.isfile(CPGFile) & (overwrite == False):
+        print("Error: Specified CPG file exists and will not be overwritten")
 else:
-        make_cpg(accumFile, taufac, CPGFile,  minAccum=accumThresh) #Create parameter CPG
+        #Run the CPG tools
+        print("Calling resample function {0}".format(datetime.datetime.now()))
+        resampleParam(paramRast, taufdr, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
+        print("Calling flow accumulation function {0}".format(datetime.datetime.now()))
+        accumulateParam(rprjFile, taufdr, accumFile, outNoDataRast=nodataFile, outNoDataAccum=nodataaccumFile, cores=cores) #Accumulate parameter
+        print("Calling make_cpg function {0}".format(datetime.datetime.now()))
+        if os.path.isfile(nodataaccumFile):
+                #If no data accumulation file was created, use it in call to create CPG
+                make_cpg(accumFile, taufac, CPGFile, noDataRast=nodataaccumFile, minAccum=accumThresh) #Create parameter CPG
+        else:
+                make_cpg(accumFile, taufac, CPGFile,  minAccum=accumThresh) #Create parameter CPG
 print("Finished {0}".format(datetime.datetime.now()))
