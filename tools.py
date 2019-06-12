@@ -225,11 +225,13 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
  
     print("Computing CPG values {0}".format(datetime.datetime.now()))
     dataCPG = data / (corrAccum + 1) # make data CPG
-    
+
+    print("Replacing numpy nan values {0}".format(datetime.datetime.now()))
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
 
     # Replace values in cells with small flow accumulation with no data
     if minAccum != None:
+        print("Replacing small flow accumulations {0}".format(datetime.datetime.now()))
         dataCPG[corrAccum < minAccum] = outNoData #Set values smaller than threshold to no data
 
     # Update raster profile
