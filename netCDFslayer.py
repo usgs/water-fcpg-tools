@@ -6,6 +6,7 @@ import subprocess
 import traceback
 
 # Script to destroy the netCDF file Roy got from gridMET
+# Must have gdal and nco tools (module load tools/nco-4.7.8-gnu) modules loaded 
 
 inCDF = "../data/cov/soil_gridMET.nc" #Original netCDF from gridMET
 reorderCDF = "../data/cov/soil_gridMETfix.nc" #NetCDF file with reordered dimensions
@@ -18,7 +19,7 @@ outDir = "../data/cov/gridMET_SOILMOISTmm"
 #Step 1: Put the file dimensions in the correct order
 
 try:
-        cmd = "ncpdq -a time,lat,lon {0} {0}".format(inCDF, reorderCDF)
+        cmd = "ncpdq -a time,lat,lon {0} {1}".format(inCDF, reorderCDF)
         result = subprocess.run(cmd, shell = True)
         result.stdout
         
