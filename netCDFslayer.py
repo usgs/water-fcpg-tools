@@ -5,11 +5,47 @@ import os
 
 # Script to destroy the netCDF file Roy got from gridMET
 
-netCDFpath = "../data/cov/gridMET_PRmm.tif"
+inCDF = "../data/cov/soil_gridMET.nc"
+reorderCDF = "../data/cov/soil_gridMET_fix.nc"
+multiTIFF = "../data/cov/gridMET_SOILDEPTHmm"
 
 baseName = "gridMET_PRmm"
 
 outDir = "../data/cov/gridMET_PRmm"
+
+#Step 1: Put the file dimensions in the correct order
+
+try:
+        cmd = "ncpdq -a time,lat,lon {0} {0}".format(inCDF, reorderCDF)
+        result = subprocess.run(cmd, shell = True)
+        result.stdout
+        
+except:
+        print('Error reordering NetCDF dimensions')
+        traceback.print_exc()
+
+
+#Step 2: Convert the netCDF to a multiband GeoTIFF
+
+
+try:
+        cmd = "gdal_translate -of GTiff {0} {1}".format(reorderCDF, multiTIFF)
+        result = subprocess.run(cmd, shell = True)
+        result.stdout
+        
+except:
+        print('Error converting netCDF to geoTIFF')
+        traceback.print_exc()
+
+#Step 3: Convert each band of the GeoTIFF to its own raster
+
+
+netCDFpath = "../data/cov/gridMET_PRmm.tif"
+
+
+
+
+
 
 with rs.open(netCDFpath) as ds: # load parameter raster
         numBands = ds.count
