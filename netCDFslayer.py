@@ -73,7 +73,7 @@ for band in data:
         
         date = day0 + datetime.timedelta(days=day) #Compute the date associated with the band
 
-        fileName = os.path.join(outDir, baseName + "_" + date.strftime('%d_%m_%Y') + ".tif") #Create the name for the output file
+        fileName = os.path.join(outDir, baseName + "_" + date.strftime('%Y_%m_%d') + ".tif") #Create the name for the output file
 
         #Update raster profile
         profile.update({
