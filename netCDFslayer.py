@@ -2,6 +2,8 @@ import rasterio as rs
 import numpy as np
 import datetime
 import os
+import subprocess
+import traceback
 
 # Script to destroy the netCDF file Roy got from gridMET
 
