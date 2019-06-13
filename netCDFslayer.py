@@ -32,7 +32,7 @@ except:
 
 
 try:
-        cmd = "gdal_translate -of GTiff {0} {1}".format(reorderCDF, multiTIFF)
+        cmd = "gdal_translate -of GTiff -a_srs EPSG:4326 {0} {1}".format(reorderCDF, multiTIFF)
         result = subprocess.run(cmd, shell = True)
         result.stdout
         
