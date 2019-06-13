@@ -5,13 +5,13 @@ import os
 
 # Script to destroy the netCDF file Roy got from gridMET
 
-inCDF = "../data/cov/soil_gridMET.nc"
-reorderCDF = "../data/cov/soil_gridMET_fix.nc"
-multiTIFF = "../data/cov/gridMET_SOILDEPTHmm"
+inCDF = "../data/cov/soil_gridMET.nc" #Original netCDF from gridMET
+reorderCDF = "../data/cov/soil_gridMETfix.nc" #NetCDF file with reordered dimensions
+multiTIFF = "../data/cov/gridMET_SOILMOISTmm.tif" #Multiband .tif created from netCDF
 
-baseName = "gridMET_PRmm"
+baseName = "gridMET_SOILMOISTmm"
 
-outDir = "../data/cov/gridMET_PRmm"
+outDir = "../data/cov/gridMET_SOILMOISTmm"
 
 #Step 1: Put the file dimensions in the correct order
 
@@ -40,14 +40,11 @@ except:
 #Step 3: Convert each band of the GeoTIFF to its own raster
 
 
-netCDFpath = "../data/cov/gridMET_PRmm.tif"
+#netCDFpath = "../data/cov/gridMET_PRmm.tif"
 
 
 
-
-
-
-with rs.open(netCDFpath) as ds: # load parameter raster
+with rs.open(multiTIFF) as ds: # load parameter raster
         numBands = ds.count
         data = ds.read()
         profile = ds.profile
