@@ -26,7 +26,7 @@ for paramtable in paramtables:
 
     df = pd.read_csv(csvName)
 
-    print(df)
+    #print(df)
 
     with rs.open(MUCraster) as ds: # load map unit code raster
         MUC = ds.read(1)
