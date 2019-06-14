@@ -23,7 +23,6 @@ def tauDrainDir(inRast, outRast):
     """
 
     print('Reclassifying Flow Directions...')
-    import time
 
     # load input data
     with rs.open(inRast) as ds:
