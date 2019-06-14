@@ -31,7 +31,10 @@ for paramtable in paramtables:
     with rs.open(MUCraster) as ds: # load map unit code raster
         MUC = ds.read(1)
         MUCNoData = ds.nodata # pull the no data value
+        profile = ds.profile
 
+
+        print(ds.profile)
         print(len(np.unique(MUC)))
 
 
