@@ -38,7 +38,10 @@ for paramtable in paramtables:
 
 
         print(ds.profile)
-        #print(len(np.unique(MUC)))
 
+        paramArray = copy(df)
+        for k, v in d.iteritems(): paramArray[df==k] = v
+
+        print(paramArray)
 
 
