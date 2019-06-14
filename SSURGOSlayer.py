@@ -12,9 +12,10 @@ for paramtable in paramtables:
 
 
     paramName = os.path.splitext(os.path.basename(paramtable))[0]
-    print(paramName)
+    
 
     csvName = os.path.join(outDir, paramName + ".csv") #Create csv file
+    print(csvName)
 
     db = dbf.Table(paramtable)
     db.open()
