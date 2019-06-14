@@ -272,12 +272,12 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         
         inParam - input parameter data raster
         fdr - flow direction raster
-        
         outParam - output file for resampled parameter raster
         resampleMethod (str)- resampling method, either bilinear or nearest neighbor
+        cores - number of cores to use
 
     Outputs:
-        Resampled, reprojected, and clipped parameter raster
+        outParam - resampled, reprojected, and clipped parameter raster
     '''
 
     with rs.open(fdr) as ds: # load flow direction raster in Rasterio
@@ -312,11 +312,10 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     elif paramType == 'float32':
         outType = 'Float32'
     else:
-        print("Warning: Unsupported data type %s"%paramType)
+        print("Warning: Unsupported data type {0}".format(paramType))
         print("Defaulting to Float64")
         outType = 'Float64' # Try a 64 bit complex floating point if all else fails
 
-    
     
 
     # Resample, reproject, and clip the parameter raster with GDAL
