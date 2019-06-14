@@ -5,7 +5,7 @@ import numpy as np
 import rasterio as rs
 
 paramtables = ["../data/cov/static/Soils/DrainageClass.dbf"]
-MUCraster = "../data/cov/static/MapunitRaster_CONUS_90ml.tif"
+MUCraster = "../data/cov/static/MapunitRaster_CONUS_90m1.tif"
 
 outDir = "../data/cov/static/Soils/work"
 
@@ -31,5 +31,7 @@ for paramtable in paramtables:
     with rs.open(MUCraster) as ds: # load map unit code raster
         MUC = ds.read(1)
         MUCNoData = ds.nodata # pull the no data value
+
+        print(len(np.unique(MUC)))
 
 
