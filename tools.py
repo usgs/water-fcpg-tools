@@ -36,9 +36,9 @@ def tauDrainDir(inRast, outRast):
     # remap NHDplus flow direction to TauDEM flow Direction
     # east is ok
     
-    tauDir[dat == 2] = 8 # stauDirheast
-    tauDir[dat == 4] =  7 # stauDirh
-    tauDir[dat == 8] = 6 # stauDirhwest
+    tauDir[dat == 2] = 8 # southeast
+    tauDir[dat == 4] =  7 # south
+    tauDir[dat == 8] = 6 # southwest
     tauDir[dat == 16] = 5 # west
     tauDir[dat == 32] = 4 # northwest
     tauDir[dat == 64] = 3 # north
