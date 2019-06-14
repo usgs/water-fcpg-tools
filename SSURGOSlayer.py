@@ -22,6 +22,9 @@ for paramtable in paramtables:
 
     dbf.export(db, csvName, header = True)
 
-    #df = pd.read_csv()
+    df = pd.read_csv(csvName)
 
+    print(df)
+
+    
 
