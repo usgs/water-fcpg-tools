@@ -39,7 +39,7 @@ for paramtable in paramtables:
 
         print(ds.profile)
 
-        paramArray = copy(df)
+        paramArray = np.copy(df)
         for k, v in d.iteritems(): paramArray[df==k] = v
 
         print(paramArray)
