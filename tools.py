@@ -59,7 +59,7 @@ def tauDrainDir(inRast, outRast):
 
     with rs.open(outRast,'w',**profile) as dst:
         dst.write(tauDir,1)
-        print('TauDEM drainage direction written to: %s'%outRast)
+        print("TauDEM drainage direction written to: {0}".format(outRast)
 
     
 
@@ -128,7 +128,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             # Save no data raster
             with rs.open(outNoDataRast, 'w', **profile) as dst:
                 dst.write(noDataArray,1)
-                print('Parameter No Data raster written to: %s'%outNoDataRast)
+                print("Parameter No Data raster written to: {0}".format(outNoDataRast))
             
             # Use tauDEM to accumulate no data values
             try:
@@ -236,7 +236,7 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     # Throw warning if there is a negative accumulation
     if np.nanmin(corrAccum) < 0:
         print("Warning: Negative accumulation value")
-        print("Minimum value:%s"%str(np.min(corrAccum)))
+        print("Minimum value:{0}".format(np.nanmin(corrAccum)))
  
     print("Computing CPG values {0}".format(datetime.datetime.now()))
     dataCPG = data / (corrAccum + 1) # make data CPG
