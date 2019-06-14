@@ -26,15 +26,18 @@ for paramtable in paramtables:
 
     df = pd.read_csv(csvName)
 
-    #print(df)
+
+    d = pd.concat(df['mukey'], df['drnclass_1'])
+    print(d)
 
     with rs.open(MUCraster) as ds: # load map unit code raster
-        MUC = ds.read(1)
+        #MUC = ds.read(1)
         MUCNoData = ds.nodata # pull the no data value
         profile = ds.profile
 
 
         print(ds.profile)
-        print(len(np.unique(MUC)))
+        #print(len(np.unique(MUC)))
+
 
 
