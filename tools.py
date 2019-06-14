@@ -71,13 +71,23 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
     Inputs:
         paramRast - Raster of parameter values to acumulate, this file is modified by the function
         fdr - flow direction raster in tauDEM format
-        outNoDataRast - raster of accumulated no data values
+        accumRast - file location to store accumulated parameter values
+        outNoDataRast - file location to store parameter no data raster
+        outNoDataAccum - file location to store accumulated no data raster
         cores - number of cores to use parameter accumulation
 
     Outputs:
-        mskRast - parameter raster masked to flow direction raster
         accumRast - raster of accumulated parameter values
+        outNoDataRast - raster of no data values
+        outNoDataRast - raster of accumulated no data values
     """
+
+    if not os.path.isfile(paramRast):
+        print("Error - Parameter raster file is missing!")
+        return #Function will fail, so end it now
+    if not os.path.isfile(fdr):
+        print("Error - Flow direction file is missing!")
+        return #Function will fail, so end it now
 
     with rs.open(paramRast) as ds: # load parameter raster
         data = ds.read(1)
@@ -88,10 +98,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         direction = ds.read(1)
         directionNoData = ds.nodata # pull the accumulated area no data value
 
-    if not os.path.isfile(paramRast):
-        print("Error - Parameter raster file is missing!")
-    if not os.path.isfile(fdr):
-        print("Error - Flow direction file is missing!")
+
 
     #Deal with no data values
     basinNoDataCount = len(data[(data == paramNoData) & (direction != directionNoData)]) # Count number of cells with flow direction but no parameter value
@@ -137,7 +144,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
                 print(cmd)
                 result = subprocess.run(cmd, shell = True) # Run shell command
                 result.stdout
-                print('Parameter no data accumulation written to: %s'%outNoDataRast)
+                print("Parameter no data accumulation written to: {0}".format(outNoDataRast))
                 
             except:
                 print('Error Accumulating Data')
@@ -171,9 +178,9 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     Inputs:
         
         accumParam - path to the accumulated parameter data raster
-        
         fac - flow accumulation grid path
-        outRast - output file
+        outRast - output CPG file location
+        noDataRast - raster of accumulated parameter no data values
         minAccum - Value of flow accumulation below which the CPG values will be set to no data
         
 
@@ -182,6 +189,15 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     '''
     outNoData = -9999
     
+
+    if not os.path.isfile(accumParam):
+        print("Error - Accumulated parameter raster file is missing!")
+        return #Function will fail, so end it now
+    if not os.path.isfile(fac):
+        print("Error - Flow accumulation file is missing!")
+        return #Function will fail, so end it now
+
+
     print("Reading accumulated parameter file {0}".format(datetime.datetime.now()))
     with rs.open(accumParam) as ds: # load accumulated data and no data rasters
         data = ds.read(1)
@@ -246,8 +262,9 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     print("Saving CPG raster {0}".format(datetime.datetime.now()))
     with rs.open(outRast, 'w', **profile) as dst:
         dst.write(dataCPG,1)
+        print("CPG file written to: {0}".format(outRast))
     
-    print("CPG file written to: {0}".format(outRast))
+    
 
 def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     '''
