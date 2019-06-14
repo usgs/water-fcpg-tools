@@ -26,8 +26,9 @@ for paramtable in paramtables:
 
     df = pd.read_csv(csvName)
 
-
+    print(list(df))
     d = pd.concat(df['mukey'], df['drnclass_1'])
+
     print(d)
 
     with rs.open(MUCraster) as ds: # load map unit code raster
