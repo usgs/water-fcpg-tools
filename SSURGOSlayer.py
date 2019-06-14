@@ -27,7 +27,7 @@ for paramtable in paramtables:
     df = pd.read_csv(csvName)
 
     print(list(df))
-    d = pd.concat(df['mukey'], df['drnclass_1'])
+    d = pd.concat(df["(b'mukey', 5)"], df["(b'drnclass_1', 10)"])
 
     print(d)
 
