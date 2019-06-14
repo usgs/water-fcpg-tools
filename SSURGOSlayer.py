@@ -1,6 +1,6 @@
 import dbf
 import os
-import pandas as pandas
+import pandas as pd
 import numpy as np
 
 paramtables = ["../data/cov/static/Soils/DrainageClass.dbf"]
