@@ -30,8 +30,8 @@ for paramtable in paramtables:
     #print(list(df))
     d = pd.concat([df["(b'mukey', 5)"], df["(b'drnclass_1', 10)"]], axis=1).to_dict()
 
-    #print(d)
-
+    print(type(d)
+"""
     with rs.open(MUCraster) as ds: # load map unit code raster
         MUC = ds.read(1)
         MUCNoData = ds.nodata # pull the no data value
@@ -69,7 +69,7 @@ for paramtable in paramtables:
 
         #newName = os.path.join(outDir, "")
 
-
+"""
 
 
 
