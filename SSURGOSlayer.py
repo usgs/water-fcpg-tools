@@ -29,7 +29,7 @@ for paramtable in paramtables:
     #print(list(df))
     d = pd.concat([df["(b'mukey', 5)"], df["(b'drnclass_1', 10)"]], axis=1).to_dict()
 
-    print(d)
+    #print(d)
 
     with rs.open(MUCraster) as ds: # load map unit code raster
         MUC = ds.read(1)
@@ -39,9 +39,12 @@ for paramtable in paramtables:
 
         print(ds.profile)
 
-        paramArray = np.copy(df)
+        paramArray = np.copy(MUC)
         for k, v in d.items(): paramArray[MUC==k] = v
 
         print(paramArray)
+
+
+
 
 
