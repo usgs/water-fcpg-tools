@@ -34,8 +34,8 @@ for paramtable in paramtables:
     combdf = combdf.set_index("(b'mukey', 5)")
 
     d = combdf.to_dict()
-
-    print(d[paramColName][1949705])
+    
+    print(d[paramColName])
 
 
     with rs.open(MUCraster) as ds: # load map unit code raster
