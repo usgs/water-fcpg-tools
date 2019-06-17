@@ -54,9 +54,14 @@ for paramtable in paramtables:
         paramArray = vsorted[np.searchsorted(ksorted,MUC)]
         """
         #print(len(np.unique(MUC)))
+        """
         for code in np.unique(MUC):
                 print(code)
                 MUC[MUC == code] = d.get(code, MUCNoData) #Default to no data if key doesn't exist
+        """
+
+        MUC = np.vectorize(d.get)(MUC)
+        print(MUC)
         #print(paramArray)
 
         #newName = os.path.join(outDir, "")
