@@ -1,7 +1,7 @@
 import gdown
 import os
 
-urls = {1985:"https://drive.google.com/open?id=1bIwlx3ufdjWdSNIP7Aqsh7WXoKLBcqBw", 
+urls = {1985:"https://drive.google.com/open?id=1bIwlx3ufdjWdSNIP7Aqsh7WXoKLBcqBw",
 1986:"https://drive.google.com/open?id=102zi-1it1yhMPUBmdzpjhlElV8mA4NLZ",
 1987:"https://drive.google.com/open?id=1QMq1K6XUXKWIiNC74xjtsSt4ktX2iVWi",
 1988:"https://drive.google.com/open?id=1M3D4a5eFo66yFHuR7_mDtuC5RJAiCGm7",
