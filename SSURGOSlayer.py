@@ -33,6 +33,7 @@ for paramtable in paramtables:
 
     combdf = combdf.set_index("(b'mukey', 5)")
     #print(combdf["(b'mukey', 5)"].dtype)
+    combdf = combdf.astype('int32')
     print(combdf[paramColName].dtype)
     d = combdf.to_dict()
     
