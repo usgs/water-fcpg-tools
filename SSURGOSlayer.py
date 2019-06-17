@@ -53,8 +53,9 @@ for paramtable in paramtables:
 
         #paramArray = vsorted[np.searchsorted(ksorted,MUC)]
         #print(len(np.unique(MUC)))
-        for x in np.unique(MUC):
-                print(x)
+        for code in np.unique(MUC):
+                print(code)
+                MUC[MUC == code] = d[code]
         #print(paramArray)
 
         #newName = os.path.join(outDir, "")
