@@ -53,9 +53,8 @@ for paramtable in paramtables:
 
         paramArray = np.vectorize(d[paramColName].get)(MUC)
         paramArray[MUC == None] = MUCNoData
-        paramArray[MUC == np.nan] = MUCNoData
+        print(np.unique(paramArray))
         paramArray = paramArray.astype('uint32')
-        print(MUC)
 
 
         outRast = os.path.join(outDir, "SSURGO_drnclass_1.tif")
