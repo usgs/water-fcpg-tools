@@ -40,19 +40,19 @@ for paramtable in paramtables:
 
         print(ds.profile)
 
-        paramArray = np.copy(MUC)
+        #paramArray = np.copy(MUC)
         #for k, v in d.items(): paramArray[MUC==k] = v
 
-        k = np.array(list(d.keys()))
-        v = np.array(list(d.values()))
+        #k = np.array(list(d.keys()))
+        #v = np.array(list(d.values()))
 
-        sortedKeys = k.argsort()
+        #sortedKeys = k.argsort()
 
-        ksorted = k[sortedKeys]
-        vsorted = v[sortedKeys]
+        #ksorted = k[sortedKeys]
+        #vsorted = v[sortedKeys]
 
         #paramArray = vsorted[np.searchsorted(ksorted,MUC)]
-        print(len(np.unique(MUC)))
+        #print(len(np.unique(MUC)))
         for x in np.unique(MUC):
                 print(x)
         #print(paramArray)
