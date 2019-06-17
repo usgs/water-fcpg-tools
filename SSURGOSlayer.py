@@ -53,6 +53,8 @@ for paramtable in paramtables:
 
         #paramArray = vsorted[np.searchsorted(ksorted,MUC)]
         print(len(np.unique(MUC)))
+        for x in np.unique(MUC):
+                print(x)
         #print(paramArray)
 
         #newName = os.path.join(outDir, "")
