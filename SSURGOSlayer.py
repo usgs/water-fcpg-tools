@@ -31,6 +31,7 @@ for paramtable in paramtables:
     d = pd.concat([df["(b'mukey', 5)"], df["(b'drnclass_1', 10)"]], axis=1).to_dict()
 
     print(type(d))
+    print(d["296575"])
 
 """
     with rs.open(MUCraster) as ds: # load map unit code raster
