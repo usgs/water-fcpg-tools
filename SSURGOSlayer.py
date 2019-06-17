@@ -32,8 +32,8 @@ for paramtable in paramtables:
     combdf = combdf.set_index("(b'mukey', 5)")
     print(combdf)
     d = combdf.to_dict()
-    print(type(d))
-    print(d.viewkeys())
+
+    print(d)
     print(d["296575"])
 
 """
