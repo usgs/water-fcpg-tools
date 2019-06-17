@@ -48,7 +48,10 @@ for paramtable in paramtables:
 
         sortedKeys = k.argsort()
 
-        paramArray = v[sortedKeys[np.searchsorted(k,MUC,sorter=sortedKeys)]]
+        ksorted = k[sortedKeys]
+        vsorted = v[sortedKeys]
+
+        paramArray = vsorted[np.searchsorted(ksorted,MUC)]
 
         print(paramArray)
 
