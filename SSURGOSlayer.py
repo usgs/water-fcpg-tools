@@ -42,7 +42,7 @@ for paramtable in paramtables:
 
         #paramArray = np.copy(MUC)
         #for k, v in d.items(): paramArray[MUC==k] = v
-
+        """
         k = np.array(list(d.keys()))
         v = np.array(list(d.values()))
 
@@ -51,11 +51,12 @@ for paramtable in paramtables:
         ksorted = k[sortedKeys]
         vsorted = v[sortedKeys]
 
-        #paramArray = vsorted[np.searchsorted(ksorted,MUC)]
+        paramArray = vsorted[np.searchsorted(ksorted,MUC)]
+        """
         #print(len(np.unique(MUC)))
         for code in np.unique(MUC):
                 print(code)
-                MUC[MUC == code] = d.get(code, np.nan) #Default to NaN if key doesn't exist
+                MUC[MUC == code] = d.get(code, MUCNoData) #Default to no data if key doesn't exist
         #print(paramArray)
 
         #newName = os.path.join(outDir, "")
