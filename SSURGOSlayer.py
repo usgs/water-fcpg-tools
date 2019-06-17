@@ -27,8 +27,11 @@ for paramtable in paramtables:
 
     df = pd.read_csv(csvName)
 
-    print(pd.concat([df["(b'mukey', 5)"], df["(b'drnclass_1', 10)"]], axis=1))
-    d = pd.concat([df["(b'mukey', 5)"], df["(b'drnclass_1', 10)"]], axis=1).to_dict()
+    combdf = pd.concat([df["(b'mukey', 5)"], df["(b'drnclass_1', 10)"]], axis=1)
+
+    combdf.set_index("(b'mukey', 5)")
+
+    d = combdf.to_dict()
 
     print(d.viewkeys())
     print(d["296575"])
