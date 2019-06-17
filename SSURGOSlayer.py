@@ -33,7 +33,7 @@ for paramtable in paramtables:
 
     combdf = combdf.set_index("(b'mukey', 5)")
     #print(combdf["(b'mukey', 5)"].dtype)
-    combdf = combdf.astype('int32')
+    combdf = combdf.astype('uint32')
     print(combdf[paramColName].dtype)
     d = combdf.to_dict()
     
@@ -53,7 +53,7 @@ for paramtable in paramtables:
         #print(len(np.unique(MUC)))
         #print(d[paramColName])
 
-        paramArray = np.vectorize(d[paramColName].get, , otypes='int32')(MUC)
+        paramArray = np.vectorize(d[paramColName].get, , otypes='uint32')(MUC)
 
         paramArray[MUC == None] = MUCNoData
 
