@@ -38,7 +38,7 @@ urls = {1985:"1bIwlx3ufdjWdSNIP7Aqsh7WXoKLBcqBw",
 
 outDir = "../data/cov/NDVI"
 
-HUC = 1002
+HUC = 1003
 
 
 for year, fileID in urls.items():
