@@ -26,13 +26,13 @@ for paramtable in paramtables:
 
     df = pd.read_csv(csvName)
 
-    print(list(df))
+    #print(list(df))
     d = pd.concat([df["(b'mukey', 5)"], df["(b'drnclass_1', 10)"]], axis=1).to_dict()
 
     print(d)
 
     with rs.open(MUCraster) as ds: # load map unit code raster
-        #MUC = ds.read(1)
+        MUC = ds.read(1)
         MUCNoData = ds.nodata # pull the no data value
         profile = ds.profile
 
@@ -40,7 +40,7 @@ for paramtable in paramtables:
         print(ds.profile)
 
         paramArray = np.copy(df)
-        for k, v in d.items(): paramArray[df==k] = v
+        for k, v in d.items(): paramArray[MUC==k] = v
 
         print(paramArray)
 
