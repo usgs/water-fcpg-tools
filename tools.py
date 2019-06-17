@@ -59,7 +59,7 @@ def tauDrainDir(inRast, outRast):
 
     with rs.open(outRast,'w',**profile) as dst:
         dst.write(tauDir,1)
-        print("TauDEM drainage direction written to: {0}".format(outRast)
+        print("TauDEM drainage direction written to: {0}".format(outRast))
 
     
 
