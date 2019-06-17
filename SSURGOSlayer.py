@@ -30,7 +30,7 @@ for paramtable in paramtables:
     #print(list(df))
     d = pd.concat([df["(b'mukey', 5)"], df["(b'drnclass_1', 10)"]], axis=1).to_dict()
 
-    print(type(d))
+    print(d.viewkeys())
     print(d["296575"])
 
 """
