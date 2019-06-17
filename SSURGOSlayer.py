@@ -52,9 +52,9 @@ for paramtable in paramtables:
         #print(len(np.unique(MUC)))
 
         MUC = np.vectorize(d[paramColName].get)(MUC)
-        MUC[MUC == None] = MUCNoData
+        #MUC[MUC == None] = MUCNoData
         print(MUC)
-        print(len(np.unique(MUC)))
+        #print(len(np.unique(MUC)))
         #print(paramArray)
 
         #newName = os.path.join(outDir, "")
