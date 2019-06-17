@@ -59,9 +59,10 @@ for paramtable in paramtables:
                 print(code)
                 MUC[MUC == code] = d.get(code, MUCNoData) #Default to no data if key doesn't exist
         """
-
+        print(d)
         MUC = np.vectorize(d.get)(MUC)
         print(MUC)
+        print(len(np.unique(MUC)))
         #print(paramArray)
 
         #newName = os.path.join(outDir, "")
