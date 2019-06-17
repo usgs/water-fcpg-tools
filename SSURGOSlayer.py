@@ -43,13 +43,16 @@ for paramtable in paramtables:
         paramArray = np.copy(MUC)
         #for k, v in d.items(): paramArray[MUC==k] = v
 
-        for k, v in d.items():
-                print(k)
-                print(v)
+        k = np.array(list(d.keys()))
+        v = np.array(list(d.values()))
 
-        #print(paramArray)
+        sortedKeys = k.argsort()
 
-        newName = os.path.join(outDir, "")
+        paramArray = v[sidx[np.searchsorted(k,MUC,sorter=sidx)]]
+
+        print(paramArray)
+
+        #newName = os.path.join(outDir, "")
 
 
 
