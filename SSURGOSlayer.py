@@ -53,7 +53,7 @@ for paramtable in paramtables:
         #print(len(np.unique(MUC)))
         #print(d[paramColName])
 
-        paramArray = np.vectorize(d[paramColName].get, excluded=MUCNoData)(MUC)
+        paramArray = np.vectorize(d[paramColName].get, excluded=[MUCNoData])(MUC)
 
         #paramArray[MUC == None] = MUCNoData
         print(paramArray)
