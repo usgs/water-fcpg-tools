@@ -60,6 +60,7 @@ for paramtable in paramtables:
                 MUC[MUC == code] = d.get(code, MUCNoData) #Default to no data if key doesn't exist
         """
         print(d)
+        print(d[296575])
         MUC = np.vectorize(d.get)(MUC)
         print(MUC)
         print(len(np.unique(MUC)))
