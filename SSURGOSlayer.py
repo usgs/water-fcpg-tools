@@ -35,7 +35,6 @@ for paramtable in paramtables:
 
     d = combdf.to_dict()
     
-    print(d[paramColName])
 
 
     with rs.open(MUCraster) as ds: # load map unit code raster
@@ -50,8 +49,9 @@ for paramtable in paramtables:
         #for k, v in d.items(): paramArray[MUC==k] = v
 
         #print(len(np.unique(MUC)))
+        print(d[paramColName])
 
-        MUC = np.vectorize(d[paramColName].get)(MUC)
+        #MUC = np.vectorize(d[paramColName].get)(MUC)
         #MUC[MUC == None] = MUCNoData
         print(MUC)
         #print(len(np.unique(MUC)))
