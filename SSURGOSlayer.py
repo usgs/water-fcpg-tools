@@ -49,20 +49,21 @@ for paramtable in paramtables:
         #for k, v in d.items(): paramArray[MUC==k] = v
 
         #print(len(np.unique(MUC)))
-        print(d[paramColName])
+        #print(d[paramColName])
 
-        paramArray = np.vectorize(d[paramColName].get)(MUC)
+        #paramArray = np.vectorize(d[paramColName].get)(MUC)
+
         paramArray[MUC == None] = MUCNoData
         print(np.unique(paramArray))
         paramArray = paramArray.astype('uint32')
 
 
         outRast = os.path.join(outDir, "SSURGO_drnclass_1.tif")
-
+"""
 with rs.open(outRast, 'w', **profile) as dst:
         dst.write(paramArray,1)
 
-
+"""
 
 
 
