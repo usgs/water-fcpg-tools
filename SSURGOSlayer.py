@@ -55,7 +55,7 @@ for paramtable in paramtables:
         #print(len(np.unique(MUC)))
         for code in np.unique(MUC):
                 print(code)
-                MUC[MUC == code] = d[code]
+                MUC[MUC == code] = d.get(code, np.nan) #Default to NaN if key doesn't exist
         #print(paramArray)
 
         #newName = os.path.join(outDir, "")
