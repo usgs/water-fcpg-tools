@@ -51,9 +51,9 @@ for paramtable in paramtables:
         ksorted = k[sortedKeys]
         vsorted = v[sortedKeys]
 
-        paramArray = vsorted[np.searchsorted(ksorted,MUC)]
-
-        print(paramArray)
+        #paramArray = vsorted[np.searchsorted(ksorted,MUC)]
+        print(len(np.unique(MUC)))
+        #print(paramArray)
 
         #newName = os.path.join(outDir, "")
 
