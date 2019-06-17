@@ -33,6 +33,9 @@ for paramtable in paramtables:
     print(combdf)
     d = combdf.to_dict()
 
+
+
+    print(d.viewkeys())
     print(d)
     print(d[1949705])
 
