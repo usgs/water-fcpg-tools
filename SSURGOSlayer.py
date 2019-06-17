@@ -53,6 +53,7 @@ for paramtable in paramtables:
 
         paramArray = np.vectorize(d[paramColName].get)(MUC)
         paramArray[MUC == None] = MUCNoData
+        paramArray[MUC == np.nan] = MUCNoData
         paramArray = paramArray.astype('uint32')
         print(MUC)
 
