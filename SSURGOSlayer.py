@@ -30,9 +30,9 @@ for paramtable in paramtables:
     combdf = pd.concat([df["(b'mukey', 5)"], df["(b'drnclass_1', 10)"]], axis=1)
 
     combdf.set_index("(b'mukey', 5)")
-
+    print(combdf)
     d = combdf.to_dict()
-
+    print(type(d))
     print(d.viewkeys())
     print(d["296575"])
 
