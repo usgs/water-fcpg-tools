@@ -51,13 +51,16 @@ for paramtable in paramtables:
         #print(len(np.unique(MUC)))
         print(d[paramColName])
 
-        #MUC = np.vectorize(d[paramColName].get)(MUC)
-        #MUC[MUC == None] = MUCNoData
+        paramArray = np.vectorize(d[paramColName].get)(MUC)
+        paramArray[MUC == None] = MUCNoData
         print(MUC)
-        #print(len(np.unique(MUC)))
-        #print(paramArray)
 
-        #newName = os.path.join(outDir, "")
+
+        outRast = os.path.join(outDir, "SSURGO_drnclass_1.tif")
+
+with rs.open(outRast, 'w', **profile) as dst:
+        dst.write(paramArray,1)
+
 
 
 
