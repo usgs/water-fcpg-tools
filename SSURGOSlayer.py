@@ -27,16 +27,17 @@ for paramtable in paramtables:
 
     df = pd.read_csv(csvName)
 
-    combdf = pd.concat([df["(b'mukey', 5)"], df["(b'drnclass_1', 10)"]], axis=1)
+    paramColName = "(b'drnclass_1', 10)" #Name of the column containing the parameter of interest
+
+    combdf = pd.concat([df["(b'mukey', 5)"], df[paramColName]], axis=1)
 
     combdf = combdf.set_index("(b'mukey', 5)")
-    print(combdf)
+
     d = combdf.to_dict()
 
-    print(d)
-    print(d["(b'drnclass_1', 10)"][1949705])
+    print(d[paramColName][1949705])
 
-"""
+
     with rs.open(MUCraster) as ds: # load map unit code raster
         MUC = ds.read(1)
         MUCNoData = ds.nodata # pull the no data value
@@ -50,8 +51,7 @@ for paramtable in paramtables:
 
         #print(len(np.unique(MUC)))
 
-        print(d[296575])
-        MUC = np.vectorize(d.get)(MUC)
+        MUC = np.vectorize(d[paramColName].get)(MUC)
         MUC[MUC == None] = MUCNoData
         print(MUC)
         print(len(np.unique(MUC)))
@@ -59,7 +59,7 @@ for paramtable in paramtables:
 
         #newName = os.path.join(outDir, "")
 
-"""
+
 
 
 
