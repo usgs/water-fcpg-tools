@@ -41,7 +41,7 @@ outDir = "../data/cov/NDVI"
 HUC = 1002
 
 
-for year, url in urls.iteritems():
+for year, url in urls.items():
     outName = "LANSAT_NVDI_{0}_00_00_HUC{1}.tif".format(year, HUC)
 
     outpath = os.path.join(outDir, outName)
