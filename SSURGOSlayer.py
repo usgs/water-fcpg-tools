@@ -34,7 +34,7 @@ for paramtable in paramtables:
     d = combdf.to_dict()
 
     print(d)
-    print(d["296575"])
+    print(d[1949705])
 
 """
     with rs.open(MUCraster) as ds: # load map unit code raster
