@@ -32,7 +32,7 @@ for paramtable in paramtables:
     combdf = pd.concat([df["(b'mukey', 5)"], df[paramColName]], axis=1)
 
     combdf = combdf.set_index("(b'mukey', 5)")
-    print(combdf["(b'mukey', 5)"].dtype)
+    #print(combdf["(b'mukey', 5)"].dtype)
     print(combdf[paramColName].dtype)
     d = combdf.to_dict()
     
