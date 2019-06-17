@@ -62,6 +62,7 @@ for paramtable in paramtables:
         print(d)
         print(d[296575])
         MUC = np.vectorize(d.get)(MUC)
+        MUC[MUC == None] = MUCNoData
         print(MUC)
         print(len(np.unique(MUC)))
         #print(paramArray)
