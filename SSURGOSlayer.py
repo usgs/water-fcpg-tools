@@ -27,7 +27,7 @@ for paramtable in paramtables:
 
     df = pd.read_csv(csvName)
 
-    #print(list(df))
+    print(pd.concat([df["(b'mukey', 5)"], df["(b'drnclass_1', 10)"]], axis=1))
     d = pd.concat([df["(b'mukey', 5)"], df["(b'drnclass_1', 10)"]], axis=1).to_dict()
 
     print(d.viewkeys())
