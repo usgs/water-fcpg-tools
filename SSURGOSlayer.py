@@ -33,11 +33,8 @@ for paramtable in paramtables:
     print(combdf)
     d = combdf.to_dict()
 
-
-
-    print(d.viewkeys())
     print(d)
-    print(d[1949705])
+    print(d["(b'drnclass_1', 10)"][1949705])
 
 """
     with rs.open(MUCraster) as ds: # load map unit code raster
