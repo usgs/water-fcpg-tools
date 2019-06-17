@@ -14,6 +14,7 @@ for paramtable in paramtables:
 
 
     paramName = os.path.splitext(os.path.basename(paramtable))[0]
+    MUCname = os.path.splitext(os.path.basename(MUCraster))[0]
     
 
     csvName = os.path.join(outDir, paramName + ".csv") #Create csv file
@@ -40,9 +41,15 @@ for paramtable in paramtables:
         print(ds.profile)
 
         paramArray = np.copy(MUC)
-        for k, v in d.items(): paramArray[MUC==k] = v
+        #for k, v in d.items(): paramArray[MUC==k] = v
+
+        for k, v in d.items():
+                print(k)
+                print(v)
 
         print(paramArray)
+
+        newName = os.path.join(outDir, "")
 
 
 
