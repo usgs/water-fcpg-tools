@@ -47,7 +47,7 @@ for paramtable in paramtables:
                 print(k)
                 print(v)
 
-        print(paramArray)
+        #print(paramArray)
 
         newName = os.path.join(outDir, "")
 
