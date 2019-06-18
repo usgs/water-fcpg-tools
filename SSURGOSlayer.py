@@ -59,7 +59,7 @@ for paramtable in paramtables:
 
         for code in np.unique(MUC):
                 print(code)
-                MUC = d.get(code, MUCNoData) #Default to no data if key not found
+                MUC[MUC == code] = d.get(code, MUCNoData) #Default to no data if key not found
 
         """
         codes = combdf["(b'mukey', 5)"].to_numpy()
@@ -81,9 +81,9 @@ for paramtable in paramtables:
 
 
         #paramArray[MUC == None] = MUCNoData
-        print(paramArray)
-        paramArray = paramArray.astype('uint32')
-        print(np.unique(paramArray))
+        print(MUC)
+        MUC = MUC.astype('uint32')
+        print(np.unique(MUC))
 
         outRast = os.path.join(outDir, "SSURGO_drnclass_1.tif")
 """
