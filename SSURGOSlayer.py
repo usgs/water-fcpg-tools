@@ -57,6 +57,12 @@ for paramtable in paramtables:
                 MUC = np.where(MUC == code, value, MUC)
         """
 
+        uniqueSoils = np.unique(MUC)
+
+        print("Min soil code: {0}".format(min(uniqueSoils)))
+        print("Max soil code: {0}".format(max(uniqueSoils)))
+        print("{0} unique soil codes".format(len(np.unique(MUC)))
+
         for code in np.unique(MUC):
                 print(code)
                 MUC[MUC == code] = d.get(code, MUCNoData) #Default to no data if key not found
