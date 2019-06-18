@@ -57,7 +57,8 @@ for paramtable in paramtables:
                 MUC = np.where(MUC == code, code, MUC)
         """
 
-        #codes = combdf[]
+        codes = combdf["(b'mukey', 5)"].to_numpy()
+        print(codes)
 
         """
         def replace(code):
