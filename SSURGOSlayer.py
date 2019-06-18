@@ -36,7 +36,7 @@ for paramtable in paramtables:
     #print(combdf["(b'mukey', 5)"].dtype)
     combdf = combdf.astype('uint32')
     print(combdf[paramColName].dtype)
-    print(combdf)
+
     d = combdf.to_dict()
     
     d = d[paramColName] #Only get the portion of the dictionary I care about
@@ -57,7 +57,7 @@ for paramtable in paramtables:
                 MUC = np.where(MUC == code, value, MUC)
         """
 
-        for codes in np.unique(MUC):
+        for code in np.unique(MUC):
                 print(code)
                 MUC = d.get(code, MUCNoDat) #Default to no data if key not found
 
