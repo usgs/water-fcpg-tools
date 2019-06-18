@@ -50,19 +50,19 @@ for paramtable in paramtables:
 
         print(ds.profile)
         
-        """
+        
         for code, value in d.items():
 
                 print(code)
-                MUC = np.where(MUC == code, code, MUC)
-        """
+                MUC = np.where(MUC == code, value, MUC)
 
+        """
         codes = combdf["(b'mukey', 5)"].to_numpy()
         paramValues = combdf[paramColName].to_numpy()
         
         print("Changing Codes")
         MUC[MUC == codes] = paramValues
-
+        """
         """
         def replace(code):
                 codeBook = d 
