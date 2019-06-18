@@ -14,6 +14,6 @@ for HUC in HUClist:
     taufac = os.path.join(outDir, "taufac" + HUC + ".tif")
     
     tauDrainDir(fdr, taufdr)
-    #tauFlowAccum(taufdr, taufac, cores=cores)
+    tauFlowAccum(taufdr, taufac, cores=cores)
 
 
