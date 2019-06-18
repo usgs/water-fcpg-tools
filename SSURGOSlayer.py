@@ -6,7 +6,7 @@ import rasterio as rs
 import functools
 
 paramtables = ["../data/cov/static/Soils/DrainageClass.dbf"]
-MUCraster = "../data/cov/static/MapunitRaster_CONUS_90m1.tif"
+MUCraster = "../data/cov/static/MapunitRaster_PROSPER_90m1.tif"
 
 outDir = "../data/cov/static/Soils/work"
 
