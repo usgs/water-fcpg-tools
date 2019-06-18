@@ -47,13 +47,18 @@ for paramtable in paramtables:
 
 
         print(ds.profile)
-        #paramArray = MUC.copy()
+        
+        """
         for code, value in d.items():
 
                 print(code)
                 MUC = np.where(MUC == code, code, MUC)
+        """
 
+        def replace(code, codeBook):
 
+                return codeBook[code]
+        paramArray = map(replace, MUC, d)
         #paramArray = np.vectorize(d[paramColName].get, excluded=[MUCNoData])(MUC)
 
 
