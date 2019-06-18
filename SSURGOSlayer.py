@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 import rasterio as rs
+import functools
 
 paramtables = ["../data/cov/static/Soils/DrainageClass.dbf"]
 MUCraster = "../data/cov/static/MapunitRaster_CONUS_90m1.tif"
@@ -59,7 +60,7 @@ for paramtable in paramtables:
                 print(codeBook)
                 return codeBook[code]
 
-        paramMap = map(replace, MUC, d)
+        paramMap = map(functools.partial(replace, codeBook=d), MUC)
         paramArray = np.fromiter(paramMap, dtype=np.int)
         #paramArray = np.vectorize(d[paramColName].get, excluded=[MUCNoData])(MUC)
 
