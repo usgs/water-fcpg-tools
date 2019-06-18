@@ -601,10 +601,9 @@ def tauFlowAccum(fdr, accumRast, cores = 1):
         'fdr':fdr,
         'cores':cores, 
         'outFl':accumRast, 
-        'weight':paramRast
         }
         
-        cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         
