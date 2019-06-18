@@ -32,7 +32,7 @@ for paramtable in paramtables:
 
     combdf = pd.concat([df["(b'mukey', 5)"], df[paramColName]], axis=1)
 
-    #combdf = combdf.set_index("(b'mukey', 5)")
+    #ombdf = combdf.set_index("(b'mukey', 5)")
     #print(combdf["(b'mukey', 5)"].dtype)
     combdf = combdf.astype('uint32')
     print(combdf[paramColName].dtype)
@@ -50,11 +50,16 @@ for paramtable in paramtables:
 
         print(ds.profile)
         
-        
+        """
         for code, value in d.items():
 
                 print(code)
                 MUC = np.where(MUC == code, value, MUC)
+        """
+
+        for codes in np.unique(MUC):
+
+                MUC = d.get(code)
 
         """
         codes = combdf["(b'mukey', 5)"].to_numpy()
