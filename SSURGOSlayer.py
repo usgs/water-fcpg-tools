@@ -59,7 +59,7 @@ for paramtable in paramtables:
 
         for code in np.unique(MUC):
                 print(code)
-                MUC = d.get(code, MUCNoDat) #Default to no data if key not found
+                MUC = d.get(code, MUCNoData) #Default to no data if key not found
 
         """
         codes = combdf["(b'mukey', 5)"].to_numpy()
