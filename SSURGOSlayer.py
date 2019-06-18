@@ -36,6 +36,7 @@ for paramtable in paramtables:
     #print(combdf["(b'mukey', 5)"].dtype)
     combdf = combdf.astype('uint32')
     print(combdf[paramColName].dtype)
+    print(combdf)
     d = combdf.to_dict()
     
     d = d[paramColName] #Only get the portion of the dictionary I care about
@@ -56,13 +57,16 @@ for paramtable in paramtables:
                 MUC = np.where(MUC == code, code, MUC)
         """
 
+        codes = combdf[]
+
+        """
         def replace(code):
                 codeBook = d 
                 return codeBook[code]
-
+        """
         #paramMap = map(functools.partial(replace, codeBook=d), MUC)
         #paramArray = np.fromiter(paramMap, dtype=np.int)
-        paramArray = np.array([replace(xi) for xi in MUC])
+        #paramArray = np.array([replace(xi) for xi in MUC])
         #paramArray = np.vectorize(d[paramColName].get, excluded=[MUCNoData])(MUC)
 
 
