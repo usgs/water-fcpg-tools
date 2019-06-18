@@ -37,6 +37,7 @@ for paramtable in paramtables:
     print(combdf[paramColName].dtype)
     d = combdf.to_dict()
     
+    d = d[paramColName] #Only get the portion of the dictionary I care about
 
 
     with rs.open(MUCraster) as ds: # load map unit code raster
@@ -46,11 +47,11 @@ for paramtable in paramtables:
 
 
         print(ds.profile)
-        paramArray = MUC.copy()
+        #paramArray = MUC.copy()
         for code, value in d.items():
 
                 print(code)
-                paramArray = np.where(MUC == code, code, MUC)
+                MUC = np.where(MUC == code, code, MUC)
 
 
         #paramArray = np.vectorize(d[paramColName].get, excluded=[MUCNoData])(MUC)
