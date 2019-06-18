@@ -60,6 +60,7 @@ for paramtable in paramtables:
         codes = combdf["(b'mukey', 5)"].to_numpy()
         paramValues = combdf[paramColName].to_numpy()
         
+        print("Changing Codes")
         MUC[MUC == codes] = paramValues
 
         """
