@@ -58,7 +58,9 @@ for paramtable in paramtables:
         """
 
         codes = combdf["(b'mukey', 5)"].to_numpy()
-        print(codes)
+        paramValues = combdf[paramColName].to_numpy()
+        
+        MUC[MUC == codes] = paramValues
 
         """
         def replace(code):
