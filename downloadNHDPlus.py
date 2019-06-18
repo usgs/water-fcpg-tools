@@ -3,7 +3,7 @@ from tools import *
 #HUClist = ["1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012"]
 
 HUClist = ["1013"]
-fileDir = "../data/NHDPlus"
+fileDir = "../data/NHDPlus05_06_2019"
 
 """
 for HUC in HUClist:
