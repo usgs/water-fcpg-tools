@@ -582,7 +582,38 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
 
     
 
+def tauFlowAccum(fdr, accumRast, cores = 1):
+    """
+    Inputs:
+        fdr - flow direction raster in tauDEM format
+        accumRast - file location to store accumulated parameter values
+        cores - number of cores to use parameter accumulation
 
+    Outputs:
+        accumRast - raster of accumulated parameter values
+    """
+
+
+    #Use tauDEM to accumulate the parameter
+    try:
+        print('Accumulating Data...')
+        tauParams = {
+        'fdr':fdr,
+        'cores':cores, 
+        'outFl':accumRast, 
+        'weight':paramRast
+        }
+        
+        cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        print(cmd)
+        result = subprocess.run(cmd, shell = True) # Run shell command
+        
+        result.stdout
+        
+
+    except:
+        print('Error Accumulating Data')
+        traceback.print_exc()
 
 
 
