@@ -58,7 +58,8 @@ for paramtable in paramtables:
         def replace(code, codeBook):
 
                 return codeBook[code]
-        paramArray = map(replace, MUC, d)
+        paramMap = map(replace, MUC, d)
+        paramArray = np.fromiter(paramMap, dtype=np.int)
         #paramArray = np.vectorize(d[paramColName].get, excluded=[MUCNoData])(MUC)
 
 
