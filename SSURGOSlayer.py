@@ -56,7 +56,7 @@ for paramtable in paramtables:
         """
 
         def replace(code, codeBook):
-                print(codeBook[code])
+                print(codeBook)
                 return codeBook[code]
 
         paramMap = map(replace, MUC, d)
