@@ -1,5 +1,7 @@
-from tools import *
+#from tools import *
 import time
+import sys
+import os
 
 #Check if system arguments were provided
 if len(sys.argv) > 1:
@@ -11,6 +13,7 @@ if len(sys.argv) > 1:
     logDir = sys.argv[6] #Directory to save slurm log files
     cores = sys.argv[7] #Number of cores to use for each slurm job
     accumThresh = sys.argv[8] #Number of cells in flow accumulation grid below which CPG will be set to no data
+    overwrite = sys.argv[9] # overwrite the output CPGs
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/gridMET_PRmm" 
@@ -56,7 +59,7 @@ for cov in covList:
         f.writelines("#SBATCH --time=01:00:00\n") # Overestimated guess at time
         f.writelines("#SBATCH --mem=128000\n") #memory in MB
         f.writelines("#SBATCH --mail-type=ALL\n") # Send email only for all events
-        f.writelines("#SBATCH --mail-user=ssiefken@usgs.gov\n")
+        f.writelines("#SBATCH --mail-user=tbarnhart@usgs.gov\n")
         f.writelines("#SBATCH --exclusive\n") # Require exclusive use of nodes
 
         #Set up python environment for job
@@ -68,7 +71,5 @@ for cov in covList:
         f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5} {6} {7}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh, overwrite))
         
     print("Launching batch job for: " + str(covname))
-
-    os.system("sbatch {0}".format(jobfile)) #Send command to console
-
     time.sleep(15) #Wait 10s between submitting jobs
+    os.system("sbatch {0}".format(jobfile)) #Send command to console
