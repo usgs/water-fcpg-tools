@@ -46,14 +46,16 @@ for paramtable in paramtables:
 
 
         print(ds.profile)
+        paramArray = MUC.copy()
+        for code, value in d.items():
 
-        #paramArray = np.copy(MUC)
-        #for k, v in d.items(): paramArray[MUC==k] = v
+                print(code)
+                paramArray = np.where(MUC == code, code, MUC)
 
-        #print(len(np.unique(MUC)))
-        #print(d[paramColName])
 
-        paramArray = np.vectorize(d[paramColName].get, excluded=[MUCNoData])(MUC)
+        #paramArray = np.vectorize(d[paramColName].get, excluded=[MUCNoData])(MUC)
+
+
 
         #paramArray[MUC == None] = MUCNoData
         print(paramArray)
