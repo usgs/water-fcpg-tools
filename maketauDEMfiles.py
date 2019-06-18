@@ -2,7 +2,7 @@ from tools import *
 
 #HUClist = [ "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012"]
 
-HUClist = ["1005"]
+HUClist = ["1013"]
 outDir = "../data/tauDEM"
 
 cores = 16
