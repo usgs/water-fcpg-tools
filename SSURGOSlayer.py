@@ -40,7 +40,7 @@ for paramtable in paramtables:
     d = combdf.to_dict()
     
     d = d[paramColName] #Only get the portion of the dictionary I care about
-
+    print(d)
 
     with rs.open(MUCraster) as ds: # load map unit code raster
         MUC = ds.read(1)
@@ -61,9 +61,9 @@ for paramtable in paramtables:
 
         print("Min soil code: {0}".format(min(uniqueSoils)))
         print("Max soil code: {0}".format(max(uniqueSoils)))
-        print("{0} unique soil codes".format(len(np.unique(MUC)))
+        print("{0} unique soil codes".format(len(uniqueSoils))
 
-        for code in np.unique(MUC):
+        for code in uniqueSoils:
                 print(code)
                 MUC[MUC == code] = d.get(code, MUCNoData) #Default to no data if key not found
 
