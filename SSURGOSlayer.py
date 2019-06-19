@@ -92,6 +92,7 @@ for paramtable in paramtables:
         print(np.unique(MUC))
 
         outRast = os.path.join(outDir, "SSURGO_drnclass_1.tif")
+        print(outRast)
 
 with rs.open(outRast, 'w', **profile) as dst:
         dst.write(MUC,1)
