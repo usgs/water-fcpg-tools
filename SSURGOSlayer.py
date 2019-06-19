@@ -61,7 +61,7 @@ for paramtable in paramtables:
 
         print("Min soil code: {0}".format(min(uniqueSoils)))
         print("Max soil code: {0}".format(max(uniqueSoils)))
-        print("{0} unique soil codes".format(len(uniqueSoils))
+        print("{0} unique soil codes".format(len(uniqueSoils)))
 
         for code in uniqueSoils:
                 print(code)
@@ -89,7 +89,7 @@ for paramtable in paramtables:
         #paramArray[MUC == None] = MUCNoData
         print("Min soil code: {0}".format(min(uniqueSoils)))
         print("Max soil code: {0}".format(max(uniqueSoils)))
-        print("{0} unique soil codes".format(len(uniqueSoils))
+        print("{0} unique soil codes".format(len(uniqueSoils)))
         print(MUC)
         MUC = MUC.astype('uint32')
         print(np.unique(MUC))
