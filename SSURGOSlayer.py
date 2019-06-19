@@ -87,6 +87,9 @@ for paramtable in paramtables:
 
 
         #paramArray[MUC == None] = MUCNoData
+        print("Min soil code: {0}".format(min(uniqueSoils)))
+        print("Max soil code: {0}".format(max(uniqueSoils)))
+        print("{0} unique soil codes".format(len(uniqueSoils))
         print(MUC)
         MUC = MUC.astype('uint32')
         print(np.unique(MUC))
