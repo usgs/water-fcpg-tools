@@ -13,7 +13,7 @@ if len(sys.argv) > 1:
     accumThresh = sys.argv[8] #Number of cells in flow accumulation grid below which CPG will be set to no data
 else:
     #If inputs aren't specified in system args, set them in the script
-    inDir = "../data/cov/gridMET_SOILMOSITmm" 
+    inDir = "../data/cov/gridMET_SOILMOISTmm" 
     taufdr = "../data/tauDEM/taufdr1002.tif" 
     taufac = "../data/tauDEM/taufac1002.tif" 
     workDir = "../work/1002"
