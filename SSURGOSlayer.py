@@ -28,7 +28,7 @@ for paramtable in paramtables:
 
     df = pd.read_csv(csvName)
 
-    paramColName = "(b'drnclass_1', 10)" #Name of the column containing the parameter of interest
+    paramColName = "(b'drnclass_2', 10)" #Name of the column containing the parameter of interest
 
     combdf = pd.concat([df["(b'mukey', 5)"], df[paramColName]], axis=1)
 
