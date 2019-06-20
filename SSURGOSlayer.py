@@ -48,7 +48,7 @@ for paramtable in paramtables:
         profile = ds.profile
 
 
-        print(ds.profile)
+        
         
         """
         for code, value in d.items():
@@ -87,6 +87,7 @@ for paramtable in paramtables:
 
 
         #paramArray[MUC == None] = MUCNoData
+        print(ds.profile)
         print("Min soil code: {0}".format(min(uniqueSoils)))
         print("Max soil code: {0}".format(max(uniqueSoils)))
         print("{0} unique soil codes".format(len(uniqueSoils)))
