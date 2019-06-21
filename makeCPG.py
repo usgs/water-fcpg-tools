@@ -20,7 +20,8 @@ workDir = sys.argv[4] #Path to working directory
 outDir = sys.argv[5] #Path to output directory for CPG files
 cores = int(sys.argv[6]) #Number of cores to use 
 accumThresh = int(sys.argv[7]) #Number of cells in flow accumulation grid below which CPG will be set to no data
-overwrite = bool(sys.argv[8]) #Whether to overwrite CPGs or not 
+overwrite = bool(sys.argv[8]) #Whether to overwrite CPGs or not
+HUC = sys.argv[9]
 
 print("Starting CPG process for:")
 print("Parameter Raster: {0}".format(paramRast))
@@ -36,10 +37,10 @@ paramName = os.path.splitext(os.path.basename(paramRast))[0]
 
 
 #Get HUC number from tau flow direction raster name
-try:
-        HUC = os.path.splitext(os.path.basename(taufdr))[0].split("taufdr")[1]
-except:
-        print("Error - Flow direction raster has inappropriate name")
+# try:
+#         HUC = os.path.splitext(os.path.basename(taufdr))[0].split("taufdr")[1]
+# except:
+#         print("Error - Flow direction raster has inappropriate name")
 
 #Prepare some file paths to things which will be created
 rprjFile = os.path.join(workDir, paramName + "_HUC" + HUC + "rprj.tif") #Create filepath for reprojected parameter file
