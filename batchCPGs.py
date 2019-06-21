@@ -11,6 +11,7 @@ if len(sys.argv) > 1:
     logDir = sys.argv[6] #Directory to save slurm log files
     cores = sys.argv[7] #Number of cores to use for each slurm job
     accumThresh = sys.argv[8] #Number of cells in flow accumulation grid below which CPG will be set to no data
+    overwrite = sys.argv[9] #Whether to overwrite existing CPGs
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/gridMET_SOILMOISTmm" 
