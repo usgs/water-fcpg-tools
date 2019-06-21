@@ -29,6 +29,6 @@ for HUC in HUClist:
                 result = subprocess.run(cmd, shell = True) # Run shell command
                 result.stdout
                 
-            except:
+    except:
                 print('Error sending command')
                 traceback.print_exc()
