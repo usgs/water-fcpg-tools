@@ -71,4 +71,4 @@ for cov in covList:
 
     os.system("sbatch {0}".format(jobfile)) #Send command to console
 
-    time.sleep(10) #Wait 10s between submitting jobs
+    time.sleep(20) #Wait 10s between submitting jobs
