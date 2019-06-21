@@ -26,7 +26,7 @@ for HUC in HUClist:
 
     try:
                 
-                cmd = 'python batchCPGS.py {0} {1} {2} {3} {4} {5}, {6}, {7}'.format(inDir, HUCtaufdr, HUCtaufac, HUCworkDir, HUCoutDir, HUClogDir, cores, accumThresh) # Create string of shell command
+                cmd = 'python batchCPGs.py {0} {1} {2} {3} {4} {5}, {6}, {7}'.format(inDir, HUCtaufdr, HUCtaufac, HUCworkDir, HUCoutDir, HUClogDir, cores, accumThresh) # Create string of shell command
                 print(cmd)
                 result = subprocess.run(cmd, shell = True) # Run shell command
                 result.stdout
