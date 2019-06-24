@@ -8,9 +8,9 @@ import traceback
 # Script to destroy the netCDF file Roy got from gridMET
 # Must have gdal and nco tools (module load tools/nco-4.7.8-gnu) modules loaded 
 
-inCDF = "../data/cov/minTempNCDF/tmmn_1986.nc" #Original netCDF from gridMET
-reorderCDF = "../data/cov/minTempNCDF/tmmn_1986fix.nc" #NetCDF file with reordered dimensions
-multiTIFF = "../data/cov/minTempNCDF/tmmn_1986.tif" #Multiband .tif created from netCDF
+inCDF = "../data/cov/minTempNCDF/tmmn_1987.nc" #Original netCDF from gridMET
+reorderCDF = "../data/cov/minTempNCDF/tmmn_1987fix.nc" #NetCDF file with reordered dimensions
+multiTIFF = "../data/cov/minTempNCDF/tmmn_1987.tif" #Multiband .tif created from netCDF
 
 baseName = "gridMET_minTempK"
 
