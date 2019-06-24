@@ -103,12 +103,12 @@ for month in range(1,13):
         print(fileName)
         monthlyMin = np.mean(monthlyData[month-1], axis=0) #Compute average minimum temp in each cell for the month
 
-        """
+        
         with rs.open(fileName, 'w', **profile) as dst:
                 dst.write(monthlyMin,1)
 
                 print("Writing: " + fileName)
-        """
+        
 
 
 
