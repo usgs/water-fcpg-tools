@@ -16,7 +16,7 @@ baseName = "gridMET_minTemp"
 
 outDir = "../data/cov/gridMET_minTempK"
 
-year = os.path.basename(inCDF).split("_")[0]
+year = os.path.splitext(os.path.basename(taufdr))[0].split("_")[1] # Get year from input file
 
 
 #Step 1: Put the file dimensions in the correct order
@@ -94,10 +94,10 @@ profile.update({
         'bigtiff':'IF_SAFER'})
 
 
-for month in monthlyData:
+for month in range(1,12):
         fileName = os.path.join(outDir, "{0}_{1}_{2}_00.tif".format(baseName, year, month)) #Create the name for the output file
         print(fileName)
-        monthlyMin = np.mean(monthlyData[month], axis=0) #Compute average minimum temp in each cell for the month
+        monthlyMin = np.mean(monthlyData[month-1], axis=0) #Compute average minimum temp in each cell for the month
 
         """
         with rs.open(fileName, 'w', **profile) as dst:
