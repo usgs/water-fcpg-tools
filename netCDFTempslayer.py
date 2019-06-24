@@ -84,6 +84,8 @@ for band in data:
 
         monthlyData[month].append(band) #Append the data to the appropriate month's list
 
+        i = i + 1
+
 
 #Update raster profile
 profile.update({
