@@ -67,7 +67,7 @@ days = days.split(",")
 
 #Create a list containing 12 empty lists
 monthlyData = []
-for month in range(1,12):
+for month in range(1,13):
         monthlyData.append([])
 
 
@@ -98,7 +98,7 @@ profile.update({
         'bigtiff':'IF_SAFER'})
 
 
-for month in range(1,12):
+for month in range(1,13):
         fileName = os.path.join(outDir, "{0}_{1}_{2}_00.tif".format(baseName, year, str(month).zfill(2))) #Create the name for the output file
         print(fileName)
         monthlyMin = np.mean(monthlyData[month-1], axis=0) #Compute average minimum temp in each cell for the month
