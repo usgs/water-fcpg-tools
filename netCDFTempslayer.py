@@ -82,7 +82,7 @@ for band in data:
         print(date.strftime('%Y_%m_%d'))
         month = int(date.strftime("%m")) #Get month associated with band
 
-        monthlyData[month].append(band) #Append the data to the appropriate month's list
+        monthlyData[month-1].append(band) #Append the data to the appropriate month's list
 
         i = i + 1
 
