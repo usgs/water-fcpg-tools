@@ -16,7 +16,7 @@ baseName = "gridMET_minTemp"
 
 outDir = "../data/cov/gridMET_minTempK"
 
-year = os.path.splitext(os.path.basename(taufdr))[0].split("_")[1] # Get year from input file
+year = os.path.splitext(os.path.basename(inCDF))[0].split("_")[1] # Get year from input file
 
 
 #Step 1: Put the file dimensions in the correct order
