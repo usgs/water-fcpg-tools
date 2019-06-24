@@ -24,7 +24,7 @@ for cov in covList:
 
     for HUC in HUClist:
         #Create the fiel name corresponding to the HUC and covariate
-        CPGFile = os.path.join(CPGdir, covname + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
+        CPGFile = os.path.join(CPGdir, HUC,covname + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
 
         if not os.path.isfile(CPGFile):
             print("Missing File: {0}".format(CPGFile))
