@@ -93,9 +93,12 @@ profile.update({
 
 for month in monthlyData:
         fileName = os.path.join(outDir, "{0}_{1}_{2}_00.tif".format(baseName, year, month)) #Create the name for the output file
+
+        monthlyMin = np.minimum.reduce(monthlyData[month]) #Compute minimum temp in each cell for the month
+
         """
         with rs.open(fileName, 'w', **profile) as dst:
-                dst.write(band,1)
+                dst.write(monthlyMin,1)
 
                 print("Writing: " + fileName)
         """
