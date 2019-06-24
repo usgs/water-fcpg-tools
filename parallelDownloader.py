@@ -1,19 +1,12 @@
-def downloadNHDPlusRaster(HUC4, fileDir):
-    '''
-    Inputs:
-        
-        HUC4 - 4 digit HUC to download NHDPlus raster data for
-        fileDir - Directory in which to save NHDPlus data
+import os
+import urllib
 
-    Outputs:
-        NHDPlus raster files saved to directory
+fileDir = "../data/cov/minTempNCDF"
 
-    '''
-    compressedFile = os.path.join(fileDir, str(HUC4) + "_RASTER.7z")
-    print("Downloading File: " + compressedFile)
-    urllib.request.urlretrieve("https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHDPlus/HU4/HighResolution/GDB/NHDPLUS_H_%s_HU4_RASTER.7z"%str(HUC4), compressedFile)
+for year in range(1979, 2018):
 
-    print("Extracting File...")
-    os.system("7za x {0} -o{1}".format(compressedFile,fileDir))
+    dataFile = os.path.join(fileDir, "tmmn_{0}.nc".format(year))
+    print("Downloading File: " + dataFile)
+    urllib.request.urlretrieve("https://www.northwestknowledge.net/metdata/data/tmmn_{0}.nc".format(year), dataFile)
 
-    
+
