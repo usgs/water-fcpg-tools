@@ -16,6 +16,9 @@ baseName = "gridMET_minTemp"
 
 outDir = "../data/cov/gridMET_minTempK"
 
+year = os.path.baseName(inCDF).split("_")[0]
+
+
 #Step 1: Put the file dimensions in the correct order
 
 try:
@@ -76,7 +79,7 @@ for band in data:
         
         date = day0 + datetime.timedelta(days=day) #Compute the date associated with the band
 
-        month = int(dat.strftime("%m")) #Get month associated with band
+        month = int(date.strftime("%m")) #Get month associated with band
 
         monthlyData[month].append(band) #Append the data to the appropriate month's list
 
@@ -93,7 +96,7 @@ profile.update({
 
 for month in monthlyData:
         fileName = os.path.join(outDir, "{0}_{1}_{2}_00.tif".format(baseName, year, month)) #Create the name for the output file
-
+        print(fileName)
         monthlyMin = np.meane(monthlyData[month], axis=0) #Compute average minimum temp in each cell for the month
 
         """
