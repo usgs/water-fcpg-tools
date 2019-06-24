@@ -90,6 +90,8 @@ for band in data:
 
 #Update raster profile
 profile.update({
+        'dtype':'int16',
+        'nodata':-1,
         'compress':'LZW',
         'profile':'GeoTIFF',
         'tiled':True,
