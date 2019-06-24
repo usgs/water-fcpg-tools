@@ -10,7 +10,7 @@ import traceback
 
 inCDF = "../data/cov/minTempNCDF/tmmn_1982.nc" #Original netCDF from gridMET
 reorderCDF = "../data/cov/minTempNCDF/tmmn_1982fix.nc" #NetCDF file with reordered dimensions
-multiTIFF = "../data/cov/minTempNCDF/tmmn_1982fix.tif" #Multiband .tif created from netCDF
+multiTIFF = "../data/cov/minTempNCDF/tmmn_1982.tif" #Multiband .tif created from netCDF
 
 baseName = "gridMET_minTempK"
 
