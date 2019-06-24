@@ -56,13 +56,19 @@ print(profile)
 day0 = datetime.datetime.strptime("01-01-1900", "%d-%m-%Y") #Set the day time is counted from
 
 
-days = tags["NETCDF_DIM_time_VALUES"] #Get the list of dates associated with each band and convert to list
+days = tags["NETCDF_DIM_day_VALUES"] #Get the list of dates associated with each band and convert to list
 days = days.replace("{", "")
 days = days.replace("}", "")
 days = days.split(",")
 
 
-i = 0 
+#Create a list containing 12 empty lists
+monthlyData = []
+for month in range(1,12):
+        monthlyData.append([])
+
+
+i = 0 #Create counter for raster bands
 
 for band in data:
 
@@ -70,23 +76,29 @@ for band in data:
         
         date = day0 + datetime.timedelta(days=day) #Compute the date associated with the band
 
-        fileName = os.path.join(outDir, baseName + "_" + date.strftime('%Y_%m_%d') + ".tif") #Create the name for the output file
+        month = int(dat.strftime(%m)) #Get month associated with band
 
-        #Update raster profile
-        profile.update({
-                'compress':'LZW',
-                'profile':'GeoTIFF',
-                'tiled':True,
-                'count':1,
-                'sparse_ok':True,
-                'num_threads':'ALL_CPUS',
-                'bigtiff':'IF_SAFER'})
+        monthlyData[month].append(band) #Append the data to the appropriate month's list
 
+#Update raster profile
+profile.update({
+        'compress':'LZW',
+        'profile':'GeoTIFF',
+        'tiled':True,
+        'count':1,
+        'sparse_ok':True,
+        'num_threads':'ALL_CPUS',
+        'bigtiff':'IF_SAFER'})
+
+
+for month in monthlyData:
+        fileName = os.path.join(outDir, "{0}_{1}_{2}_00.tif".format(baseName, year, month)) #Create the name for the output file
+        """
         with rs.open(fileName, 'w', **profile) as dst:
                 dst.write(band,1)
 
                 print("Writing: " + fileName)
-
+        """
 
 
 
