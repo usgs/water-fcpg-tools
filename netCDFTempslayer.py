@@ -16,7 +16,7 @@ baseName = "gridMET_minTemp"
 
 outDir = "../data/cov/gridMET_minTempK"
 
-year = os.path.baseName(inCDF).split("_")[0]
+year = os.path.basename(inCDF).split("_")[0]
 
 
 #Step 1: Put the file dimensions in the correct order
