@@ -8,18 +8,18 @@ import traceback
 # Script to destroy the netCDF file Roy got from gridMET
 # Must have gdal and nco tools (module load tools/nco-4.7.8-gnu) modules loaded 
 
-inCDF = "../data/cov/soil_gridMET.nc" #Original netCDF from gridMET
-reorderCDF = "../data/cov/soil_gridMETfix.nc" #NetCDF file with reordered dimensions
-multiTIFF = "../data/cov/gridMET_SOILMOISTmm.tif" #Multiband .tif created from netCDF
+inCDF = "../data/cov/minTempNCDF/tmmn_1979.nc" #Original netCDF from gridMET
+reorderCDF = "../data/cov/minTempNCDF/tmmn_1979fix.nc" #NetCDF file with reordered dimensions
+multiTIFF = "../data/cov/minTempNCDF/tmmn_1979.tif" #Multiband .tif created from netCDF
 
-baseName = "gridMET_SOILMOISTmm"
+baseName = "gridMET_minTemp"
 
-outDir = "../data/cov/gridMET_SOILMOISTmm"
+outDir = "../data/cov/gridMET_minTempK"
 
 #Step 1: Put the file dimensions in the correct order
 
 try:
-        cmd = "ncpdq -a time,lat,lon {0} {1}".format(inCDF, reorderCDF)
+        cmd = "ncpdq -a day,lat,lon,crs {0} {1}".format(inCDF, reorderCDF)
         result = subprocess.run(cmd, shell = True)
         result.stdout
         
@@ -41,9 +41,6 @@ except:
         traceback.print_exc()
 
 #Step 3: Convert each band of the GeoTIFF to its own raster
-
-
-#netCDFpath = "../data/cov/gridMET_PRmm.tif"
 
 
 
