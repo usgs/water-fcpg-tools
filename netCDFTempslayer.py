@@ -55,7 +55,7 @@ with rs.open(multiTIFF) as ds: # load parameter raster
         tags = ds.tags()
 
 print(profile)
-innodata = profile.nodata #Get input no data value
+
 
 day0 = datetime.datetime.strptime("01-01-1900", "%d-%m-%Y") #Set the day time is counted from
 
@@ -103,7 +103,7 @@ for month in range(1,13):
         fileName = os.path.join(outDir, "{0}_{1}_{2}_00.tif".format(baseName, year, str(month).zfill(2))) #Create the name for the output file
         print(fileName)
         monthlyMin = np.mean(monthlyData[month-1], axis=0) #Compute average minimum temp in each cell for the month
-        monthlyMin[monthlyMin == innodata] = -1
+        monthlyMin[monthlyMin == paramNoData] = -1
         monthlyMin = monthlyMin.astype(np.int16)
         
         with rs.open(fileName, 'w', **profile) as dst:
