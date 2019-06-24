@@ -76,7 +76,7 @@ for band in data:
         
         date = day0 + datetime.timedelta(days=day) #Compute the date associated with the band
 
-        month = int(dat.strftime(%m)) #Get month associated with band
+        month = int(dat.strftime("%m")) #Get month associated with band
 
         monthlyData[month].append(band) #Append the data to the appropriate month's list
 
