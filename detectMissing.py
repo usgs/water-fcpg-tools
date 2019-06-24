@@ -28,3 +28,6 @@ for cov in covList:
 
         if not os.path.isfile(CPGFile):
             print("Missing File: {0}".format(CPGFile))
+            missingList.append(CPGFile)
+
+print("{0} missing files found".format(len(missingList)))
