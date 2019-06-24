@@ -1,5 +1,5 @@
 import os
-import urllib
+import urllib.request
 
 fileDir = "../data/cov/minTempNCDF"
 
