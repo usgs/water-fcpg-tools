@@ -29,15 +29,13 @@ for year in years:
     
     outFile = os.path.join(outDir, "landsat_NDVI-May-Oct_{0}_00_00.tif") #Create output file path
 
-    
 
     try:
 
-        cmd = 'gddalbuildvrt {0} {1}'.format(outFile, " ".join(yearRasters)) # Create string of tauDEM shell command
+        cmd = 'gddalbuildvrt -d {0} {1}'.format(outFile, " ".join(yearRasters)) # Create string of tauDEM shell command
         print(cmd)
-        result = subprocess.run(cmd, shell = True) # Run shell command
-        result.stdout
-        print("Parameter no data accumulation written to: {0}".format(outNoDataRast))
+        #result = subprocess.run(cmd, shell = True) # Run shell command
+        #result.stdout
 
         except:
         print('Error Accumulating Data')
