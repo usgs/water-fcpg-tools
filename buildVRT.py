@@ -17,14 +17,15 @@ for path, subdirs, files in os.walk(inDir):
 
 
 years = range(1985, 2019)
-print(rasterList)
+
 
 for year in years:
 
     yearRasters = [] #Create an empty list of rasters
 
     for raster in rasterList:
-        if raster.split("_")[4] == str(year):
+        print(raster)
+        if os.path.basename(raster).split("_")[4] == str(year):
              yearRasters.append(raster) #Add rasters from the current year to the list
     
     outFile = os.path.join(outDir, "landsat_NDVI-May-Oct_{0}_00_00.tif") #Create output file path
