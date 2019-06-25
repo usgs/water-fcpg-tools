@@ -2,6 +2,8 @@ import os
 import subprocess
 import traceback
 
+#Requires gdal module (gdal/2.2.2-gcc) to be loaded
+
 inDir = "../data/cov/landsatNDVI"
 outDir = "../data/cov/landsatNDVI/vrt"
 
