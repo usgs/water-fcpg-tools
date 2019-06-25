@@ -3,7 +3,7 @@ import subprocess
 import traceback
 
 inDir = "../data/cov/landsatNDVI"
-outDir = "../data/cov/landsatNDVI"
+outDir = "../data/cov/landsatNDVI/vrt"
 
 rasterList = [] #Initialize list of covariates
 
