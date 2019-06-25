@@ -10,6 +10,10 @@ workDir = os.path.abspath("../work/1002")
 outDir = os.path.abspath("../CPGs/1002")
 cores = 8
 """
+
+def parsebool(b):
+    return b == "True"
+
 print("Starting {0}".format(datetime.datetime.now()))
 #Set up Inputs
 #print(sys.argv)
@@ -20,8 +24,8 @@ workDir = sys.argv[4] #Path to working directory
 outDir = sys.argv[5] #Path to output directory for CPG files
 cores = int(sys.argv[6]) #Number of cores to use 
 accumThresh = int(sys.argv[7]) #Number of cells in flow accumulation grid below which CPG will be set to no data
-overwrite = bool(sys.argv[8]) #Whether to overwrite CPGs or not 
-deleteTemp = bool(sys.argv[9]) #Whether to delete temporary files
+overwrite = parsebool(sys.argv[8]) #Whether to overwrite CPGs or not 
+deleteTemp = parsebool(sys.argv[9]) #Whether to delete temporary files
 
 print("Starting CPG process for:")
 print("Parameter Raster: {0}".format(paramRast))
