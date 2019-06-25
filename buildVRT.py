@@ -20,11 +20,13 @@ years = range(1985, 2019)
 
 for year in years:
 
-    rasterList = []
+    rasterList = [] #Create an empty list of rasters
+
+    for raster in rasterList:
+            if raster.split[4] == str(year):
+                    rasterList.append(raster) #Add rasters from the current year to the list
 
     try:
-        print('Accumulating No Data Values')
-
 
         cmd = 'gddalbuildvrt -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
