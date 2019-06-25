@@ -16,15 +16,15 @@ if len(sys.argv) > 1:
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/gridMET_PRmm" 
-    taufdr = "../data/tauDEM/taufdr1005.tif" 
-    taufac = "../data/tauDEM/taufac1005.tif" 
-    workDir = "../work/1005"
-    outDir = "../CPGs/1005"
-    logDir = "../logs/1005"
+    taufdr = "../data/tauDEM/taufdr1007.tif" 
+    taufac = "../data/tauDEM/taufac1007.tif" 
+    workDir = "../work/1007"
+    outDir = "../CPGs/1007"
+    logDir = "../logs/1007"
     cores = 20
     accumThresh = 1000
-    overwrite = True
-    deleteTemp = False
+    overwrite = False
+    deleteTemp = True
 
 covList = [] #Initialize list of covariates
 
@@ -74,4 +74,4 @@ for cov in covList:
 
     os.system("sbatch {0}".format(jobfile)) #Send command to console
 
-    time.sleep(20) #Wait 10s between submitting jobs
+    time.sleep(10) #Wait 10s between submitting jobs
