@@ -17,7 +17,7 @@ for path, subdirs, files in os.walk(inDir):
 
 
 years = range(1985, 2019)
-
+print(rasterList)
 
 for year in years:
 
@@ -29,10 +29,11 @@ for year in years:
     
     outFile = os.path.join(outDir, "landsat_NDVI-May-Oct_{0}_00_00.tif") #Create output file path
 
+    print(yearRasters)
 
     try:
 
-        cmd = 'gddalbuildvrt -d {0} {1}'.format(outFile, " ".join(yearRasters)) # Create string of tauDEM shell command
+        cmd = "gddalbuildvrt -d {0} {1}".format(outFile, " ".join(yearRasters)) # Create string of tauDEM shell command
         print(cmd)
         #result = subprocess.run(cmd, shell = True) # Run shell command
         #result.stdout
