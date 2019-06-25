@@ -35,8 +35,8 @@ for year in years:
 
         cmd = "gddalbuildvrt -d {0} {1}".format(outFile, " ".join(yearRasters)) # Create string of tauDEM shell command
         print(cmd)
-        #result = subprocess.run(cmd, shell = True) # Run shell command
-        #result.stdout
+        result = subprocess.run(cmd, shell = True) # Run shell command
+        result.stdout
 
     except:
         print('Error Accumulating Data')
