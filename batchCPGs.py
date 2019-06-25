@@ -12,6 +12,7 @@ if len(sys.argv) > 1:
     cores = sys.argv[7] #Number of cores to use for each slurm job
     accumThresh = sys.argv[8] #Number of cells in flow accumulation grid below which CPG will be set to no data
     overwrite = sys.argv[9] #Whether to overwrite existing CPGs
+    deleteTemp = sys.argv[10] #Whether to delete temporary files
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/gridMET_SOILMOISTmm" 
@@ -23,6 +24,7 @@ else:
     cores = 20
     accumThresh = 1000
     overwrite = True
+    deleteTemp = True
 
 covList = [] #Initialize list of covariates
 
@@ -66,7 +68,7 @@ for cov in covList:
         f.writelines("source activate py36\n")
 
         #Run the python script
-        f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5} {6} {7}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh, overwrite))
+        f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
         
     print("Launching batch job for: " + str(covname))
 
