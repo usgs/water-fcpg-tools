@@ -24,7 +24,7 @@ for year in years:
     yearRasters = [] #Create an empty list of rasters
 
     for raster in rasterList:
-        print(raster)
+        print(os.path.basename(raster).split("_"))
         if os.path.basename(raster).split("_")[4] == str(year):
              yearRasters.append(raster) #Add rasters from the current year to the list
     
