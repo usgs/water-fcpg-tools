@@ -21,6 +21,7 @@ outDir = sys.argv[5] #Path to output directory for CPG files
 cores = int(sys.argv[6]) #Number of cores to use 
 accumThresh = int(sys.argv[7]) #Number of cells in flow accumulation grid below which CPG will be set to no data
 overwrite = bool(sys.argv[8]) #Whether to overwrite CPGs or not 
+deleteTemp = bool(sys.argv[9]) #Whether to delete temporary files
 
 print("Starting CPG process for:")
 print("Parameter Raster: {0}".format(paramRast))
@@ -62,4 +63,14 @@ else:
                 make_cpg(accumFile, taufac, CPGFile, noDataRast=nodataaccumFile, minAccum=accumThresh) #Create parameter CPG
         else:
                 make_cpg(accumFile, taufac, CPGFile,  minAccum=accumThresh) #Create parameter CPG
+        
+        if deleteTemp:
+                try:
+                        #Delete temporary files
+                        os.remove(rprjFile)
+                        os.remove(accumFile)
+                        os.remove(nodataFile)
+                        os.remove(nodataaccumFile)
+                except:
+                        print("Warning: Unable to delete temporary files")
 print("Finished {0}".format(datetime.datetime.now()))
