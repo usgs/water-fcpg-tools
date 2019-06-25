@@ -2,7 +2,8 @@ import os
 import subprocess
 import traceback
 
-
+inDir = "../data/cov/landsatNDVI"
+outDir = "../data/cov/landsatNDVI"
 
 rasterList = [] #Initialize list of covariates
 
@@ -20,15 +21,19 @@ years = range(1985, 2019)
 
 for year in years:
 
-    rasterList = [] #Create an empty list of rasters
+    yearRasters = [] #Create an empty list of rasters
 
     for raster in rasterList:
-            if raster.split[4] == str(year):
-                    rasterList.append(raster) #Add rasters from the current year to the list
+        if raster.split[4] == str(year):
+             yearRasters.append(raster) #Add rasters from the current year to the list
+    
+    outFile = os.path.join(outDir, "landsat_NDVI-May-Oct_{0}_00_00.tif") #Create output file path
+
+    
 
     try:
 
-        cmd = 'gddalbuildvrt -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = 'gddalbuildvrt {0} {1}'.format(outFile, " ".join(yearRasters)) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         result.stdout
