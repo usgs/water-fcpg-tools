@@ -37,6 +37,6 @@ for year in years:
         #result = subprocess.run(cmd, shell = True) # Run shell command
         #result.stdout
 
-        except:
+    except:
         print('Error Accumulating Data')
         traceback.print_exc()
