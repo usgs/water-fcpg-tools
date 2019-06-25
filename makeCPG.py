@@ -31,7 +31,7 @@ print("Working Directory: {0}".format(workDir))
 print("Output Directory: {0}".format(outDir))
 print("Number of Cores: {0}".format(cores))
 print("Accumulation Threshold: {0} cells".format(accumThresh))
-print("oOverwrite Existing CPG: {0}".format(overwrite))
+print("Overwrite Existing CPG: {0}".format(overwrite))
 print("Delete Temporary Files: {0}".format(deleteTemp))
 
 #Get name of input parameter without extention
