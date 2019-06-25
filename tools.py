@@ -98,6 +98,9 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         direction = ds.read(1)
         directionNoData = ds.nodata # pull the accumulated area no data value
 
+    print(paramNoData)
+    if paramNoData == None:
+        print("Warning: Parameter raster no data value not specified, results may be invalid")
 
 
     #Deal with no data values
