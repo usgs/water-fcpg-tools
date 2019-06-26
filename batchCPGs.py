@@ -28,11 +28,16 @@ else:
 
 covList = [] #Initialize list of covariates
 
-for path, subdirs, files in os.walk(inDir):
-    for name in files:
-        #Check if file is .tif, and if so add it to covariate list
-        if os.path.splitext(name)[1] == ".tif":
-                covList.append(os.path.join(path, name))
+if os.path.isdir(inDir):
+    for path, subdirs, files in os.walk(inDir):
+        for name in files:
+            #Check if file is .tif, and if so add it to covariate list
+            if os.path.splitext(name)[1] == ".tif":
+                    covList.append(os.path.join(path, name))
+elif os.path.isfile(inDir):
+    covList.append(inDir)
+else:
+    print("Invalid covariate directory")
 
 print("The following covariate files were located in the specified directory:")
 print(covList)
