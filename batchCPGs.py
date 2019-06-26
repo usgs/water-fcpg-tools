@@ -15,15 +15,15 @@ if len(sys.argv) > 1:
     deleteTemp = sys.argv[10] #Whether to delete temporary files
 else:
     #If inputs aren't specified in system args, set them in the script
-    inDir = "../data/cov/gridMET_PRmm" 
-    taufdr = "../data/tauDEM/taufdr1006.tif" 
-    taufac = "../data/tauDEM/taufac1006.tif" 
-    workDir = "../work/1006"
-    outDir = "../CPGs/1006"
-    logDir = "../logs/1006"
+    inDir = "../data/cov/gridMET_SOILMOISTmm" 
+    taufdr = "../data/tauDEM/taufdr1005.tif" 
+    taufac = "../data/tauDEM/taufac1005.tif" 
+    workDir = "../work/1005"
+    outDir = "../CPGs/1005"
+    logDir = "../logs/1005"
     cores = 20
     accumThresh = 1000
-    overwrite = True
+    overwrite = False
     deleteTemp = True
 
 covList = [] #Initialize list of covariates
