@@ -29,12 +29,14 @@ else:
 covList = [] #Initialize list of covariates
 
 if os.path.isdir(inDir):
+    #Get all covariate files in directory
     for path, subdirs, files in os.walk(inDir):
         for name in files:
             #Check if file is .tif, and if so add it to covariate list
             if os.path.splitext(name)[1] == ".tif":
                     covList.append(os.path.join(path, name))
 elif os.path.isfile(inDir):
+    #Supplied path is a single covariate file
     covList.append(inDir)
 else:
     print("Invalid covariate directory")
