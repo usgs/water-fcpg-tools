@@ -2,10 +2,10 @@ import os
 import subprocess
 import traceback
 
-HUClist = ["1006", "1007", "1008", "1009", "1010", "1011", "1012", "1013"]
+HUClist = ["1002", "1003", "1004", "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012", "1013"]
 
 
-inDir = "../data/cov/gridMET_SOILMOISTmm" 
+inDir = "../data/cov/SNODAS_SWEmm" 
 taufdr = "../data/tauDEM" 
 taufac = "../data/tauDEM" 
 workDir = "../work"
@@ -14,6 +14,7 @@ logDir = "../logs"
 cores = 20
 accumThresh = 1000
 overwrite = True
+deleteTemp = True
 
 
 for HUC in HUClist:
@@ -26,7 +27,7 @@ for HUC in HUClist:
 
     try:
                 
-                cmd = 'python batchCPGs.py {0} {1} {2} {3} {4} {5} {6} {7} {8}'.format(inDir, HUCtaufdr, HUCtaufac, HUCworkDir, HUCoutDir, HUClogDir, cores, accumThresh, overwrite) # Create string of shell command
+                cmd = 'python batchCPGs.py {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}'.format(inDir, HUCtaufdr, HUCtaufac, HUCworkDir, HUCoutDir, HUClogDir, cores, accumThresh, overwrite, deleteTemp) # Create string of shell command
                 print(cmd)
                 result = subprocess.run(cmd, shell = True) # Run shell command
                 result.stdout
