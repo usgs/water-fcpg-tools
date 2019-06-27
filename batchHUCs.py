@@ -13,7 +13,7 @@ outDir = "../CPGs"
 logDir = "../logs"
 cores = 20
 accumThresh = 1000
-overwrite = True
+overwrite = False
 deleteTemp = True
 
 
