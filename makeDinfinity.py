@@ -16,3 +16,23 @@ for HUC in HUClist:
     tauDrainDir(fdr, taufdr)
     tauFlowAccum(taufdr, taufac, cores=cores)
 
+    try:
+        print('Accumulating Data...')
+        tauParams = {
+        'fdr':fdr,
+        'cores':cores, 
+        'outFl':accumRast, 
+        }
+        
+        cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        print(cmd)
+        result = subprocess.run(cmd, shell = True) # Run shell command
+        
+        result.stdout
+        
+
+    except:
+        print('Error Accumulating Data')
+        traceback.print_exc()
+
+
