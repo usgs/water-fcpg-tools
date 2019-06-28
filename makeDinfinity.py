@@ -1,7 +1,7 @@
 from tools import *
 
-HUClist = ["1002", "1003", "1004", "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012", "1013"]
-
+#HUClist = ["1002", "1003", "1004", "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012", "1013"]
+HUClist = ["1002"]
 
 outDir = "../data/tauDEM"
 
@@ -10,21 +10,17 @@ cores = 16
 for HUC in HUClist:
 
     DEM = "../data/NHDPlus05_06_2019/HRNHDPlusRasters{0}/elev_cm.tif".format(HUC)
-    tauDINFfdr = os.path.join(outDir, "tauDINFfdr" + HUC + ".tif")
-    taufac = os.path.join(outDir, "taufac" + HUC + ".tif")
+    tauDINFang = os.path.join(outDir, "tauDINFang" + HUC + ".tif")
+    tauDINFslp = os.path.join(outDir, "tauDINFslp" + HUC + ".tif")
     
     tauDrainDir(fdr, taufdr)
     tauFlowAccum(taufdr, taufac, cores=cores)
 
     try:
         print('Accumulating Data...')
-        tauParams = {
-        'fdr':fdr,
-        'cores':cores, 
-        'outFl':accumRast, 
-        }
+
         
-        cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = 'mpiexec -bind-to rr -n {0} DinfFlowDir -fel {1} -ang {2} -slp {3}'.format(cores, DEM, tauDINFang, tauDINFslp) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         
