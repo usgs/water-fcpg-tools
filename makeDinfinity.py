@@ -18,7 +18,7 @@ for HUC in HUClist:
         print('Accumulating Data...')
 
         
-        cmd = 'mpiexec -bind-to rr -n {0} DinfFlowDir -fel {1} -ang {2} -slp {3}'.format(cores, DEM, tauDINFang, tauDINFslp) # Create string of tauDEM shell command
+        cmd = 'mpiexec -bind-to rr -n {0} dinfflowdir -fel {1} -ang {2} -slp {3}'.format(cores, DEM, tauDINFang, tauDINFslp) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         
