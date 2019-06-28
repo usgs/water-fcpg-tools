@@ -9,8 +9,8 @@ cores = 16
 
 for HUC in HUClist:
 
-    fdr = "../data/NHDPlus05_06_2019/HRNHDPlusRasters{0}/fdr.tif".format(HUC)
-    taufdr = os.path.join(outDir, "taufdr" + HUC + ".tif")
+    DEM = "../data/NHDPlus05_06_2019/HRNHDPlusRasters{0}/elev_cm.tif".format(HUC)
+    tauDINFfdr = os.path.join(outDir, "tauDINFfdr" + HUC + ".tif")
     taufac = os.path.join(outDir, "taufac" + HUC + ".tif")
     
     tauDrainDir(fdr, taufdr)
