@@ -22,21 +22,28 @@ arcpy.env.snapRaster = fdrPath
 arcpy.env.cellSize = fdrPath
 arcpy.env.overwriteOutput = True 
 
-#sampLyr = "sampLyr"
-#arcpy.MakeFeatureLayer_management(samples, sampLyr)
+sampLyr = "sampLyr"
+arcpy.MakeFeatureLayer_management(samples, sampLyr)
 #samp = arcpy.SelectLayerByAttribute_management(sampLyr, "NEW_SELECTION", '"idx" <= %i'%(numSamples))
 
 fdr = Raster(fdrPath) # load the FDR
 param = Raster(paramPath) # load the parameter
 
 arcpy.AddMessage("Delineating watersheds for run: %s, %s points."%(runNum, numSamples))
-contrib = Watershed(fdr,samples,"idx")
-contrib.save("ESRI_delineation_%i.tif"%(int(runNum)))
+
+delineation = Con(IsNull(fdr) == 0,0,'')
+with arcpy.da.SearchCursor(samples,['idx']) as cursor: # loop through each point
+	for field in cursor:
+		samp = arcpy.SelectLayerByAttribute_management(sampLyr, "NEW_SELECTION", '"idx" = %i'%field[0]) # select each point
+		delineation += Watershed(fdr,samp,"idx") # run the watershed and sum onto output raster
+		arcpy.SelectLayerByAttribute_management(samp, "CLEAR_SELECTION") # start over
+
+delineation = SetNull(IsNull(fdr),delineation)
+
+delineation.save("ESRI_delineation_%i.tif"%(int(runNum)))
 
 arcpy.AddMessage("Computing Zonal Stats for run: %s, %s watersheds."%(runNum, numSamples))
-outStats = ZonalStatisticsAsTable(contrib,"Value", param,"ESRI_res_%i.dbf"%int(runNum),"DATA","MEAN")
-#outStats.save("ESRI_stats_%i.tif"%(int(runNum)))
-#arcpy.ConvertTableToCsvFile_locref("ESRI_res_%i.dbf"%int(runNum),"ESRI_res_%i.xlsx"%int(runNum),"COMMA")
+outStats = ZonalStatisticsAsTable(delineation,"Value", param,"ESRI_res_%i.dbf"%int(runNum),"DATA","MEAN")
 
 
 totalTime = time.time() - strt
