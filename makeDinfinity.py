@@ -5,7 +5,7 @@ HUClist = ["1002"]
 
 outDir = "../data/tauDEM"
 
-cores = 16
+cores = 4
 
 for HUC in HUClist:
 
@@ -13,8 +13,6 @@ for HUC in HUClist:
     tauDINFang = os.path.join(outDir, "tauDINFang" + HUC + ".tif")
     tauDINFslp = os.path.join(outDir, "tauDINFslp" + HUC + ".tif")
     
-    tauDrainDir(fdr, taufdr)
-    tauFlowAccum(taufdr, taufac, cores=cores)
 
     try:
         print('Accumulating Data...')
