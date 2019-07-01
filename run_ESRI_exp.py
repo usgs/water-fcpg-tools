@@ -61,10 +61,10 @@ def delineate(numIter):
 	if not os.path.isfile(outfl):
 	 	with open(outfl,'w') as dst:
 	 		dst.write('RunNum,Time\n')
-	 		dst.write('%s,%s\n'%(numIter,totalTime))
+	 		dst.write('%s,%s\n'%(numIter,runTime))
 	else:
 	 	with open(outfl,'a') as dst:
-	 		dst.write('%s,%s\n'%(numIter,totalTime))
+	 		dst.write('%s,%s\n'%(numIter,runTime))
 	arcpy.AddMessage("	Output Complete.")
 
 	return runTime
