@@ -1,8 +1,8 @@
-cov=~/projects/CPGtools/data/CHI_poster/daymet/daymet_v3_prcp_annttl_2017_na.tif
-taufdr=~/projects/CPGtools/data/CHI_poster/HRNHDPlusRasters1003/fdr_reclass.tif
-taufac=~/projects/CPGtools/data/CHI_poster/HRNHDPlusRasters1003/fac.tif
-workDir=~/projects/CPGtools/data/CHI_poster/cpg
-outDir=~/projects/CPGtools/data/CHI_poster/cpg
+cov=./data/CHI_poster/daymet/daymet_v3_prcp_annttl_2017_na.tif
+taufdr=./data/CHI_poster/nhd/fdr_reclass.tif
+taufac=./data/CHI_poster/HRNHDPlusRasters1003/fac.tif
+workDir=./data/CHI_poster/cpg
+outDir=./data/CHI_poster/cpg
 cores=6
 accumThresh=1000
 overwrite=True
