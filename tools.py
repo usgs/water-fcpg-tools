@@ -283,6 +283,9 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         outParam - resampled, reprojected, and clipped parameter raster
     '''
 
+    assert os.path.isfile(fdr), "%s does not exist."%fdr
+    assert os.path.isfile(inParam), "%s does not exist."%inParam
+
     with rs.open(fdr) as ds: # load flow direction raster in Rasterio
         fdrcrs = ds.crs #Get flow direction coordinate system
         xsize, ysize = ds.res #Get flow direction cell size
@@ -645,6 +648,27 @@ def downloadNHDPlusRaster(HUC4, fileDir):
     os.system("7za x {0} -o{1}".format(compressedFile,fileDir))
 
     
+def queryCPG(cpg,points):
+    '''
+    Parameters
+    ----------
+    cpg : str
+        Path to CPG
+    points : list
+        List of Shapely point objects
+    
+    Returns
+    -------
+    values : list
+        List of values queried from CPG grid
+    '''
+    values = []
+    with rs.open(cpg) as src:
+        dat = src.read(1)
 
+        for geom in points:
+            row,col = src.index(geom.x,geom.y) # get array indicies based on spatial coordinate.
+            values.append(dat[row,col])
 
+    return values
 
