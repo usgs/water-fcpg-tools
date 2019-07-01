@@ -15,6 +15,8 @@ def delineate(numIter):
 
 	arcpy.env.workspace = "C:\\Users\\tbarnhart\\projects\\CPGtools\\data\\CHI_poster"
 
+	outfl = os.path.join(arcpy.env.workspace,"ESRI_results.csv")
+
 	fdrPath = os.path.join(arcpy.env.workspace,'HRNHDPlusRasters1003\\fdr.tif')
 	paramPath = os.path.join(arcpy.env.workspace,'daymet\\daymet_v3_prcp_annttl_2017_na_reproj.tif')
 
@@ -43,29 +45,10 @@ def delineate(numIter):
 	if arcpy.Exists(delineationPath):
 		arcpy.Delete_management(delineationPath)
 
-	sampLyr = 'sampLyr'
 	PP = 'pp.tif'
-	arcpy.MakeFeatureLayer_management(samples,sampLyr)
+	arcpy.FeatureToRaster_conversion(samples,"idx",PP,10)
+	delineation = Watershed(fdr, PP) # compute watershed
 
-	loadTotal = time.time() - loadStrt
-
-	tmp = Int(Con(IsNull(fdr)==0,0)) # make empty raster
-	wshds = []
-	with arcpy.da.SearchCursor(samples,['idx']) as cursor: # iterate through each point
-		for field in cursor:
-			arcpy.AddMessage('	Delineating watershed %i'%field[0])
-			arcpy.SelectLayerByAttribute_management(sampLyr,"NEW_SELECTION",'"idx" = %s'%field[0])
-
-			arcpy.FeatureToRaster_conversion(sampLyr,"idx",PP,10)
-
-			wshd = Watershed(fdr, PP) # compute watershed
-			tmp += Int(Con(IsNull(wshd)==0,int(field[0]),0)) # add the idx number to the delineation raster, before, this had nulls, wich was generating an all-null raster
-			#wshds.append(Int(Con(IsNull(wshd)==0,int(field[0]),0)))
-			arcpy.SelectLayerByAttribute_management(sampLyr,"CLEAR_SELECTION")
-
-	#arcpy.MosaicToNewRaster_management(wshds,arcp.env.workspace, delineationPath, pixel_type="32_BIT_UNSIGNED", mosaic_method = "SUM")
-	#delineation = Raster(delineationPath)
-	delineation = Int(Con((IsNull(fdr)==0) & (tmp != 0),tmp,'')) # mask out the no data areas again.
 	delineation.save(delineationPath)
 
 	arcpy.AddMessage("	Computing Zonal Stats.")
@@ -74,16 +57,14 @@ def delineate(numIter):
 	runTime = time.time() - strt
 	arcpy.AddMessage("	Run time: %s minutes."%(runTime/60.))
 
-	#outfl = os.path.join(arcpy.env.workspace,outfl)
+	arcpy.AddMessage("	Writing Output to : %s"%outfl)
+	if not os.path.isfile(outfl):
+	 	with open(outfl,'w') as dst:
+	 		dst.write('RunNum,Time\n')
+	 		dst.write('%s,%s\n'%(numIter,totalTime))
+	else:
+	 	with open(outfl,'a') as dst:
+	 		dst.write('%s,%s\n'%(numIter,totalTime))
+	arcpy.AddMessage("	Output Complete.")
 
-	# arcpy.AddMessage("	Writing Output to : %s"%outfl)
-	# if not os.path.isfile(outfl):
-	# 	with open(outfl,'w') as dst:
-	# 		dst.write('RunNum,Time\n')
-	# 		dst.write('%s,%s\n'%(numIter,totalTime))
-	# else:
-	# 	with open(outfl,'a') as dst:
-	# 		dst.write('%s,%s\n'%(numIter,totalTime))
-	# arcpy.AddMessage("	Output Complete.")
-
-	return loadTotal, runTime
+	return runTime
