@@ -20,11 +20,11 @@ def parsebool(b):
 print("Starting {0}".format(datetime.datetime.now()))
 #Set up Inputs
 #print(sys.argv)
-paramRast = sys.argv[1] #Path to parameter raster with name in format of "source_var_dd_mm_yyyy.tif"
-taufdr = sys.argv[2] #Path to tauDEM flow direction grid with in format of "taufdrXXXX.tif", where XXXX is a HUC code of any length
-taufac = sys.argv[3] #Path to tauDEM flow accumulation grid
-workDir = sys.argv[4] #Path to working directory
-outDir = sys.argv[5] #Path to output directory for CPG files
+paramRast = str(sys.argv[1]) #Path to parameter raster with name in format of "source_var_dd_mm_yyyy.tif"
+taufdr = str(sys.argv[2]) #Path to tauDEM flow direction grid with in format of "taufdrXXXX.tif", where XXXX is a HUC code of any length
+taufac = str(sys.argv[3]) #Path to tauDEM flow accumulation grid
+workDir = str(sys.argv[4]) #Path to working directory
+outDir = str(sys.argv[5]) #Path to output directory for CPG files
 cores = int(sys.argv[6]) #Number of cores to use 
 accumThresh = int(sys.argv[7]) #Number of cells in flow accumulation grid below which CPG will be set to no data
 overwrite = parsebool(sys.argv[8]) #Whether to overwrite CPGs or not 
@@ -58,7 +58,7 @@ accumFile = os.path.join(workDir, paramName + "_HUC" + HUC + "accum.tif") #Creat
 nodataFile = os.path.join(workDir, paramName + "_HUC" + HUC + "nodata.tif") #Create filepath for parameter no data file
 nodataaccumFile = os.path.join(workDir, paramName + "_HUC" + HUC + "accumnodata.tif") #Create filepath for parameter accumulated no data file
 CPGFile = os.path.join(outDir, paramName + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
-
+print(os.getcwd())
 if os.path.isfile(CPGFile) & (overwrite == False):
         print("Error: Specified CPG file exists and will not be overwritten")
 else:
