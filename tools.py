@@ -306,8 +306,11 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     #print("Flow Direction proj4: " + str(fdrcrs))
     
     # Choose an appropriate gdal data type for the parameter
-    if paramType == 'int8' or paramType == 'int16':
+    if paramType == 'int8':
         outType = 'Int16' # Convert 8 bit integers to 16 bit in gdal
+        print("Warning: 8 bit inputs are unsupported and may not be reprojected correctly") #Print warning that gdal may cause problems with 8 bit rasters
+    elif paramType == 'int16':
+        outType = 'Int16' 
     elif paramType == 'int32':
         outType = 'Int32'
     elif paramType == 'int64':
