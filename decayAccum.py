@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import rasterio as rs
+import datetime
 
 
 
@@ -16,6 +17,7 @@ def makeDecayGrid(fdr, multiplier, outRast):
         profile = ds.profile
         inNoData = ds.nodata
 
+    print("Building multiplier grid {0}".format(datetime.datetime.now()))
     decayGrid = data.astype(np.float32) #Convert to float
     decayGrid[data != inNoData] = multiplier # fill all data cells with with multiplier values
 
@@ -41,3 +43,5 @@ def makeDecayGrid(fdr, multiplier, outRast):
 
     
 
+
+makeDecayGrid("../data/tauDEM/taufdr1002.tif", 0.5, "../data/tauDEM/mult1002.tif")
