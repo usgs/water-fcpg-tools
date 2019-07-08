@@ -73,4 +73,4 @@ def decayAccum(ang, paramRast, mult, outRast, cores=1) :
 
 #decayAccum("../data/tauDEM/tauDINFang1002.tif", "../work/1002/testrprj1002.tif", "../data/tauDEM/mult1002.tif", "../work/1002/decayAccumTest.tif")
 
-make_cpg("../work/1002/decayAccumTest.tif", "../data/tauDEM/taufac1002.tif", "../work/1002/decayAccumCPGTest.tif")
+make_cpg("../work/1002/decayAccumTest.tif", "../data/tauDEM/taufac1002.tif", "../work/1002/decayAccumCPGTest.tif", minAccum = 1000)
