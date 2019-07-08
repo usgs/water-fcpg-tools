@@ -15,4 +15,4 @@ source activate py36
 module load gis/TauDEM-5.3.8-gcc-mpich
 module load gdal/2.2.2-gcc
 
-python -u ./makeDecayAccumulation.py
+python -u ./decayAccum.py
