@@ -3,7 +3,7 @@ import numpy as np
 import rasterio as rs
 import datetime
 import subprocess
-import stdout
+import traceback
 
 
 
