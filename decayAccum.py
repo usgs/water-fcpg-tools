@@ -2,6 +2,8 @@ import os
 import numpy as np
 import rasterio as rs
 import datetime
+import subprocess
+import stdout
 
 
 
@@ -41,7 +43,30 @@ def makeDecayGrid(fdr, multiplier, outRast):
 
         
 
-    
+def decayAccum(ang, paramRast, mult, outRast, cores=1) 
 
 
-makeDecayGrid("../data/tauDEM/taufdr1002.tif", 0.5, "../data/tauDEM/mult1002.tif")
+    try:
+        print('Accumulating parameter')
+        tauParams = {
+        'ang':ang,
+        'cores':cores, 
+        'dm':mult,
+        'dsca': outRast,
+        'weight':paramRast
+        }
+                
+        cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {mult} -dsca {outRast}, -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        print(cmd)
+        result = subprocess.run(cmd, shell = True) # Run shell command
+        result.stdout
+        print("Parameter no data accumulation written to: {0}".format(outNoDataRast))
+                
+    except:
+        print('Error Accumulating Data')
+        traceback.print_exc()
+
+
+
+
+#makeDecayGrid("../data/tauDEM/taufdr1002.tif", 0.5, "../data/tauDEM/mult1002.tif")
