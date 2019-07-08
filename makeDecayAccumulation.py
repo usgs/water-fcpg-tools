@@ -9,7 +9,7 @@ outDir = "../data/tauDEM"
 
 cores = 20
 
-mult = 0.5 #Decay multiplier
+mult = "../data/tauDEM/mult1002.tif" #Decay multiplier
 
 for HUC in HUClist:
 
