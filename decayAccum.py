@@ -43,7 +43,7 @@ def makeDecayGrid(fdr, multiplier, outRast):
 
         
 
-def decayAccum(ang, paramRast, mult, outRast, cores=1) 
+def decayAccum(ang, paramRast, mult, outRast, cores=1) :
 
 
     try:
