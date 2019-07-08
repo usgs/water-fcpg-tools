@@ -9,11 +9,13 @@ outDir = "../data/tauDEM"
 
 cores = 20
 
+mult = 0.5 #Decay multiplier
+
 for HUC in HUClist:
 
-    DEM = "../data/NHDPlus05_06_2019/HRNHDPlusRasters{0}/elev_cm.tif".format(HUC)
-    tauDINFang = os.path.join(outDir, "tauDINFang" + HUC + ".tif")
-    tauDINFslp = os.path.join(outDir, "tauDINFslp" + HUC + ".tif")
+    ang = "../data/tauDEM/tauDINFang{0}.tif".format(HUC)
+
+    decayAccum = os.path.join(outDir, "tauDecayAccum" + HUC + ".tif")
     
 
     try:
