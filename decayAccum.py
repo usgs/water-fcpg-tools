@@ -67,6 +67,6 @@ def decayAccum(ang, paramRast, mult, outRast, cores=1)
         traceback.print_exc()
 
 
-
-
 #makeDecayGrid("../data/tauDEM/taufdr1002.tif", 0.5, "../data/tauDEM/mult1002.tif")
+
+decayAccum("../data/tauDEM/tauDINFang1002.tif", "../data/cov/SNODAS_SWEmm/SNODAS_SWEmm_2004_03_01.tif", "../data/tauDEM/mult1002.tif", "../data/cov/decayAccumTest.tif")
