@@ -15,7 +15,7 @@ for HUC in HUClist:
 
     ang = "../data/tauDEM/tauDINFang{0}.tif".format(HUC)
 
-    decayAccum = os.path.join(outDir, "tauDecayAccum" + HUC + ".tif")
+    decayAccum = os.path.join(outDir, "tau050DecayAccum" + HUC + ".tif")
     
 
     try:
