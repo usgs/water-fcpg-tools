@@ -60,7 +60,7 @@ def decayAccum(ang, paramRast, mult, outRast, cores=1) :
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         result.stdout
-        print("Parameter no data accumulation written to: {0}".format(outNoDataRast))
+        print("Parameter no data accumulation written to: {0}".format(outRast))
                 
     except:
         print('Error Accumulating Data')
