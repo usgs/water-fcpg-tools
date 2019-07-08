@@ -56,7 +56,7 @@ def decayAccum(ang, paramRast, mult, outRast, cores=1) :
         'weight':paramRast
         }
                 
-        cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {mult} -dsca {outRast}, -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         result.stdout
