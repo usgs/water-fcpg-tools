@@ -60,7 +60,7 @@ def decayAccum(ang, paramRast, mult, outRast, cores=1) :
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         result.stdout
-        print("Parameter no data accumulation written to: {0}".format(outRast))
+        print("Parameter accumulation written to: {0}".format(outRast))
                 
     except:
         print('Error Accumulating Data')
@@ -73,4 +73,4 @@ resampleParam("../data/cov/landsatNDVI/vrt/landsat_NDVI-May-Oct_2018_00_00.vrt",
 
 decayAccum("../data/tauDEM/tauDINFang1002.tif", "../work/1002/landsat_NDVI-May-Oct_2018_00_00rprj.tif", "../data/tauDEM/mult1002.tif", "../work/1002/decayAccumTest.tif", cores=20)
 
-make_cpg("../work/1002/decayAccumTest.tif", "../data/tauDEM/tau050DecayAccum1002.tif", "../work/1002/decayAccumCPGTest.tif", minAccum = 1000)
+make_cpg("../work/1002/decayAccumTest.tif", "../data/tauDEM/tau050DecayAccum1002.tif", "../work/1002/decayAccumCPGTest.tif", minAccum = 10)
