@@ -73,4 +73,4 @@ resampleParam("../data/cov/landsatNDVI/vrt/landsat_NDVI-May-Oct_2018_00_00.vrt",
 
 decayAccum("../data/tauDEM/tauDINFang1002.tif", "../work/1002/landsat_NDVI-May-Oct_2018_00_00rprj.tif", "../data/tauDEM/mult1002.tif", "../work/1002/decayAccumTest.tif", cores=20)
 
-make_cpg("../work/1002/decayAccumTest.tif", "../data/tauDEM/tau050DecayAccum1002.tif", "../work/1002/decayAccumCPGTest.tif", minAccum = 100)
+make_cpg("../work/1002/decayAccumTest.tif", "../data/tauDEM/tau050DecayAccum1002.tif", "../work/1002/decayAccumCPGTest.tif", minAccum = 50)
