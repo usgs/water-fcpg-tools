@@ -120,7 +120,7 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1) :
         traceback.print_exc()
 
 
-def make_Decaycpg(accumParam, fac, maskfac, outRast, noDataRast = None, minAccum = None):
+def make_Decaycpg(accumParam, fac,  outRast, noDataRast = None, streamMask = None):
     '''
     Inputs:
         
@@ -192,9 +192,13 @@ def make_Decaycpg(accumParam, fac, maskfac, outRast, noDataRast = None, minAccum
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
 
     # Replace values in cells with small flow accumulation with no data
-    if minAccum != None:
+    if streamMask != None:
+        with rs.open(streamMask) as ds: # stream mask raster
+            streams = ds.read(1)
+            streamsNoData = ds.nodata # pull the mask no data value
+
         print("Replacing small flow accumulations {0}".format(datetime.datetime.now()))
-        dataCPG[corrAccum < minAccum] = outNoData #Set values smaller than threshold to no data
+        dataCPG[streams == streamsNoData] = outNoData #Set values off streams to no data
 
     # Update raster profile
     profile.update({'dtype':dataCPG.dtype,
@@ -222,7 +226,7 @@ decayAccum("../data/tauDEM/tauDINFang1002.tif",  "../data/tauDEM/invDist1002.tif
 
 decayAccum("../data/tauDEM/tauDINFang1002.tif", "../data/tauDEM/invDist1002.tif", "../work/1002/decayAccumTest.tif", cores=20)
 
-make_cpg("../work/1002/paramdecayAccumTest.tif", "../work/1002/decayAccumTest.tif", "../work/1002/decayAccumCPGTest.tif", minAccum = 20)
+make_cpg("../work/1002/paramdecayAccumTest.tif", "../work/1002/decayAccumTest.tif", "../work/1002/decayAccumCPGTest.tif", streamMask ="../CPGs/1002/gridMET_minTempK_1979_01_00_HUC1002_CPG.tif")
 
 
 """
