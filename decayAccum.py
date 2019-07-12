@@ -7,22 +7,31 @@ import traceback
 from tools import *
 
 
-def makeDecayGrid(fdr, multiplier, outRast):
+def makeDecayGrid(d2strm, outRast):
 
-    if not os.path.isfile(fdr):
+    if not os.path.isfile(d2strm):
         print("Error - Flow direction raster file is missing!")
         return #Function will fail, so end it now
 
 
-    with rs.open(fdr) as ds: # load flow direction data
+    with rs.open(d2strm) as ds: # load flow direction data
         data = ds.read(1)
         profile = ds.profile
         inNoData = ds.nodata
+        xsize, ysize = ds.res #Get flow direction cell size
+    
+    if xsize != ysize:
+        print("Warning - grid cells are not square")
+
+
+    outNoData = 0 #Set no data value for output raster
 
     print("Building multiplier grid {0}".format(datetime.datetime.now()))
     decayGrid = data.astype(np.float32) #Convert to float
-    decayGrid[data != inNoData] = multiplier # fill all data cells with with multiplier values
+    decayGrid[data == inNoData] = np.NaN # fill with no data values where appropriate
+    decayGrid = 1/(decayGrid + xsize) #Add the resolution to every value and invert distances to streams
 
+    decayGrid[np.isnan(decayGrid)] = outNoData # Replace numpy NaNs with no data value
 
     # Update raster profile
     profile.update({
@@ -184,15 +193,16 @@ def make_Decaycpg(accumParam, fac, maskfac, outRast, noDataRast = None, minAccum
     
 
 
-#makeDecayGrid("../data/tauDEM/taufdr1002.tif", 0.5, "../data/tauDEM/mult1002.tif")
+makeDecayGrid("../data/tauDEM/tauDist2Strm1002.tif", "../data/tauDEM/invDist1002.tif")
 
 #resampleParam("../data/cov/landsatNDVI/vrt/landsat_NDVI-May-Oct_2018_00_00.vrt", "../data/tauDEM/taufdr1002.tif", "../work/1002/landsat_NDVI-May-Oct_2018_00_00rprj.tif", resampleMethod="bilinear", cores=20)
 
 #decayAccum("../data/tauDEM/tauDINFang1002.tif", "../work/1002/landsat_NDVI-May-Oct_2018_00_00rprj.tif", "../data/tauDEM/mult1002.tif", "../work/1002/decayAccumTest.tif", cores=20)
 
 #make_cpg("../work/1002/decayAccumTest.tif", "../data/tauDEM/tau050DecayAccum1002.tif", "../work/1002/decayAccumCPGTest.tif", minAccum = 30)
-
+"""
 HUCs = ["1003", "1004", "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012", "1013"]
 
 for HUC in HUCs:
     dist2stream("../data/tauDEM/taufdr{0}.tif".format(HUC), "../data/tauDEM/taufac{0}.tif".format(HUC), 1000, "../data/tauDEM/tauDist2Strm{0}.tif".format(HUC), cores=20)
+"""
