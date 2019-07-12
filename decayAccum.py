@@ -54,45 +54,45 @@ def makeDecayGrid(d2strm, outRast):
 
 def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
 
-if paramRast != None:
-    try:
-        print('Accumulating parameter')
-        tauParams = {
-        'ang':ang,
-        'cores':cores, 
-        'dm':mult,
-        'dsca': outRast,
-        'weight':paramRast
-        }
+    if paramRast != None:
+        try:
+            print('Accumulating parameter')
+            tauParams = {
+            'ang':ang,
+            'cores':cores, 
+            'dm':mult,
+            'dsca': outRast,
+            'weight':paramRast
+            }
+                    
+            cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+            print(cmd)
+            result = subprocess.run(cmd, shell = True) # Run shell command
+            result.stdout
+            print("Parameter accumulation written to: {0}".format(outRast))
+                    
+        except:
+            print('Error Accumulating Data')
+            traceback.print_exc()
+    else:
+        try:
+            print('Accumulating parameter')
+            tauParams = {
+            'ang':ang,
+            'cores':cores, 
+            'dm':mult,
+            'dsca': outRast,
+            }
+                    
+            cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -nc'.format(**tauParams) # Create string of tauDEM shell command
+            print(cmd)
+            result = subprocess.run(cmd, shell = True) # Run shell command
+            result.stdout
+            print("Parameter accumulation written to: {0}".format(outRast))
                 
-        cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
-        print(cmd)
-        result = subprocess.run(cmd, shell = True) # Run shell command
-        result.stdout
-        print("Parameter accumulation written to: {0}".format(outRast))
-                
-    except:
-        print('Error Accumulating Data')
-        traceback.print_exc()
-else:
-    try:
-        print('Accumulating parameter')
-        tauParams = {
-        'ang':ang,
-        'cores':cores, 
-        'dm':mult,
-        'dsca': outRast,
-        }
-                
-        cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -nc'.format(**tauParams) # Create string of tauDEM shell command
-        print(cmd)
-        result = subprocess.run(cmd, shell = True) # Run shell command
-        result.stdout
-        print("Parameter accumulation written to: {0}".format(outRast))
-            
-    except:
-        print('Error Accumulating Data')
-        traceback.print_exc()
+        except:
+            print('Error Accumulating Data')
+            traceback.print_exc()
 
 
 
