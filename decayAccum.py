@@ -222,7 +222,7 @@ decayAccum("../data/tauDEM/tauDINFang1002.tif",  "../data/tauDEM/invDist1002.tif
 
 decayAccum("../data/tauDEM/tauDINFang1002.tif", "../data/tauDEM/invDist1002.tif", "../work/1002/decayAccumTest.tif", cores=20)
 
-make_cpg("../work/1002/paramdecayAccumTest.tif", "../work/1002/decayAccumTest.tif", "../work/1002/decayAccumCPGTest.tif", minAccum = 40)
+make_cpg("../work/1002/paramdecayAccumTest.tif", "../work/1002/decayAccumTest.tif", "../work/1002/decayAccumCPGTest.tif", minAccum = 10)
 
 
 """
