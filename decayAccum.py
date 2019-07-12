@@ -120,7 +120,7 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1) :
         traceback.print_exc()
 
 
-def make_Decaycpg(accumParam, fac,  outRast, noDataRast = None, streamMask = None):
+def make_Decaycpg(accumParam, fac, outRast, noDataRast = None, streamMask = None):
     '''
     Inputs:
         
@@ -226,7 +226,7 @@ decayAccum("../data/tauDEM/tauDINFang1002.tif",  "../data/tauDEM/invDist1002.tif
 
 decayAccum("../data/tauDEM/tauDINFang1002.tif", "../data/tauDEM/invDist1002.tif", "../work/1002/decayAccumTest.tif", cores=20)
 
-make_cpg("../work/1002/paramdecayAccumTest.tif", "../work/1002/decayAccumTest.tif", "../work/1002/decayAccumCPGTest.tif", streamMask ="../CPGs/1002/gridMET_minTempK_1979_01_00_HUC1002_CPG.tif")
+make_Decaycpg("../work/1002/paramdecayAccumTest.tif", "../work/1002/decayAccumTest.tif", "../work/1002/decayAccumCPGTest.tif", streamMask ="../CPGs/1002/gridMET_minTempK_1979_01_00_HUC1002_CPG.tif")
 
 
 """
