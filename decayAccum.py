@@ -52,9 +52,9 @@ def makeDecayGrid(d2strm, outRast):
 
         
 
-def decayAccum(ang, paramRast, mult, outRast, cores=1) :
+def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
 
-
+if paramRast != None:
     try:
         print('Accumulating parameter')
         tauParams = {
@@ -74,6 +74,27 @@ def decayAccum(ang, paramRast, mult, outRast, cores=1) :
     except:
         print('Error Accumulating Data')
         traceback.print_exc()
+else:
+    try:
+    print('Accumulating parameter')
+    tauParams = {
+    'ang':ang,
+    'cores':cores, 
+    'dm':mult,
+    'dsca': outRast,
+    }
+            
+    cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -nc'.format(**tauParams) # Create string of tauDEM shell command
+    print(cmd)
+    result = subprocess.run(cmd, shell = True) # Run shell command
+    result.stdout
+    print("Parameter accumulation written to: {0}".format(outRast))
+            
+except:
+    print('Error Accumulating Data')
+    traceback.print_exc()
+
+
 
 def dist2stream(fdr, fac, thresh, outRast, cores=1) :
 
@@ -197,9 +218,11 @@ makeDecayGrid("../data/tauDEM/tauDist2Strm1002.tif", "../data/tauDEM/invDist1002
 
 resampleParam("../data/cov/landsatNDVI/vrt/landsat_NDVI-May-Oct_2018_00_00.vrt", "../data/tauDEM/taufdr1002.tif", "../work/1002/landsat_NDVI-May-Oct_2018_00_00rprj.tif", resampleMethod="bilinear", cores=20)
 
-decayAccum("../data/tauDEM/tauDINFang1002.tif", "../work/1002/landsat_NDVI-May-Oct_2018_00_00rprj.tif", "../data/tauDEM/invDist1002.tif", "../work/1002/decayAccumTest.tif", cores=20)
+decayAccum("../data/tauDEM/tauDINFang1002.tif",  "../data/tauDEM/invDist1002.tif", "../work/1002/paramdecayAccumTest.tif", paramRast="../work/1002/landsat_NDVI-May-Oct_2018_00_00rprj.tif", cores=20)
 
-make_cpg("../work/1002/decayAccumTest.tif", "../data/tauDEM/taufac1002.tif", "../work/1002/decayAccumCPGTest.tif", minAccum = 1000)
+decayAccum("../data/tauDEM/tauDINFang1002.tif", "../data/tauDEM/invDist1002.tif", "../work/1002/decayAccumTest.tif", cores=20)
+
+make_cpg("../work/1002/paramdecayAccumTest.tif", "../work/1002/decayAccumTest.tif", "../work/1002/decayAccumCPGTest.tif", minAccum = 1000)
 
 
 """
