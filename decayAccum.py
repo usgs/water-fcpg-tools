@@ -195,11 +195,13 @@ def make_Decaycpg(accumParam, fac, maskfac, outRast, noDataRast = None, minAccum
 
 makeDecayGrid("../data/tauDEM/tauDist2Strm1002.tif", "../data/tauDEM/invDist1002.tif")
 
-#resampleParam("../data/cov/landsatNDVI/vrt/landsat_NDVI-May-Oct_2018_00_00.vrt", "../data/tauDEM/taufdr1002.tif", "../work/1002/landsat_NDVI-May-Oct_2018_00_00rprj.tif", resampleMethod="bilinear", cores=20)
+resampleParam("../data/cov/landsatNDVI/vrt/landsat_NDVI-May-Oct_2018_00_00.vrt", "../data/tauDEM/taufdr1002.tif", "../work/1002/landsat_NDVI-May-Oct_2018_00_00rprj.tif", resampleMethod="bilinear", cores=20)
 
-#decayAccum("../data/tauDEM/tauDINFang1002.tif", "../work/1002/landsat_NDVI-May-Oct_2018_00_00rprj.tif", "../data/tauDEM/mult1002.tif", "../work/1002/decayAccumTest.tif", cores=20)
+decayAccum("../data/tauDEM/tauDINFang1002.tif", "../work/1002/landsat_NDVI-May-Oct_2018_00_00rprj.tif", "../data/tauDEM/invDist1002.tif", "../work/1002/decayAccumTest.tif", cores=20)
 
-#make_cpg("../work/1002/decayAccumTest.tif", "../data/tauDEM/tau050DecayAccum1002.tif", "../work/1002/decayAccumCPGTest.tif", minAccum = 30)
+make_cpg("../work/1002/decayAccumTest.tif", "../data/tauDEM/taufac1002.tif", "../work/1002/decayAccumCPGTest.tif", minAccum = 1000)
+
+
 """
 HUCs = ["1003", "1004", "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012", "1013"]
 
