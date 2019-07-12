@@ -186,7 +186,8 @@ def make_Decaycpg(accumParam, fac, outRast, noDataRast = None, streamMask = None
         print("Minimum value:{0}".format(np.nanmin(corrAccum)))
  
     print("Computing CPG values {0}".format(datetime.datetime.now()))
-    dataCPG = data / (corrAccum + 1) # make data CPG
+    #dataCPG = data / (corrAccum + 1) # make data CPG
+    dataCPG = data #No division required for decayed data
 
     print("Replacing numpy nan values {0}".format(datetime.datetime.now()))
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
