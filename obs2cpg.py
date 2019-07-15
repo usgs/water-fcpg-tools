@@ -36,7 +36,7 @@ def getCPGname(CPG):
     paramname = basename.split("_")[0] + "_" + basename.split("_")[0] #Get name of CPG parameter
     return paramname
 
-CPGs.map(getCPGname)
+paramNames = map(getCPGname, CPGs)
 
 
 print(CPGs)
