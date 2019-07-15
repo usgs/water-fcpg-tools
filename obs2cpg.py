@@ -5,8 +5,9 @@ import os
 from collections import Counter
 
 obsFile = "../data/observations/flowPerm_07152019.txt"
-
 CPGdir = "../CPGs/1002"
+HUC = 1002
+
 
 data = pd.read_csv(obsFile)
 
