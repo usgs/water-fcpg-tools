@@ -6,7 +6,7 @@ CPGdir = "../CPGs/1002"
 
 data = pd.read_csv(obsFile)
 
-data.Date =  pd.to_datetime(data.Date, format='%m/%d/%Y %H:%M:%S.%f')
+data.Date =  pd.to_datetime(data.Date, format='%m/%d/%Y %H:%M:%S')
 
 
 print(data.Date)
