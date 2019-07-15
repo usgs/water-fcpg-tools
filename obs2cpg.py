@@ -52,8 +52,8 @@ for param in set(paramNames):
         static.add(param)
  
 #Sort the parameter paramNames
-dynamic = list(dynamic).sort()
-static = list(static).sort()
+dynamic = list(dynamic)
+static = list(static)
 
 data = pd.concat([data, pd.DataFrame(columns=dynamic), pd.DataFrame(columns=static)])
 
