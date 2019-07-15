@@ -39,5 +39,5 @@ def getCPGname(CPG):
 paramNames = map(getCPGname, CPGs)
 
 
-print(CPGs)
+print(paramNames)
 print(data)
