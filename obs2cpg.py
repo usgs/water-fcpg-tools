@@ -33,10 +33,10 @@ else:
 
 def getCPGname(CPG):
     basename = os.path.splitext(os.path.basename(CPG))[0] #Get name of CPG file without extention
-    paramname = basename.split("_")[0] + "_" + basename.split("_")[0] #Get name of CPG parameter
+    paramname = basename.split("_")[0] + "_" + basename.split("_")[1] #Get name of CPG parameter
     return paramname
 
-paramNames = list(map(getCPGname, CPGs))
+paramNames = set(map(getCPGname, CPGs))
 
 
 print(paramNames)
