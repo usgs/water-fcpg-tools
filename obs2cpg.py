@@ -93,13 +93,10 @@ for index, row in data.iterrows():
         print(paramCPG)
         
 
-        with rs.open(paramCPG) as (ds, err):
+        with rs.open(paramCPG) as ds:
 
-            if err:
-                print("Bad things have happened")
-            else:
-                #CPGvalues = ds.sample(list(data['USGS_Albers']),1)
-                CPGvalues = ds.sample([(-124542,44226)],1)
+            #CPGvalues = ds.sample(list(data['USGS_Albers']),1)
+            CPGvalues = ds.sample([(-124542,44226)],1)
 
 
 
