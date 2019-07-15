@@ -4,20 +4,22 @@ import time
 #Check if system arguments were provided
 if len(sys.argv) > 1:
     inDir = sys.argv[1] #Input directory in which to search for parameter rasters
-    taufdr = sys.argv[2] #Flow direction grid in tauDEM format
+    tauDINFang = sys.argv[2] #Path to tauDEM d-infinity flow direction grid
     taufac = sys.argv[3] #Flow accumulation grid in tauDEM format
-    workDir = sys.argv[4] #Working directory to save intermediate files
-    outDir = sys.argv[5] #Output directory to save CPGs
-    logDir = sys.argv[6] #Directory to save slurm log files
-    cores = sys.argv[7] #Number of cores to use for each slurm job
-    accumThresh = sys.argv[8] #Number of cells in flow accumulation grid below which CPG will be set to no data
-    overwrite = sys.argv[9] #Whether to overwrite existing CPGs
-    deleteTemp = sys.argv[10] #Whether to delete temporary files
+    invDist = sys.argv[4] #Path to raster with inverse flow distances to streams
+    workDir = sys.argv[5] #Working directory to save intermediate files
+    outDir = sys.argv[6] #Output directory to save CPGs
+    logDir = sys.argv[7] #Directory to save slurm log files
+    cores = sys.argv[8] #Number of cores to use for each slurm job
+    accumThresh = sys.argv[9] #Number of cells in flow accumulation grid below which CPG will be set to no data
+    overwrite = sys.argv[10] #Whether to overwrite existing CPGs
+    deleteTemp = sys.argv[11] #Whether to delete temporary files
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/static/Soils/" 
-    taufdr = "../data/tauDEM/taufdr1002.tif" 
+    tauDINFang = "../data/tauDEM/taufdr1002.tif" 
     taufac = "../data/tauDEM/taufac1002.tif" 
+    invDist = "../data/tauDEM/invDist1002.tif" 
     workDir = "../work/1002"
     outDir = "../CPGs/1002"
     logDir = "../logs/1002"
@@ -75,7 +77,7 @@ for cov in covList:
         f.writelines("source activate py36\n")
 
         #Run the python script
-        f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
+        f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}\n".format(cov, taufdr, taufac, invDist, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
         
     print("Launching batch job for: " + str(covname))
 
