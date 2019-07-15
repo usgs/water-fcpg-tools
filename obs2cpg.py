@@ -12,3 +12,17 @@ data.Date =  pd.to_datetime(data.Date, format='%m/%d/%Y %H:%M:%S')
 data.Year = pd.DatetimeIndex(data.Date).year
 data.Month = pd.DatetimeIndex(data.Date).month
 data.Day = pd.DatetimeIndex(data.Date).day
+
+
+CPGs = [] #Initialize list of CPGs
+
+
+if os.path.isdir(inDir):
+    #Get all covariate files in directory
+    for path, subdirs, files in os.walk(inDir):
+        for name in files:
+            #Check if file is .tif, and if so add it to covariate list
+            if os.path.splitext(name)[1] == ".tif":
+                    CPGs.append(os.path.join(path, name))
+else:
+    print("Invalid CPG directory")
