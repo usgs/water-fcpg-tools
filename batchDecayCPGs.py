@@ -17,7 +17,7 @@ if len(sys.argv) > 1:
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/static/Soils/" 
-    tauDINFang = "../data/tauDEM/taufdr1002.tif" 
+    tauDINFang = "../data/tauDEM/tauDINFang1002.tif" 
     taufac = "../data/tauDEM/taufac1002.tif" 
     invDist = "../data/tauDEM/invDist1002.tif" 
     workDir = "../work/1002"
@@ -35,7 +35,7 @@ if os.path.isdir(inDir):
     for path, subdirs, files in os.walk(inDir):
         for name in files:
             #Check if file is .tif, and if so add it to covariate list
-            if os.path.splitext(name)[1] == ".tif":
+            if os.path.splitext(name)[1] == ".vrt":
                     covList.append(os.path.join(path, name))
 elif os.path.isfile(inDir):
     #Supplied path is a single covariate file
