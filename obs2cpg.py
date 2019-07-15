@@ -14,8 +14,8 @@ data = pd.read_csv(obsFile)
 data.Date =  pd.to_datetime(data.Date, format='%m/%d/%Y %H:%M:%S')
 
 #Populate the year, month, and day columns
-data.Year = str(pd.DatetimeIndex(data.Date).year)
-data.Month = pd.DatetimeIndex(data.Date).month
+data.Year = pd.DatetimeIndex(data.Date).year
+data.Month = pd.DatetimeIndex(data.Date).month.map("{:02}".format)
 data.Day = pd.DatetimeIndex(data.Date).day
 
 #Create column with tuple of point coordinates
