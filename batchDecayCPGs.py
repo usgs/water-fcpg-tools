@@ -77,7 +77,7 @@ for cov in covList:
         f.writelines("source activate py36\n")
 
         #Run the python script
-        f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}\n".format(cov, tauDINFang, taufac, invDist, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
+        f.writelines("python -u ./makeDecayCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}\n".format(cov, tauDINFang, taufac, invDist, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
         
     print("Launching batch job for: " + str(covname))
 
