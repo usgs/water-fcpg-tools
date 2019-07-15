@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import os
 
 obsFile = "../data/observations/flowPerm_07152019.txt"
@@ -18,9 +19,9 @@ data.Day = pd.DatetimeIndex(data.Date).day
 CPGs = [] #Initialize list of CPGs
 
 
-if os.path.isdir(inDir):
+if os.path.isdir(CPGdir):
     #Get all covariate files in directory
-    for path, subdirs, files in os.walk(inDir):
+    for path, subdirs, files in os.walk(CPGdir):
         for name in files:
             #Check if file is .tif, and if so add it to covariate list
             if os.path.splitext(name)[1] == ".tif":
