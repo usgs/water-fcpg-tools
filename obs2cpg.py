@@ -14,7 +14,7 @@ data = pd.read_csv(obsFile)
 data.Date =  pd.to_datetime(data.Date, format='%m/%d/%Y %H:%M:%S')
 
 #Populate the year, month, and day columns
-data.Year = pd.to_datetime(data.Date, format='%Y')
+data.Year = pd.to_datetime(data.Date, format='%Y/%m/%d')
 data.Month = pd.to_datetime(data.Date, format='%m')
 data.Day = pd.to_datetime(data.Date, format='%d')
 
