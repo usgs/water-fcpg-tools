@@ -2,7 +2,7 @@ import os
 
 HUClist = ["1002", "1003", "1004", "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012", "1013"]
 #HUClist = ["1002", "1003", "1004", "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1013"]
-inDir = "../data/cov/static/Soils" 
+inDir = "../data/cov/landsatNDVI/vrt" 
 
 CPGdir = "../CPGs"
 
@@ -11,7 +11,7 @@ covList = [] #Initialize list of covariates
 for path, subdirs, files in os.walk(inDir):
     for name in files:
         #Check if file is .tif, and if so add it to covariate list
-        if os.path.splitext(name)[1] == ".tif":
+        if os.path.splitext(name)[1] == ".tif" or os.path.splitext(name)[1] == ".vrt":
                 covList.append(os.path.join(path, name))
 
 print("The following covariate files were located in the specified directory:")
