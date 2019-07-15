@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+from collections import Counter
 
 obsFile = "../data/observations/flowPerm_07152019.txt"
 
@@ -36,8 +37,23 @@ def getCPGname(CPG):
     paramname = basename.split("_")[0] + "_" + basename.split("_")[1] #Get name of CPG parameter
     return paramname
 
-paramNames = set(map(getCPGname, CPGs))
+paramNames = list(map(getCPGname, CPGs))
+
+paramNum = Counter(paramNames) #Counter number of times each parameter name occurs
+
+#Create empty sets for dynamic and static parameter lists
+dynamic = set()
+static = set()
+
+for param in set(paramNames):
+    if paramNum.param > 1:
+        dynamic.append(param)
+    else:
+        static.append(param)
 
 
-print(paramNames)
+
+
+print(static)
+print(dynamic)
 print(data)
