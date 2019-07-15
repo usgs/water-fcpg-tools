@@ -73,11 +73,11 @@ data = pd.concat([data, pd.DataFrame(columns=dynamic), pd.DataFrame(columns=stat
 for param in static:
 
     paramCPG = os.path.join(CPGdir, "{0}_HUC{1}_CPG.tif".format(param, HUC)) #Build path to CPG file
-
+    print(paramCPG)
     with rs.open(paramCPG) as ds:
         #CPGvalues = ds.sample(list(data['USGS_Albers']),1)
         CPGvalues = ds.sample([(-124542,44226)],1)
-        print(next(CPGvalues))
+
 
 
 for index, row in data.iterrows():
@@ -90,11 +90,11 @@ for index, row in data.iterrows():
     for param in dynamic:
 
         paramCPG = os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, obsYear, obsMonth, obsDay, HUC)) #Build path to CPG file
-        
+        print(paramCPG)
         with rs.open(paramCPG) as ds:
             #CPGvalues = ds.sample(list(data['USGS_Albers']),1)
-            CPGvalues = ds.sample([(-124542,44226)],1)
-            print(next(CPGvalues))
+            #CPGvalues = ds.sample([(-124542,44226)],1)
+
 
 
 
