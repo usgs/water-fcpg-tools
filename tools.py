@@ -533,7 +533,7 @@ def maskStreams(inRast, fac, outRast, minAccum = None):
         inNoData = ds.nodata 
 
     with rs.open(fac) as ds: # load input raster
-    accum = ds.read(1)
+        accum = ds.read(1)
 
 
     # Replace values in cells with small flow accumulation with no data
