@@ -76,7 +76,7 @@ for param in static:
 
     with rs.open(paramCPG) as ds:
         CPGvalues = ds.sample(list(data['USGS_Albers']),1)
-        print(CPGvalues[0])
+        print(next(CPGvalues))
 
 
 
