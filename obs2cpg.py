@@ -50,10 +50,14 @@ for param in set(paramNames):
         dynamic.add(param)
     else:
         static.add(param)
+ 
+#Sort the parameter paramNames
+dynamic = list(dynamic).sort()
+static = list(static).sort()
 
-
-
+data = pd.concat([data, pd.DataFrame(columns=dynamic), pd.DataFrame(columns=static)])
 
 print(static)
 print(dynamic)
 print(data)
+
