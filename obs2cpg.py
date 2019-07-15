@@ -84,7 +84,7 @@ for index, row in data.iterrows():
 
     obsYear = row['Year']
     obsMonth = row['Month']
-    obsDay = 00
+    obsDay = "00"
 
     
     for param in dynamic:
