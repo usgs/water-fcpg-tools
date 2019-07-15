@@ -75,9 +75,8 @@ for param in static:
     paramCPG = os.path.join(CPGdir, "{0}_HUC{1}_CPG.tif".format(param, HUC)) #Build path to CPG file
 
     with rs.open(paramCPG) as ds:
-        print(list(data['USGS_Albers']))
         CPGvalues = ds.sample(list(data['USGS_Albers']))
-        print(CPGvalues)
+        print(list(CPGvalues))
 
 
 
