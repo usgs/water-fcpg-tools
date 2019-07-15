@@ -18,7 +18,7 @@ print("Starting {0}".format(datetime.datetime.now()))
 #Set up Inputs
 #print(sys.argv)
 paramRast = sys.argv[1] #Path to parameter raster with name in format of "source_var_dd_mm_yyyy.tif"
-tauDINFang = sys.argv[2] #Path to tauDEM d-infinity flow direction grid with in format of "tauDINFangXXXX.tif", where XXXX is a HUC code of any length
+tauDINFang = sys.argv[2] #Path to tauDEM d-infinity flow direction grid in format of "tauDINFangXXXX.tif", where XXXX is a HUC code of any length
 taufac = sys.argv[3] #Path to tauDEM flow accumulation grid
 invDist = sys.argv[4] #Path to raster with inverse flow distances to streams
 workDir = sys.argv[5] #Path to working directory
