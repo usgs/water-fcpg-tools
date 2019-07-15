@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 obsFile = "../data/observations/flowPerm_07152019.txt"
 
