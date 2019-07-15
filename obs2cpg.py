@@ -6,4 +6,4 @@ CPGdir = "../CPGs/1002"
 
 data = pd.read_csv(obsFile)
 
-print(data.Date)
+print(data.Date.month)
