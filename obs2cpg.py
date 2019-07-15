@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import rasterio as rs
 import os
 from collections import Counter
 
@@ -15,6 +16,11 @@ data.Date =  pd.to_datetime(data.Date, format='%m/%d/%Y %H:%M:%S')
 data.Year = pd.DatetimeIndex(data.Date).year
 data.Month = pd.DatetimeIndex(data.Date).month
 data.Day = pd.DatetimeIndex(data.Date).day
+
+#Create column with tuple of point coordinates
+data['USGS_Albers'] = list(zip(data.POINTX, data.POINTY))
+
+
 
 
 CPGs = [] #Initialize list of CPGs
@@ -61,10 +67,15 @@ data = pd.concat([data, pd.DataFrame(columns=dynamic), pd.DataFrame(columns=stat
 
 
 
+#Get static CPG values
 
+for param in static:
 
+    paramCPG = os.path.join(CPGdir, "{0}_HUC{1}_CPG.tif".format(param, HUC)) #Build path to CPG file
 
-
+    with rs.open(param) as ds:
+        CPGvalues = ds.sample(data['USGS_Albers'])
+        print(CPGvalues)
 
 
 
