@@ -26,3 +26,7 @@ if os.path.isdir(inDir):
                     CPGs.append(os.path.join(path, name))
 else:
     print("Invalid CPG directory")
+
+
+print(CPGs)
+print(data)
