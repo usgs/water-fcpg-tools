@@ -47,9 +47,9 @@ static = set()
 
 for param in set(paramNames):
     if paramNum[param] > 1:
-        dynamic.append(param)
+        dynamic.add(param)
     else:
-        static.append(param)
+        static.add(param)
 
 
 
