@@ -11,12 +11,12 @@ HUC = 1002
 
 data = pd.read_csv(obsFile)
 
-#data.Date =  pd.to_datetime(data.Date, format='%Y/%m/%d %H:%M:%S')
+data.Date =  pd.to_datetime(data.Date, format='%Y/%m/%d %H:%M:%S')
 
 #Populate the year, month, and day columns
-data.Year = pd.to_datetime(data.Date, format='%Y/%m/%d %H:%M:%S')
-data.Month = pd.to_datetime(data.Date, format='%m')
-data.Day = pd.to_datetime(data.Date, format='%d')
+data.Year = data.Date.year
+data.Month = data.Date.month
+data.Day = data.Date.day
 
 #Create column with tuple of point coordinates
 data['USGS_Albers'] = list(zip(data.POINTX, data.POINTY))
