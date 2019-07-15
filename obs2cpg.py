@@ -29,6 +29,15 @@ if os.path.isdir(CPGdir):
 else:
     print("Invalid CPG directory")
 
+#Get unique CPG parameters
+
+def getCPGname(CPG):
+    basename = os.path.splitext(os.path.basename(CPG))[0] #Get name of CPG file without extention
+    paramname = basename.split("_")[0] + "_" + basename.split("_")[0] #Get name of CPG parameter
+    return paramname
+
+CPGs.map(getCPGname)
+
 
 print(CPGs)
 print(data)
