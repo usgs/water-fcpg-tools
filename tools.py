@@ -357,6 +357,192 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     
 
 
+
+
+#Tools for decayed accumulation CPGs
+
+def makeDecayGrid(d2strm, outRast):
+    '''
+    Inputs:
+        
+        d2strm - Raster of flow distances from each grid cell to the nearest stream
+        outRast - output file path for decay grid
+
+    Outputs:
+        outRast - decay raster computed as the inverse flow distance (1/distance) from each grid cell to the nearest stream
+    '''
+    if not os.path.isfile(d2strm):
+        print("Error - Stream distance raster file is missing!")
+        return #Function will fail, so end it now
+
+
+    with rs.open(d2strm) as ds: # load flow direction data
+        data = ds.read(1)
+        profile = ds.profile
+        inNoData = ds.nodata
+        xsize, ysize = ds.res #Get flow direction cell size
+    
+    if xsize != ysize:
+        print("Warning - grid cells are not square, results may be incorrect")
+
+
+    outNoData = 0 #Set no data value for output raster
+
+    print("Building decay grid {0}".format(datetime.datetime.now()))
+    decayGrid = data.astype(np.float32) #Convert to float
+    decayGrid[data == inNoData] = np.NaN # fill with no data values where appropriate
+    decayGrid = 1/(decayGrid + xsize) #Add the resolution to every value and invert distances to streams
+
+    decayGrid[np.isnan(decayGrid)] = outNoData # Replace numpy NaNs with no data value
+
+    # Update raster profile
+    profile.update({
+                'dtype': decayGrid.dtype,
+                'compress':'LZW',
+                'profile':'GeoTIFF',
+                'tiled':True,
+                'sparse_ok':True,
+                'num_threads':'ALL_CPUS',
+                'nodata':inNoData,
+                'bigtiff':'IF_SAFER'})
+
+    print("Saving decay raster {0}".format(datetime.datetime.now()))
+    
+    with rs.open(outRast, 'w', **profile) as dst:
+        dst.write(decayGrid,1)
+        print("Decay raster written to: {0}".format(outRast))
+
+
+
+def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
+    '''
+    Inputs:
+        
+        ang - Flow angle from tauDEM Dinfinity flow direction tool
+        mult - grid of multiplier values applied to upstream accumulations, 1 corresponds to no decay, 0 corresponds to complete decay
+        outRast - output file path for decayed accumulation raster
+        paramRast - raster of parameter values to accumulate, no parameter raster will result in area being accumulated
+        cores - number of cores to use
+
+    Outputs:
+        outRast - decayed accumulation raster
+    '''
+
+    if paramRast != None:
+        try:
+            print('Accumulating parameter')
+            tauParams = {
+            'ang':ang,
+            'cores':cores, 
+            'dm':mult,
+            'dsca': outRast,
+            'weight':paramRast
+            }
+                    
+            cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+            print(cmd)
+            result = subprocess.run(cmd, shell = True) # Run shell command
+            result.stdout
+            print("Parameter accumulation written to: {0}".format(outRast))
+                    
+        except:
+            print('Error Accumulating Data')
+            traceback.print_exc()
+    else:
+        try:
+            print('Accumulating parameter')
+            tauParams = {
+            'ang':ang,
+            'cores':cores, 
+            'dm':mult,
+            'dsca': outRast,
+            }
+                    
+            cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -nc'.format(**tauParams) # Create string of tauDEM shell command
+            print(cmd)
+            result = subprocess.run(cmd, shell = True) # Run shell command
+            result.stdout
+            print("Parameter accumulation written to: {0}".format(outRast))
+                
+        except:
+            print('Error Accumulating Data')
+            traceback.print_exc()
+
+
+
+def dist2stream(fdr, fac, thresh, outRast, cores=1) :
+    '''
+    Inputs:
+        
+        fdr - flow direction raster
+        fac - flow accumulation raster
+        thresh - accumulation threshold for stream formation
+        outRast - output file path for distance raster
+        cores - number of cores to use
+
+    Outputs:
+        outRast - raster with values of d8 flow distance from each cell to the nearest stream
+    '''
+
+    try:
+        print('Accumulating parameter')
+        tauParams = {
+        'fdr':fdr,
+        'cores':cores, 
+        'fac':fac,
+        'outRast': outRast,
+        'thresh':thresh
+        }
+                
+        cmd = 'mpiexec -bind-to rr -n {cores} d8hdisttostrm -p {fdr} -src {fac} -dist {outRast}, -thresh {thresh}'.format(**tauParams) # Create string of tauDEM shell command
+        print(cmd)
+        result = subprocess.run(cmd, shell = True) # Run shell command
+        result.stdout
+        print("Distance raster written to: {0}".format(outRast))
+                
+    except:
+        print('Error computing distances')
+        traceback.print_exc()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj"):
     '''
     Inputs:
