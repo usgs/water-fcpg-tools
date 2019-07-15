@@ -66,7 +66,7 @@ static.sort()
 
 data = pd.concat([data, pd.DataFrame(columns=dynamic), pd.DataFrame(columns=static)], sort=False)
 
-
+print(data)
 
 #Get static CPG values
 
