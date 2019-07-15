@@ -14,9 +14,9 @@ data = pd.read_csv(obsFile)
 data.Date =  pd.to_datetime(data.Date, format='%m/%d/%Y %H:%M:%S')
 
 #Populate the year, month, and day columns
-data.Year = data.Date.year
-data.Month = data.Date.month
-data.Day = data.Date.day
+data.Year = pd.DatetimeIndex(data.Date).year
+data.Month = pd.DatetimeIndex(data.Date).month
+data.Day = pd.DatetimeIndex(data.Date).day
 
 #Create column with tuple of point coordinates
 data['USGS_Albers'] = list(zip(data.POINTX, data.POINTY))
