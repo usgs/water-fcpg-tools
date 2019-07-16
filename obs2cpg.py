@@ -102,11 +102,13 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
 
     year = int(year)
     month = int(month)
-
-    print(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC)))
-    print(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC))))
     param = "SNODAS_SWEmm"
     CPGdict = {}
+
+    
+    print(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC)))
+    print(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC))))
+
 
     if month >= 10:
         #Water year only includes data from calendar year
