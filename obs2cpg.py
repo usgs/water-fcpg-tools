@@ -114,7 +114,7 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
 
     else:
         #SWE data is available
-        for m in range(3, max(month + 1,7)):
+        for m in range(3, min(month + 1,7)):
             monthAbbr = monthList[m -1] #Get month abbreviation from list
 
             if os.path.isfile(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(m).zfill(2), day, HUC))):
