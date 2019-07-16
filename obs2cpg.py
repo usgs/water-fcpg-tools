@@ -103,7 +103,7 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
     param = "SNODAS_SWEmm"
     CPGdict = {}
 
-    if Month >= 10:
+    if month >= 10:
         #Water year only includes data from calendar year
     
         for m in range(10, month +1):
