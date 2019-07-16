@@ -80,7 +80,7 @@ for param in static:
         CPGvalues = ds.sample([(-124542,44226)],1)
 
 
-dynamicPaths = data[['FID', 'Lat', 'Long', 'Date', 'Year', 'Month', 'Day', 'USGS_Albers']].copy() #Create dataframe to store file paths to dynamic CPGs
+dynamicPaths = data[['FID', 'Lat', 'Long', 'Site_ID', 'Waterbody', 'Date', 'Year', 'Month', 'Day', 'USGS_Albers', 'Source', 'Binary']].copy() #Create dataframe to store file paths to dynamic CPGs
 
 
 #Dynamic parameter lists
@@ -233,7 +233,7 @@ for index, row in dynamicPaths.iterrows():
                 print("Error file not found: {0}".format(paramCPG))
 
 
-
+dynamicValues.to_csv("../work/1002/obsTest.csv")
 
 print(dynamicPaths)
 print(static)
