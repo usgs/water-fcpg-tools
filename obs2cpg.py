@@ -107,21 +107,20 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
     CPGdict = {}
 
     if month >= 10 or month < 3:
-        #There month is in the first part of the water year and there is no SWE data to report for the period  
+        #The month is in the first part of the water year and there is no SWE data to report for the period  
         return CPGdict
 
     else:
         #SWE data is available
         for m in range(3, month + 1):
             monthAbbr = monthList[m -1] #Get month abbreviation from list
-            print(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(m).zfill(2), day, HUC)))
+
             if os.path.isfile(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(m).zfill(2), day, HUC))):
                 #Only one parameter CPG match the timeframe exists 
-                 
                 monthCPG = os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(m).zfill(2), day, HUC))
             else:
-                #Multipe parameter CPGs match the timeframe exists 
-                print("Error: multiple CPGs exit for parameter {0} in {1} {2}".format(param, str(m).zfill(2), year))
+                #A unique CPG file does not exist
+                print("Error: no unique CPG exists for parameter {0} in {1} {2}".format(param, str(m).zfill(2), year))
                 monthCPG = ""
 
             CPGdict[monthAbbr] = monthCPG
@@ -129,12 +128,13 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
     print(CPGdict)
 
 
-"""
-def SNODAS_SWEmm_fcn(HUC, year, month):
+
+def gridMET_minTempK_fcn(HUC, year, month):
 
     year = int(year)
     month = int(month)
-    param = "SNODAS_SWEmm"
+    day = "*"
+    param = "gridMET_minTempK"
     CPGdict = {}
 
     if month >= 10:
@@ -144,9 +144,9 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
 
             monthAbbr = monthList[m -1] #Get month abbreviation from list
 
-            if len(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2) , "*", HUC)))) == 1:
+            if len(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(m).zfill(2) , day, HUC)))) == 1:
                 #Only one parameter CPG match the timeframe exists  
-                monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), "*", HUC)))[0]
+                monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(m).zfill(2), day, HUC)))[0]
             else:
                 #Multipe parameter CPGs match the timeframe exists 
                 print("Error: no unique CPG exists for parameter {0} in {1} {2}".format(param, monthAbbr, year))
@@ -162,9 +162,9 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
             lastyear = year - 1
             monthAbbr = monthList[m -1] #Get month abbreviation from list
 
-            if len(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, lastyear, str(month).zfill(2), "*", HUC)))) == 1:
+            if len(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, lastyear, str(m).zfill(2), day, HUC)))) == 1:
                 #Only one parameter CPG match the timeframe exists  
-                monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, lastyear, str(month).zfill(2), "*", HUC)))[0]
+                monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, lastyear, str(m).zfill(2), day, HUC)))[0]
             else:
                 #Multipe parameter CPGs match the timeframe exists 
                 print("Error: no unique CPG exists for parameter {0} in {1} {2}".format(param, monthAbbr, lastyear))
@@ -188,12 +188,11 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
     
     print(CPGdict)
 
-"""
 
 
 monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-dynamicfcns = [SNODAS_SWEmm_fcn]
+dynamicfcns = [SNODAS_SWEmm_fcn, gridMET_minTempK_fcn]
 
 for index, row in dynamicPaths.iterrows():
 
