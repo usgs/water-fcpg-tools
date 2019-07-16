@@ -115,7 +115,7 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
         for m in range(3, month + 1):
             monthAbbr = monthList[m -1] #Get month abbreviation from list
 
-            if len(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), day, HUC)))) == 1:
+            if os.path.isfile(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), day, HUC))):
                 #Only one parameter CPG match the timeframe exists  
                 monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), day, HUC)))[0]
             else:
