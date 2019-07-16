@@ -95,7 +95,7 @@ SNODAS_SWEmmList = ["SNODAS_SWEmm_Oct", "SNODAS_SWEmm_Nov," "SNODAS_SWEmm_Dec", 
 
 landsat_NDVIMayOctList = ["landsat_NDVI-May-Oct"]
 
-dynamicPaths = pd.concat([dynamicPaths, pd.DataFrame(columns=gridMET_PRmmList), pd.DataFrame(columns=gridMET_minTempKList), pd.DataFrame(columns=gridMET_SOILMOISTmmList), pd.DataFrame(columns=SNODAS_SWEmmList), pd.DataFrame(columns=landsat_NDVIMayOctList)], sort=False)
+dynamicPaths = pd.concat([dynamicPaths, pd.DataFrame(columns=gridMET_minTempKList), pd.DataFrame(columns=gridMET_SOILMOISTmmList), pd.DataFrame(columns=SNODAS_SWEmmList), pd.DataFrame(columns=landsat_NDVIMayOctList)], sort=False)
 
 
 
