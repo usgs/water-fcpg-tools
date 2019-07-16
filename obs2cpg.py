@@ -212,7 +212,8 @@ for index, row in dynamicPaths.iterrows():
         for key, value in CPGdict.items():
 
             row["{0}_{1}".format(paramName, key)] = value #Add the file path to the data frame
-
+            print("{0}_{1}".format(paramName, key))
+            print(value)
 
 
         """
