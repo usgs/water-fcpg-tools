@@ -91,7 +91,7 @@ gridMET_PRmmList = ["gridMET_PRmm_Oct", "gridMET_PRmm_Nov", "gridMET_PRmm_Dec", 
 gridMET_minTempKList = ["gridMET_minTempK_Oct", "gridMET_minTempK_Nov", "gridMET_minTempK_Dec", "gridMET_minTempK_Jan", "gridMET_minTempK_Feb", "gridMET_minTempK_Mar", "gridMET_minTempK_Apr", "gridMET_minTempK_May", "gridMET_minTempK_Jun", "gridMET_minTempK_Jul", "gridMET_minTempK_Aug", "gridMET_minTempK_Sep"]
 gridMET_SOILMOISTmmList = ["gridMET_SOILMOISTmm_Oct", "gridMET_SOILMOISTmm_Nov", "gridMET_SOILMOISTmm_Dec", "gridMET_SOILMOISTmm_Jan", "gridMET_SOILMOISTmm_Feb", "gridMET_SOILMOISTmm_Mar", "gridMET_SOILMOISTmm_Apr", "gridMET_SOILMOISTmm_May", "gridMET_SOILMOISTmm_Jun", "gridMET_SOILMOISTmm_Jul", "gridMET_SOILMOISTmm_Aug", "gridMET_SOILMOISTmm_Sep"]
 
-SNODAS_SWEmmList = ["SNODAS_SWEmm_Oct", "SNODAS_SWEmm_Nov," "SNODAS_SWEmm_Dec", "SNODAS_SWEmm_Jan", "SNODAS_SWEmm_Feb", "SNODAS_SWEmm_Mar", "SNODAS_SWEmm_Apr", "SNODAS_SWEmm_May", "SNODAS_SWEmm_Jun", "SNODAS_SWEmm_Jul", "SNODAS_SWEmm_Aug", "SNODAS_SWEmm_Sep"]
+SNODAS_SWEmmList = [ "SNODAS_SWEmm_Jan", "SNODAS_SWEmm_Feb", "SNODAS_SWEmm_Mar", "SNODAS_SWEmm_Apr", "SNODAS_SWEmm_May", "SNODAS_SWEmm_Jun", "SNODAS_SWEmm_Jul"]
 
 landsat_NDVIMayOctList = ["landsat_NDVI-May-Oct"]
 
@@ -196,8 +196,8 @@ def gridMET_minTempK_fcn(HUC, year, month):
 
 monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-#dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
-dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn)]
+dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
+
 
 for index, row in dynamicPaths.iterrows():
 
