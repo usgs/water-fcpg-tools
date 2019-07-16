@@ -5,7 +5,7 @@ import os
 import glob
 from collections import Counter
 
-obsFile = "../data/observations/flowPerm_07152019.txt"
+obsFile = "../data/observations/flowPerm_07152019_USGSAlbers.csv"
 CPGdir = "../CPGs/1002"
 HUC = 1002
 
@@ -80,7 +80,7 @@ for param in static:
         CPGvalues = ds.sample([(-124542,44226)],1)
 
 
-dynamicPaths = data[['FID', 'Lat', 'Long', 'Date', 'Year', 'Month', 'Day']].copy() #Create dataframe to store file paths to dynamic CPGs
+dynamicPaths = data[['FID', 'Lat', 'Long', 'Date', 'Year', 'Month', 'Day', 'USGS_Albers']].copy() #Create dataframe to store file paths to dynamic CPGs
 
 
 #Dynamic parameter lists
@@ -217,16 +217,18 @@ for index, row in dynamicPaths.iterrows():
             print("{0}_{1}".format(paramName, key))
             print(row["{0}_{1}".format(paramName, key)])
 
+            paramCPG = value
+            coords = row['USGS_Albers']
 
-        """
-        if os.path.isfile(paramCPG):
-            with rs.open(paramCPG) as ds:
+            if os.path.isfile(paramCPG):
+                with rs.open(paramCPG) as ds:
 
-                #CPGvalues = ds.sample(list(data['USGS_Albers']),1)
-                CPGvalues = ds.sample([(-124542,44226)],1)
-        else:
-            print("Error file not found: {0}".format(paramCPG))
-        """
+                    #CPGvalues = ds.sample(list(data['USGS_Albers']),1)
+                    CPGvalues = ds.sample([coords],1)
+                    print(CPGvalues)
+            else:
+                print("Error file not found: {0}".format(paramCPG))
+
 
 
 
