@@ -205,8 +205,13 @@ for index, row in dynamicPaths.iterrows():
     for paramName,paramF in dynamicParams:
 
         print(paramName)
-        paramF(HUC, obsYear, obsMonth)
+        CPGdict = paramF(HUC, obsYear, obsMonth)
         
+        for key, value in CPGdict.items():
+
+            row["{0}_{1}".format(paramName, key)] = value #Add the file path to the data frame
+
+
 
         """
         if os.path.isfile(paramCPG):
