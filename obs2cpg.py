@@ -174,7 +174,7 @@ for index, row in dynamicPaths.iterrows():
     
     for paramF in dynamicfcns:
 
-        #print(paramF(HUC, obsYear, obsMonth))
+        paramF(HUC, obsYear, obsMonth)
         
 
         """
