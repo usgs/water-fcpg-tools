@@ -236,6 +236,7 @@ for index, row in dynamicPaths.iterrows():
 
 
 dynamicValues.to_csv("../work/1002/obsTest.csv")
+paramValues.to_csv("../work/1002/obsTestParams.csv")
 
 print(dynamicPaths)
 print(static)
