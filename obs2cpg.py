@@ -225,7 +225,7 @@ for index, row in dynamicPaths.iterrows():
 
                     #CPGvalues = ds.sample(list(data['USGS_Albers']),1)
                     CPGvalues = ds.sample([coords],1)
-                    print(CPGvalues)
+                    print(next(CPGvalues))
             else:
                 print("Error file not found: {0}".format(paramCPG))
 
