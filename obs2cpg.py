@@ -119,7 +119,7 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
                 monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), "*", HUC)))[0]
             else:
                 #Multipe parameter CPGs match the timeframe exists 
-                print("Error: multiple CPGs exit for parameter {0} in {1} {2}".format(param, monthAbbr, year))
+                print("Error: multiple CPGs exit for parameter {0} in {1} {2}".format(param, str(month).zfill(2), year))
                 monthCPG = ""
 
             CPGdict[monthAbbr] = monthCPG
