@@ -102,6 +102,9 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
 
     year = int(year)
     month = int(month)
+
+    print(year)
+    print(month)
     param = "SNODAS_SWEmm"
     CPGdict = {}
 
