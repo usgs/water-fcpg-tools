@@ -227,8 +227,8 @@ for index, row in dynamicPaths.iterrows():
 
 
 
-
+print(dynamicPaths)
 print(static)
 print(dynamic)
-print(data)
+
 
