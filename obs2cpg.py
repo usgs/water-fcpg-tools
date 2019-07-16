@@ -108,7 +108,7 @@ for param in static:
         CPGvalues = ds.sample(points)
 
         for index, row in paramValues.iterrows():
-            paramValues.at[index, param]= next(CPGvalues)
+            paramValues.at[index, param]= next(CPGvalues)[0]
             
         
 
