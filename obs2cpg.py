@@ -196,7 +196,8 @@ def gridMET_minTempK_fcn(HUC, year, month):
 
 monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
+#dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
+dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn)]
 
 for index, row in dynamicPaths.iterrows():
 
@@ -213,7 +214,7 @@ for index, row in dynamicPaths.iterrows():
 
             row["{0}_{1}".format(paramName, key)] = value #Add the file path to the data frame
             print("{0}_{1}".format(paramName, key))
-            print(value)
+            print(row["{0}_{1}".format(paramName, key)])
 
 
         """
