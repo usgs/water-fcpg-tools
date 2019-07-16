@@ -114,10 +114,11 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
         #SWE data is available
         for m in range(3, month + 1):
             monthAbbr = monthList[m -1] #Get month abbreviation from list
-
+            print(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), day, HUC)))
             if os.path.isfile(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), day, HUC))):
-                #Only one parameter CPG match the timeframe exists  
-                monthCPG = os.path.isfile(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), day, HUC)))
+                #Only one parameter CPG match the timeframe exists 
+                 
+                monthCPG = os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), day, HUC))
             else:
                 #Multipe parameter CPGs match the timeframe exists 
                 print("Error: multiple CPGs exit for parameter {0} in {1} {2}".format(param, str(month).zfill(2), year))
