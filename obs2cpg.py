@@ -155,7 +155,7 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
 
 monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-dynamicfcns = SNODAS_SWEmm_fcn
+dynamicfcns = [SNODAS_SWEmm_fcn]
 
 for index, row in dynamicPaths.iterrows():
 
@@ -163,9 +163,9 @@ for index, row in dynamicPaths.iterrows():
     obsMonth = row['Month']
 
     
-    for param in dynamicfcns:
+    for paramF in dynamicfcns:
 
-        print(SNODAS_SWEmm_fcn(HUC, obsYear, obsMonth))
+        print(paramF(HUC, obsYear, obsMonth))
         
         if os.path.isfile(paramCPG):
             with rs.open(paramCPG) as ds:
