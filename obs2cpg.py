@@ -67,7 +67,31 @@ static = list(static)
 dynamic.sort()
 static.sort()
 
+
+#Prepare intermediate data frames
 staticValues = pd.concat([data, pd.DataFrame(columns=static)], sort=False)
+
+
+dynamicPaths = data[['FID', 'Lat', 'Long', 'Site_ID', 'Waterbody', 'Date', 'Year', 'Month', 'Day', 'USGS_Albers', 'Source', 'Binary']].copy() #Create dataframe to store file paths to dynamic CPGs
+
+
+#Dynamic parameter lists
+gridMET_PRmmList = ["gridMET_PRmm_Oct", "gridMET_PRmm_Nov", "gridMET_PRmm_Dec", "gridMET_PRmm_Jan", "gridMET_PRmm_Feb", "gridMET_PRmm_Mar", "gridMET_PRmm_Apr", "gridMET_PRmm_May", "gridMET_PRmm_Jun", "gridMET_PRmm_Jul", "gridMET_PRmm_Aug", "gridMET_PRmm_Sep"]
+gridMET_minTempKList = ["gridMET_minTempK_Oct", "gridMET_minTempK_Nov", "gridMET_minTempK_Dec", "gridMET_minTempK_Jan", "gridMET_minTempK_Feb", "gridMET_minTempK_Mar", "gridMET_minTempK_Apr", "gridMET_minTempK_May", "gridMET_minTempK_Jun", "gridMET_minTempK_Jul", "gridMET_minTempK_Aug", "gridMET_minTempK_Sep"]
+gridMET_SOILMOISTmmList = ["gridMET_SOILMOISTmm_Oct", "gridMET_SOILMOISTmm_Nov", "gridMET_SOILMOISTmm_Dec", "gridMET_SOILMOISTmm_Jan", "gridMET_SOILMOISTmm_Feb", "gridMET_SOILMOISTmm_Mar", "gridMET_SOILMOISTmm_Apr", "gridMET_SOILMOISTmm_May", "gridMET_SOILMOISTmm_Jun", "gridMET_SOILMOISTmm_Jul", "gridMET_SOILMOISTmm_Aug", "gridMET_SOILMOISTmm_Sep"]
+
+SNODAS_SWEmmList = [ "SNODAS_SWEmm_Jan", "SNODAS_SWEmm_Feb", "SNODAS_SWEmm_Mar", "SNODAS_SWEmm_Apr", "SNODAS_SWEmm_May", "SNODAS_SWEmm_Jun", "SNODAS_SWEmm_Jul"]
+
+landsat_NDVIMayOctList = ["landsat_NDVI-May-Oct"]
+
+dynamicPaths = pd.concat([dynamicPaths, pd.DataFrame(columns=gridMET_SOILMOISTmmList), pd.DataFrame(columns=SNODAS_SWEmmList), pd.DataFrame(columns=landsat_NDVIMayOctList), pd.DataFrame(columns=gridMET_minTempKList)], sort=False)
+
+dynamicValues = dynamicPaths.copy()
+
+
+#Create dataframe to store all needed parameter values
+paramValues = pd.concat([data, pd.DataFrame(columns=static), pd.DataFrame(columns=gridMET_SOILMOISTmmList), pd.DataFrame(columns=SNODAS_SWEmmList), pd.DataFrame(columns=landsat_NDVIMayOctList), pd.DataFrame(columns=gridMET_minTempKList)], sort=False)
+
 
 
 #Get static CPG values
@@ -82,35 +106,18 @@ for param in static:
     with rs.open(paramCPG) as ds:
         #CPGvalues = ds.sample(list(data['USGS_Albers']),1)
         CPGvalues = ds.sample(points)
-        print(next(CPGvalues))
-        print(next(CPGvalues))
-        print(next(CPGvalues))
-        print(next(CPGvalues))
-        print(next(CPGvalues))
+
+        for index, row in paramValues.iterrows():
+            paramValues.at[index, param]= next(CPGvalues)
+            
         
 
+print(paramValues)
 
 
 
 
-dynamicPaths = data[['FID', 'Lat', 'Long', 'Site_ID', 'Waterbody', 'Date', 'Year', 'Month', 'Day', 'USGS_Albers', 'Source', 'Binary']].copy() #Create dataframe to store file paths to dynamic CPGs
 
-
-#Dynamic parameter lists
-
-
-
-gridMET_PRmmList = ["gridMET_PRmm_Oct", "gridMET_PRmm_Nov", "gridMET_PRmm_Dec", "gridMET_PRmm_Jan", "gridMET_PRmm_Feb", "gridMET_PRmm_Mar", "gridMET_PRmm_Apr", "gridMET_PRmm_May", "gridMET_PRmm_Jun", "gridMET_PRmm_Jul", "gridMET_PRmm_Aug", "gridMET_PRmm_Sep"]
-gridMET_minTempKList = ["gridMET_minTempK_Oct", "gridMET_minTempK_Nov", "gridMET_minTempK_Dec", "gridMET_minTempK_Jan", "gridMET_minTempK_Feb", "gridMET_minTempK_Mar", "gridMET_minTempK_Apr", "gridMET_minTempK_May", "gridMET_minTempK_Jun", "gridMET_minTempK_Jul", "gridMET_minTempK_Aug", "gridMET_minTempK_Sep"]
-gridMET_SOILMOISTmmList = ["gridMET_SOILMOISTmm_Oct", "gridMET_SOILMOISTmm_Nov", "gridMET_SOILMOISTmm_Dec", "gridMET_SOILMOISTmm_Jan", "gridMET_SOILMOISTmm_Feb", "gridMET_SOILMOISTmm_Mar", "gridMET_SOILMOISTmm_Apr", "gridMET_SOILMOISTmm_May", "gridMET_SOILMOISTmm_Jun", "gridMET_SOILMOISTmm_Jul", "gridMET_SOILMOISTmm_Aug", "gridMET_SOILMOISTmm_Sep"]
-
-SNODAS_SWEmmList = [ "SNODAS_SWEmm_Jan", "SNODAS_SWEmm_Feb", "SNODAS_SWEmm_Mar", "SNODAS_SWEmm_Apr", "SNODAS_SWEmm_May", "SNODAS_SWEmm_Jun", "SNODAS_SWEmm_Jul"]
-
-landsat_NDVIMayOctList = ["landsat_NDVI-May-Oct"]
-
-dynamicPaths = pd.concat([dynamicPaths, pd.DataFrame(columns=gridMET_SOILMOISTmmList), pd.DataFrame(columns=SNODAS_SWEmmList), pd.DataFrame(columns=landsat_NDVIMayOctList), pd.DataFrame(columns=gridMET_minTempKList)], sort=False)
-
-dynamicValues = dynamicPaths.copy()
 
 
 def SNODAS_SWEmm_fcn(HUC, year, month):
