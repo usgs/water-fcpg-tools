@@ -102,6 +102,7 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
 
     year = int(year)
     month = int(month)
+    day = "01"
     param = "SNODAS_SWEmm"
     CPGdict = {}
 
@@ -114,9 +115,9 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
         for m in range(3, month + 1):
             monthAbbr = monthList[m -1] #Get month abbreviation from list
 
-            if len(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), "*", HUC)))) == 1:
+            if len(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), day, HUC)))) == 1:
                 #Only one parameter CPG match the timeframe exists  
-                monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), "*", HUC)))[0]
+                monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), day, HUC)))[0]
             else:
                 #Multipe parameter CPGs match the timeframe exists 
                 print("Error: multiple CPGs exit for parameter {0} in {1} {2}".format(param, str(month).zfill(2), year))
