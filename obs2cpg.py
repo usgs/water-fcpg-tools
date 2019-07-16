@@ -211,8 +211,9 @@ for index, row in dynamicPaths.iterrows():
         CPGdict = paramF(HUC, obsYear, obsMonth)
         
         for key, value in CPGdict.items():
+            
+            df.at[index, "{0}_{1}".format(paramName, key)]= value #Add the file path to the data frame
 
-            row["{0}_{1}".format(paramName, key)] = value #Add the file path to the data frame
             print("{0}_{1}".format(paramName, key))
             print(row["{0}_{1}".format(paramName, key)])
 
