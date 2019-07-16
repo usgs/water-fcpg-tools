@@ -97,11 +97,33 @@ dynamicPaths = pd.concat([dynamicPaths, pd.DataFrame(columns=gridMET_PRmmList), 
 
 
 
-for index, row in data.iterrows():
+
+
+
+
+
+
+monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+for index, row in dynamicPaths.iterrows():
 
     obsYear = row['Year']
     obsMonth = row['Month']
-    obsDay = "00"
+
+
+    if Month >= 10:
+        #Water year only includes data from calendar year
+
+        for m in range(10, obsMonth +1):
+
+            monthAbbr = monthList[m -1] #Get month abbreviation from list
+
+
+    else:
+        #Water year includes data from two calendar years
+
+
+
 
     
     for param in dynamic:
