@@ -97,7 +97,7 @@ landsat_NDVIMayOctList = ["landsat_NDVI-May-Oct"]
 
 dynamicPaths = pd.concat([dynamicPaths, pd.DataFrame(columns=gridMET_SOILMOISTmmList), pd.DataFrame(columns=SNODAS_SWEmmList), pd.DataFrame(columns=landsat_NDVIMayOctList), pd.DataFrame(columns=gridMET_minTempKList)], sort=False)
 
-
+dynamicValues = dynamicPaths.copy()
 
 
 def SNODAS_SWEmm_fcn(HUC, year, month):
@@ -226,6 +226,7 @@ for index, row in dynamicPaths.iterrows():
                     CPGvalues = ds.sample([coords],1)
                     try:
                         print(next(CPGvalues))
+                        dynamicValues.at[index, "{0}_{1}".format(paramName, key)]= value 
                     except:
                         print("Error getting CPG value")
             else:
