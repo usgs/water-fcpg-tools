@@ -98,7 +98,7 @@ dynamicPaths = pd.concat([dynamicPaths, pd.DataFrame(columns=gridMET_PRmmList), 
 
 
 
-def SNODAS_SWEmm_fcn(HUC, month, year):
+def SNODAS_SWEmm_fcn(HUC, year, month):
 
     param = "SNODAS_SWEmm"
     CPGdict = {}
@@ -155,23 +155,17 @@ def SNODAS_SWEmm_fcn(HUC, month, year):
 
 monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
+dynamicfcns = SNODAS_SWEmm_fcn
+
 for index, row in dynamicPaths.iterrows():
 
     obsYear = row['Year']
     obsMonth = row['Month']
 
-
-
-
-
-
-
     
-    for param in dynamic:
+    for param in dynamicfcns:
 
-        print(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, obsYear, obsMonth, "*", HUC))))
-        paramCPG = os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, obsYear, obsMonth, obsDay, HUC)) #Build path to CPG file
-        print(paramCPG)
+        print(SNODAS_SWEmm_fcn(HUC, obsYear, obsMonth))
         
         if os.path.isfile(paramCPG):
             with rs.open(paramCPG) as ds:
