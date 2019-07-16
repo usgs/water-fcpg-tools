@@ -83,6 +83,11 @@ for param in static:
         #CPGvalues = ds.sample(list(data['USGS_Albers']),1)
         CPGvalues = ds.sample(points)
         print(next(CPGvalues))
+        print(next(CPGvalues))
+        print(next(CPGvalues))
+        print(next(CPGvalues))
+        print(next(CPGvalues))
+        
 
 
 
