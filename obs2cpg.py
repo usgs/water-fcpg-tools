@@ -103,8 +103,8 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
     year = int(year)
     month = int(month)
 
-    print(year)
-    print(month)
+    print(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC)))
+    print(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC))))
     param = "SNODAS_SWEmm"
     CPGdict = {}
 
@@ -114,8 +114,7 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
         for m in range(10, month +1):
 
             monthAbbr = monthList[m -1] #Get month abbreviation from list
-            print(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC)))
-            print(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC))))
+
             if len(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC)))) == 1:
                 #Only one parameter CPG match the timeframe exists  
                 monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC)))[0]
