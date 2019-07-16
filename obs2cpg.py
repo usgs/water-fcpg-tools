@@ -225,8 +225,8 @@ for index, row in dynamicPaths.iterrows():
                     #CPGvalues = ds.sample(list(data['USGS_Albers']),1)
                     CPGvalues = ds.sample([coords],1)
                     try:
-                        print(next(CPGvalues))
-                        dynamicValues.at[index, "{0}_{1}".format(paramName, key)]= value 
+                        CPGval = next(CPGvalues)
+                        dynamicValues.at[index, "{0}_{1}".format(paramName, key)]= CPGval
                     except:
                         print("Error getting CPG value")
             else:
