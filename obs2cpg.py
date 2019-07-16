@@ -100,6 +100,8 @@ dynamicPaths = pd.concat([dynamicPaths, pd.DataFrame(columns=gridMET_PRmmList), 
 
 def SNODAS_SWEmm_fcn(HUC, year, month):
 
+    year = int(year)
+    month = int(month)
     param = "SNODAS_SWEmm"
     CPGdict = {}
 
