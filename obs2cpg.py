@@ -122,7 +122,7 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
                 monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), "*", HUC)))[0]
             else:
                 #Multipe parameter CPGs match the timeframe exists 
-                print("Error: multiple CPGs exit for parameter {0} in {1} {2}".format(param, monthAbbr, year))
+                print("Error: no unique CPG exists for parameter {0} in {1} {2}".format(param, monthAbbr, year))
                 monthCPG = ""
                 
             CPGdict[monthAbbr] = monthCPG
@@ -140,7 +140,7 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
                 monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, lastyear, str(month).zfill(2), "*", HUC)))[0]
             else:
                 #Multipe parameter CPGs match the timeframe exists 
-                print("Error: multiple CPGs exit for parameter {0} in {1} {2}".format(param, monthAbbr, lastyear))
+                print("Error: no unique CPG exists for parameter {0} in {1} {2}".format(param, monthAbbr, lastyear))
                 monthCPG = ""
 
             CPGdict[monthAbbr] = monthCPG
@@ -174,8 +174,10 @@ for index, row in dynamicPaths.iterrows():
     
     for paramF in dynamicfcns:
 
-        print(paramF(HUC, obsYear, obsMonth))
+        #print(paramF(HUC, obsYear, obsMonth))
         
+
+        """
         if os.path.isfile(paramCPG):
             with rs.open(paramCPG) as ds:
 
@@ -183,7 +185,7 @@ for index, row in dynamicPaths.iterrows():
                 CPGvalues = ds.sample([(-124542,44226)],1)
         else:
             print("Error file not found: {0}".format(paramCPG))
-
+        """
 
 
 
