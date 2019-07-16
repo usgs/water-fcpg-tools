@@ -5,7 +5,7 @@ import os
 import glob
 from collections import Counter
 
-obsFile = "../data/observations/flowPerm_07152019_USGSAlbers.csv"
+obsFile = "../data/observations/flowPerm_07152019_USGSAlbers_HUC1002.csv"
 CPGdir = "../CPGs/1002"
 HUC = 1002
 
