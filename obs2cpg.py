@@ -10,7 +10,7 @@ CPGdir = "../CPGs/1002"
 HUC = 1002
 
 
-data = pd.read_csv(obsFile)
+data = pd.read_csv(obsFile, encoding = "ISO-8859-1")
 
 data.Date =  pd.to_datetime(data.Date, format='%m/%d/%Y %H:%M:%S')
 
