@@ -136,7 +136,7 @@ def gridMET_minTempK_fcn(HUC, year, month):
 
     year = int(year)
     month = int(month)
-    day = "*"
+    day = "??"
     param = "gridMET_minTempK"
     CPGdict = {}
 
