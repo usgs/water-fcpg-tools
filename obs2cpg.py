@@ -161,9 +161,9 @@ def gridMET_minTempK_fcn(HUC, year, month):
         #Handle the current calendar year
         monthAbbr = monthList[m -1] #Get month abbreviation from list
 
-        if len(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), "*", HUC)))) == 1:
+        if len(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(m).zfill(2), "*", HUC)))) == 1:
             #Only one parameter CPG match the timeframe exists  
-            monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(month).zfill(2), "*", HUC)))[0]
+            monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(m).zfill(2), "*", HUC)))[0]
         else:
             #Multipe parameter CPGs match the timeframe exists 
             print("Error: multiple CPGs exit for parameter {0} in {1} {2}".format(param, monthAbbr, year))
