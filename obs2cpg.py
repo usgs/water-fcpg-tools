@@ -90,7 +90,7 @@ for index, row in data.iterrows():
     
     for param in dynamic:
 
-        print(glob.glob("{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, obsYear, obsMonth, "*", HUC)))
+        print(glob.glob("{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, obsYear, obsMonth, "??", HUC)))
         paramCPG = os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, obsYear, obsMonth, obsDay, HUC)) #Build path to CPG file
         print(paramCPG)
         
