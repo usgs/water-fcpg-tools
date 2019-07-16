@@ -85,7 +85,7 @@ dynamicPaths = data[['FID', 'Lat', 'Long', 'Date', 'Year', 'Month', 'Day']].copy
 
 #Dynamic parameter lists
 
-dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
+
 
 gridMET_PRmmList = ["gridMET_PRmm_Oct", "gridMET_PRmm_Nov", "gridMET_PRmm_Dec", "gridMET_PRmm_Jan", "gridMET_PRmm_Feb", "gridMET_PRmm_Mar", "gridMET_PRmm_Apr", "gridMET_PRmm_May", "gridMET_PRmm_Jun", "gridMET_PRmm_Jul", "gridMET_PRmm_Aug", "gridMET_PRmm_Sep"]
 gridMET_minTempKList = ["gridMET_minTempK_Oct", "gridMET_minTempK_Nov", "gridMET_minTempK_Dec", "gridMET_minTempK_Jan", "gridMET_minTempK_Feb", "gridMET_minTempK_Mar", "gridMET_minTempK_Apr", "gridMET_minTempK_May", "gridMET_minTempK_Jun", "gridMET_minTempK_Jul", "gridMET_minTempK_Aug", "gridMET_minTempK_Sep"]
@@ -194,7 +194,7 @@ def gridMET_minTempK_fcn(HUC, year, month):
 
 monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-dynamicfcns = [SNODAS_SWEmm_fcn, gridMET_minTempK_fcn]
+dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
 
 for index, row in dynamicPaths.iterrows():
 
@@ -202,7 +202,7 @@ for index, row in dynamicPaths.iterrows():
     obsMonth = row['Month']
 
     
-    for paramName,paramF in dynamicfcns:
+    for paramName,paramF in dynamicParams:
 
         print(paramName)
         paramF(HUC, obsYear, obsMonth)
