@@ -92,11 +92,13 @@ for index, row in data.iterrows():
         paramCPG = os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, obsYear, obsMonth, obsDay, HUC)) #Build path to CPG file
         print(paramCPG)
         
+        if os.path.isfile(paramCPG):
+            with rs.open(paramCPG) as ds:
 
-        with rs.open(paramCPG) as ds:
-
-            #CPGvalues = ds.sample(list(data['USGS_Albers']),1)
-            CPGvalues = ds.sample([(-124542,44226)],1)
+                #CPGvalues = ds.sample(list(data['USGS_Albers']),1)
+                CPGvalues = ds.sample([(-124542,44226)],1)
+        else:
+            print("Error file not found: {0}".format(paramCPG))
 
 
 
