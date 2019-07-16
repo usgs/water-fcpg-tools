@@ -226,7 +226,6 @@ for index, row in dynamicPaths.iterrows():
                     CPGvalues = ds.sample([coords],1)
                     try:
                         print(next(CPGvalues))
-                        dynamicPaths.at[index, "{0}_{1}".format(paramName, key)]= next(CPGvalues) #Add CPG value to data frame
                     except:
                         print("Error getting CPG value")
             else:
