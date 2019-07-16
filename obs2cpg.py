@@ -5,11 +5,13 @@ import os
 import glob
 from collections import Counter
 
+
+#Inputs
 obsFile = "../data/observations/flowPerm_07152019_USGSAlbers_HUC1002.csv"
 CPGdir = "../CPGs/1002"
 HUC = 1002
 
-
+#Load observations file to dataframe
 data = pd.read_csv(obsFile, encoding = "ISO-8859-1")
 
 data.Date =  pd.to_datetime(data.Date, format='%m/%d/%Y')
@@ -23,7 +25,7 @@ data.Day = pd.DatetimeIndex(data.Date).day.map("{:02}".format)
 data['USGS_Albers'] = list(zip(data.POINTX, data.POINTY))
 
 
-
+#Get lists of static and dynamic CPGs
 
 CPGs = [] #Initialize list of CPGs
 
@@ -65,11 +67,13 @@ static = list(static)
 dynamic.sort()
 static.sort()
 
-data = pd.concat([data, pd.DataFrame(columns=dynamic), pd.DataFrame(columns=static)], sort=False)
+staticValues = pd.concat([data, pd.DataFrame(columns=static)], sort=False)
 
-print(data)
 
 #Get static CPG values
+
+points = data.USGS_Albers #Get list of data points
+print(points)
 
 for param in static:
 
@@ -77,7 +81,11 @@ for param in static:
     print(paramCPG)
     with rs.open(paramCPG) as ds:
         #CPGvalues = ds.sample(list(data['USGS_Albers']),1)
-        CPGvalues = ds.sample([(-124542,44226)],1)
+        CPGvalues = ds.sample(points)
+        print(next(CPGvalues))
+
+
+
 
 
 dynamicPaths = data[['FID', 'Lat', 'Long', 'Site_ID', 'Waterbody', 'Date', 'Year', 'Month', 'Day', 'USGS_Albers', 'Source', 'Binary']].copy() #Create dataframe to store file paths to dynamic CPGs
@@ -179,7 +187,7 @@ def gridMET_minTempK_fcn(HUC, year, month):
 monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 #dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
-dynamicParams = [ ("gridMET_minTempK", gridMET_minTempK_fcn)]
+dynamicParams = [ ]
 
 for index, row in dynamicPaths.iterrows():
 
