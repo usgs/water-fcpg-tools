@@ -127,7 +127,7 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
     print(CPGdict)
 
 
-
+"""
 def SNODAS_SWEmm_fcn(HUC, year, month):
 
     year = int(year)
@@ -186,7 +186,7 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
     
     print(CPGdict)
 
-
+"""
 
 
 monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
