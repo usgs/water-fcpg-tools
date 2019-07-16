@@ -117,18 +117,40 @@ def SNODAS_SWEmm_fcn(HUC, month, year):
                 #Multipe parameter CPGs match the timeframe exists 
                 print("Error: multiple CPGs exit for parameter {0} in {1} {2}".format(param, monthAbbr, year))
                 monthCPG = ""
-            
-
-
-
+                
+            CPGdict[monthAbbr] = monthCPG
 
     else:
         #Water year includes data from two calendar years
 
+        for m in range(10, 13):
+            #Handle last months of the last calendar year
+            lastyear = year - 1
+            monthAbbr = monthList[m -1] #Get month abbreviation from list
 
+            if len(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, lastyear, month, "*", HUC)))) == 1:
+                #Only one parameter CPG match the timeframe exists  
+                monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, lastyear, month, "*", HUC)))[0]
+            else:
+                #Multipe parameter CPGs match the timeframe exists 
+                print("Error: multiple CPGs exit for parameter {0} in {1} {2}".format(param, monthAbbr, lastyear))
+                monthCPG = ""
 
+            CPGdict[monthAbbr] = monthCPG
 
+        for m in range(1, month + 1):
+            #Handle the current calendar year
+            monthAbbr = monthList[m -1] #Get month abbreviation from list
 
+            if len(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC)))) == 1:
+                #Only one parameter CPG match the timeframe exists  
+                monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC)))[0]
+            else:
+                #Multipe parameter CPGs match the timeframe exists 
+                print("Error: multiple CPGs exit for parameter {0} in {1} {2}".format(param, monthAbbr, year))
+                monthCPG = ""
+
+            CPGdict[monthAbbr] = monthCPG
 
 
 monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
