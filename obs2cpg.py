@@ -98,6 +98,34 @@ dynamicPaths = pd.concat([dynamicPaths, pd.DataFrame(columns=gridMET_PRmmList), 
 
 
 
+def SNODAS_SWEmm_fcn(HUC, month, year):
+
+    param = "SNODAS_SWEmm"
+    CPGdict = {}
+
+    if Month >= 10:
+        #Water year only includes data from calendar year
+    
+        for m in range(10, month +1):
+
+            monthAbbr = monthList[m -1] #Get month abbreviation from list
+
+            if len(glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC)))) == 1:
+                #Only one parameter CPG match the timeframe exists  
+                monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, month, "*", HUC)))[0]
+            else:
+                #Multipe parameter CPGs match the timeframe exists 
+                print("Error: multiple CPGs exit for parameter {0} in {1} {2}".format(param, monthAbbr, year))
+                monthCPG = ""
+            
+
+
+
+
+    else:
+        #Water year includes data from two calendar years
+
+
 
 
 
@@ -111,16 +139,7 @@ for index, row in dynamicPaths.iterrows():
     obsMonth = row['Month']
 
 
-    if Month >= 10:
-        #Water year only includes data from calendar year
 
-        for m in range(10, obsMonth +1):
-
-            monthAbbr = monthList[m -1] #Get month abbreviation from list
-
-
-    else:
-        #Water year includes data from two calendar years
 
 
 
