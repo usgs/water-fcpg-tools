@@ -196,8 +196,8 @@ def gridMET_minTempK_fcn(HUC, year, month):
 
 monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
-
+#dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
+dynamicParams = [ ("gridMET_minTempK", gridMET_minTempK_fcn)]
 
 for index, row in dynamicPaths.iterrows():
 
@@ -215,7 +215,6 @@ for index, row in dynamicPaths.iterrows():
             dynamicPaths.at[index, "{0}_{1}".format(paramName, key)]= value #Add the file path to the data frame
 
             print("{0}_{1}".format(paramName, key))
-            print(row["{0}_{1}".format(paramName, key)])
 
             paramCPG = value
             coords = row['USGS_Albers']
@@ -227,6 +226,7 @@ for index, row in dynamicPaths.iterrows():
                     CPGvalues = ds.sample([coords],1)
                     try:
                         print(next(CPGvalues))
+                        dynamicPaths.at[index, "{0}_{1}".format(paramName, key)]= next(CPGvalues) #Add CPG value to data frame
                     except:
                         print("Error getting CPG value")
             else:
