@@ -207,13 +207,13 @@ monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct
 dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
 #dynamicParams = [("gridMET_minTempK", gridMET_minTempK_fcn) ]
 
-for index, row in dynamicPaths.iterrows():
+for index, row in paramValues.iterrows():
 
     obsYear = row['Year']
     obsMonth = row['Month']
 
     
-    for paramName,paramF in paramValues:
+    for paramName,paramF in dynamicParams:
 
         print(paramName)
         CPGdict = paramF(HUC, obsYear, obsMonth)
