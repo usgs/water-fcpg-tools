@@ -3,6 +3,7 @@ import numpy as np
 import rasterio as rs
 import os
 import glob
+import calendar
 from collections import Counter
 
 
@@ -51,7 +52,8 @@ def gridMET_minTempK_fcn(HUC, year, month):
 
     year = int(year)
     month = int(month)
-    day = "??"
+    #day = calendar.monthrange(year,month)[1] #Get last date of last day of month
+    day = "00"
     param = "gridMET_minTempK"
     CPGdict = {}
 
@@ -81,7 +83,7 @@ def gridMET_minTempK_fcn(HUC, year, month):
             monthCPG = glob.glob(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(m).zfill(2), "*", HUC)))[0]
         else:
             #Multipe parameter CPGs match the timeframe exists 
-            print("Error: multiple CPGs exit for parameter {0} in {1} {2}".format(param, monthAbbr, year))
+            print("Error: no unique CPG exists for parameter {0} in {1} {2}".format(param, monthAbbr, year))
             monthCPG = ""
 
         CPGdict[monthAbbr] = monthCPG
