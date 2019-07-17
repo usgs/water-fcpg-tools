@@ -213,7 +213,7 @@ for index, row in dynamicPaths.iterrows():
     obsMonth = row['Month']
 
     
-    for paramName,paramF in dynamicParams:
+    for paramName,paramF in paramValues:
 
         print(paramName)
         CPGdict = paramF(HUC, obsYear, obsMonth)
