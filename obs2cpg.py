@@ -241,6 +241,16 @@ for index, row in paramValues.iterrows():
                 print("Error file not found: {0}".format(paramCPG))
 
 
+"""
+Need code to loop over list of dynamic CPGs, get a list of coordinates asssociate with that CPG, pull the CPG values, then write to values to the output dataframe
+
+
+
+"""
+
+
+
+
 paramValues.to_csv("../work/1002/obsTestParams.csv")
 
 #print(dynamicPaths)
