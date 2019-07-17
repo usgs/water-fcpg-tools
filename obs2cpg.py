@@ -13,7 +13,7 @@ HUC = 1002
 
 
 
-""" BEGIN PARAMTER FUNCTIONS """"
+""" BEGIN PARAMTER FUNCTIONS """
 
 def SNODAS_SWEmm_fcn(HUC, year, month):
 
