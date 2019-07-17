@@ -240,12 +240,10 @@ for index, row in dynamicPaths.iterrows():
                 print("Error file not found: {0}".format(paramCPG))
 
 
-dynamicValues.to_csv("../work/1002/obsTest.csv")
 paramValues.to_csv("../work/1002/obsTestParams.csv")
 
-print(dynamicPaths)
+#print(dynamicPaths)
 print(static)
 print(dynamic)
-print(dynamicValues)
 
 
