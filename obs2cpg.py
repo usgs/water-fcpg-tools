@@ -198,7 +198,7 @@ for param in static:
             
 
 
-
+opencount = 0
 
 #Get dynamic CPG values
 
@@ -231,7 +231,7 @@ for index, row in paramValues.iterrows():
                 with rs.open(paramCPG) as ds:
 
                     CPGvalues = ds.sample([coords],1)
-                    
+                    opencount = opencount + 1 
                     try:
                         CPGval = next(CPGvalues)
                         paramValues.at[index, "{0}_{1}".format(paramName, key)]= CPGval[0]
@@ -246,5 +246,5 @@ paramValues.to_csv("../work/1002/obsTestParams.csv")
 #print(dynamicPaths)
 print(static)
 print(dynamic)
-
+print("{0} files opened".format(opencount))
 
