@@ -198,8 +198,8 @@ def gridMET_minTempK_fcn(HUC, year, month):
 
 monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-#dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
-dynamicParams = [("gridMET_minTempK", gridMET_minTempK_fcn) ]
+dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
+#dynamicParams = [("gridMET_minTempK", gridMET_minTempK_fcn) ]
 
 for index, row in dynamicPaths.iterrows():
 
