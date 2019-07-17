@@ -175,11 +175,10 @@ landsat_NDVIMayOctList = ["landsat_NDVI-May-Oct"]
 
 #dynamicPaths = pd.concat([data, pd.DataFrame(columns=gridMET_SOILMOISTmmList), pd.DataFrame(columns=SNODAS_SWEmmList), pd.DataFrame(columns=landsat_NDVIMayOctList), pd.DataFrame(columns=gridMET_minTempKList)], sort=False) #Create dataframe to store file paths to dynamic CPGs
 
-dynamicPaths = pd.concat([data, pd.DataFrame(columns=SNODAS_SWEmmList), pd.DataFrame(columns=gridMET_minTempKList)], sort=False) #Create dataframe to store file paths to dynamic CPGs
 
 
 #Create dataframe to store all needed parameter values
-paramValues = pd.concat([data, pd.DataFrame(columns=static), pd.DataFrame(columns=gridMET_SOILMOISTmmList), pd.DataFrame(columns=SNODAS_SWEmmList), pd.DataFrame(columns=landsat_NDVIMayOctList), pd.DataFrame(columns=gridMET_minTempKList)], sort=False)
+paramValues = pd.concat([data, pd.DataFrame(columns=static),  pd.DataFrame(columns=SNODAS_SWEmmList), pd.DataFrame(columns=gridMET_minTempKList)], sort=False)
 
 
 
