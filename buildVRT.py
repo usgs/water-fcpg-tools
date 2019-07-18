@@ -6,6 +6,7 @@ import traceback
 
 inDir = "../data/cov/landsatNDVI"
 outDir = "../data/cov/landsatNDVI/vrt"
+paramName = "landsat_NDVI-May-Oct"
 
 rasterList = [] #Initialize list of covariates
 
@@ -29,7 +30,7 @@ for year in years:
         if os.path.basename(raster).split("_")[4].split("-")[0] == str(year):
              yearRasters.append(raster) #Add rasters from the current year to the list
     
-    outFile = os.path.join(outDir, "landsat_NDVI-May-Oct_{0}_00_00.vrt".format(year)) #Create output file path
+    outFile = os.path.join(outDir, "{0}_{1}_00_00.vrt".format(paramName, year)) #Create output file path
 
     print(yearRasters)
 
