@@ -200,7 +200,7 @@ gridMET_minTempKList = ["gridMET_minTempK_Oct", "gridMET_minTempK_Nov", "gridMET
 
 SNODAS_SWEmmList = [ "SNODAS_SWEmm_Mar", "SNODAS_SWEmm_Apr", "SNODAS_SWEmm_May", "SNODAS_SWEmm_Jun", "SNODAS_SWEmm_Jul"]
 
-landsat_NDVIMayOctList = ["landsat_NDVI-May-Oct"]
+landsat_NDVIMayOctList = ["landsat_NDVI-May-Oct_MayOct"]
 
 dynamicList = gridMET_minTempKList + SNODAS_SWEmmList + landsat_NDVIMayOctList #Combine lists of dynamic parameters
 
@@ -235,7 +235,7 @@ opencount = 0
 
 monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn), ("landsat_NDVIMayOct", landsat_NDVIMayOct_fcn)]
+dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn), ("landsat_NDVI-May-Oct", landsat_NDVIMayOct_fcn)]
 #dynamicParams = [("gridMET_minTempK", gridMET_minTempK_fcn) ]
 
 startTime = time.time()
