@@ -44,7 +44,7 @@ def SNODAS_SWEmm_fcn(HUC, year, month):
 
             CPGdict[monthAbbr] = monthCPG
     
-    #print(CPGdict)
+    print(CPGdict)
     return CPGdict
 
 
@@ -89,7 +89,7 @@ def gridMET_minTempK_fcn(HUC, year, month):
 
         CPGdict[monthAbbr] = monthCPG
     
-    #print(CPGdict)
+    print(CPGdict)
     return CPGdict
 
 
