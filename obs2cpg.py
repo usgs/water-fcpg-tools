@@ -17,6 +17,34 @@ HUC = 1002
 
 """ BEGIN PARAMTER FUNCTIONS """
 
+
+
+def landsat_NDVIMayOct_fcn(HUC, year, month):
+
+    year = int(year)
+    month = int(month)
+    day = "00"
+    param = "landsat_NDVI-May-Oct"
+    CPGdict = {}
+
+    monthAbbr = monthList[month -1] #Get month abbreviation from list
+
+    m = 0 #Hard code month to zero for landsat CPGs
+
+    if os.path.isfile(os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(m).zfill(2), day, HUC))):
+        #Only one parameter CPG match the timeframe exists 
+        monthCPG = os.path.join(CPGdir, "{0}_{1}_{2}_{3}_HUC{4}_CPG.tif".format(param, year, str(m).zfill(2), day, HUC))
+    else:
+        #A unique CPG file does not exist
+        print("Error: no unique CPG exists for parameter {0} in {1}".format(param, year))
+        monthCPG = ""
+
+    CPGdict[monthAbbr] = monthCPG
+
+    
+    print(CPGdict)
+    return CPGdict
+
 def SNODAS_SWEmm_fcn(HUC, year, month):
 
     year = int(year)
@@ -207,7 +235,7 @@ opencount = 0
 
 monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
+dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn), ("landsat_NDVIMayOct", landsat_NDVIMayOct_fcn)]
 #dynamicParams = [("gridMET_minTempK", gridMET_minTempK_fcn) ]
 
 startTime = time.time()
