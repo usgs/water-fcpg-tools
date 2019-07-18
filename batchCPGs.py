@@ -66,7 +66,7 @@ for cov in covList:
         f.writelines("#SBATCH --time=01:00:00\n") # Overestimated guess at time
         f.writelines("#SBATCH --mem=128000\n") #memory in MB
         f.writelines("#SBATCH --mail-type=ALL\n") # Send email only for all events
-        f.writelines("#SBATCH --mail-user=ssiefken@usgs.gov\n")
+        f.writelines("#SBATCH --mail-user={0}@usgs.gov\n".format(os.getlogin()))
         f.writelines("#SBATCH --exclusive\n") # Require exclusive use of nodes
 
         #Set up python environment for job
