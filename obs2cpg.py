@@ -228,7 +228,7 @@ for index, row in paramValues.iterrows():
             dynamicPaths.at[index, "{0}_{1}".format(paramName, key)]= value #Add the file path to the data frame
 
             #print("{0}_{1}".format(paramName, key))
-            """
+            
             paramCPG = value
             coords = row['USGS_Albers']
             
@@ -245,7 +245,7 @@ for index, row in paramValues.iterrows():
             else:
                 print("Error file not found: {0}".format(paramCPG))
 
-            """
+            
 print("Execution Time: {0}".format(time.time() - startTime))
 
 """
@@ -286,4 +286,4 @@ dynamicPaths.to_csv("../work/1002/obsTestParams_new.csv")
 print(static)
 print(dynamic)
 print("{0} files opened".format(opencount))
-print("{0} files opened".format(newcount))
+
