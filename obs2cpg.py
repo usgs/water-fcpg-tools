@@ -253,7 +253,7 @@ for col in dynamicList:
 
     for path in pathList:
         rows = dynamicPaths.loc[dynamicPaths[col] == path] #Select rows with the current path
-        points = rows.['USGS_Albers'] #Get list of data points associated with the current path
+        points = rows['USGS_Albers'] #Get list of data points associated with the current path
     
         with rs.open(path) as ds:
             CPGvalues = ds.sample(points) #Read the parameter CPG at all data points
