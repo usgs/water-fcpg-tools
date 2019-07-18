@@ -27,7 +27,7 @@ def landsat_NDVIMayOct_fcn(HUC, year, month):
     param = "landsat_NDVI-May-Oct"
     CPGdict = {}
 
-    monthAbbr = monthList[month -1] #Get month abbreviation from list
+    monthAbbr = "MayOct" #Set month abbreviation
 
     m = 0 #Hard code month to zero for landsat CPGs
 
@@ -209,7 +209,7 @@ dynamicPaths = pd.concat([data, pd.DataFrame(columns=dynamicList)], sort=False) 
 
 
 #Create dataframe to store all needed parameter values
-paramValues = pd.concat([data, pd.DataFrame(columns=static),  pd.DataFrame(columns=SNODAS_SWEmmList), pd.DataFrame(columns=gridMET_minTempKList)], sort=False)
+paramValues = pd.concat([data, pd.DataFrame(columns=static),  pd.DataFrame(columns=SNODAS_SWEmmList), pd.DataFrame(columns=gridMET_minTempKList), pd.DataFrame(columns=landsat_NDVIMayOctList)], sort=False)
 
 
 
