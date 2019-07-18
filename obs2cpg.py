@@ -228,10 +228,10 @@ for index, row in paramValues.iterrows():
             dynamicPaths.at[index, "{0}_{1}".format(paramName, key)]= value #Add the file path to the data frame
 
             #print("{0}_{1}".format(paramName, key))
-
+            """
             paramCPG = value
             coords = row['USGS_Albers']
-            """
+            
             if os.path.isfile(paramCPG):
                 with rs.open(paramCPG) as ds:
 
