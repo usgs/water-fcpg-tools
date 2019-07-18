@@ -173,7 +173,9 @@ SNODAS_SWEmmList = [ "SNODAS_SWEmm_Mar", "SNODAS_SWEmm_Apr", "SNODAS_SWEmm_May",
 
 landsat_NDVIMayOctList = ["landsat_NDVI-May-Oct"]
 
-#dynamicPaths = pd.concat([data, pd.DataFrame(columns=gridMET_SOILMOISTmmList), pd.DataFrame(columns=SNODAS_SWEmmList), pd.DataFrame(columns=landsat_NDVIMayOctList), pd.DataFrame(columns=gridMET_minTempKList)], sort=False) #Create dataframe to store file paths to dynamic CPGs
+dynamicList = gridMET_minTempKList + SNODAS_SWEmmList + landsat_NDVIMayOctList #Combine lists of dynamic parameters
+
+dynamicPaths = pd.concat([data, pd.DataFrame(columns=dynamicList)], sort=False) #Create dataframe to store file paths to dynamic CPGs
 
 
 
@@ -220,7 +222,7 @@ for index, row in paramValues.iterrows():
         
         for key, value in CPGdict.items():
             
-            #dynamicPaths.at[index, "{0}_{1}".format(paramName, key)]= value #Add the file path to the data frame
+            dynamicPaths.at[index, "{0}_{1}".format(paramName, key)]= value #Add the file path to the data frame
 
             #print("{0}_{1}".format(paramName, key))
 
@@ -241,20 +243,35 @@ for index, row in paramValues.iterrows():
                 print("Error file not found: {0}".format(paramCPG))
 
 
-"""
-Need code to loop over list of dynamic CPGs, get a list of coordinates asssociate with that CPG, pull the CPG values, then write to values to the output dataframe
+
+#Need code to loop over list of dynamic CPGs, get a list of coordinates asssociate with that CPG, pull the CPG values, then write to values to the output dataframe
+newcount = 0
+#Loop over each columns of dynamic parameters
+for col in dynamicList:
+
+    pathList = dynamicPaths[col].unique() #Get list of unique CPG paths in the column
+
+    for path in pathList:
+        rows = dynamicPaths.loc[dynamicPaths[col] == path] #Select rows with the current path
+        points = rows.['USGS_Albers'] #Get list of data points associated with the current path
+    
+        with rs.open(path) as ds:
+            CPGvalues = ds.sample(points) #Read the parameter CPG at all data points
+            newcount = newcount + 1 
+            #Add CPG values to dataframe
+            for index, row in rows.iterrows():
+                dynamicPaths.at[index, param]= next(CPGvalues)[0]
 
 
-
-"""
 
 
 
 
 paramValues.to_csv("../work/1002/obsTestParams.csv")
+dynamicPaths.to_csv("../work/1002/obsTestParams_new.csv")
 
 #print(dynamicPaths)
 print(static)
 print(dynamic)
 print("{0} files opened".format(opencount))
-
+print("{0} files opened".format(newcount))
