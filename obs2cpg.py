@@ -254,13 +254,17 @@ for col in dynamicList:
     for path in pathList:
         rows = dynamicPaths.loc[dynamicPaths[col] == path] #Select rows with the current path
         points = rows['USGS_Albers'] #Get list of data points associated with the current path
-    
-        with rs.open(path) as ds:
-            CPGvalues = ds.sample(points) #Read the parameter CPG at all data points
-            newcount = newcount + 1 
-            #Add CPG values to dataframe
-            for index, row in rows.iterrows():
-                dynamicPaths.at[index, param]= next(CPGvalues)[0]
+
+        if os.path.isfile(path):
+            with rs.open(path) as ds:
+                CPGvalues = ds.sample(points) #Read the parameter CPG at all data points
+                newcount = newcount + 1 
+                #Add CPG values to dataframe
+                for index, row in rows.iterrows():
+                    dynamicPaths.at[index, param]= next(CPGvalues)[0]
+
+        else:
+                print("Error file not found: {0}".format(path))
 
 
 
