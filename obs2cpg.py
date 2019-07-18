@@ -4,6 +4,7 @@ import rasterio as rs
 import os
 import glob
 import calendar
+import time
 from collections import Counter
 
 
@@ -209,6 +210,8 @@ monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct
 dynamicParams = [("SNODAS_SWEmm", SNODAS_SWEmm_fcn), ("gridMET_minTempK", gridMET_minTempK_fcn)]
 #dynamicParams = [("gridMET_minTempK", gridMET_minTempK_fcn) ]
 
+startTime = time.time()
+
 for index, row in paramValues.iterrows():
 
     obsYear = row['Year']
@@ -243,7 +246,9 @@ for index, row in paramValues.iterrows():
                 print("Error file not found: {0}".format(paramCPG))
 
             """
+print("Execution Time: {0}".format(time.time() - startTime))
 
+"""
 #Need code to loop over list of dynamic CPGs, get a list of coordinates asssociate with that CPG, pull the CPG values, then write to values to the output dataframe
 newcount = 0
 print(dynamicPaths)
@@ -270,7 +275,7 @@ for col in dynamicList:
                 print("Error file not found: {0}".format(path))
 
 
-
+"""
 
 
 
