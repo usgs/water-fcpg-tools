@@ -228,7 +228,7 @@ for index, row in paramValues.iterrows():
 
             paramCPG = value
             coords = row['USGS_Albers']
-
+            """
             if os.path.isfile(paramCPG):
                 with rs.open(paramCPG) as ds:
 
@@ -242,16 +242,19 @@ for index, row in paramValues.iterrows():
             else:
                 print("Error file not found: {0}".format(paramCPG))
 
-
+            """
 
 #Need code to loop over list of dynamic CPGs, get a list of coordinates asssociate with that CPG, pull the CPG values, then write to values to the output dataframe
 newcount = 0
+print(dynamicPaths)
 #Loop over each columns of dynamic parameters
 for col in dynamicList:
 
+    print(col)
     pathList = dynamicPaths[col].unique() #Get list of unique CPG paths in the column
 
     for path in pathList:
+        print(path)
         rows = dynamicPaths.loc[dynamicPaths[col] == path] #Select rows with the current path
         points = rows['USGS_Albers'] #Get list of data points associated with the current path
 
