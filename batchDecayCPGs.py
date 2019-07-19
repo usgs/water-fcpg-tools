@@ -17,12 +17,12 @@ if len(sys.argv) > 1:
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/NDVI_eulersZ/vrt" 
-    tauDINFang = "../data/tauDEM/tauDINFang1002.tif" 
-    taufac = "../data/tauDEM/taufac1002.tif" 
-    invDist = "../data/tauDEM/invDist1002.tif" 
-    workDir = "../work/1002"
-    outDir = "../CPGs/1002"
-    logDir = "../logs/1002"
+    tauDINFang = "../data/tauDEM/tauDINFang1003.tif" 
+    taufac = "../data/tauDEM/taufac1003.tif" 
+    invDist = "../data/tauDEM/invDist1003.tif" 
+    workDir = "../work/1003"
+    outDir = "../CPGs/1003"
+    logDir = "../logs/1003"
     cores = 20
     accumThresh = 1000
     overwrite = True
@@ -65,7 +65,7 @@ for cov in covList:
         f.writelines("#SBATCH -o {0}/slurm-%A.out\n".format(logDir)) # Set log file name 
         f.writelines("#SBATCH -p normal\n") # the partition you want to use, for this case prod is best
         f.writelines("#SBATCH --account=wymtwsc\n") # your account
-        f.writelines("#SBATCH --time=01:00:00\n") # Overestimated guess at time
+        f.writelines("#SBATCH --time=00:30:00\n") # Overestimated guess at time
         f.writelines("#SBATCH --mem=128000\n") #memory in MB
         f.writelines("#SBATCH --mail-type=ALL\n") # Send email only for all events
         f.writelines("#SBATCH --mail-user={0}@usgs.gov\n".format(os.getlogin()))
