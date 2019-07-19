@@ -20,9 +20,9 @@ else:
     tauDINFang = "../data/tauDEM/tauDINFang1002.tif" 
     taufac = "../data/tauDEM/taufac1002.tif" 
     invDist = "../data/tauDEM/invDist1002.tif" 
-    workDir = "../work/1013"
-    outDir = "../CPGs/1013"
-    logDir = "../logs/1013"
+    workDir = "../work/1002"
+    outDir = "../CPGs/1002"
+    logDir = "../logs/1002"
     cores = 20
     accumThresh = 1000
     overwrite = True
