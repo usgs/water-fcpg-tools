@@ -20,7 +20,7 @@ from tools import *
 #make_Decaycpg("../work/1002/paramdecayAccumTest.tif", "../work/1002/decayAccumTest.tif", "../work/1002/decayAccumCPGTest.tif", streamMask ="../CPGs/1002/gridMET_minTempK_1979_01_00_HUC1002_CPG.tif")
 
 
-HUCs = ["1003", "1004", "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012", "1013"]
+HUCs = ["1002", "1003", "1004", "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012", "1013"]
 
 for HUC in HUCs:
     #dist2stream("../data/tauDEM/taufdr{0}.tif".format(HUC), "../data/tauDEM/taufac{0}.tif".format(HUC), 1000, "../data/tauDEM/tauDist2Strm{0}.tif".format(HUC), cores=20)
