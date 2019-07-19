@@ -413,7 +413,7 @@ def makeDecayGrid(d2strm, outRast):
         print("Decay raster written to: {0}".format(outRast))
 
 def applyMult(inRast, mult, outRast):
-     '''
+    '''
     Inputs:
         inRast- Input parameter raster
         mult - multiplier raster
