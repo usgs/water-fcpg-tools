@@ -425,6 +425,7 @@ def applyMult(inRast, mult, outRast):
     if not os.path.isfile(inRast):
         print("Error - Input parameter raster file is missing!")
         return #Function will fail, so end it now
+
     if not os.path.isfile(mult):
         print("Error - Multiplier file is missing!")
         return #Function will fail, so end it now
