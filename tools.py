@@ -412,6 +412,56 @@ def makeDecayGrid(d2strm, outRast):
         dst.write(decayGrid,1)
         print("Decay raster written to: {0}".format(outRast))
 
+def applyMult(inRast, mult, outRast):
+     '''
+    Inputs:
+        inRast- Input parameter raster
+        mult - multiplier raster
+
+    Outputs:
+        outRast - parameter raster multiplied by the multiplier raster
+    '''  
+
+    if not os.path.isfile(inRast):
+        print("Error - Input parameter raster file is missing!")
+        return #Function will fail, so end it now
+    if not os.path.isfile(mult):
+        print("Error - Multiplier file is missing!")
+        return #Function will fail, so end it now
+
+
+    print("Reading input rasters {0}".format(datetime.datetime.now()))
+    with rs.open(inRast) as ds: # load input rasters
+        data = ds.read(1)
+        profile = ds.profile
+        inNoData = ds.nodata
+    
+    with rs.open(mult) as ds: # load input rasters
+        m = ds.read(1)
+        mNoData = ds.nodata
+
+    data = data.astype(np.float32) #Convert to 32 bit float
+    data[data == inNoData] = np.NaN # fill with no data values where appropriate
+    m[m == mNoData] = np.NaN # fill with no data values where appropriate
+    outData = data * multiplier #Multiply the parameter values by the multiplier
+
+    outNoData = -9999
+    outData[np.isnan(outData)] = outNoData # Replace numpy NaNs with no data value
+
+    # Update raster profile
+    profile.update({'dtype':outData.dtype,
+                'compress':'LZW',
+                'profile':'GeoTIFF',
+                'tiled':True,
+                'sparse_ok':True,
+                'num_threads':'ALL_CPUS',
+                'nodata':outNoData,
+                'bigtiff':'IF_SAFER'})
+
+    print("Saving raster {0}".format(datetime.datetime.now()))
+    with rs.open(outRast, 'w', **profile) as dst:
+        dst.write(outData,1)
+        print("Raster written to: {0}".format(outRast))
 
 
 def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
