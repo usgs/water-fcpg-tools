@@ -369,7 +369,7 @@ def makeDecayGrid(d2strm, outRast):
         outRast - output file path for decay grid
 
     Outputs:
-        outRast - decay raster computed as the inverse flow distance (1/distance) from each grid cell to the nearest stream
+        outRast - decay raster computed as the inverse number of grid cells (1/number) from each grid cell to the nearest stream
     '''
     if not os.path.isfile(d2strm):
         print("Error - Stream distance raster file is missing!")
@@ -391,7 +391,7 @@ def makeDecayGrid(d2strm, outRast):
     print("Building decay grid {0}".format(datetime.datetime.now()))
     decayGrid = data.astype(np.float32) #Convert to float
     decayGrid[data == inNoData] = np.NaN # fill with no data values where appropriate
-    decayGrid = 1/(decayGrid + xsize) #Add the resolution to every value and invert distances to streams
+    decayGrid = xsize/(decayGrid + xsize) #Compute decay function
 
     decayGrid[np.isnan(decayGrid)] = outNoData # Replace numpy NaNs with no data value
 
