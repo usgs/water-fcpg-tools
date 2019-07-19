@@ -234,4 +234,4 @@ HUCs = ["1003", "1004", "1005", "1006", "1007", "1008", "1009", "1010", "1011", 
 
 for HUC in HUCs:
     #dist2stream("../data/tauDEM/taufdr{0}.tif".format(HUC), "../data/tauDEM/taufac{0}.tif".format(HUC), 1000, "../data/tauDEM/tauDist2Strm{0}.tif".format(HUC), cores=20)
-    makeDecayGrid("../data/tauDEM/tauDist2Strm{0}.tif".format(HUC), "../data/tauDEM/invDist{0}.tif".format(HUC))
+    makeDecayGrid("../data/tauDEM/tauDist2Strm{0}.tif".format(HUC), "../data/tauDEM/invDecay{0}.tif".format(HUC))
