@@ -5,8 +5,8 @@ import traceback
 #Requires gdal module (gdal/2.2.2-gcc) to be loaded
 
 inDir = "../data/cov/NDVI_eulersZ"
-outDir = "../data/cov/landsatNDVI/vrt"
-paramName = "landsat_NDVI-May-Oct"
+outDir = "../data/cov/NDVI_eulersZ/vrt"
+paramName = "landsat_NDVI-eulersZ"
 
 rasterList = [] #Initialize list of covariates
 
@@ -19,7 +19,7 @@ for path, subdirs, files in os.walk(inDir):
 
 
 
-years = range(1985, 2019)
+years = range(1988, 2019)
 
 
 for year in years:
