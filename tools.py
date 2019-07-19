@@ -66,7 +66,7 @@ def tauDrainDir(inRast, outRast):
 
 
 
-def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, cores = 1):
+def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, multiplier = None, cores = 1):
     """
     Inputs:
         paramRast - Raster of parameter values to acumulate, this file is modified by the function
@@ -132,6 +132,9 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             with rs.open(outNoDataRast, 'w', **profile) as dst:
                 dst.write(noDataArray,1)
                 print("Parameter No Data raster written to: {0}".format(outNoDataRast))
+
+
+        #Need to apply multiplier here, if one is provided
             
             # Use tauDEM to accumulate no data values
             try:
