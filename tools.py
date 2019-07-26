@@ -137,30 +137,30 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         #Need to apply multiplier here, if one is provided
         multNoDataRast = applyMult(outNoDataRast, multiplier, multNoDataRast)
             
-            # Use tauDEM to accumulate no data values
-            try:
-                print('Accumulating No Data Values')
-                if multNoDataRast != None:
-                    outFl = multNoDataRast
-                else:
-                    outFl = outNoDataRast
-                    
-                tauParams = {
-                'fdr':fdr,
-                'cores':cores, 
-                'outFl':outFl,
-                'weight':outNoDataRast
-                }
+        # Use tauDEM to accumulate no data values
+        try:
+            print('Accumulating No Data Values')
+            if multNoDataRast != None:
+                outFl = multNoDataRast
+            else:
+                outFl = outNoDataRast
                 
-                cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
-                print(cmd)
-                result = subprocess.run(cmd, shell = True) # Run shell command
-                result.stdout
-                print("Parameter no data accumulation written to: {0}".format(outNoDataRast))
-                
-            except:
-                print('Error Accumulating Data')
-                traceback.print_exc()
+            tauParams = {
+            'fdr':fdr,
+            'cores':cores, 
+            'outFl':outFl,
+            'weight':outNoDataRast
+            }
+            
+            cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+            print(cmd)
+            result = subprocess.run(cmd, shell = True) # Run shell command
+            result.stdout
+            print("Parameter no data accumulation written to: {0}".format(outNoDataRast))
+            
+        except:
+            print('Error Accumulating Data')
+            traceback.print_exc()
 
 
     #Use tauDEM to accumulate the parameter
