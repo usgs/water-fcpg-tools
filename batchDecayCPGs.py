@@ -17,7 +17,7 @@ if len(sys.argv) > 1:
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/NDVI_eulersZ/vrt" 
-    tauDINFang = "../data/tauDEM/tauDINFang1002.tif" 
+    tauDINFang = "../data/tauDEM/tauRADang1002.tif" 
     taufac = "../data/tauDEM/taufac1002.tif" 
     invDist = "../data/tauDEM/oneFourthDecay1002.tif" 
     workDir = "../work/1002"
