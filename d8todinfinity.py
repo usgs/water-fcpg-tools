@@ -61,4 +61,10 @@ def d8todinfinity(inRast, outRast):
 inFile = "../data/tauDEM/taufdr1002.tif"
 outFile = "../data/tauDEM/taudINFang1002.tif"
 
-d8todinfinity(inFile, outFile)
+#d8todinfinity(inFile, outFile)
+
+
+from tools import *
+streamDist = "../data/tauDEM/invDist1002.tif"
+decayRast = "../data/tauDEM/oneFourthDecay1002.tif"
+makeDecayGrid(streamDist, 4, decayRast)
