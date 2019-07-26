@@ -370,11 +370,12 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
 
 #Tools for decayed accumulation CPGs
 
-def makeDecayGrid(d2strm, outRast):
+def makeDecayGrid(d2strm, k, outRast):
     '''
     Inputs:
         
         d2strm - Raster of flow distances from each grid cell to the nearest stream
+        k - constant applied to decay factor denominator
         outRast - output file path for decay grid
 
     Outputs:
@@ -400,7 +401,7 @@ def makeDecayGrid(d2strm, outRast):
     print("Building decay grid {0}".format(datetime.datetime.now()))
     decayGrid = data.astype(np.float32) #Convert to float
     decayGrid[data == inNoData] = np.NaN # fill with no data values where appropriate
-    decayGrid = xsize/(decayGrid + xsize) #Compute decay function
+    decayGrid = xsize/(decayGrid + k*xsize) #Compute decay function
 
     decayGrid[np.isnan(decayGrid)] = outNoData # Replace numpy NaNs with no data value
 
