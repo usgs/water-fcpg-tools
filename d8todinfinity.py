@@ -65,6 +65,6 @@ outFile = "../data/tauDEM/taudINFang1002.tif"
 
 
 from tools import *
-streamDist = "../data/tauDEM/invDist1002.tif"
+streamDist = "../data/tauDEM/tauDist2Strm1002.tif"
 decayRast = "../data/tauDEM/oneFourthDecay1002.tif"
 makeDecayGrid(streamDist, 4, decayRast)
