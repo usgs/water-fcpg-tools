@@ -66,7 +66,7 @@ else:
         print("Calling decay accumulation function {0}".format(datetime.datetime.now()))
         decayAccum(tauDINFang,  invDist, accumFile, paramRast=rprjFile, cores=20)
         print("Calling masking CPG {0}".format(datetime.datetime.now()))
-        maskStreams(accumFile, taufac, CPGFile, minAccum = accumThresh)
+        #maskStreams(accumFile, taufac, CPGFile, minAccum = accumThresh)
         
         if deleteTemp:
                 try:
