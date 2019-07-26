@@ -19,7 +19,7 @@ else:
     inDir = "../data/cov/NDVI_eulersZ/vrt" 
     tauDINFang = "../data/tauDEM/tauDINFang1002.tif" 
     taufac = "../data/tauDEM/taufac1002.tif" 
-    invDist = "../data/tauDEM/invDist1002.tif" 
+    invDist = "../data/tauDEM/oneFourthDecay1002.tif" 
     workDir = "../work/1002"
     outDir = "../CPGs/1002"
     logDir = "../logs/1002"
