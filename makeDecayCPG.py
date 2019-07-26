@@ -46,7 +46,7 @@ paramName = os.path.splitext(os.path.basename(paramRast))[0]
 
 #Get HUC number from tau flow direction raster name
 try:
-        HUC = os.path.splitext(os.path.basename(tauDINFang))[0].split("tauDINFang")[1]
+        HUC = os.path.splitext(os.path.basename(tauRADang))[0].split("tauRADang")[1]
 except:
         print("Error - Flow direction raster has inappropriate name")
 
