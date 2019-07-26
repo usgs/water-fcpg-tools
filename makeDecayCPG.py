@@ -18,7 +18,7 @@ print("Starting {0}".format(datetime.datetime.now()))
 #Set up Inputs
 #print(sys.argv)
 paramRast = sys.argv[1] #Path to parameter raster with name in format of "source_var_dd_mm_yyyy.tif"
-tauDINFang = sys.argv[2] #Path to tauDEM d-infinity flow direction grid in format of "tauDINFangXXXX.tif", where XXXX is a HUC code of any length
+tauRADang = sys.argv[2] #Path to tauDEM d-infinity flow direction grid in format of "tauRADangXXXX.tif", where XXXX is a HUC code of any length
 taufac = sys.argv[3] #Path to tauDEM flow accumulation grid
 invDist = sys.argv[4] #Path to raster with inverse flow distances to streams
 workDir = sys.argv[5] #Path to working directory
@@ -30,7 +30,7 @@ deleteTemp = parsebool(sys.argv[10]) #Whether to delete temporary files
 
 print("Starting CPG process for:")
 print("Parameter Raster: {0}".format(paramRast))
-print("Flow Driection Grid: {0}".format(tauDINFang))
+print("Flow Direction Grid: {0}".format(tauRADang))
 print("Flow Accumulation Grid: {0}".format(taufac))
 print("Inverse Distance Grid: {0}".format(invDist))
 print("Working Directory: {0}".format(workDir))
@@ -64,7 +64,7 @@ else:
         print("Calling resample function {0}".format(datetime.datetime.now()))
         resampleParam(paramRast, taufac, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
         print("Calling decay accumulation function {0}".format(datetime.datetime.now()))
-        decayAccum(tauDINFang,  invDist, accumFile, paramRast=rprjFile, cores=20)
+        decayAccum(tauRADang,  invDist, accumFile, paramRast=rprjFile, cores=20)
         print("Calling masking CPG {0}".format(datetime.datetime.now()))
         #maskStreams(accumFile, taufac, CPGFile, minAccum = accumThresh)
         
