@@ -565,26 +565,23 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1) :
         print('Error computing distances')
         traceback.print_exc()
 
-def maskStreams(inRast, fac, outRast, minAccum = None):
+def maskStreams(inRast, streamRast, outRast):
     '''
     Inputs:
         
         inRast - input raster to mask
-        fac - flow accumulation raster
+        streamRast - raster with all non-stream pixels set to no data
         outRast - output raster file location
-        minAccum - value of flow accumulation below which the raster values will be set to no data
-        
 
     Outputs:
-        outRast - raster with cells below minimum accumulation set to no data
+        outRast - raster with non-stream cells set to no data
     '''
   
-    
     if not os.path.isfile(inRast):
         print("Error - Parameter raster file is missing!")
         return #Function will fail, so end it now
-    if not os.path.isfile(fac):
-        print("Error - Flow accumulation file is missing!")
+    if not os.path.isfile(streamRast):
+        print("Error - Stream raster file is missing!")
         return #Function will fail, so end it now
 
 
@@ -593,14 +590,14 @@ def maskStreams(inRast, fac, outRast, minAccum = None):
         profile = ds.profile
         inNoData = ds.nodata 
 
-    with rs.open(fac) as ds: # load input raster
-        accum = ds.read(1)
+    with rs.open(streamRast) as ds: # load input raster
+        strmVals = ds.read(1)
+        strmNoData = ds.nodata 
 
+    data[data == inNoData] = np.NaN #Set no data values to NaN
+    data[strmVals == strmNoData] = np.NaN #Set values off streams to NaN
 
-    # Replace values in cells with small flow accumulation with no data
-    if minAccum != None:
-        print("Replacing small flow accumulations {0}".format(datetime.datetime.now()))
-        data[accum < minAccum] = inNoData #Set values smaller than threshold to no data
+    data[data == np.NaN] = inNoData #Set NaNs to input no data value
 
     # Update raster profile
     profile.update({
