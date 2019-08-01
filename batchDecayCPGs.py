@@ -5,8 +5,8 @@ import time
 if len(sys.argv) > 1:
     inDir = sys.argv[1] #Input directory in which to search for parameter rasters
     tauDINFang = sys.argv[2] #Path to tauDEM d-infinity flow direction grid
-    strmRast = sys.argv[3] #Raster with all non-stream cells set to no data
-    decayRast = sys.argv[4] #Raster with decay coefficients for each cell
+    strmRast = sys.argv[3] #Path to raster with all non-stream cells set to no data
+    decayRast = sys.argv[4] #Path to raster with decay coefficients for each cell
     workDir = sys.argv[5] #Working directory to save intermediate files
     outDir = sys.argv[6] #Output directory to save CPGs
     logDir = sys.argv[7] #Directory to save slurm log files
@@ -26,7 +26,7 @@ else:
     cores = 20
     accumThresh = 1000
     overwrite = True
-    deleteTemp = False
+    deleteTemp = True
 
 covList = [] #Initialize list of covariates
 
