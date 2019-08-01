@@ -5,8 +5,8 @@ import time
 if len(sys.argv) > 1:
     inDir = sys.argv[1] #Input directory in which to search for parameter rasters
     tauDINFang = sys.argv[2] #Path to tauDEM d-infinity flow direction grid
-    taufac = sys.argv[3] #Flow accumulation grid in tauDEM format
-    invDist = sys.argv[4] #Path to raster with inverse flow distances to streams
+    strmRast = sys.argv[3] #Raster with all non-stream cells set to no data
+    decayRast = sys.argv[4] #Raster with decay coefficients for each cell
     workDir = sys.argv[5] #Working directory to save intermediate files
     outDir = sys.argv[6] #Output directory to save CPGs
     logDir = sys.argv[7] #Directory to save slurm log files
@@ -18,8 +18,8 @@ else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/NDVI_eulersZ/vrt" 
     tauDINFang = "../data/tauDEM/tauRADang1002.tif" 
-    taufac = "../data/tauDEM/taufac1002.tif" 
-    invDist = "../data/tauDEM/oneFourthDecay1002.tif" 
+    strmRast = "../data/tauDEM/taufac1002.tif" 
+    decayRast = "../data/tauDEM/oneFourthDecay1002.tif" 
     workDir = "../work/1002"
     outDir = "../CPGs/1002"
     logDir = "../logs/1002"
@@ -77,7 +77,7 @@ for cov in covList:
         f.writelines("source activate py36\n")
 
         #Run the python script
-        f.writelines("python -u ./makeDecayCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}\n".format(cov, tauDINFang, taufac, invDist, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
+        f.writelines("python -u ./makeDecayCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}\n".format(cov, tauDINFang, strmRast, decayRast, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
         
     print("Launching batch job for: " + str(covname))
 
