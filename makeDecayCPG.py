@@ -18,9 +18,9 @@ print("Starting {0}".format(datetime.datetime.now()))
 #Set up Inputs
 #print(sys.argv)
 paramRast = sys.argv[1] #Path to parameter raster with name in format of "source_var_dd_mm_yyyy.tif"
-tauRADang = sys.argv[2] #Path to tauDEM d-infinity flow direction grid in format of "tauRADangXXXX.tif", where XXXX is a HUC code of any length
-taufac = sys.argv[3] #Path to tauDEM flow accumulation grid
-invDist = sys.argv[4] #Path to raster with inverse flow distances to streams
+tauRADang = sys.argv[2] #Path to tauDEM radian flow direction grid in format of "tauRADangXXXX.tif", where XXXX is a HUC code of any length
+strmRast = sys.argv[3] #Path to raster with all non-stream cells set to no data
+decayRast = sys.argv[4] #Path to raster with decay coefficients for each cell
 workDir = sys.argv[5] #Path to working directory
 outDir = sys.argv[6] #Path to output directory for CPG files
 cores = int(sys.argv[7]) #Number of cores to use 
@@ -31,8 +31,8 @@ deleteTemp = parsebool(sys.argv[10]) #Whether to delete temporary files
 print("Starting CPG process for:")
 print("Parameter Raster: {0}".format(paramRast))
 print("Flow Direction Grid: {0}".format(tauRADang))
-print("Flow Accumulation Grid: {0}".format(taufac))
-print("Inverse Distance Grid: {0}".format(invDist))
+print("Stream Raster: {0}".format(strmRast))
+print("Decay Grid: {0}".format(decayRast))
 print("Working Directory: {0}".format(workDir))
 print("Output Directory: {0}".format(outDir))
 print("Number of Cores: {0}".format(cores))
@@ -62,19 +62,17 @@ if os.path.isfile(CPGFile) & (overwrite == False):
 else:
         #Run the CPG tools
         print("Calling resample function {0}".format(datetime.datetime.now()))
-        resampleParam(paramRast, taufac, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
+        resampleParam(paramRast, tauRADang, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
         print("Calling decay accumulation function {0}".format(datetime.datetime.now()))
-        decayAccum(tauRADang,  invDist, accumFile, paramRast=rprjFile, cores=20)
+        decayAccum(tauRADang,  decayRast, accumFile, paramRast=rprjFile, cores=20)
         print("Calling masking CPG {0}".format(datetime.datetime.now()))
-        #maskStreams(accumFile, taufac, CPGFile, minAccum = accumThresh)
+        maskStreams(accumFile, strmRast, CPGFile)
         
         if deleteTemp:
                 try:
                         #Delete temporary files
                         os.remove(rprjFile)
                         os.remove(accumFile)
-                        #os.remove(nodataFile)
-                        #os.remove(nodataaccumFile)
                 except:
                         print("Warning: Unable to delete temporary files")
 print("Finished {0}".format(datetime.datetime.now()))
