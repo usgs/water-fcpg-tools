@@ -8,4 +8,4 @@ for HUC in HUCs:
     streamDist = "../data/tauDEM/tauDist2Strm{0}.tif".format(HUC)
     decayRast = "../data/tauDEM/oneFourthDecay{0}.tif".format(HUC)
 
-    makeDecayGrid(streamDist, 4, decayRast)
+    makeDecayGrid(streamDist, 4, decayRast) #Create decay grid with multiplier of 4
