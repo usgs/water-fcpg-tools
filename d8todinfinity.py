@@ -56,15 +56,12 @@ def d8todinfinity(inRast, outRast):
         dst.write(tauDir,1)
         print("TauDEM drainage direction written to: {0}".format(outRast))
 
+HUCs = ["1003", "1004", "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012", "1013",]
 
+for HUC in HUCs:
 
-inFile = "../data/tauDEM/taufdr1002.tif"
-outFile = "../data/tauDEM/taudINFang1002.tif"
+    inFile = "../data/tauDEM/taufdr{0}.tif".format(HUC)
+    outFile = "../data/tauDEM/taudINFang{0}.tif".format(HUC)
 
-#d8todinfinity(inFile, outFile)
+    d8todinfinity(inFile, outFile)
 
-
-from tools import *
-streamDist = "../data/tauDEM/tauDist2Strm1002.tif"
-decayRast = "../data/tauDEM/oneFourthDecay1002.tif"
-makeDecayGrid(streamDist, 4, decayRast)
