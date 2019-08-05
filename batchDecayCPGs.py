@@ -17,15 +17,15 @@ if len(sys.argv) > 1:
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/landsatNDVI/vrt" 
-    tauDINFang = "../data/tauDEM/tauRADang1005.tif" 
-    strmRast = "../CPGs/1005/gridMET_minTempK_2017_12_00_HUC1005_CPG.tif" 
-    decayRast = "../data/tauDEM/oneFourthDecay1005.tif" 
-    workDir = "../work/1005"
-    outDir = "../CPGs/1005"
-    logDir = "../logs/1005"
+    tauDINFang = "../data/tauDEM/tauRADang1002.tif" 
+    strmRast = "../CPGs/1002/gridMET_minTempK_2017_12_00_HUC1002_CPG.tif" 
+    decayRast = "../data/tauDEM/oneFourthDecay1002.tif" 
+    workDir = "../work/1002"
+    outDir = "../CPGs/1002"
+    logDir = "../logs/1002"
     cores = 20
     accumThresh = 1000
-    overwrite = True
+    overwrite = False
     deleteTemp = True
 
 covList = [] #Initialize list of covariates
