@@ -8,27 +8,31 @@ CPGdir = "../CPGs"
 
 covList = [] #Initialize list of covariates
 
-for path, subdirs, files in os.walk(inDir):
-    for name in files:
-        #Check if file is .tif, and if so add it to covariate list
-        if os.path.splitext(name)[1] == ".tif" or os.path.splitext(name)[1] == ".vrt":
-                covList.append(os.path.join(path, name))
+if os.path.isdir(inDir):
 
-print("The following covariate files were located in the specified directory:")
-print(covList)
+        for path, subdirs, files in os.walk(inDir):
+        for name in files:
+                #Check if file is .tif, and if so add it to covariate list
+                if os.path.splitext(name)[1] == ".tif" or os.path.splitext(name)[1] == ".vrt":
+                        covList.append(os.path.join(path, name))
 
-missingList = [] #Initialize list of missing files
+        print("The following covariate files were located in the specified directory:")
+        print(covList)
 
-for cov in covList:
+        missingList = [] #Initialize list of missing files
 
-    covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
+        for cov in covList:
 
-    for HUC in HUClist:
-        #Create the fiel name corresponding to the HUC and covariate
-        CPGFile = os.path.join(CPGdir, HUC,covname + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
+        covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
 
-        if not os.path.isfile(CPGFile):
-            print("Missing File: {0}".format(CPGFile))
-            missingList.append(CPGFile)
+        for HUC in HUClist:
+                #Create the fiel name corresponding to the HUC and covariate
+                CPGFile = os.path.join(CPGdir, HUC,covname + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
 
-print("{0} missing files found".format(len(missingList)))
+                if not os.path.isfile(CPGFile):
+                print("Missing File: {0}".format(CPGFile))
+                missingList.append(CPGFile)
+
+        print("{0} missing files found".format(len(missingList)))
+else:
+        print("Error input directory does  not exist: {0}".format(inDir))
