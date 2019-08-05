@@ -25,14 +25,18 @@ if os.path.isdir(inDir):
 
                 covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
 
-        for HUC in HUClist:
-                #Create the fiel name corresponding to the HUC and covariate
-                CPGFile = os.path.join(CPGdir, HUC,covname + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
+        if os.path.isdir(CPGdir):
+                for HUC in HUClist:
+                        #Create the fiel name corresponding to the HUC and covariate
+                        CPGFile = os.path.join(CPGdir, HUC,covname + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
 
-                if not os.path.isfile(CPGFile):
-                        print("Missing File: {0}".format(CPGFile))
-                        missingList.append(CPGFile)
+                        if not os.path.isfile(CPGFile):
+                                print("Missing File: {0}".format(CPGFile))
+                                missingList.append(CPGFile)
 
-        print("{0} missing files found".format(len(missingList)))
+                print("{0} missing files found".format(len(missingList)))
+        else:
+                print("Error CPG directory does  not exist: {0}".format(CPGdir))
+
 else:
         print("Error input directory does  not exist: {0}".format(inDir))
