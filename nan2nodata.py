@@ -26,7 +26,7 @@ def nan2nodata(inRast, outRast):
     """
     
 
-    outNoData = 0  #Must be set to zero for numpy < 1.17
+    outNoData = -9999  #Must be set to zero for numpy < 1.17
     print('Opening raster...')
 
     #load input data
@@ -37,8 +37,8 @@ def nan2nodata(inRast, outRast):
 
     print('Replacing NaNs...')
 
-    #fix = np.nan_to_num(dat,  nan=outNoData, posinf=outNoData, neginf=outNoData)
-    fix = np.nan_to_num(dat)
+    fix = np.nan_to_num(dat,  nan=outNoData, posinf=outNoData, neginf=outNoData)
+    #fix = np.nan_to_num(dat)
 
     fix = fix.astype('float32')
 
