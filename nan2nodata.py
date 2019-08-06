@@ -33,7 +33,7 @@ def nan2nodata(inRast, outRast):
         inNoData = ds.nodata
         profile = ds.profile.copy() # save the metadata for output later
 
-
+     print('Replacing NaNs...')
 
     fix = np.nan_to_num(dat,  nan=-9999, posinf=-9999, neginf=-9999)
     
