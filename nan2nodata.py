@@ -84,10 +84,10 @@ print(covList)
 
 for cov in covList:
 
-    #covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
+    covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
 
-    outfile = os.path.join(outDir, cov) # Create path to output file
+    outfile = os.path.join(outDir, "{0}fix.tif".format(cov)) # Create path to output file
         
-    print("Fixing: " + str(cov))
+    print("Creating: " + outfile)
 
     nan2nodata(cov, outfile)
