@@ -35,7 +35,7 @@ def nan2nodata(inRast, outRast):
 
 
 
-    fix = np.nan_to_num(dat, nan=-9999)
+    fix = np.nan_to_num(dat,  nan=-9999, posinf=-9999, neginf=-9999)
     
     fix = fix.astype('float32')
 
