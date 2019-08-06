@@ -35,8 +35,8 @@ def nan2nodata(inRast, outRast):
 
     print('Replacing NaNs...')
 
-    #fix = np.nan_to_num(dat,  nan=-9999, posinf=-9999, neginf=-9999)
-    fix = np.nan_to_num(dat)
+    fix = np.nan_to_num(dat,  nan=-9999, posinf=-9999, neginf=-9999)
+    #fix = np.nan_to_num(dat)
 
     fix = fix.astype('float32')
 
