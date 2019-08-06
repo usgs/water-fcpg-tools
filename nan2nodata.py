@@ -59,4 +59,35 @@ def nan2nodata(inRast, outRast):
 
 
 
-nan2nodata("../data/cov/landsatNDVI/NDVI_May_Oct_Composite_2012-0000000000-0000000000.tif", "../data/cov/landsatNDVI/NDVI_May_Oct_Composite_2012-0000000000-0000000000fix.tif")
+
+
+inDir = "../data/cov/landsatNDVI"
+outDir = "../data/cov/landsat_NDVI-May-Oct"
+
+covList = [] #Initialize list of covariates
+
+if os.path.isdir(inDir):
+    #Get all covariate files in directory
+    for path, subdirs, files in os.walk(inDir):
+        for name in files:
+            #Check if file is .tif, and if so add it to covariate list
+            if os.path.splitext(name)[1] == ".vrt":
+                    covList.append(os.path.join(path, name))
+elif os.path.isfile(inDir):
+    #Supplied path is a single covariate file
+    covList.append(inDir)
+else:
+    print("Invalid covariate directory")
+
+print("The following covariate files were located in the specified directory:")
+print(covList)
+
+for cov in covList:
+
+    #covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
+
+    outfile = os.path.join(outDir, cov) # Create path to output file
+        
+    print("Fixing: " + str(cov))
+
+    nan2nodata(cov, outfile)
