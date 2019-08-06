@@ -1,3 +1,17 @@
+import rasterio as rs
+import numpy as np
+import sys
+import os
+import pandas as pd
+import gdal
+import subprocess
+import glob
+import shutil
+import traceback
+import urllib.request
+import datetime
+from multiprocessing import Pool as processPool
+from osgeo import osr
 
 
 
@@ -39,3 +53,7 @@ def nan2nodata(inRast, outRast):
     with rs.open(outRast,'w',**profile) as dst:
         dst.write(fix,1)
         print("Raster written to: {0}".format(outRast))
+
+
+
+nan2nodata("../data/cov/landsatNDVI/NDVI_May_Oct_Composite_2012-0000000000-0000000000.tif", "../data/cov/landsatNDVI/NDVI_May_Oct_Composite_2012-0000000000-0000000000fix.tif")
