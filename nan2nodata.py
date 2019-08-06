@@ -25,6 +25,8 @@ def nan2nodata(inRast, outRast):
         outRast - Output raster file path
     """
     
+
+    outNoData = 0  #Must be set to zero for numpy < 1.17
     print('Opening raster...')
 
     #load input data
@@ -35,8 +37,8 @@ def nan2nodata(inRast, outRast):
 
     print('Replacing NaNs...')
 
-    fix = np.nan_to_num(dat,  nan=-9999, posinf=-9999, neginf=-9999)
-    #fix = np.nan_to_num(dat)
+    #fix = np.nan_to_num(dat,  nan=outNoData, posinf=outNoData, neginf=outNoData)
+    fix = np.nan_to_num(dat)
 
     fix = fix.astype('float32')
 
@@ -48,7 +50,7 @@ def nan2nodata(inRast, outRast):
                 'tiled':True,
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
-                'nodata':-9999,
+                'nodata':outNoData,
                 'bigtiff':'IF_SAFER'})
 
     with rs.open(outRast,'w',**profile) as dst:
