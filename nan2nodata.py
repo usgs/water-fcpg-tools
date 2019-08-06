@@ -24,16 +24,16 @@ def nan2nodata(inRast, outRast):
     Outputs:
         outRast - Output raster file path
     """
-
+    
     print('Opening raster...')
 
-    # load input data
+    #load input data
     with rs.open(inRast) as ds:
         dat = ds.read(1)
         inNoData = ds.nodata
         profile = ds.profile.copy() # save the metadata for output later
 
-     print('Replacing NaNs...')
+    print('Replacing NaNs...')
 
     #fix = np.nan_to_num(dat,  nan=-9999, posinf=-9999, neginf=-9999)
     fix = np.nan_to_num(dat)
