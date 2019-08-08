@@ -27,7 +27,7 @@ for year in years:
     yearRasters = [] #Create an empty list of rasters
 
     for raster in rasterList:
-        if os.path.basename(raster).split("_")[3].split("-")[0] == str(year):
+        if os.path.basename(raster).split("_")[4].split("-")[0] == str(year):
              yearRasters.append(raster) #Add rasters from the current year to the list
     
     outFile = os.path.join(outDir, "{0}_{1}_00_00.vrt".format(paramName, year)) #Create output file path
