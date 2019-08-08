@@ -17,12 +17,12 @@ if len(sys.argv) > 1:
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/landsat_NDVI-May-Oct/vrt" 
-    tauDINFang = "../data/tauDEM/tauRADang1008.tif" 
-    strmRast = "../CPGs/1008/gridMET_minTempK_2017_12_00_HUC1008_CPG.tif" 
-    decayRast = "../data/tauDEM/oneFourthDecay1008.tif" 
-    workDir = "../work/1008"
-    outDir = "../CPGs/1008"
-    logDir = "../logs/1008"
+    tauDINFang = "../data/tauDEM/tauRADang1009.tif" 
+    strmRast = "../CPGs/1009/gridMET_minTempK_2017_12_00_HUC1009_CPG.tif" 
+    decayRast = "../data/tauDEM/oneFourthDecay1009.tif" 
+    workDir = "../work/1009"
+    outDir = "../CPGs/1009"
+    logDir = "../logs/1009"
     cores = 20
     accumThresh = 1000
     overwrite = True
