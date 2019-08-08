@@ -19,7 +19,7 @@ for path, subdirs, files in os.walk(inDir):
 
 
 
-years = range(1999, 2012)
+years = range(2012, 2013)
 
 
 for year in years:
