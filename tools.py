@@ -30,14 +30,12 @@ def tauDrainDir(inRast, outRast):
         inNoData = ds.nodata
         profile = ds.profile.copy() # save the metadata for output later
 
-
-
     tauDir = dat.copy()
     # remap NHDplus flow direction to TauDEM flow Direction
     # east is ok
     
     tauDir[dat == 2] = 8 # southeast
-    tauDir[dat == 4] =  7 # south
+    tauDir[dat == 4] = 7 # south
     tauDir[dat == 8] = 6 # southwest
     tauDir[dat == 16] = 5 # west
     tauDir[dat == 32] = 4 # northwest
@@ -55,16 +53,12 @@ def tauDrainDir(inRast, outRast):
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
                 'nodata':0,
-                'bigtiff':'IF_SAFER'})
-
+                'bigtiff':'IF_SAFER',
+                'driver' : "GTiff"})
+    
     with rs.open(outRast,'w',**profile) as dst:
         dst.write(tauDir,1)
         print("TauDEM drainage direction written to: {0}".format(outRast))
-
-    
-
-
-
 
 def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, multiplier = None, multNoDataRast = None, cores = 1):
     """
