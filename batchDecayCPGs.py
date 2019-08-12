@@ -16,7 +16,7 @@ if len(sys.argv) > 1:
     deleteTemp = sys.argv[11] #Whether to delete temporary files
 else:
     #If inputs aren't specified in system args, set them in the script
-    inDir = "../data/cov/landsat_NDVI-May-Oct/vrt" 
+    inDir = "../data/cov/landsat_NDVI-May-Oct2/vrt" 
     tauDINFang = "../data/tauDEM/tauRADang1010.tif" 
     strmRast = "../CPGs/1010/gridMET_minTempK_2017_12_00_HUC1010_CPG.tif" 
     decayRast = "../data/tauDEM/oneFourthDecay1010.tif" 
