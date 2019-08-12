@@ -46,7 +46,7 @@ def changeNoData(inRast, newNoData):
                 'bigtiff':'IF_SAFER'})
 
     with rs.open(inRast,'w',**profile) as dst:
-        dst.write(fix,1)
+        dst.write(dat,1)
         print("Raster written to: {0}".format(outRast))
 
 
