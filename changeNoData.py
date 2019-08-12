@@ -16,17 +16,14 @@ from osgeo import osr
 
 
 
-def nan2nodata(inRast, outRast):
+def changeNaN(inRast, newNoData):
     """
     Inputs:
         inRast - Input raster file path
+        newNoData - new no data value for the raster
 
-    Outputs:
-        outRast - Output raster file path
     """
     
-
-    outNoData = -9999  #Must be set to zero for numpy < 1.17
     print('Opening raster...')
 
     #load input data
@@ -35,22 +32,17 @@ def nan2nodata(inRast, outRast):
         inNoData = ds.nodata
         profile = ds.profile.copy() # save the metadata for output later
 
-    print('Replacing NaNs...')
-
-    fix = np.nan_to_num(dat,  nan=outNoData, posinf=outNoData, neginf=outNoData)
-    #fix = np.nan_to_num(dat)
-
-    fix = fix.astype('float32')
+    print('Changing no data values...')
+    dat[dat == inNoData] = newNoData #Change no data value
 
     # edit the metadata
     profile.update({
-                'dtype':'float32',
                 'compress':'LZW',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
-                'nodata':outNoData,
+                'nodata':newNoData,
                 'bigtiff':'IF_SAFER'})
 
     with rs.open(outRast,'w',**profile) as dst:
@@ -62,7 +54,6 @@ def nan2nodata(inRast, outRast):
 
 
 inDir = "../data/cov/landsatNDVI"
-outDir = "../data/cov/landsat_NDVI-May-Oct"
 
 covList = [] #Initialize list of covariates
 
@@ -84,10 +75,4 @@ print(covList)
 
 for cov in covList:
 
-    covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
-
-    outfile = os.path.join(outDir, "{0}.tif".format(covname)) # Create path to output file
-        
-    print("Creating: " + outfile)
-
-    nan2nodata(cov, outfile)
+    nan2nodata(cov, -3.4028234663852886e+38)
