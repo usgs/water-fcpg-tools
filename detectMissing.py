@@ -2,7 +2,7 @@ import os
 
 HUClist = ["1002", "1003", "1004", "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012", "1013"]
 
-inDir = "../data/cov/NDVI_eulersZ/vrt" 
+inDir = "../data/cov/landsat_NDVI_May-Oct/vrt" 
 
 CPGdir = "../CPGs"
 
