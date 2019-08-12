@@ -26,7 +26,7 @@ else:
     cores = 20
     accumThresh = 1000
     overwrite = True
-    deleteTemp = False
+    deleteTemp = True
 
 covList = [] #Initialize list of covariates
 
