@@ -16,7 +16,7 @@ from osgeo import osr
 
 
 
-def changeNaN(inRast, newNoData):
+def changeNoData(inRast, newNoData):
     """
     Inputs:
         inRast - Input raster file path
@@ -45,7 +45,7 @@ def changeNaN(inRast, newNoData):
                 'nodata':newNoData,
                 'bigtiff':'IF_SAFER'})
 
-    with rs.open(outRast,'w',**profile) as dst:
+    with rs.open(inRast,'w',**profile) as dst:
         dst.write(fix,1)
         print("Raster written to: {0}".format(outRast))
 
@@ -75,4 +75,4 @@ print(covList)
 
 for cov in covList:
 
-    changeNaN(cov, -3.4028234663852886e+38)
+    changeNoData(cov, -3.4028234663852886e+38)
