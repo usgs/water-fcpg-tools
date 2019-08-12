@@ -4,8 +4,8 @@ import traceback
 
 #Requires gdal module (gdal/2.2.2-gcc) to be loaded
 
-inDir = "../data/cov/landsat_NDVI-May-Oct"
-outDir = "../data/cov/landsat_NDVI-May-Oct/vrt"
+inDir = "../data/cov/landsat_NDVI-May-Oct2"
+outDir = "../data/cov/landsat_NDVI-May-Oct2/vrt"
 paramName = "landsat_NDVI-May-Oct"
 
 rasterList = [] #Initialize list of covariates
