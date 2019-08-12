@@ -53,7 +53,7 @@ def changeNaN(inRast, newNoData):
 
 
 
-inDir = "../data/cov/landsatNDVI"
+inDir = "../data/cov/landsatNDVI-May_Oct2"
 
 covList = [] #Initialize list of covariates
 
