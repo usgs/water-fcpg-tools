@@ -75,4 +75,4 @@ print(covList)
 
 for cov in covList:
 
-    nan2nodata(cov, -3.4028234663852886e+38)
+    changeNaN(cov, -3.4028234663852886e+38)
