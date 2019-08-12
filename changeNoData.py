@@ -47,7 +47,7 @@ def changeNoData(inRast, newNoData):
 
     with rs.open(inRast,'w',**profile) as dst:
         dst.write(dat,1)
-        print("Raster written to: {0}".format(outRast))
+        print("Raster written to: {0}".format(inRast))
 
 
 
