@@ -55,7 +55,7 @@ def tauDrainDir(inRast, outRast):
                 'nodata':0,
                 'bigtiff':'IF_SAFER',
                 'driver' : "GTiff"})
-    
+
     with rs.open(outRast,'w',**profile) as dst:
         dst.write(tauDir,1)
         print("TauDEM drainage direction written to: {0}".format(outRast))
@@ -129,7 +129,8 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
 
 
         #Need to apply multiplier here, if one is provided
-        multNoDataRast = applyMult(outNoDataRast, multiplier, multNoDataRast)
+        if multiplier != None:
+            multNoDataRast = applyMult(outNoDataRast, multiplier, multNoDataRast)
             
         # Use tauDEM to accumulate no data values
         try:
@@ -608,43 +609,6 @@ def maskStreams(inRast, streamRast, outRast):
         dst.write(data,1)
         print("CPG file written to: {0}".format(outRast))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj"):
     '''
     Inputs:
@@ -871,12 +835,6 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
     
 
     return catRaster # Return the path to the raster created
-    
-
-
-
-
-    
 
 def tauFlowAccum(fdr, accumRast, cores = 1):
     """
@@ -939,5 +897,70 @@ def downloadNHDPlusRaster(HUC4, fileDir):
 
     
 
+def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac = None, thresh = None):
+    '''
+    Wrapper for the TauDEM extreme upslope value function.
 
+    Parameters
+    ----------
+    fdr : str
+        Path to TauDEM D8 flow accumulation raster
+    param : str
+        Path to parameter raster to run through the D8 Extreme Upslope Value tool
+    output : str
+        Path to outplet file
+    accum_type : str (optional, defaults to "MAX") 
+        Either  "MAX" or "MIN".
+    cores : int
+        Number of cores to run this process on.
 
+    Returns
+    -------
+    output : str
+    '''
+    
+    print()
+    tauParams = {
+        'fdr':fdr,
+        'cores':cores, 
+        'outFl':output,
+        'param':param,
+        'accum_type':accum_type.lower()
+        }
+
+    if accum_type == "min": # insert flag for min 
+        cmd = 'mpiexec -bind-to rr -n {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -{accum_type} -nc'.format(**tauParams) # Create string of tauDEM shell command
+    else: # no flag for max
+        cmd = 'mpiexec -bind-to rr -n {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
+
+    print(cmd)
+    result = subprocess.run(cmd, shell = True) # Run shell command
+        
+    result.stdout
+
+    if fac != None and thresh != None: # if a stream mask is specified
+        outNoData = -9999
+
+        with rs.open(output) as src:
+            dat = src.read(1)
+            params = src.meta.copy()
+            noData = src.nodata
+            dat[dat == noData] = np.NaN
+            
+        del src
+
+        with rs.open(fac) as src:
+            fac = src.read(1)
+            fac[fac == src.nodata] = outNoData
+
+        del src
+
+        dat[fac < thresh] = outNoData # make low accumulation areas noData
+        dat[fac == outNoData] = outNoData # make borders noData
+
+        params['nodata'] = outNoData
+
+        with rs.open(output,'w',**params) as dst: # write out raster.
+            dst.write(dat,1)
+
+    return None
