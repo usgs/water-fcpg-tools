@@ -4,7 +4,7 @@ import os
 import subprocess
 
 #inDir = "../../../../cxfs/projects/usgs/water/wymtwsc/georad/prosper/data/cov/snodas"
-inDir = "../data/cov/snodas"
+inDir = "../data/cov/SNODAS_SWEmm"
 """
 filelist = [] # Initialize list
 
