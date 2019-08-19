@@ -129,8 +129,10 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
 
 
         #Need to apply multiplier here, if one is provided
+        """"
         if multiplier != None:
             multNoDataRast = applyMult(outNoDataRast, multiplier, multNoDataRast)
+        """
             
         # Use tauDEM to accumulate no data values
         try:
