@@ -15,7 +15,7 @@ for path, subdirs, files in os.walk(inDir):
                 filelist.append(os.path.join(path, name))
 
 """
-filelist = ["../data/cov/snodas/us_ssmv11034tS__T0001TTNATS2006030105HP001.dat", "../data/cov/snodas/us_ssmv11034tS__T0001TTNATS2006070105HP001.dat"] #Correct a couple files
+filelist = ["../data/cov/SNODAS_SWEmm/us_ssmv11034tS__T0001TTNATS2006030105HP001.dat", "../data/cov/SNODAS_SWEmm/us_ssmv11034tS__T0001TTNATS2006070105HP001.dat"] #Correct a couple files
                 
 for f in filelist:
     
