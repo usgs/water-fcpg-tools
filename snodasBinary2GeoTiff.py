@@ -3,8 +3,9 @@
 import os
 import subprocess
 
-inDir = "../../../../cxfs/projects/usgs/water/wymtwsc/georad/prosper/data/cov/snodas"
-
+#inDir = "../../../../cxfs/projects/usgs/water/wymtwsc/georad/prosper/data/cov/snodas"
+inDir = "../data/cov/snodas"
+"""
 filelist = [] # Initialize list
 
 for path, subdirs, files in os.walk(inDir):
@@ -13,8 +14,8 @@ for path, subdirs, files in os.walk(inDir):
         if os.path.splitext(name)[1] == ".dat":
                 filelist.append(os.path.join(path, name))
 
-
-
+"""
+filelist = ["../data/cov/snodas/us_ssmv11034tS__T0001TTNATS2006030105HP001.dat", "../data/cov/snodas/us_ssmv11034tS__T0001TTNATS2006070105HP001.dat"] #Correct a couple files
                 
 for f in filelist:
     
