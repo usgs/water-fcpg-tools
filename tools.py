@@ -134,12 +134,12 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
 
         # Update profile for no data raster
             profile.update({
-                    'compress':'LZW',
-                    'profile':'GeoTIFF',
-                    'tiled':True,
-                    'sparse_ok':True,
-                    'num_threads':'ALL_CPUS',
-                    'bigtiff':'IF_SAFER'})
+                'compress':'LZW',
+                'profile':'GeoTIFF',
+                'tiled':True,
+                'sparse_ok':True,
+                'num_threads':'ALL_CPUS',
+                'bigtiff':'IF_SAFER'})
             
             # Save no data raster
             with rs.open(zeroNoDataRast, 'w', **profile) as dst:
