@@ -18,12 +18,12 @@ else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/landsat_NDVI-May-Oct2/vrt" 
     #inDir = "../data/cov/static/springs_rast.tif" 
-    tauDINFang = "../data/tauDEM/tauRADang1010.tif" 
-    strmRast = "../CPGs/1010/gridMET_minTempK_2017_12_00_HUC1010_CPG.tif" 
-    decayRast = "../data/tauDEM/oneFourthDecay1010.tif" 
-    workDir = "../work/1010"
-    outDir = "../CPGs/1010"
-    logDir = "../logs/1010"
+    tauDINFang = "../data/tauDEM/tauRADang1011.tif" 
+    strmRast = "../CPGs/1011/gridMET_minTempK_2017_12_00_HUC1011_CPG.tif" 
+    decayRast = "../data/tauDEM/oneFourthDecay1011.tif" 
+    workDir = "../work/1011"
+    outDir = "../CPGs/1011"
+    logDir = "../logs/1011"
     cores = 20
     accumThresh = 1000
     overwrite = True
