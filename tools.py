@@ -130,7 +130,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
 
         #Set no data values in the basin to zero so tauDEM accumulates them correctly
         noDataZero = data.copy()
-        noDataZero[(data == paramNoData) & (direction != directionNoData)] = 0 #Set no data values in basin to 0
+        #noDataZero[(data == paramNoData) & (direction != directionNoData)] = 0 #Set no data values in basin to 0
 
         # Update profile for no data raster
         profile.update({
