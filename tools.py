@@ -109,7 +109,8 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         #noDataZero[(data == paramNoData) & (direction != directionNoData)] = 0 #Set no data values in basin to 0
 
         # Update profile for no data raster
-        newProfile = profile.update({
+        newProfile = profile 
+        newProfile.update({
             'compress':'LZW',
             'profile':'GeoTIFF',
             'tiled':True,
@@ -133,7 +134,8 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             noDataArray = noDataArray.astype(np.int8)
 
             # Update profile for no data raster
-            newProfile = profile.update({
+            newProfile = profile 
+            newProfile.update({
                     'dtype':'int8',
                     'compress':'LZW',
                     'profile':'GeoTIFF',
