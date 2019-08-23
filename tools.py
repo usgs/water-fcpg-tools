@@ -143,7 +143,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             
         # Save no data raster
         with rs.open(zeroNoDataRast, 'w', **profile) as dst:
-            dst.write(noDataZero,1)
+            dst.write(data,1)
             print("Parameter No Data raster written to: {0}".format(zeroNoDataRast))
             
         tauDEMweight = zeroNoDataRast #Set file to use as weight in tauDEM accumulation
