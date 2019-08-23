@@ -133,18 +133,18 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         noDataZero[(data == paramNoData) & (direction != directionNoData)] = 1 #Set no data values in basin to 1
 
         # Update profile for no data raster
-            profile.update({
-                'compress':'LZW',
-                'profile':'GeoTIFF',
-                'tiled':True,
-                'sparse_ok':True,
-                'num_threads':'ALL_CPUS',
-                'bigtiff':'IF_SAFER'})
+        profile.update({
+            'compress':'LZW',
+            'profile':'GeoTIFF',
+            'tiled':True,
+            'sparse_ok':True,
+            'num_threads':'ALL_CPUS',
+            'bigtiff':'IF_SAFER'})
             
-            # Save no data raster
-            with rs.open(zeroNoDataRast, 'w', **profile) as dst:
-                dst.write(noDataArray,1)
-                print("Parameter No Data raster written to: {0}".format(zeroNoDataRast))
+        # Save no data raster
+        with rs.open(zeroNoDataRast, 'w', **profile) as dst:
+            dst.write(noDataArray,1)
+            print("Parameter No Data raster written to: {0}".format(zeroNoDataRast))
 
 
         tauDEMweight = zeroNoDataRast #Set file to use as weight in tauDEM accumulation
