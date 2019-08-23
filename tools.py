@@ -109,7 +109,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         #noDataZero[(data == paramNoData) & (direction != directionNoData)] = 0 #Set no data values in basin to 0
 
         # Update profile for no data raster
-        profile.update({
+        newProfile = profile.update({
             'compress':'LZW',
             'profile':'GeoTIFF',
             'tiled':True,
@@ -118,7 +118,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             'bigtiff':'IF_SAFER'})
             
         # Save no data raster
-        with rs.open(zeroNoDataRast, 'w', **profile) as dst:
+        with rs.open(zeroNoDataRast, 'w', **newProfile) as dst:
             dst.write(data,1)
             print("Parameter No Data raster written to: {0}".format(zeroNoDataRast))
             
@@ -133,7 +133,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             noDataArray = noDataArray.astype(np.int8)
 
             # Update profile for no data raster
-            profile.update({
+            newProfile = profile.update({
                     'dtype':'int8',
                     'compress':'LZW',
                     'profile':'GeoTIFF',
@@ -144,7 +144,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
                     'bigtiff':'IF_SAFER'})
             
             # Save no data raster
-            with rs.open(outNoDataRast, 'w', **profile) as dst:
+            with rs.open(outNoDataRast, 'w', **newProfile) as dst:
                 dst.write(noDataArray,1)
                 print("Parameter No Data raster written to: {0}".format(outNoDataRast))
         
