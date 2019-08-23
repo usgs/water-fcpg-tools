@@ -17,12 +17,13 @@ if len(sys.argv) > 1:
 else:
     #If inputs aren't specified in system args, set them in the script
     inDir = "../data/cov/landsat_NDVI-May-Oct2/vrt" 
-    tauDINFang = "../data/tauDEM/tauRADang1005.tif" 
-    strmRast = "../CPGs/1005/gridMET_minTempK_2017_12_00_HUC1005_CPG.tif" 
-    decayRast = "../data/tauDEM/oneFourthDecay1005.tif" 
-    workDir = "../work/1005"
-    outDir = "../CPGs/1005"
-    logDir = "../logs/1005"
+    #inDir = "../data/cov/static/springs_rast.tif" 
+    tauDINFang = "../data/tauDEM/tauRADang1006.tif" 
+    strmRast = "../CPGs/1006/gridMET_minTempK_2017_12_00_HUC1006_CPG.tif" 
+    decayRast = "../data/tauDEM/oneFourthDecay1006.tif" 
+    workDir = "../work/1006"
+    outDir = "../CPGs/1006"
+    logDir = "../logs/1006"
     cores = 20
     accumThresh = 1000
     overwrite = True
@@ -35,7 +36,7 @@ if os.path.isdir(inDir):
     for path, subdirs, files in os.walk(inDir):
         for name in files:
             #Check if file is .tif, and if so add it to covariate list
-            if os.path.splitext(name)[1] == ".vrt":
+            if os.path.splitext(name)[1] == ".tif":
                     covList.append(os.path.join(path, name))
 elif os.path.isfile(inDir):
     #Supplied path is a single covariate file
@@ -83,4 +84,4 @@ for cov in covList:
 
     os.system("sbatch {0}".format(jobfile)) #Send command to console
 
-    time.sleep(10) #Wait 10s between submitting jobs
+    time.sleep(5) #Wait 10s between submitting jobs
