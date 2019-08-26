@@ -75,4 +75,5 @@ print(covList)
 
 for cov in covList:
 
-    changeNoData(cov, -3.4028234663852886e+38)
+    #changeNoData(cov, -3.4028234663852886e+38)
+    changeNoData(cov, 0)
