@@ -53,7 +53,7 @@ def changeNoData(inRast, newNoData):
 
 
 
-inDir = "../data/cov/landsat_NDVI-May-Oct2"
+inDir = "../data/cov/static/XXX_springs.tif"
 
 covList = [] #Initialize list of covariates
 
