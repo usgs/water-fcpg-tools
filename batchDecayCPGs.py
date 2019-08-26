@@ -16,7 +16,8 @@ if len(sys.argv) > 1:
     deleteTemp = sys.argv[11] #Whether to delete temporary files
 else:
     #If inputs aren't specified in system args, set them in the script
-    inDir = "../data/cov/static/XXX_springs.tif" 
+    #inDir = "../data/cov/static/XXX_springs.tif" 
+    inDir = "../data/cov/static/CHILI_10.vrt" 
     tauDINFang = "../data/tauDEM/tauRADang1002.tif" 
     strmRast = "../CPGs/1002/gridMET_minTempK_2017_12_00_HUC1002_CPG.tif" 
     decayRast = "../data/tauDEM/oneFourthDecay1002.tif" 
@@ -35,7 +36,7 @@ if os.path.isdir(inDir):
     for path, subdirs, files in os.walk(inDir):
         for name in files:
             #Check if file is .tif, and if so add it to covariate list
-            if os.path.splitext(name)[1] == ".tif":
+            if os.path.splitext(name)[1] == ".vrt":
                     covList.append(os.path.join(path, name))
 elif os.path.isfile(inDir):
     #Supplied path is a single covariate file
