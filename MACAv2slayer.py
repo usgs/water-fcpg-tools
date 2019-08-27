@@ -38,13 +38,14 @@ for cov in covList:
     
     baseName = os.path.basename(cov)
     param = baseName.split("_")[1] #Get the parameter name
+    model = baseName.split("_")[2] #Get model used to generate the data
     scenario = baseName.split("_")[4] #Get the future scenario number (rcp4.5 of rcp8.5)
     startTime = baseName.split("_")[5] #Get the file start year
     endTime = baseName.split("_")[6] #Get the file start year
 
-    reorderCDF = os.path.join(outDir, "{0}{1}_{2}_{3}_{4}.nc".format(dataSource, scenario, param, startTime, endTime))
+    reorderCDF = os.path.join(outDir, "{0}-{1}-{2}_{3}_{4}_{5}.nc".format(dataSource, model, scenario, param, startTime, endTime))
 
-    multiTIFF = os.path.join(outDir, "{0}{1}_{2}_{3}_{4}.tif".format(dataSource, scenario, param, startTime, endTime))
+    multiTIFF = os.path.join(outDir, "{0}-{1}-{2}_{3}_{4}_{5}.nc".format(dataSource, model, scenario, param, startTime, endTime))
 
 
     print(baseName)
@@ -104,7 +105,7 @@ for cov in covList:
         
         date = day0 + datetime.timedelta(days=day) #Compute the date associated with the band
 
-        fileName = os.path.join(outDir, dataSource + scenario + "_" + param + "_" + date.strftime('%Y_%m_%d') + ".tif") #Create the name for the output file
+        fileName = os.path.join(outDir, dataSource + "-" +  model + "-" + scenario + "_" + param + "_" + date.strftime('%Y_%m_%d') + ".tif") #Create the name for the output file
 
         #Update raster profile
         profile.update({
