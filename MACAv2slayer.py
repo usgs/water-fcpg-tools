@@ -8,9 +8,38 @@ import traceback
 # Script to destroy the netCDF file Roy got from MACAv2
 # Must have gdal and nco tools (module load tools/nco-4.7.8-gnu) modules loaded 
 
-inCDF = "../data/cov/soil_gridMET.nc" #Original netCDF from gridMET
-reorderCDF = "../data/cov/soil_gridMETfix.nc" #NetCDF file with reordered dimensions
-multiTIFF = "../data/cov/gridMET_SOILMOISTmm.tif" #Multiband .tif created from netCDF
+inDir = "../data/cov/macav2metdata" #Directory with netCDF files
+#reorderCDF = "../data/cov/soil_gridMETfix.nc" #NetCDF file with reordered dimensions
+#multiTIFF = "../data/cov/gridMET_SOILMOISTmm.tif" #Multiband .tif created from netCDF
+
+
+
+covList = [] #Initialize list of covariates
+if os.path.isdir(inDir):
+    #Get all covariate files in directory
+    for path, subdirs, files in os.walk(inDir):
+        for name in files:
+            #Check file type add it to covariate list
+            if os.path.splitext(name)[1] == ".nc":
+                    covList.append(os.path.join(path, name))
+elif os.path.isfile(inDir):
+    #Supplied path is a single covariate file
+    covList.append(inDir)
+else:
+    print("Invalid covariate directory")
+
+
+
+for cov in covList:
+    
+    baseName = os.path.basename(cov)
+    print(baseName)
+
+
+
+
+
+"""
 
 baseName = "gridMET_SOILMOISTmm"
 
@@ -98,3 +127,4 @@ for band in data:
 
         i = i + 1
 
+"""
