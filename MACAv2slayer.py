@@ -11,7 +11,7 @@ import traceback
 #inDir = "../data/cov/macav2metdata" #Directory with netCDF files
 inDir = "../data/cov/macav2metdata/macav2metdata_pr_GFDL-ESM2G_r1i1p1_historical_1980_1984_CONUS_monthly.nc" #Directory with netCDF files
 outDir = "../data/cov/MACAv2"
-dataSource = MACAv2 #Name of data source
+dataSource = "MACAv2" #Name of data source
 
 #reorderCDF = "../data/cov/soil_gridMETfix.nc" #NetCDF file with reordered dimensions
 #multiTIFF = "../data/cov/gridMET_SOILMOISTmm.tif" #Multiband .tif created from netCDF
