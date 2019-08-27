@@ -8,7 +8,8 @@ import traceback
 # Script to destroy the netCDF file Roy got from MACAv2
 # Must have gdal and nco tools (module load tools/nco-4.7.8-gnu) modules loaded 
 
-inDir = "../data/cov/macav2metdata" #Directory with netCDF files
+#inDir = "../data/cov/macav2metdata" #Directory with netCDF files
+inDir = "../data/cov/macav2metdata/macav2metdata_pr_GFDL-ESM2G_r1i1p1_historical_1980_1984_CONUS_monthly.nc" #Directory with netCDF files
 outDir = "../data/cov/MACAv2"
 dataSource = MACAv2 #Name of data source
 
