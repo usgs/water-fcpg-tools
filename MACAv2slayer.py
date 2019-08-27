@@ -8,8 +8,8 @@ import traceback
 # Script to destroy the netCDF file Roy got from MACAv2
 # Must have gdal and nco tools (module load tools/nco-4.7.8-gnu) modules loaded 
 
-#inDir = "../data/cov/macav2metdata" #Directory with netCDF files
-inDir = "../data/cov/macav2metdata/macav2metdata_pr_GFDL-ESM2G_r1i1p1_historical_1980_1984_CONUS_monthly.nc" #Directory with netCDF files
+inDir = "../data/cov/macav2metdata" #Directory with netCDF files
+#inDir = "../data/cov/macav2metdata/macav2metdata_pr_GFDL-ESM2G_r1i1p1_historical_1980_1984_CONUS_monthly.nc" #Directory with netCDF files
 outDir = "../data/cov/MACAv2"
 dataSource = "MACAv2" #Name of data source
 
@@ -38,8 +38,8 @@ for cov in covList:
     
     baseName = os.path.basename(cov)
     param = baseName.split("_")[1] #Get the parameter name
-    startTime = baseName.split("_")[6] #Get the file start year
-    endTime = baseName.split("_")[7] #Get the file start year
+    startTime = baseName.split("_")[5] #Get the file start year
+    endTime = baseName.split("_")[6] #Get the file start year
 
     reorderCDF = os.path.join(outDir, "{0}_{1}_{2}_{3}.nc".format(dataSource, param, startTime, endTime))
 
