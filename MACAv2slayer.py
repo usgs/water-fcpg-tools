@@ -45,7 +45,7 @@ for cov in covList:
 
     reorderCDF = os.path.join(outDir, "{0}-{1}-{2}_{3}_{4}_{5}.nc".format(dataSource, model, scenario, param, startTime, endTime))
 
-    multiTIFF = os.path.join(outDir, "{0}-{1}-{2}_{3}_{4}_{5}.nc".format(dataSource, model, scenario, param, startTime, endTime))
+    multiTIFF = os.path.join(outDir, "{0}-{1}-{2}_{3}_{4}_{5}.tif".format(dataSource, model, scenario, param, startTime, endTime))
 
 
     print(baseName)
