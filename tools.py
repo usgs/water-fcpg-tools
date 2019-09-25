@@ -60,7 +60,7 @@ def tauDrainDir(inRast, outRast):
         dst.write(tauDir,1)
         print("TauDEM drainage direction written to: {0}".format(outRast))
 
-def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, multiplier = None, multNoDataRast = None, cores = 1):
+def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, zeroNoDataRast = None, multiplier = None, multNoDataRast = None, cores = 1):
     """
     Inputs:
         paramRast - Raster of parameter values to acumulate, this file is modified by the function
@@ -103,6 +103,28 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
     if basinNoDataCount > 0:
         print('Warning: No data parameter values exist in basin')
 
+
+        #Set no data values in the basin to zero so tauDEM accumulates them correctly
+        noDataZero = data.copy()
+        #noDataZero[(data == paramNoData) & (direction != directionNoData)] = 0 #Set no data values in basin to 0
+
+        # Update profile for no data raster
+        newProfile = profile 
+        newProfile.update({
+            'compress':'LZW',
+            'profile':'GeoTIFF',
+            'tiled':True,
+            'sparse_ok':True,
+            'num_threads':'ALL_CPUS',
+            'bigtiff':'IF_SAFER'})
+            
+        # Save no data raster
+        with rs.open(zeroNoDataRast, 'w', **newProfile) as dst:
+            dst.write(data,1)
+            print("Parameter No Data raster written to: {0}".format(zeroNoDataRast))
+            
+        tauDEMweight = zeroNoDataRast #Set file to use as weight in tauDEM accumulation
+
         #If a no data file path is given, accumulate no data values
         if (outNoDataRast != None) & (outNoDataAccum != None):
             noDataArray = data.copy()
@@ -112,7 +134,8 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             noDataArray = noDataArray.astype(np.int8)
 
             # Update profile for no data raster
-            profile.update({
+            newProfile = profile 
+            newProfile.update({
                     'dtype':'int8',
                     'compress':'LZW',
                     'profile':'GeoTIFF',
@@ -123,22 +146,19 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
                     'bigtiff':'IF_SAFER'})
             
             # Save no data raster
-            with rs.open(outNoDataRast, 'w', **profile) as dst:
+            with rs.open(outNoDataRast, 'w', **newProfile) as dst:
                 dst.write(noDataArray,1)
                 print("Parameter No Data raster written to: {0}".format(outNoDataRast))
+        
 
 
-        #Need to apply multiplier here, if one is provided
-        if multiplier != None:
-            multNoDataRast = applyMult(outNoDataRast, multiplier, multNoDataRast)
+
             
         # Use tauDEM to accumulate no data values
         try:
             print('Accumulating No Data Values')
-            if multNoDataRast != None:
-                outFl = multNoDataRast
-            else:
-                outFl = outNoDataRast
+            
+            outFl = outNoDataRast
                 
             tauParams = {
             'fdr':fdr,
@@ -158,6 +178,11 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             traceback.print_exc()
 
 
+
+    else:
+        tauDEMweight = paramRast #Set file to use as weight in tauDEM accumulation
+
+
     #Use tauDEM to accumulate the parameter
     try:
         print('Accumulating Data...')
@@ -165,7 +190,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         'fdr':fdr,
         'cores':cores, 
         'outFl':accumRast, 
-        'weight':paramRast
+        'weight':tauDEMweight
         }
         
         cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command

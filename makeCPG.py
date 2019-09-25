@@ -53,6 +53,7 @@ rprjFile = os.path.join(workDir, paramName + "_HUC" + HUC + "rprj.tif") #Create 
 accumFile = os.path.join(workDir, paramName + "_HUC" + HUC + "accum.tif") #Create filepath for accumulated parameter file
 nodataFile = os.path.join(workDir, paramName + "_HUC" + HUC + "nodata.tif") #Create filepath for parameter no data file
 nodataaccumFile = os.path.join(workDir, paramName + "_HUC" + HUC + "accumnodata.tif") #Create filepath for parameter accumulated no data file
+zeronodataFile = os.path.join(workDir, paramName + "_HUC" + HUC + "zeronodata.tif") #Create filepath for parameter zeroed no data file
 CPGFile = os.path.join(outDir, paramName + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
 
 if os.path.isfile(CPGFile) & (overwrite == False):
@@ -62,7 +63,7 @@ else:
         print("Calling resample function {0}".format(datetime.datetime.now()))
         resampleParam(paramRast, taufdr, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
         print("Calling flow accumulation function {0}".format(datetime.datetime.now()))
-        accumulateParam(rprjFile, taufdr, accumFile, outNoDataRast=nodataFile, outNoDataAccum=nodataaccumFile, cores=cores) #Accumulate parameter
+        accumulateParam(rprjFile, taufdr, accumFile, outNoDataRast=nodataFile, outNoDataAccum=nodataaccumFile, zeroNoDataRast=zeronodataFile, cores=cores) #Accumulate parameter
         print("Calling make_cpg function {0}".format(datetime.datetime.now()))
         if os.path.isfile(nodataaccumFile):
                 #If no data accumulation file was created, use it in call to create CPG

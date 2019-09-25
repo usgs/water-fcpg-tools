@@ -16,17 +16,18 @@ if len(sys.argv) > 1:
     deleteTemp = sys.argv[11] #Whether to delete temporary files
 else:
     #If inputs aren't specified in system args, set them in the script
-    inDir = "../data/cov/landsat_NDVI-May-Oct2/vrt" 
-    tauDINFang = "../data/tauDEM/tauRADang1010.tif" 
-    strmRast = "../CPGs/1010/gridMET_minTempK_2017_12_00_HUC1010_CPG.tif" 
-    decayRast = "../data/tauDEM/oneFourthDecay1010.tif" 
-    workDir = "../work/1010"
-    outDir = "../CPGs/1010"
-    logDir = "../logs/1010"
+    inDir = "../data/cov/static/XXX_springs.tif" 
+    #inDir = "../data/cov/static/CHILI_10.vrt" 
+    tauDINFang = "../data/tauDEM/tauRADang1013.tif" 
+    strmRast = "../CPGs/1013/gridMET_minTempK_2017_12_00_HUC1013_CPG.tif" 
+    decayRast = "../data/tauDEM/oneFourthDecay1013.tif" 
+    workDir = "../work/1013"
+    outDir = "../CPGs/1013"
+    logDir = "../logs/1013"
     cores = 20
     accumThresh = 1000
     overwrite = True
-    deleteTemp = False
+    deleteTemp = True
 
 covList = [] #Initialize list of covariates
 
@@ -65,7 +66,7 @@ for cov in covList:
         f.writelines("#SBATCH -o {0}/slurm-%A.out\n".format(logDir)) # Set log file name 
         f.writelines("#SBATCH -p normal\n") # the partition you want to use, for this case prod is best
         f.writelines("#SBATCH --account=wymtwsc\n") # your account
-        f.writelines("#SBATCH --time=00:30:00\n") # Overestimated guess at time
+        f.writelines("#SBATCH --time=01:00:00\n") # Overestimated guess at time
         f.writelines("#SBATCH --mem=128000\n") #memory in MB
         f.writelines("#SBATCH --mail-type=ALL\n") # Send email only for all events
         f.writelines("#SBATCH --mail-user={0}@usgs.gov\n".format(os.getlogin()))
@@ -83,4 +84,4 @@ for cov in covList:
 
     os.system("sbatch {0}".format(jobfile)) #Send command to console
 
-    time.sleep(10) #Wait 10s between submitting jobs
+    time.sleep(5) #Wait between submitting jobs

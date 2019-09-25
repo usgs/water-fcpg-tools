@@ -53,7 +53,7 @@ def changeNoData(inRast, newNoData):
 
 
 
-inDir = "../data/cov/landsat_NDVI-May-Oct2"
+inDir = "../data/cov/static/XXX_springs.tif"
 
 covList = [] #Initialize list of covariates
 
@@ -75,4 +75,5 @@ print(covList)
 
 for cov in covList:
 
-    changeNoData(cov, -3.4028234663852886e+38)
+    #changeNoData(cov, -3.4028234663852886e+38)
+    changeNoData(cov, 0)
