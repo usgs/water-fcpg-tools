@@ -62,15 +62,29 @@ def tauDrainDir(inRast, outRast):
 
 def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, zeroNoDataRast = None, multiplier = None, multNoDataRast = None, cores = 1):
     """
-    Inputs:
-        paramRast - Raster of parameter values to acumulate, this file is modified by the function
-        fdr - flow direction raster in tauDEM format
-        accumRast - file location to store accumulated parameter values
-        outNoDataRast - file location to store parameter no data raster
-        outNoDataAccum - file location to store accumulated no data raster
+    Parameters
+    ----------
+        paramRast : 
+            Raster of parameter values to acumulate, this file is modified by the function
+        fdr : 
+            Flow direction raster in tauDEM format
+        accumRast : 
+            File location to store accumulated parameter values
+        outNoDataRast : 
+            File location to store parameter no data raster
+        outNoDataAccum :
+            File location to store accumulated no data raster
+        zeroNoDataRast : 
+        multiplier :
+        multNoDataRast : 
         cores - number of cores to use parameter accumulation
 
-    Outputs:
+    Returns
+    -------
+    None
+
+    Outputs
+    -------
         accumRast - raster of accumulated parameter values
         outNoDataRast - raster of no data values
         outNoDataRast - raster of accumulated no data values
