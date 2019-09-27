@@ -411,10 +411,6 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     except:
         print('Error Reprojecting Parameter Raster')
         traceback.print_exc()
-    
-
-
-
 
 #Tools for decayed accumulation CPGs
 
@@ -744,9 +740,6 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
     pool.close()
     pool.join()
     """
-
-
-
     return fileList
 
 def make_cpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="CPG"):
@@ -852,8 +845,6 @@ def cat2bin(inCat, outWorkspace):
     
     return fileList
 
-
-
 def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
 
     '''
@@ -899,8 +890,6 @@ def tauFlowAccum(fdr, accumRast, cores = 1):
     Outputs:
         accumRast - raster of accumulated parameter values
     """
-
-
     #Use tauDEM to accumulate the parameter
     try:
         print('Accumulating Data...')
@@ -916,7 +905,6 @@ def tauFlowAccum(fdr, accumRast, cores = 1):
         
         result.stdout
         
-
     except:
         print('Error Accumulating Data')
         traceback.print_exc()
@@ -1058,7 +1046,7 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins = False):
     Returns
     -------
     finalPoints : list
-        List of tuples containing (x,y,w).
+        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not CPGed) upstream parameter grids for information to cascade down to 
     '''
     pourPoints = []
     for i in range(len(pourBasins)):
@@ -1088,7 +1076,7 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins = False):
             newx,newy = FindDownstreamCellTauDir(d,x,y,out_transform[0])
 
             if queryPoint(newx,newy,upfacfl) == data.meta['nodata']:
-                pourPoints.append((x,y,w)) # keep the point if it does.
+                pourPoints.append((x,y,w)) # keep the point if it does. Original points retained
     
     if plotBasins:
         ax = pourBasins.plot('Name')
@@ -1478,3 +1466,77 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
                              downstreamFACweightFl,downstreamFACweightFl) # update with lists
             
     accumulateParam(downstreamFACweightFl, downstreamFDRFl, adjFACFl, cores = cores) # run a parameter accumulation on the weighting grid.
+
+    def updateDict(ud, upHUC, varName, val):
+    '''Update dictionary with parameter value.
+    
+    Parameters
+    ----------
+    ud : dict
+        Update dictionary to add a variable to.
+    upHUC : str
+        Name of the upstream HUC that the variable cooresponds to.
+    varName : str
+        Name to use for the variable.
+    val : list or int or float
+        Value to add to the upstream dictonary.
+    
+    Returns
+    -------
+    None
+    
+    Outputs
+    -------
+    ud : dict (JSON)
+        Update dictionary written back out to file.
+    '''
+    
+    if type(val) != list:
+        val = list(val)
+    
+    UD = loadJSON(ud)
+    
+    upstream = UD[upHUC]
+    variables = upstream['vars']
+    variables.append(varName)
+    upstream['vars'] = variables
+    
+    upstream[varName] = val
+    
+    UD[upHUC] = upstream # update dictionary with upstream sub-dictionary
+    saveJSON(ud) # write out file
+
+def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl):
+    '''Generate updated FAC given an update dictionary.
+    
+    Parameters
+    ----------
+    updatedParam : str
+        Name of the parameter to update.
+    downstreamParamFL : str (path)
+        Path to downstream parameter grid to update.
+    updateDictFl : str (path)
+        Path to update dictionary to use.
+    adjParamFl : str (path)
+        Path to output adjusted parameter file.
+    
+    Returns
+    -------
+    None
+    
+    Outputs
+    -------
+    adjParamFl : raster
+        Adjusted parameter file that can be accumulated prior to CPG creation.
+    '''
+    updateDict = loadJSON(updateDictFl)
+    for key in updateDict.keys(): # for each upstream HUC.
+
+        upstreamDict = updateDict[key] # subset out the upstream HUC of interest
+        if updatedParam in upstreamDict['vars']: 
+            if os.path.isfile(downstreamParamFL): # if the weighting grid is present, update it with the upstream value.
+                print("Updating parameter grid with value from %s FAC"%(key))
+                updateRaster(upstreamDict['x'],
+                             upstreamDict['y'],
+                             upstreamDict[updatedParam],
+                             downstreamParamFL,adjParamFl) # update with lists
