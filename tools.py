@@ -1467,7 +1467,7 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
             
     accumulateParam(downstreamFACweightFl, downstreamFDRFl, adjFACFl, cores = cores) # run a parameter accumulation on the weighting grid.
 
-    def updateDict(ud, upHUC, varName, val):
+def updateDict(ud, upHUC, varName, val):
     '''Update dictionary with parameter value.
     
     Parameters
