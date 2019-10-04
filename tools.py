@@ -927,8 +927,6 @@ def downloadNHDPlusRaster(HUC4, fileDir):
     print("Extracting File...")
     os.system("7za x {0} -o{1}".format(compressedFile,fileDir))
 
-"""
-#Stuff below here introduced by Theo and turned off so I can create CPGs
 
 
 def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac = None, thresh = None):
@@ -1544,4 +1542,3 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl):
                              upstreamDict['y'],
                              upstreamDict[updatedParam],
                              downstreamParamFL,adjParamFl) # update with lists
-"""
