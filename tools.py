@@ -120,7 +120,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         direction = ds.read(1)
         directionNoData = ds.nodata # pull the accumulated area no data value
 
-    print(paramNoData)
+    #print(paramNoData)
     if paramNoData == None:
         print("Warning: Parameter raster no data value not specified, results may be invalid")
 
@@ -128,7 +128,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
     #Deal with no data values
     basinNoDataCount = len(data[(data == paramNoData) & (direction != directionNoData)]) # Count number of cells with flow direction but no parameter value
     
-    if basinNoDataCount > 0:
+    if basinNoDataCount > 0 and zeroNoDataRast is not None:
         print('Warning: No data parameter values exist in basin')
 
 
@@ -178,10 +178,6 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
                 dst.write(noDataArray,1)
                 print("Parameter No Data raster written to: {0}".format(outNoDataRast))
         
-
-
-
-            
         # Use tauDEM to accumulate no data values
         try:
             print('Accumulating No Data Values')
@@ -204,8 +200,6 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         except:
             print('Error Accumulating Data')
             traceback.print_exc()
-
-
 
     else:
         tauDEMweight = paramRast #Set file to use as weight in tauDEM accumulation
@@ -1467,7 +1461,7 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
             
     accumulateParam(downstreamFACweightFl, downstreamFDRFl, adjFACFl, cores = cores) # run a parameter accumulation on the weighting grid.
 
-    def updateDict(ud, upHUC, varName, val):
+def updateDict(ud, upHUC, varName, val):
     '''Update dictionary with parameter value.
     
     Parameters
