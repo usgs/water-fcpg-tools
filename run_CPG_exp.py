@@ -4,8 +4,6 @@ from tools import *
 import sys
 import geopandas as gpd
 
-sampleIDX = sys.argv[1]
-
 # make the CPG file first!
 
 cov="./data/CHI_poster/daymet/daymet_v3_prcp_annttl_2017_na.tif"
@@ -30,6 +28,7 @@ nodataaccumFile = os.path.join(workDir, paramName + "_HUC" + HUC + "accumnodata.
 CPGFile = os.path.join(outDir, paramName + "_HUC" + HUC +"_CPG.tif") #Create filepath for parameter CPG file
 
 resampleParam(cov, taufdr, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
+tauFlowAccum(taufdr,taufac,cores=cores)
 accumulateParam(rprjFile, taufdr, accumFile, outNoDataRast=nodataFile, outNoDataAccum=nodataaccumFile, cores=cores) #Accumulate parameter
 if os.path.isfile(nodataaccumFile):
     #If no data accumulation file was created, use it in call to create CPG
@@ -37,22 +36,7 @@ if os.path.isfile(nodataaccumFile):
 else:
     make_cpg(accumFile, taufac, CPGFile,  minAccum=accumThresh) #Create parameter CPG
 
-# query the CPG file based on a shapefile...
-
-df = gpd.read_file("./data/CHI_poster/sample_locs_%s.shp"%(sampleIDX)) # read in the points
-
-df['mean'] = queryCPG(CPGFile,df.geometry)
-del df['geometry']
-df.to_csv('./data/CHI_poster/CPG_res_%s.csv'%sampleIDX,index=False)
-
 totalTime = time.time() - strt
 
-print("Built CPG and queried points in %s minutes."%(totalTime/60.))
-
-if not os.path.isfile(outfl):
-	with open(outfl,'w') as dst:
-		dst.write('RunNum,Time\n')
-		dst.write('%s,%s\n'%(sampleIDX,totalTime))
-else:
-	with open(outfl,'a') as dst:
-		dst.write('%s,%s\n'%(sampleIDX,totalTime))
+print("total time: %s seconds"%totalTime)
+print("total time: %s minutes"%(totalTime/60.))
