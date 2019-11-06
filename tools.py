@@ -921,6 +921,8 @@ def downloadNHDPlusRaster(HUC4, fileDir):
     print("Extracting File...")
     os.system("7za x {0} -o{1}".format(compressedFile,fileDir))
 
+
+
 def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac = None, thresh = None):
     '''
     Wrapper for the TauDEM extreme upslope value function.
@@ -990,7 +992,7 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
     return None
 
 def getFeatures(gdf):
-    """Function to parse features from GeoDataFrame in such a manner that rasterio wants them"""
+    #Function to parse features from GeoDataFrame in such a manner that rasterio wants them
     import json
     return [json.loads(gdf.to_json())['features'][0]['geometry']]
 
