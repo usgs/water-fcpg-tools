@@ -35,9 +35,9 @@ nco = netCDF4.Dataset(outFile,'w',clobber=True)
 
 # chunking is optional, but can improve access a lot: 
 # (see: http://www.unidata.ucar.edu/blogs/developer/entry/chunking_data_choosing_shapes)
-chunk_lon=16
-chunk_lat=16
-chunk_time=12
+#chunk_lon=16
+#chunk_lat=16
+#chunk_time=12
 
 # create dimensions, variables and attributes:
 nco.createDimension('lon',nlon)
@@ -54,6 +54,14 @@ lono.standard_name = 'longitude'
 lato = nco.createVariable('lat','f4',('lat'))
 lato.units = 'degrees_north'
 lato.standard_name = 'latitude'
+
+y = nco.createVariable('y','f4',('y'))
+y.units = 'm'
+y.standard_name = 'projection_y_coordinate'
+
+x = nco.createVariable('x','f4',('x'))
+x.units = 'm'
+x.standard_name = 'projection_x_coordinate'
 
 """
 # create container variable for CRS: lon/lat WGS84 datum
