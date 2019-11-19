@@ -13,12 +13,13 @@ import datetime as dt
 import os
 import gdal
 import netCDF4
-import re
+#import re
 
-outFile = 'gridMET_minTempK_HUC1002_CPG.nc'
+outFile = '../CPGs/nc/gridMET_minTempK_HUC1002_CPG.nc'
 netCDFparam = 'gridMET_minTempK'
+inDir = "../CPGs/1002"
 
-ds = gdal.Open('CPGs/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif')
+ds = gdal.Open('../CPGs/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif')
 a = ds.ReadAsArray()
 nlat,nlon = np.shape(a)
 
