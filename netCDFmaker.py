@@ -112,20 +112,14 @@ for path, subdirs, files in os.walk(inDir):
     for name in files:
         #Check if file hs correct parameter name
         baseName = os.path.splitext(name)[0]
-        print(baseName)
         source = baseName.split("_")[0]
-        print(source)
         param = baseName.split("_")[1]
-        print(param)
-        year = baseName.split("_")[2]
-        print(year)
-        month = baseName.split("_")[3]
-        print(month)
-        day = baseName.split("_")[5]
-        print(day)
-        HUC = baseName.split("_")[5]
 
         if source + "_" + param == netCDFparam:
+            year = baseName.split("_")[2]
+            month = baseName.split("_")[3]
+            day = baseName.split("_")[4]
+            HUC = baseName.split("_")[5]
            date = dr.datetime(year, month, day, 0, 0, 0)
            print(path)
            dtime=(date-basedate).total_seconds()/86400.
