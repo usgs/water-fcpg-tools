@@ -125,13 +125,15 @@ for path, subdirs, files in os.walk(inDir):
               month = 1
            if day == 0:
               day = 1
-           print(path)
+
+
+           CPGfile = os.path.join(path, name)
+           print(CPGfile)
            #HUC = baseName.split("_")[5]
            date = dt.datetime(year, month, day, 0, 0, 0)
-           print(path)
            dtime=(date-basedate).total_seconds()/86400.
            timeo[itime]=dtime
-           cpgTiff = gdal.Open(path)
+           cpgTiff = gdal.Open(CPGfile)
            a=cpgTiff.ReadAsArray()  #data
            tmno[itime,:,:]=a
            itime=itime+1
