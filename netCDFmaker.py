@@ -43,8 +43,8 @@ nco = netCDF4.Dataset(outFile,'w',clobber=True)
 # create dimensions, variables and attributes:
 nco.createDimension('y',ny)
 nco.createDimension('x',nx)
-nco.createDimension('lon', None)
-nco.createDimension('lat', None)
+nco.createDimension('lon', nx)
+nco.createDimension('lat', ny)
 nco.createDimension('time', None)
 timeo = nco.createVariable('time','f4',('time'))
 timeo.units = 'days since 1900-01-01 00:00:00'
@@ -90,7 +90,7 @@ crso.false_northing = 0
 
 # create short integer variable for temperature data, with chunking
 #Use 32 bit unsigned integer (u4)
-tmno = nco.createVariable('tmn', 'u4',  ('time', 'y', 'x'), zlib=True,fill_value=-9999) #Create variable, compress with gzip (zlib=True)
+tmno = nco.createVariable('tmn', 'u4',  ('time', 'y', 'x'), zlib=True,fill_value=999) #Create variable, compress with gzip (zlib=True)
 tmno.units = 'K'
 #tmno.scale_factor = 0.01
 tmno.add_offset = 0.00
