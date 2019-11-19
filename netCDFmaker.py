@@ -19,7 +19,7 @@ outFile = '../CPGs/nc/gridMET_minTempK_HUC1002_CPG.nc'
 netCDFparam = 'gridMET_minTempK'
 inDir = "../CPGs/1002"
 
-ds = gdal.Open('../CPGs/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif')
+ds = gdal.Open('../CPGs/1002/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif')
 a = ds.ReadAsArray()
 nlat,nlon = np.shape(a)
 
