@@ -121,8 +121,9 @@ for path, subdirs, files in os.walk(inDir):
         print(year)
         month = baseName.split("_")[3]
         print(month)
-        day = baseName.split("_")[4]
-        HUC= baseName.split("_")[5]
+        day = baseName.split("_")[5]
+        print(day)
+        HUC = baseName.split("_")[5]
 
         if source + "_" + param == netCDFparam:
            date = dr.datetime(year, month, day, 0, 0, 0)
