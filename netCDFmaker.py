@@ -125,7 +125,7 @@ for path, subdirs, files in os.walk(inDir):
               month = 1
            if day == 0:
               day = 1
-
+           print(path)
            #HUC = baseName.split("_")[5]
            date = dt.datetime(year, month, day, 0, 0, 0)
            print(path)
