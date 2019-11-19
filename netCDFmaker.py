@@ -65,7 +65,7 @@ crso.inverse_flattening = 298.257223563
 """
 
 #Define coordinate system for Albers Equal Area Conic USGS version
-crso = nco.createVariable('crs','i4')
+crso = nco.createVariable('crs','i4') #i4 = 32 bit signed int
 crso.grid_mapping_name='albers_conical_equal_area_usgs_version'
 crso.standard_parallel_1 = 29.5
 crso.standard_parallel_2 = 45.5
@@ -77,13 +77,14 @@ crso.false_northing = 0
 
 
 # create short integer variable for temperature data, with chunking
-tmno = nco.createVariable('tmn', 'i2',  ('time', 'lat', 'lon'), 
+#Use 32 bit unsigned integer (u4)
+tmno = nco.createVariable('tmn', 'u4',  ('time', 'lat', 'lon'), 
    zlib=True,chunksizes=[chunk_time,chunk_lat,chunk_lon],fill_value=-9999)
-tmno.units = 'degC'
-tmno.scale_factor = 0.01
+tmno.units = 'K'
+#tmno.scale_factor = 0.01
 tmno.add_offset = 0.00
 tmno.long_name = 'minimum monthly temperature'
-tmno.standard_name = 'air_temperature'
+tmno.standard_name = 'min_temperature'
 tmno.grid_mapping = 'crs'
 tmno.set_auto_maskandscale(False)
 
