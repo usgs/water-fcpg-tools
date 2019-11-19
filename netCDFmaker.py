@@ -102,10 +102,9 @@ tmno.set_auto_maskandscale(False)
 nco.Conventions='CF-1.6'
 
 #write lon,lat
-lono[:]=lon
-lato[:]=lat
+#lono[:]=lon
+#lato[:]=lat
 
-pat = re.compile('us_tmin_[0-9]{4}\.[0-9]{2}')
 itime=0
 
 #step through data, writing time and data to NetCDF
