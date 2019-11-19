@@ -90,8 +90,7 @@ crso.false_northing = 0
 
 # create short integer variable for temperature data, with chunking
 #Use 32 bit unsigned integer (u4)
-tmno = nco.createVariable('tmn', 'u4',  ('time', 'lat', 'lon'), 
-   zlib=True,chunksizes=[chunk_time,chunk_lat,chunk_lon],fill_value=-9999)
+tmno = nco.createVariable('tmn', 'u4',  ('time', 'lat', 'lon'), zlib=True,fill_value=-9999) #Create variable, compress with gzip (zlib=True)
 tmno.units = 'K'
 #tmno.scale_factor = 0.01
 tmno.add_offset = 0.00
