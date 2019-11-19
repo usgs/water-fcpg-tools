@@ -119,6 +119,13 @@ for path, subdirs, files in os.walk(inDir):
            year = int(baseName.split("_")[2])
            month = int(baseName.split("_")[3])
            day = int(baseName.split("_")[4])
+           
+           #Set months or days that are zero to one
+           if month == 0:
+              month = 1
+           if day == 0:
+              day = 1
+
            #HUC = baseName.split("_")[5]
            date = dt.datetime(year, month, day, 0, 0, 0)
            print(path)
