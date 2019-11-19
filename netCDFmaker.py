@@ -41,7 +41,7 @@ nco = netCDF4.Dataset(outFile,'w',clobber=True)
 #chunk_time=12
 
 # create dimensions, variables and attributes:
-co.createDimension('y',ny)
+nco.createDimension('y',ny)
 nco.createDimension('x',nx)
 nco.createDimension('lon',nlon)
 nco.createDimension('lat',nlat)
