@@ -132,7 +132,7 @@ for path, subdirs, files in os.walk(inDir):
            dtime=(date-basedate).total_seconds()/86400.
            timeo[itime]=dtime
            cpgTiff = gdal.Open(path)
-           a=tmn.ReadAsArray()  #data
+           a=cpgTiff.ReadAsArray()  #data
            tmno[itime,:,:]=a
            itime=itime+1
 
