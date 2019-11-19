@@ -43,7 +43,7 @@ nco.createDimension('lon',nlon)
 nco.createDimension('lat',nlat)
 nco.createDimension('time',None)
 timeo = nco.createVariable('time','f4',('time'))
-timeo.units = 'days since 1858-11-17 00:00:00'
+timeo.units = 'days since 1900-01-01 00:00:00'
 timeo.standard_name = 'time'
 
 lono = nco.createVariable('lon','f4',('lon'))
@@ -54,6 +54,7 @@ lato = nco.createVariable('lat','f4',('lat'))
 lato.units = 'degrees_north'
 lato.standard_name = 'latitude'
 
+"""
 # create container variable for CRS: lon/lat WGS84 datum
 crso = nco.createVariable('crs','i4')
 csro.long_name = 'Lon/Lat Coords in WGS84'
@@ -61,6 +62,19 @@ crso.grid_mapping_name='latitude_longitude'
 crso.longitude_of_prime_meridian = 0.0
 crso.semi_major_axis = 6378137.0
 crso.inverse_flattening = 298.257223563
+"""
+
+#Define coordinate system for Albers Equal Area Conic USGS version
+crso = nco.createVariable('crs','i4')
+crso.grid_mapping_name='albers_conical_equal_area_usgs_version'
+crso.standard_parallel_1 = 29.5
+crso.standard_parallel_2 = 45.5
+crso.latitude_of_projection_origin = 23.0
+crso.longitude_of_central_meridian = -96.0
+crso.false_easting = 0
+crso.false_northing = 0
+
+
 
 # create short integer variable for temperature data, with chunking
 tmno = nco.createVariable('tmn', 'i2',  ('time', 'lat', 'lon'), 
