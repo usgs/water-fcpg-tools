@@ -18,14 +18,15 @@ import netCDF4
 outFile = '../CPGs/nc/gridMET_minTempK_HUC1002_CPG.nc'
 netCDFparam = 'gridMET_minTempK'
 inDir = "../CPGs/1002"
+templateFile = '../CPGs/1002/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif'
 
-ds = gdal.Open('../CPGs/1002/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif')
+ds = gdal.Open(templateFile)
 a = ds.ReadAsArray()
-nlat,nlon = np.shape(a)
+nx,ny = np.shape(a)
 
 b = ds.GetGeoTransform() #bbox, interval
-lon = np.arange(nlon)*b[1]+b[0]
-lat = np.arange(nlat)*b[5]+b[3]
+y = np.arange(ny)*b[1]+b[0]
+x = np.arange(nx)*b[5]+b[3]
 
 
 basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
@@ -40,6 +41,8 @@ nco = netCDF4.Dataset(outFile,'w',clobber=True)
 #chunk_time=12
 
 # create dimensions, variables and attributes:
+co.createDimension('y',ny)
+nco.createDimension('x',nx)
 nco.createDimension('lon',nlon)
 nco.createDimension('lat',nlat)
 nco.createDimension('time',None)
