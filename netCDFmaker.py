@@ -120,7 +120,7 @@ for path, subdirs, files in os.walk(inDir):
            month = baseName.split("_")[3]
            day = baseName.split("_")[4]
            HUC = baseName.split("_")[5]
-           date = dr.datetime(year, month, day, 0, 0, 0)
+           date = dt.datetime(year, month, day, 0, 0, 0)
            print(path)
            dtime=(date-basedate).total_seconds()/86400.
            timeo[itime]=dtime
