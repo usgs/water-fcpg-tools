@@ -16,7 +16,7 @@ import netCDF4
 import re
 
 outFile = 'gridMET_minTempK_HUC1002_CPG.nc'
-
+netCDFparam = 'gridMET_minTempK'
 
 ds = gdal.Open('CPGs/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif')
 a = ds.ReadAsArray()
@@ -98,7 +98,33 @@ pat = re.compile('us_tmin_[0-9]{4}\.[0-9]{2}')
 itime=0
 
 #step through data, writing time and data to NetCDF
-for root, dirs, files in os.walk('/usgs/data0/prism/1890-1899/'):
+for path, subdirs, files in os.walk(inDir):
+    for name in files:
+        #Check if file hs correct parameter name
+        baseName = os.path.splitext(name)[0]
+        source = baseName.split("_")[0]
+        param = baseName.split("_")[1]
+        year = baseName.split("_")[2]
+        month = baseName.split("_")[3]
+        day = baseName.split("_")[4]
+        HUC= baseName.split("_")[5]
+
+        if source + "_" + param == netCDFparam:
+           date = dr.datetime(year, month, day, 0, 0, 0)
+           print(path)
+           dtime=(date-basedate).total_seconds()/86400.
+           timeo[itime]=dtime
+           cpgTiff = gdal.Open(path)
+           a=tmn.ReadAsArray()  #data
+           tmno[itime,:,:]=a
+           itime=itime+1
+
+nco.close()
+
+
+
+"""
+for root, dirs, files in os.walk('/CPGs/'):
     dirs.sort()
     files.sort()
     for f in files:
@@ -119,3 +145,4 @@ for root, dirs, files in os.walk('/usgs/data0/prism/1890-1899/'):
             itime=itime+1
 
 nco.close()
+"""
