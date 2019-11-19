@@ -135,6 +135,7 @@ for path, subdirs, files in os.walk(inDir):
            timeo[itime]=dtime
            cpgTiff = gdal.Open(CPGfile)
            a=cpgTiff.ReadAsArray()  #data
+           print(tmno)
            tmno[itime,:,:]=a
            itime=itime+1
 
