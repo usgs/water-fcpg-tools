@@ -43,9 +43,9 @@ nco = netCDF4.Dataset(outFile,'w',clobber=True)
 # create dimensions, variables and attributes:
 nco.createDimension('y',ny)
 nco.createDimension('x',nx)
-nco.createDimension('lon',nlon)
-nco.createDimension('lat',nlat)
-nco.createDimension('time',None)
+nco.createDimension('lon', None)
+nco.createDimension('lat', None)
+nco.createDimension('time', None)
 timeo = nco.createVariable('time','f4',('time'))
 timeo.units = 'days since 1900-01-01 00:00:00'
 timeo.standard_name = 'time'
