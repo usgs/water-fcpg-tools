@@ -4,9 +4,9 @@ import traceback
 
 #Requires gdal module (gdal/2.2.2-gcc) to be loaded
 
-inDir = "../data/cov/landsat_NDVI-May-Oct2"
-outDir = "../data/cov/landsat_NDVI-May-Oct2/vrt"
-paramName = "landsat_NDVI-May-Oct"
+inDir = "../data/cov/landsatET"
+outDir = "../data/cov/landsatET/vrt"
+paramName = "landsat_ETmm"
 
 rasterList = [] #Initialize list of covariates
 
@@ -27,7 +27,7 @@ for year in years:
     yearRasters = [] #Create an empty list of rasters
 
     for raster in rasterList:
-        if os.path.basename(raster).split("_")[4].split("-")[0] == str(year):
+        if os.path.basename(raster).split("ET")[1].split("-")[0] == str(year):
              yearRasters.append(raster) #Add rasters from the current year to the list
     
     outFile = os.path.join(outDir, "{0}_{1}_00_00.vrt".format(paramName, year)) #Create output file path
@@ -36,11 +36,11 @@ for year in years:
 
     try:
 
-        cmd = "gdalbuildvrt {0} {1}".format(outFile, " ".join(yearRasters)) # Create string of tauDEM shell command
+        cmd = "gdalbuildvrt {0} {1}".format(outFile, " ".join(yearRasters)) # Create string of shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         result.stdout
 
     except:
-        print('Error Accumulating Data')
+        print('Error Creating VRT')
         traceback.print_exc()
