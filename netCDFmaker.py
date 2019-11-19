@@ -114,9 +114,13 @@ for path, subdirs, files in os.walk(inDir):
         baseName = os.path.splitext(name)[0]
         print(baseName)
         source = baseName.split("_")[0]
+        print(source)
         param = baseName.split("_")[1]
+        print(param)
         year = baseName.split("_")[2]
+        print(year)
         month = baseName.split("_")[3]
+        print(month)
         day = baseName.split("_")[4]
         HUC= baseName.split("_")[5]
 
