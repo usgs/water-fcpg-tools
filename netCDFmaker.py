@@ -1,10 +1,11 @@
 '''
+Based on code from Rich Signell
 Convert a bunch of GDAL readable grids to a NetCDF Time Series.
 Here we read a bunch of files that have names like:
-/usgs/data0/prism/1890-1899/us_tmin_1895.01
-/usgs/data0/prism/1890-1899/us_tmin_1895.02
+CPGs/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif
+CPGs/gridMET_minTempK_1979_05_00_HUC1002_CPG.tif
 ...
-/usgs/data0/prism/1890-1899/us_tmin_1895.12
+CPGs/gridMET_minTempK_1980_04_00_HUC1002_CPG.tif
 '''
 
 import numpy as np
@@ -14,7 +15,10 @@ import gdal
 import netCDF4
 import re
 
-ds = gdal.Open('/usgs/data0/prism/1890-1899/us_tmin_1895.01')
+outFile = 'gridMET_minTempK_HUC1002_CPG.nc'
+
+
+ds = gdal.Open('CPGs/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif')
 a = ds.ReadAsArray()
 nlat,nlon = np.shape(a)
 
@@ -23,10 +27,10 @@ lon = np.arange(nlon)*b[1]+b[0]
 lat = np.arange(nlat)*b[5]+b[3]
 
 
-basedate = dt.datetime(1858,11,17,0,0,0)
+basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
 
 # create NetCDF file
-nco = netCDF4.Dataset('time_series.nc','w',clobber=True)
+nco = netCDF4.Dataset(outFile,'w',clobber=True)
 
 # chunking is optional, but can improve access a lot: 
 # (see: http://www.unidata.ucar.edu/blogs/developer/entry/chunking_data_choosing_shapes)
