@@ -112,6 +112,7 @@ for path, subdirs, files in os.walk(inDir):
     for name in files:
         #Check if file hs correct parameter name
         baseName = os.path.splitext(name)[0]
+        print(baseName)
         source = baseName.split("_")[0]
         param = baseName.split("_")[1]
         year = baseName.split("_")[2]
