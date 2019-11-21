@@ -16,7 +16,7 @@ import netCDF4
 #import re
 
 outFile = '../CPGs/nc/gridMET_minTempK_HUC1002_CPG.nc'
-netCDFparam = 'gridMET_minTempK'
+netCDFparam = 'SSURGO_AVGSAND'
 inDir = "../CPGs/1002"
 templateFile = '../CPGs/1002/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif'
 
@@ -108,6 +108,32 @@ yo[:]=y
 
 itime=0
 
+#Test code for static rasters
+for path, subdirs, files in os.walk(inDir):
+    for name in files:
+        #Check if file hs correct parameter name
+        baseName = os.path.splitext(name)[0]
+        source = baseName.split("_")[0]
+        param = baseName.split("_")[1]
+
+        if source + "_" + param == netCDFparam:
+
+
+           CPGfile = os.path.join(path, name)
+           print(CPGfile)
+           #HUC = baseName.split("_")[5]
+           date = dt.datetime(1900, 1, 1, 0, 0, 0)
+           dtime=(date-basedate).total_seconds()/86400.
+           timeo[itime]=dtime
+           cpgTiff = gdal.Open(CPGfile)
+           a=cpgTiff.ReadAsArray()  #data
+           print(tmno)
+           tmno[itime,:,:]=a
+           itime=itime+1
+
+
+
+"""
 #step through data, writing time and data to NetCDF
 for path, subdirs, files in os.walk(inDir):
     for name in files:
@@ -139,31 +165,10 @@ for path, subdirs, files in os.walk(inDir):
            print(tmno)
            tmno[itime,:,:]=a
            itime=itime+1
-
+"""
 nco.close()
 
 
 
-"""
-for root, dirs, files in os.walk('/CPGs/'):
-    dirs.sort()
-    files.sort()
-    for f in files:
-        if re.match(pat,f):
-            # read the time values by parsing the filename
-            year=int(f[8:12])
-            mon=int(f[13:15])
-            date=dt.datetime(year,mon,1,0,0,0)
-            print(date)
-            dtime=(date-basedate).total_seconds()/86400.
-            timeo[itime]=dtime
-           # min temp
-            tmn_path = os.path.join(root,f)
-            print(tmn_path)
-            tmn=gdal.Open(tmn_path)
-            a=tmn.ReadAsArray()  #data
-            tmno[itime,:,:]=a
-            itime=itime+1
 
-nco.close()
-"""
+nco.clos
