@@ -4,9 +4,9 @@ import traceback
 
 #Requires gdal module (gdal/2.2.2-gcc) to be loaded
 
-inDir = "../data/cov/landsatET"
-outDir = "../data/cov/landsatET/vrt"
-paramName = "landsat_ETmm"
+inDir = "../data/cov/landsatEffPrec"
+outDir = "../data/cov/landsatEffPrec/vrt"
+paramName = "landsat_EffPrecmm"
 
 rasterList = [] #Initialize list of covariates
 
@@ -27,7 +27,7 @@ for year in years:
     yearRasters = [] #Create an empty list of rasters
 
     for raster in rasterList:
-        if os.path.basename(raster).split("ET")[1].split("-")[0] == str(year):
+        if os.path.basename(raster).split("EffPrec")[1].split("-")[0] == str(year):
              yearRasters.append(raster) #Add rasters from the current year to the list
     
     outFile = os.path.join(outDir, "{0}_{1}_00_00.vrt".format(paramName, year)) #Create output file path
