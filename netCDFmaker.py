@@ -168,7 +168,3 @@ for path, subdirs, files in os.walk(inDir):
 """
 nco.close()
 
-
-
-
-nco.clos
