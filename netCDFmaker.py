@@ -50,6 +50,7 @@ timeo = nco.createVariable('time','f4',('time'))
 timeo.units = 'days since 1900-01-01 00:00:00'
 timeo.standard_name = 'time'
 
+"""
 lono = nco.createVariable('lon','f4',('lon'))
 lono.units = 'degrees_east'
 lono.standard_name = 'longitude'
@@ -57,7 +58,7 @@ lono.standard_name = 'longitude'
 lato = nco.createVariable('lat','f4',('lat'))
 lato.units = 'degrees_north'
 lato.standard_name = 'latitude'
-
+"""
 y = nco.createVariable('y','f4',('y'))
 y.units = 'm'
 y.standard_name = 'projection_y_coordinate'
@@ -85,8 +86,8 @@ crso.latitude_of_projection_origin = 23.0
 crso.longitude_of_central_meridian = -96.0
 crso.false_easting = 0
 crso.false_northing = 0
-
-
+crso.semi_major_axis = 6378137.0
+crso.inverse_flattening = 298.257222101
 
 # create short integer variable for temperature data, with chunking
 #Use 32 bit unsigned integer (u4)
@@ -102,8 +103,8 @@ tmno.set_auto_maskandscale(False)
 nco.Conventions='CF-1.6'
 
 #write lon,lat
-#lono[:]=lon
-#lato[:]=lat
+xo[:]=x
+yo[:]=y
 
 itime=0
 
