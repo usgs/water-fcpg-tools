@@ -10,6 +10,7 @@ CPGs/gridMET_minTempK_1980_04_00_HUC1002_CPG.tif
 
 import numpy as np
 import datetime as dt
+import rasterio as rs
 import os
 import gdal
 import netCDF4
@@ -27,6 +28,10 @@ nx,ny = np.shape(a)
 b = ds.GetGeoTransform() #bbox, interval
 y = np.arange(ny)*b[5]+b[3]
 x = np.arange(nx)*b[1]+b[0]
+
+#Get raster no data value 
+with rs.open(templateFile) as ds:
+   NoData = ds.nodata
 
 
 basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
@@ -93,7 +98,7 @@ crso.unit = 'm'
 
 # create short integer variable for temperature data, with chunking
 #Use 32 bit unsigned integer (u4)
-tmno = nco.createVariable('tmn', 'u4',  ('time', 'y', 'x'), zlib=True,fill_value=999) #Create variable, compress with gzip (zlib=True)
+tmno = nco.createVariable('tmn', 'u4',  ('time', 'y', 'x'), zlib=True,fill_value=NoData) #Create variable, compress with gzip (zlib=True)
 tmno.units = 'K'
 #tmno.scale_factor = 0.01
 tmno.add_offset = 0.00
