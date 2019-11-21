@@ -55,7 +55,7 @@ nco.createDimension('x',nx)
 #nco.createDimension('lon', nx)
 #nco.createDimension('lat', ny)
 nco.createDimension('time', None)
-timeo = nco.createVariable('time',ncDataType,('time'))
+timeo = nco.createVariable('time',u4,('time'))
 timeo.units = 'days since 1900-01-01 00:00:00'
 timeo.standard_name = 'time'
 
@@ -102,7 +102,7 @@ crso.unit = 'm'
 
 # create short integer variable for temperature data, with chunking
 #Use 32 bit unsigned integer (u4)
-tmno = nco.createVariable('tmn', 'u4',  ('time', 'y', 'x'), zlib=True,fill_value=NoData) #Create variable, compress with gzip (zlib=True)
+tmno = nco.createVariable('tmn', ncDataType,  ('time', 'y', 'x'), zlib=True,fill_value=NoData) #Create variable, compress with gzip (zlib=True)
 tmno.units = 'K'
 #tmno.scale_factor = 0.01
 tmno.add_offset = 0.00
@@ -138,7 +138,6 @@ for path, subdirs, files in os.walk(inDir):
            timeo[itime]=dtime
            cpgTiff = gdal.Open(CPGfile)
            a=cpgTiff.ReadAsArray()  #data
-           print(tmno)
            tmno[itime,:,:]=a
            itime=itime+1
 
