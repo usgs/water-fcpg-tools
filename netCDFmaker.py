@@ -79,7 +79,7 @@ crso.inverse_flattening = 298.257223563
 
 #Define coordinate system for Albers Equal Area Conic USGS version
 crso = nco.createVariable('crs','i4') #i4 = 32 bit signed int
-crso.grid_mapping_name='albers_conical_equal_area_usgs_version'
+crso.grid_mapping_name='albers_conical_equal_area'
 crso.standard_parallel_1 = 29.5
 crso.standard_parallel_2 = 45.5
 crso.latitude_of_projection_origin = 23.0
