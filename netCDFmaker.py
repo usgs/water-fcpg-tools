@@ -59,13 +59,13 @@ lato = nco.createVariable('lat','f4',('lat'))
 lato.units = 'degrees_north'
 lato.standard_name = 'latitude'
 """
-y = nco.createVariable('y','f4',('y'))
-y.units = 'm'
-y.standard_name = 'projection_y_coordinate'
+yo = nco.createVariable('y','f4',('y'))
+yo.units = 'm'
+yo.standard_name = 'projection_y_coordinate'
 
-x = nco.createVariable('x','f4',('x'))
-x.units = 'm'
-x.standard_name = 'projection_x_coordinate'
+xo = nco.createVariable('x','f4',('x'))
+xo.units = 'm'
+xo.standard_name = 'projection_x_coordinate'
 
 """
 # create container variable for CRS: lon/lat WGS84 datum
