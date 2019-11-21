@@ -55,7 +55,7 @@ nco.createDimension('x',nx)
 #nco.createDimension('lon', nx)
 #nco.createDimension('lat', ny)
 nco.createDimension('time', None)
-timeo = nco.createVariable('time',u4,('time'))
+timeo = nco.createVariable('time','f4',('time'))
 timeo.units = 'days since 1900-01-01 00:00:00'
 timeo.standard_name = 'time'
 
