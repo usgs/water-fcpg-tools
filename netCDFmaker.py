@@ -19,7 +19,7 @@ import netCDF4
 outFile = '../CPGs/nc/gridMET_minTempK_HUC1002_CPG.nc'
 netCDFparam = 'SSURGO_AVGSAND'
 inDir = "../CPGs/1002"
-templateFile = '../CPGs/1002/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif'
+templateFile = '../CPGs/1002/SSURGO_AVGSAND_HUC1002_CPG.tif'
 
 ds = gdal.Open(templateFile)
 a = ds.ReadAsArray()
@@ -32,7 +32,11 @@ x = np.arange(nx)*b[1]+b[0]
 #Get raster no data value 
 with rs.open(templateFile) as ds:
    NoData = ds.nodata
+   dataType = ds.dtypes[0] #Get datatype of first band
 
+print(dataType)
+if dataType == 'float32':
+   ncDataType = 'f4'
 
 basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
 
@@ -51,7 +55,7 @@ nco.createDimension('x',nx)
 #nco.createDimension('lon', nx)
 #nco.createDimension('lat', ny)
 nco.createDimension('time', None)
-timeo = nco.createVariable('time','f4',('time'))
+timeo = nco.createVariable('time',ncDataType,('time'))
 timeo.units = 'days since 1900-01-01 00:00:00'
 timeo.standard_name = 'time'
 
