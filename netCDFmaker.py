@@ -25,8 +25,8 @@ a = ds.ReadAsArray()
 nx,ny = np.shape(a)
 
 b = ds.GetGeoTransform() #bbox, interval
-y = np.arange(ny)*b[1]+b[0]
-x = np.arange(nx)*b[5]+b[3]
+y = np.arange(ny)*b[5]+b[3]
+x = np.arange(nx)*b[1]+b[0]
 
 
 basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
