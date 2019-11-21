@@ -34,9 +34,11 @@ if os.path.isdir(inDir):
                                         print("Missing File: {0}".format(CPGFile))
                                         missingList.append(CPGFile)
 
-                        print("{0} missing files found".format(len(missingList)))
+                        
                 else:
                         print("Error CPG directory does  not exist: {0}".format(CPGdir))
+                        
+        print("{0} missing files found".format(len(missingList)))
 
 else:
         print("Error input directory does  not exist: {0}".format(inDir))
