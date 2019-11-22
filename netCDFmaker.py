@@ -14,7 +14,10 @@ import rasterio as rs
 import os
 #import gdal
 import netCDF4
+import sys
 #import re
+
+np.set_printoptions(threshold=sys.maxsize)
 
 outFile = '../CPGs/nc/gridMET_minTempK_HUC1002_CPG.nc'
 netCDFparam = 'gridMET_minTempK'
