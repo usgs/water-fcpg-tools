@@ -166,11 +166,11 @@ for path, subdirs, files in os.walk(inDir):
               print(data[8005:8010, 8005:8010])
               profile = ds.profile.copy() # save the metadata for output later
             
-            with rs.open('../CPGs/nc/testFile.tif','w',**profile) as dst:
-            dst.write(data,1)
+           with rs.open('../CPGs/nc/testFile.tif','w',**profile) as dst:
+              dst.write(data,1)
 
-            with rs.open('../CPGs/nc/testFile2.tif','w',**profile) as dst:
-            dst.write(tmno[itime,:,:],1)
+           with rs.open('../CPGs/nc/testFile2.tif','w',**profile) as dst:
+              dst.write(tmno[itime,:,:],1)
 
 
 
