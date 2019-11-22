@@ -162,8 +162,9 @@ for path, subdirs, files in os.walk(inDir):
            #Try reading with rasterio
            with rs.open(CPGfile) as ds: # load accumulated data and no data rasters
               data = ds.read(1)
-              tmno[itime,:,:] = data
-              print(data[8005:8010, 8005:8010])
+              print(np.shape(data))
+              print(np.shape(tmno[itime,:,:]))
+              tmno[itime,:,:] = np.transpose(data)
               profile = ds.profile.copy() # save the metadata for output later
             
            with rs.open('../CPGs/nc/testFile.tif','w',**profile) as dst:
