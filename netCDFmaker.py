@@ -33,7 +33,7 @@ x = np.arange(nx)*b[1]+b[0]
 with rs.open(templateFile) as ds:
    NoData = ds.nodata
    dataType = ds.dtypes[0] #Get datatype of first band
-      xsize, ysize = ds.res #Get  cell size
+   xsize, ysize = ds.res #Get  cell size
    #Get bounding coordinates of the raster
    fdrXmin = ds.transform[2]
    fdrYmax = ds.transform[5]
