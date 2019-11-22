@@ -3,10 +3,10 @@ import numpy as np
 import datetime as dt
 import rasterio as rs
 import os
-import gdal
-import netCDF4
 import sys
 #import re
+np.set_printoptions(threshold=sys.maxsize)
+
 
 inRast = '../CPGs/nc/testInput/gridMET_minTempK_1979_01_00_HUC1002_CPG.tif'
 outRast = '../CPGs/nc/testRead.tif'
