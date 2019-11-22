@@ -17,9 +17,9 @@ import netCDF4
 #import re
 
 outFile = '../CPGs/nc/gridMET_minTempK_HUC1002_CPG.nc'
-netCDFparam = 'SSURGO_AVGSAND'
-inDir = "../CPGs/1002"
-templateFile = '../CPGs/1002/SSURGO_AVGSAND_HUC1002_CPG.tif'
+netCDFparam = 'gridMET_minTempK'
+inDir = "../CPGs/nc/testInput"
+templateFile = '../CPGs/nc/testInput/gridMET_minTempK_1979_01_00_HUC1002_CPG.tif'
 
 ds = gdal.Open(templateFile)
 a = ds.ReadAsArray()
