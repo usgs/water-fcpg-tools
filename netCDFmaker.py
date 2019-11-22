@@ -164,53 +164,11 @@ for path, subdirs, files in os.walk(inDir):
               data = ds.read(1)
               print(np.shape(data))
               print(np.shape(tmno[itime,:,:]))
-              tmno[itime,:,:] = np.transpose(data)
-              profile = ds.profile.copy() # save the metadata for output later
-            
-           with rs.open('../CPGs/nc/testFile.tif','w',**profile) as dst:
-              dst.write(data,1)
-
-           with rs.open('../CPGs/nc/testFile2.tif','w',**profile) as dst:
-              dst.write(tmno[itime,:,:],1)
-
+              tmno[itime,:,:] = np.flipud(np.transpose(data))
 
 
            itime=itime+1
 
 
-
-"""
-#step through data, writing time and data to NetCDF
-for path, subdirs, files in os.walk(inDir):
-    for name in files:
-        #Check if file hs correct parameter name
-        baseName = os.path.splitext(name)[0]
-        source = baseName.split("_")[0]
-        param = baseName.split("_")[1]
-
-        if source + "_" + param == netCDFparam:
-           year = int(baseName.split("_")[2])
-           month = int(baseName.split("_")[3])
-           day = int(baseName.split("_")[4])
-           
-           #Set months or days that are zero to one
-           if month == 0:
-              month = 1
-           if day == 0:
-              day = 1
-
-
-           CPGfile = os.path.join(path, name)
-           print(CPGfile)
-           #HUC = baseName.split("_")[5]
-           date = dt.datetime(year, month, day, 0, 0, 0)
-           dtime=(date-basedate).total_seconds()/86400.
-           timeo[itime]=dtime
-           cpgTiff = gdal.Open(CPGfile)
-           a=cpgTiff.ReadAsArray()  #data
-           print(tmno)
-           tmno[itime,:,:]=a
-           itime=itime+1
-"""
 nco.close()
 
