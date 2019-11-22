@@ -12,7 +12,7 @@ import numpy as np
 import datetime as dt
 import rasterio as rs
 import os
-#import gdal
+import gdal
 import netCDF4
 import sys
 #import re
@@ -23,7 +23,7 @@ outFile = '../CPGs/nc/gridMET_minTempK_HUC1002_CPG.nc'
 netCDFparam = 'gridMET_minTempK'
 inDir = "../CPGs/nc/testInput"
 templateFile = '../CPGs/nc/testInput/gridMET_minTempK_1979_01_00_HUC1002_CPG.tif'
-"""
+
 ds = gdal.Open(templateFile)
 a = ds.ReadAsArray()
 nx,ny = np.shape(a)
@@ -31,7 +31,7 @@ nx,ny = np.shape(a)
 b = ds.GetGeoTransform() #bbox, interval
 y = np.arange(ny)*b[5]+b[3]
 x = np.arange(nx)*b[1]+b[0]
-"""
+
 #Get raster no data value 
 with rs.open(templateFile) as ds:
    data = ds.read(1)
@@ -44,9 +44,9 @@ with rs.open(templateFile) as ds:
    Xmax = Xmin + xsize*ds.width
    Ymin = Ymax - ysize*ds.height
 
-   nx,ny = nx,ny = np.shape(data)
-   y = np.arange(ny)*ds.transform[5]+ds.transform[3]
-   x = np.arange(nx)*ds.transform[1]+ds.transform[0]
+   #nx,ny = nx,ny = np.shape(data)
+   #y = np.arange(ny)*ds.transform[5]+ds.transform[3]
+   #x = np.arange(nx)*ds.transform[1]+ds.transform[0]
 
 
 
