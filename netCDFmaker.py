@@ -150,6 +150,7 @@ for path, subdirs, files in os.walk(inDir):
            date = dt.datetime(1900, 1, 1, 0, 0, 0)
            dtime=(date-basedate).total_seconds()/86400.
            timeo[itime]=dtime
+
            """
            cpgTiff = gdal.Open(CPGfile)
            a=cpgTiff.ReadAsArray()  #data
@@ -159,6 +160,7 @@ for path, subdirs, files in os.walk(inDir):
            with rs.open(CPGfile) as ds: # load accumulated data and no data rasters
               data = ds.read(1)
               tmno[itime,:,:] = data
+              print(data[5000:6000, 5000:6000])
 
 
 
