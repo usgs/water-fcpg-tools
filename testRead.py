@@ -8,14 +8,15 @@ import gdal
 #import re
 np.set_printoptions(threshold=sys.maxsize)
 
-ds = gdal.Open(templateFile)
-a = ds.ReadAsArray()
-nx,ny = np.shape(a)
+
 
 
 inRast = '../CPGs/nc/testInput/gridMET_minTempK_1979_01_00_HUC1002_CPG.tif'
 outRast = '../CPGs/nc/testRead.tif'
 
+ds = gdal.Open(inRast)
+a = ds.ReadAsArray()
+nx,ny = np.shape(a)
 
 with rs.open(inRast) as ds:
         dat = ds.read(1)
