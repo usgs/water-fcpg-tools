@@ -18,7 +18,7 @@ with rs.open(inRast) as ds:
         profile = ds.profile.copy() # save the metadata for output later
 
 
-print(dat[5000:6000, 5000:6000])
+print(dat[5000:5005, 5000:5005])
 
 with rs.open(outRast,'w',**profile) as dst:
         dst.write(dat,1)
