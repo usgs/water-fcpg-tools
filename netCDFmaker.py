@@ -110,8 +110,7 @@ crso.inverse_flattening = 298.257222101
 crso.unit = 'm'
 
 # create short integer variable for temperature data, with chunking
-#Use 32 bit unsigned integer (u4)
-tmno = nco.createVariable('tmn', ncDataType,  ('time', 'y', 'x'), zlib=True,fill_value=NoData) #Create variable, compress with gzip (zlib=True)
+tmno = nco.createVariable('tmn', ncDataType,  ('time', 'y', 'x'), zlib=True, fill_value=NoData) #Create variable, compress with gzip (zlib=True)
 tmno.units = 'K'
 #tmno.scale_factor = 0.01
 tmno.add_offset = 0.00
@@ -145,9 +144,18 @@ for path, subdirs, files in os.walk(inDir):
            date = dt.datetime(1900, 1, 1, 0, 0, 0)
            dtime=(date-basedate).total_seconds()/86400.
            timeo[itime]=dtime
+           """
            cpgTiff = gdal.Open(CPGfile)
            a=cpgTiff.ReadAsArray()  #data
            tmno[itime,:,:]=a
+           """
+           #Try reading with rasterio
+           with rs.open(CPGfile) as ds: # load accumulated data and no data rasters
+              data = ds.read(1)
+              tmno[itime,:,:] = data
+
+
+
            itime=itime+1
 
 
