@@ -12,43 +12,44 @@ import numpy as np
 import datetime as dt
 import rasterio as rs
 import os
-import gdal
 import netCDF4
 import sys
-#import re
 
 np.set_printoptions(threshold=sys.maxsize)
 
-outFile = '../CPGs/nc/gridMET_minTempK_HUC1002_CPG.nc'
+outFile = 'data/gridMET_minTempK_HUC1003_CPG.nc'
 netCDFparam = 'gridMET_minTempK'
-inDir = "../CPGs/nc/testInput"
-templateFile = '../CPGs/nc/testInput/gridMET_minTempK_1979_01_00_HUC1002_CPG.tif'
+inDir = "data/cpgs_to_netCDF/"
+templateFile = 'data/cpgs_to_netCDF/gridMET_minTempK_2015_01_00_HUC1003_CPG.tif'
 
-ds = gdal.Open(templateFile)
-a = ds.ReadAsArray()
-nx,ny = np.shape(a)
-
-b = ds.GetGeoTransform() #bbox, interval
-y = np.arange(ny)*b[5]+b[3]
-x = np.arange(nx)*b[1]+b[0]
-
-#Get raster no data value 
 with rs.open(templateFile) as ds:
-   data = ds.read(1)
    NoData = ds.nodata
    dataType = ds.dtypes[0] #Get datatype of first band
    xsize, ysize = ds.res #Get  cell size
+   
    #Get bounding coordinates of the raster
    Xmin = ds.transform[2]
    Ymax = ds.transform[5]
    Xmax = Xmin + xsize*ds.width
    Ymin = Ymax - ysize*ds.height
+   
+   a = ds.transform
+   nrow,ncol = ds.shape
 
-   #nx,ny = nx,ny = np.shape(data)
-   #y = np.arange(ny)*ds.transform[5]+ds.transform[3]
-   #x = np.arange(nx)*ds.transform[1]+ds.transform[0]
+# make arrays of rows and columns
+nx = np.arange(ncol)
+ny = np.arange(nrow)
 
+print("ncol:",ncol)
+print("nrow:",nrow)
 
+# translate the rows and columns to x,y
+x,tmp = rs.transform.xy(rows = np.repeat(0,len(nx)),cols = nx, transform=a)
+tmp,y = rs.transform.xy(rows = ny, cols = np.repeat(0,len(ny)), transform=a)
+del tmp
+
+print("x:",len(x))
+print("y:",len(y))
 
 print(dataType)
 if dataType == 'float32':
@@ -68,8 +69,8 @@ nco = netCDF4.Dataset(outFile,'w',clobber=True)
 #chunk_time=12
 
 # create dimensions, variables and attributes:
-nco.createDimension('y',ny)
-nco.createDimension('x',nx)
+nco.createDimension('y',nrow)
+nco.createDimension('x',ncol)
 #nco.createDimension('lon', nx)
 #nco.createDimension('lat', ny)
 nco.createDimension('time', None)
@@ -86,13 +87,19 @@ lato = nco.createVariable('lat','f4',('lat'))
 lato.units = 'degrees_north'
 lato.standard_name = 'latitude'
 """
-yo = nco.createVariable('y','f4',('y'))
+yo = nco.createVariable('y','f4',('y'),zlib=True, complevel=1)
 yo.units = 'm'
 yo.standard_name = 'projection_y_coordinate'
 
-xo = nco.createVariable('x','f4',('x'))
+xo = nco.createVariable('x','f4',('x'),zlib=True, complevel=1)
 xo.units = 'm'
 xo.standard_name = 'projection_x_coordinate'
+
+nco.Conventions='CF-1.7'
+
+#write lon,lat
+xo[:]=x
+yo[:]=y
 
 """
 # create container variable for CRS: lon/lat WGS84 datum
@@ -117,10 +124,12 @@ crso.false_northing = 0
 crso.semi_major_axis = 6378137.0
 crso.inverse_flattening = 298.257222101
 crso.unit = 'm'
-crso.crs_wkt = 'PROJCS[\"USA_Contiguous_Albers_Equal_Area_Conic_USGS_version\",GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Albers\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",-96.0],PARAMETER[\"Standard_Parallel_1\",29.5],PARAMETER[\"Standard_Parallel_2\",45.5], PARAMETER[\"Latitude_Of_Origin\",23.0], UNIT[\"Meter\",1]]'
+wkt = 'PROJCS[\"USA_Contiguous_Albers_Equal_Area_Conic_USGS_version\",GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Albers\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",-96.0],PARAMETER[\"Standard_Parallel_1\",29.5],PARAMETER[\"Standard_Parallel_2\",45.5], PARAMETER[\"Latitude_Of_Origin\",23.0], UNIT[\"Meter\",1]]'
+crso.crs_wkt = wkt
+crso.spatial_ref = wkt
 
 # create short integer variable for temperature data, with chunking
-tmno = nco.createVariable('tmn', ncDataType,  ('time', 'y', 'x'), zlib=True, fill_value=NoData) #Create variable, compress with gzip (zlib=True)
+tmno = nco.createVariable('tmn', ncDataType,  ('time', 'y', 'x'), zlib=True, fill_value=NoData, complevel=1) #Create variable, compress with gzip (zlib=True)
 tmno.units = 'K'
 #tmno.scale_factor = 0.01
 tmno.add_offset = 0.00
@@ -128,12 +137,6 @@ tmno.long_name = 'minimum monthly temperature'
 tmno.standard_name = 'min_temperature'
 tmno.grid_mapping = 'crs'
 tmno.set_auto_maskandscale(False)
-
-nco.Conventions='CF-1.6'
-
-#write lon,lat
-xo[:]=x
-yo[:]=y
 
 itime=0
 
@@ -165,11 +168,10 @@ for path, subdirs, files in os.walk(inDir):
               data = ds.read(1)
               print(np.shape(data))
               print(np.shape(tmno[itime,:,:]))
-              tmno[itime,:,:] = np.flipud(np.transpose(data))
+              tmno[itime,:,:] = data
 
 
            itime=itime+1
-
-
+           
 nco.close()
 
