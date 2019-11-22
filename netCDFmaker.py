@@ -44,6 +44,8 @@ with rs.open(templateFile) as ds:
 print(dataType)
 if dataType == 'float32':
    ncDataType = 'f4'
+elif dataType == 'int32':
+   ncDataType = 'i4'
 
 basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
 
