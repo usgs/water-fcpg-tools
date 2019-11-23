@@ -28,7 +28,7 @@ cl = 9
 #netCDFparam = sys.argv[2]
 #outFile = sys.argv[3]
 
-files = glob.glob(inDir)
+files = glob.glob(inDir) # there probably should be some more work here to parse time and order the files by time so that the loop works properly at the end.
 
 assert len(files) > 0 # check that there are files to process
 templateFile = files [0] # use first file as the template
@@ -74,6 +74,7 @@ basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
 
 # create NetCDF file
 nco = netCDF4.Dataset(outFile,'w',clobber=True)
+nco.Conventions='CF-1.7'
 
 # chunking is optional, but can improve access a lot: 
 # (see: http://www.unidata.ucar.edu/blogs/developer/entry/chunking_data_choosing_shapes)
@@ -84,45 +85,26 @@ nco = netCDF4.Dataset(outFile,'w',clobber=True)
 # create dimensions, variables and attributes:
 nco.createDimension('y',nrow)
 nco.createDimension('x',ncol)
-#nco.createDimension('lon', nx)
-#nco.createDimension('lat', ny)
 nco.createDimension('time', None)
+
+# time axis
 timeo = nco.createVariable('time','f4',('time'))
 timeo.units = 'days since 1900-01-01 00:00:00'
 timeo.standard_name = 'time'
 
-"""
-lono = nco.createVariable('lon','f4',('lon'))
-lono.units = 'degrees_east'
-lono.standard_name = 'longitude'
-
-lato = nco.createVariable('lat','f4',('lat'))
-lato.units = 'degrees_north'
-lato.standard_name = 'latitude'
-"""
+# projected vertical coordinates (latitude)
 yo = nco.createVariable('y','f4',('y'),zlib=True, complevel=cl, shuffle = True)
 yo.units = 'm'
 yo.standard_name = 'projection_y_coordinate'
 
+# projected horizontal coordinates (longitude)
 xo = nco.createVariable('x','f4',('x'),zlib=True, complevel=cl, shuffle = True)
 xo.units = 'm'
 xo.standard_name = 'projection_x_coordinate'
 
-nco.Conventions='CF-1.7'
-
 #write lon,lat
 xo[:]=x
 yo[:]=y
-
-"""
-# create container variable for CRS: lon/lat WGS84 datum
-crso = nco.createVariable('crs','i4')
-csro.long_name = 'Lon/Lat Coords in WGS84'
-crso.grid_mapping_name='latitude_longitude'
-crso.longitude_of_prime_meridian = 0.0
-crso.semi_major_axis = 6378137.0
-crso.inverse_flattening = 298.257223563
-"""
 
 #Define coordinate system for Albers Equal Area Conic USGS version
 crso = nco.createVariable('crs','i4') #i4 = 32 bit signed int
@@ -140,6 +122,12 @@ crso.unit = 'm'
 wkt = 'PROJCS[\"USA_Contiguous_Albers_Equal_Area_Conic_USGS_version\",GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Albers\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",-96.0],PARAMETER[\"Standard_Parallel_1\",29.5],PARAMETER[\"Standard_Parallel_2\",45.5], PARAMETER[\"Latitude_Of_Origin\",23.0], UNIT[\"Meter\",1]]'
 crso.crs_wkt = wkt
 crso.spatial_ref = wkt
+'''
+We might need to implement the metadata here by passing the script a dictionary...
+
+We should also look to see if we can make the netCDF ISO 19115 compliant so that we can put these bad boys on sciencebase.
+'''
+
 
 # create short integer variable for temperature data, with chunking
 tmno = nco.createVariable('Tmin', ncDataType,  ('time', 'y', 'x'), zlib=True, fill_value=NoData, complevel=cl, shuffle = True) #Create variable, compress with gzip (zlib=True)
