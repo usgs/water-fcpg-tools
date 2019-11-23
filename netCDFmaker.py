@@ -14,13 +14,26 @@ import rasterio as rs
 import os
 import netCDF4
 import sys
+import glob
+import time
 
-np.set_printoptions(threshold=sys.maxsize)
+strt = dt.datetime.now()
 
 outFile = 'data/gridMET_minTempK_HUC1003_CPG.nc'
 netCDFparam = 'gridMET_minTempK'
-inDir = "data/cpgs_to_netCDF/"
-templateFile = 'data/cpgs_to_netCDF/gridMET_minTempK_2015_01_00_HUC1003_CPG.tif'
+inDir = "data/cpgs_to_netCDF/*.tif"
+cl = 9
+
+#inDir = sys.argv[1]
+#netCDFparam = sys.argv[2]
+#outFile = sys.argv[3]
+
+files = glob.glob(inDir)
+
+assert len(files) > 0 # check that there are files to process
+templateFile = files [0] # use first file as the template
+
+np.set_printoptions(threshold=sys.maxsize)
 
 with rs.open(templateFile) as ds:
    NoData = ds.nodata
@@ -39,17 +52,17 @@ with rs.open(templateFile) as ds:
 # make arrays of rows and columns
 nx = np.arange(ncol)
 ny = np.arange(nrow)
-
-print("ncol:",ncol)
-print("nrow:",nrow)
+print("Grid Shape:")
+print("\tncol:",ncol)
+print("\tnrow:",nrow)
 
 # translate the rows and columns to x,y
 x,tmp = rs.transform.xy(rows = np.repeat(0,len(nx)),cols = nx, transform=a)
 tmp,y = rs.transform.xy(rows = ny, cols = np.repeat(0,len(ny)), transform=a)
 del tmp
 
-print("x:",len(x))
-print("y:",len(y))
+print("\tx:",len(x))
+print("\ty:",len(y))
 
 print(dataType)
 if dataType == 'float32':
@@ -87,11 +100,11 @@ lato = nco.createVariable('lat','f4',('lat'))
 lato.units = 'degrees_north'
 lato.standard_name = 'latitude'
 """
-yo = nco.createVariable('y','f4',('y'),zlib=True, complevel=1)
+yo = nco.createVariable('y','f4',('y'),zlib=True, complevel=cl, shuffle = True)
 yo.units = 'm'
 yo.standard_name = 'projection_y_coordinate'
 
-xo = nco.createVariable('x','f4',('x'),zlib=True, complevel=1)
+xo = nco.createVariable('x','f4',('x'),zlib=True, complevel=cl, shuffle = True)
 xo.units = 'm'
 xo.standard_name = 'projection_x_coordinate'
 
@@ -129,7 +142,7 @@ crso.crs_wkt = wkt
 crso.spatial_ref = wkt
 
 # create short integer variable for temperature data, with chunking
-tmno = nco.createVariable('tmn', ncDataType,  ('time', 'y', 'x'), zlib=True, fill_value=NoData, complevel=1) #Create variable, compress with gzip (zlib=True)
+tmno = nco.createVariable('Tmin', ncDataType,  ('time', 'y', 'x'), zlib=True, fill_value=NoData, complevel=cl, shuffle = True) #Create variable, compress with gzip (zlib=True)
 tmno.units = 'K'
 #tmno.scale_factor = 0.01
 tmno.add_offset = 0.00
@@ -139,39 +152,31 @@ tmno.grid_mapping = 'crs'
 tmno.set_auto_maskandscale(False)
 
 itime=0
+for name in files:
+  #Check if file has correct parameter name
+  baseName = name.split('/')[-1]
+  source = baseName.split("_")[0]
+  param = baseName.split("_")[1]
 
-#Test code for static rasters
-for path, subdirs, files in os.walk(inDir):
-    for name in files:
-        #Check if file hs correct parameter name
-        baseName = os.path.splitext(name)[0]
-        source = baseName.split("_")[0]
-        param = baseName.split("_")[1]
+  if source + "_" + param == netCDFparam: # test if netCDF file is correct.
+    print(name)
+    year = int(name.split('/')[-1].split('_')[-5])
+    month = int(name.split('/')[-1].split('_')[-4])
+    day = int(name.split('/')[-1].split('_')[-3])
+    #print(year,month,day)
+    date = dt.datetime(year, month, day+1, 0, 0, 0) # set base date
+    dtime=(date-basedate).total_seconds()/86400.
+    timeo[itime]=dtime
 
-        if source + "_" + param == netCDFparam:
+    #Try reading with rasterio
+    with rs.open(name) as ds: # load accumulated data and no data rasters
+      #data = ds.read(1)
+      #print(np.shape(data))
+      #print(np.shape(tmno[itime,:,:]))
+      tmno[itime,:,:] = ds.read(1)
 
+    itime=itime+1
 
-           CPGfile = os.path.join(path, name)
-           print(CPGfile)
-           #HUC = baseName.split("_")[5]
-           date = dt.datetime(1900, 1, 1, 0, 0, 0)
-           dtime=(date-basedate).total_seconds()/86400.
-           timeo[itime]=dtime
-
-           """
-           cpgTiff = gdal.Open(CPGfile)
-           a=cpgTiff.ReadAsArray()  #data
-           tmno[itime,:,:]=a
-           """
-           #Try reading with rasterio
-           with rs.open(CPGfile) as ds: # load accumulated data and no data rasters
-              data = ds.read(1)
-              print(np.shape(data))
-              print(np.shape(tmno[itime,:,:]))
-              tmno[itime,:,:] = data
-
-
-           itime=itime+1
-           
 nco.close()
 
+print((dt.datetime.now()-strt))
