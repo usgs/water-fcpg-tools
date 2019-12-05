@@ -40,7 +40,7 @@ metaDict = {
   'add_offset':0.0,
   'standard_name':'min_temperature',
   'long_name':'minimum monthly temperature',
-  'grid_mapping':'crs'
+  'grid_mapping':'crs',
   'scale_factor':1.0
 }
 
@@ -49,7 +49,13 @@ if 'conventions' not in metaDict.keys():
   metaDict['conventions'] = 'CF-1.7'
 
 if 'grid_mapping' not in metaDict.keys():
-  metaDict['']
+  metaDict['grid_mapping'] = 'crs'
+
+if 'scale_factor' not in metaDict.keys():
+  metaDict['scale_factor'] = 1.0
+
+if 'add_offset' not in metaDict.keys():
+  metaDict['add_offset'] = 0.0
 
 files = glob.glob(inDir) # there probably should be some more work here to parse time and order the files by time so that the loop works properly at the end.
 
