@@ -29,33 +29,54 @@ netCDFparam = 'gridMET_minTempK'
 inDir = "data/cpgs_to_netCDF/*.tif"
 cl = 9
 
+# refer to http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3 and http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents for metadata entry descriptions.
 metaDict = {
   'title':'',
   'institution':'',
   'source':'',
+  'id':'', 
   'references':'',
   'comment':'',
+  'history':'',
+  'license':'', 
+  'acknowledgement':'', # 
+  'metadata_link':'', 
+  'date_creates':'',
+  'creator_type':'',
+  'creator_email':'',
+  'creator_name':'',
+  'creator_url':'',
+  'creator_institution':'',
+  'publisher_type':'',
+  'publisher_name':'',
+  'publisher_email':'',
+  'publisher_url':'',
+  'publisher_institution':'', 
   'var_name':'Tmin',
   'units':'K',
   'add_offset':0.0,
   'standard_name':'min_temperature',
   'long_name':'minimum monthly temperature',
   'grid_mapping':'crs',
-  'scale_factor':1.0
+  'scale_factor':1.0,
+  'coverage_content_type':''
 }
 
 # enforce some defaults if they are not present
 if 'conventions' not in metaDict.keys():
-  metaDict['conventions'] = 'CF-1.7'
+  metaDict['conventions'] = 'CF-1.7\nDD-1.3' # conventions this was written around
 
 if 'grid_mapping' not in metaDict.keys():
-  metaDict['grid_mapping'] = 'crs'
+  metaDict['grid_mapping'] = 'crs' # mapped to projected grid
 
 if 'scale_factor' not in metaDict.keys():
-  metaDict['scale_factor'] = 1.0
+  metaDict['scale_factor'] = 1.0 # set scale at 1.
 
 if 'add_offset' not in metaDict.keys():
-  metaDict['add_offset'] = 0.0
+  metaDict['add_offset'] = 0.0 # no offset
+
+if 'history' not in metaDict.keys():
+  metaDict['history'] = '' # start with blank history
 
 files = glob.glob(inDir) # there probably should be some more work here to parse time and order the files by time so that the loop works properly at the end.
 
@@ -103,6 +124,34 @@ basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
 
 # create NetCDF file
 nco = netCDF4.Dataset(outFile,'w',clobber=True)
+try: # try to populate the metadata
+  nco.title = metaDict['title']
+  nco.institution = metaDict['institution']
+  nco.source = metaDict['source']
+  nco.id = metaDict['id']
+  nco.references = metaDict['references']
+  nco.comment = metaDict['comment']
+  nco.history = metaDict['history']
+  nco.license = metaDict['license']
+  nco.acknowledgement = metaDict['acknowledgement']
+  nco.metadata_link = metaDict['metadata_link']
+  
+  nco.date_created = metaDict['date_created']
+  nco.creator_type = metaDict['creator_type']
+  nco.creator_name = metaDict['creator_name']
+  nco.creator_email = metaDict['creator_email']
+  nco.creator_url = metaDict['creator_url']
+  nco.creator_institution = metaDict['creator_institution']
+
+  nco.publisher_type = metaDict['publisher_type']
+  nco.publisher_name = metaDict['publisher_name']
+  nco.publisher_email = metaDict['publisher_email']
+  nco.publisher_url = metaDict['publisher_url']
+  nco.publisher_institution = metaDict['publisher_institution']
+  
+except:
+  print('Metadata incomplete.')
+
 nco.Conventions=metaDict['conventions']
 
 # chunking is optional, but can improve access a lot: 
@@ -169,6 +218,7 @@ tmno.add_offset = metaDict['add_offset']
 tmno.long_name = metaDict['long_name']
 tmno.standard_name = metaDict['standard_name']
 tmno.grid_mapping = metaDict['grid_mapping']
+coverage_content_type = metaDict['coverage_content_type']
 tmno.set_auto_maskandscale(False)
 
 itime=0
