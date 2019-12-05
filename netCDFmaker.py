@@ -19,14 +19,37 @@ import time
 
 strt = dt.datetime.now()
 
+#inDir = sys.argv[1]
+#netCDFparam = sys.argv[2]
+#outFile = sys.argv[3]
+
+
 outFile = 'data/gridMET_minTempK_HUC1003_CPG.nc'
 netCDFparam = 'gridMET_minTempK'
 inDir = "data/cpgs_to_netCDF/*.tif"
 cl = 9
 
-#inDir = sys.argv[1]
-#netCDFparam = sys.argv[2]
-#outFile = sys.argv[3]
+metaDict = {
+  'title':'',
+  'institution':'',
+  'source':'',
+  'references':'',
+  'comment':'',
+  'var_name':'Tmin',
+  'units':'K',
+  'add_offset':0.0,
+  'standard_name':'min_temperature',
+  'long_name':'minimum monthly temperature',
+  'grid_mapping':'crs'
+  'scale_factor':1.0
+}
+
+# enforce some defaults if they are not present
+if 'conventions' not in metaDict.keys():
+  metaDict['conventions'] = 'CF-1.7'
+
+if 'grid_mapping' not in metaDict.keys():
+  metaDict['']
 
 files = glob.glob(inDir) # there probably should be some more work here to parse time and order the files by time so that the loop works properly at the end.
 
@@ -74,7 +97,7 @@ basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
 
 # create NetCDF file
 nco = netCDF4.Dataset(outFile,'w',clobber=True)
-nco.Conventions='CF-1.7'
+nco.Conventions=metaDict['conventions']
 
 # chunking is optional, but can improve access a lot: 
 # (see: http://www.unidata.ucar.edu/blogs/developer/entry/chunking_data_choosing_shapes)
@@ -107,6 +130,9 @@ xo[:]=x
 yo[:]=y
 
 #Define coordinate system for Albers Equal Area Conic USGS version
+'''
+Should we make this a dictionary so / automatically create this from the input files?
+'''
 crso = nco.createVariable('crs','i4') #i4 = 32 bit signed int
 crso.grid_mapping_name='albers_conical_equal_area'
 #crso.standard_parallel_1 = 29.5
@@ -130,17 +156,17 @@ We should also look to see if we can make the netCDF ISO 19115 compliant so that
 
 
 # create short integer variable for temperature data, with chunking
-tmno = nco.createVariable('Tmin', ncDataType,  ('time', 'y', 'x'), zlib=True, fill_value=NoData, complevel=cl, shuffle = True) #Create variable, compress with gzip (zlib=True)
-tmno.units = 'K'
-#tmno.scale_factor = 0.01
-tmno.add_offset = 0.00
-tmno.long_name = 'minimum monthly temperature'
-tmno.standard_name = 'min_temperature'
-tmno.grid_mapping = 'crs'
+tmno = nco.createVariable(metaDict['var_name'], ncDataType,  ('time', 'y', 'x'), zlib=True, fill_value=NoData, complevel=cl, shuffle = True) #Create variable, compress with gzip (zlib=True)
+tmno.units = metaDict['units']
+tmno.scale_factor = metaDict['scale_factor']
+tmno.add_offset = metaDict['add_offset']
+tmno.long_name = metaDict['long_name']
+tmno.standard_name = metaDict['standard_name']
+tmno.grid_mapping = metaDict['grid_mapping']
 tmno.set_auto_maskandscale(False)
 
 itime=0
-for name in files:
+for name in sorted(files):
   #Check if file has correct parameter name
   baseName = name.split('/')[-1]
   source = baseName.split("_")[0]
