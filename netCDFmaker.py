@@ -176,13 +176,13 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 		NoData = ds.nodata
 		dataType = ds.dtypes[0] #Get datatype of first band
 		xsize, ysize = ds.res #Get  cell size
-	 
+	
 		#Get bounding coordinates of the raster
 		Xmin = ds.transform[2]
-	 	Ymax = ds.transform[5]
+		Ymax = ds.transform[5]
 		Xmax = Xmin + xsize*ds.width
 		Ymin = Ymax - ysize*ds.height
-	 
+	
 		a = ds.transform
 		nrow,ncol = ds.shape
 
