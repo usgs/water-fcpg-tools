@@ -323,7 +323,7 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 		month = int(name.split('/')[-1].split('_')[-4])
 		day = int(name.split('/')[-1].split('_')[-3])
 		#print(year,month,day)
-		date = dt.datetime(year, month, day+1, 0, 0, 0) # set base date
+		date = dt.datetime(year, month, day, 0, 0, 0) # set base date
 		dtime=(date-basedate).total_seconds()/86400.
 		timeo[itime]=dtime
 
