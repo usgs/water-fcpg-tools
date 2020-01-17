@@ -11,7 +11,8 @@ metaDict = {
     'title':'',
     'institution':'',
     'source':'',
-    'id':'', 
+    'id':'',
+    'naming_authority':'',
     'references':'',
     'comment':'',
     'history':'',
@@ -38,8 +39,6 @@ metaDict = {
     'scale_factor':1.0,
     'coverage_content_type':''
   }
-
-
 '''
 
 import numpy as np
@@ -51,15 +50,13 @@ import sys
 import glob
 import time
 
-def buildNC(inDir, netCDFparam, outFile, metaDict, cl=9):
+def buildNC(inDir, outFile, metaDict, cl=9):
   '''Build netCDF file from a stack of geotiffs
 
   Parameters
   ----------
   inDir : str
     Directory with geotiff files to be converted, specified as '/dir/here/*.tif'
-  netCDFparam : str
-    NetCDF variable name to store data under.
   outFile : str
     Output filename with '.nc' included.
   metaDict : dict
@@ -219,6 +216,7 @@ def buildNC(inDir, netCDFparam, outFile, metaDict, cl=9):
   nco.institution = metaDict['institution']
   nco.source = metaDict['source']
   nco.id = metaDict['id']
+  nco.naming_authority = metaDict['naming_authority']
   nco.references = metaDict['references']
   nco.comment = metaDict['comment']
   nco.history = metaDict['history']
@@ -318,25 +316,26 @@ def buildNC(inDir, netCDFparam, outFile, metaDict, cl=9):
     source = baseName.split("_")[0]
     param = baseName.split("_")[1]
 
-    if source + "_" + param == netCDFparam: # test if netCDF file is correct.
-      print(name)
-      year = int(name.split('/')[-1].split('_')[-5])
-      month = int(name.split('/')[-1].split('_')[-4])
-      day = int(name.split('/')[-1].split('_')[-3])
-      #print(year,month,day)
-      date = dt.datetime(year, month, day+1, 0, 0, 0) # set base date
-      dtime=(date-basedate).total_seconds()/86400.
-      timeo[itime]=dtime
+    #if source + "_" + param == netCDFparam: # test if netCDF file is correct.
+    print(name)
+    year = int(name.split('/')[-1].split('_')[-5])
+    month = int(name.split('/')[-1].split('_')[-4])
+    day = int(name.split('/')[-1].split('_')[-3])
+    #print(year,month,day)
+    date = dt.datetime(year, month, day+1, 0, 0, 0) # set base date
+    dtime=(date-basedate).total_seconds()/86400.
+    timeo[itime]=dtime
 
-      #Try reading with rasterio
-      with rs.open(name) as ds: # load accumulated data and no data rasters
-        #data = ds.read(1)
-        #print(np.shape(data))
-        #print(np.shape(tmno[itime,:,:]))
-        tmno[itime,:,:] = ds.read(1)
+    #Try reading with rasterio
+    with rs.open(name) as ds: # load accumulated data and no data rasters
+      #data = ds.read(1)
+      #print(np.shape(data))
+      #print(np.shape(tmno[itime,:,:]))
+      tmno[itime,:,:] = ds.read(1)
 
-      itime=itime+1
+    itime=itime+1
 
   nco.close()
 
   print((dt.datetime.now()-strt))
+  return None
