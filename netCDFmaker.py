@@ -151,19 +151,19 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 
 	# enforce some defaults if they are not present
 	if 'conventions' not in metaDict.keys():
-	metaDict['conventions'] = 'CF-1.7\nDD-1.3' # conventions this was written around
+		metaDict['conventions'] = 'CF-1.7\nDD-1.3' # conventions this was written around
 
 	if 'grid_mapping' not in metaDict.keys():
-	metaDict['grid_mapping'] = 'crs' # mapped to projected grid
+		metaDict['grid_mapping'] = 'crs' # mapped to projected grid
 
 	if 'scale_factor' not in metaDict.keys():
-	metaDict['scale_factor'] = 1.0 # set scale at 1.
+		metaDict['scale_factor'] = 1.0 # set scale at 1.
 
 	if 'add_offset' not in metaDict.keys():
-	metaDict['add_offset'] = 0.0 # no offset
+		metaDict['add_offset'] = 0.0 # no offset
 
 	if 'history' not in metaDict.keys():
-	metaDict['history'] = '' # start with blank history
+		metaDict['history'] = '' # start with blank history
 
 	files = glob.glob(inDir) # there probably should be some more work here to parse time and order the files by time so that the loop works properly at the end.
 
@@ -203,9 +203,9 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 
 	print(dataType)
 	if dataType == 'float32':
-	 ncDataType = 'f4'
+		ncDataType = 'f4'
 	elif dataType == 'int32':
-	 ncDataType = 'i4'
+		ncDataType = 'i4'
 
 	basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
 
@@ -312,29 +312,29 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 
 	itime=0
 	for name in sorted(files):
-	#Check if file has correct parameter name
-	baseName = name.split('/')[-1]
-	source = baseName.split("_")[0]
-	param = baseName.split("_")[1]
+		#Check if file has correct parameter name
+		baseName = name.split('/')[-1]
+		source = baseName.split("_")[0]
+		param = baseName.split("_")[1]
 
-	#if source + "_" + param == netCDFparam: # test if netCDF file is correct.
-	print(name)
-	year = int(name.split('/')[-1].split('_')[-5])
-	month = int(name.split('/')[-1].split('_')[-4])
-	day = int(name.split('/')[-1].split('_')[-3])
-	#print(year,month,day)
-	date = dt.datetime(year, month, day+1, 0, 0, 0) # set base date
-	dtime=(date-basedate).total_seconds()/86400.
-	timeo[itime]=dtime
+		#if source + "_" + param == netCDFparam: # test if netCDF file is correct.
+		print(name)
+		year = int(name.split('/')[-1].split('_')[-5])
+		month = int(name.split('/')[-1].split('_')[-4])
+		day = int(name.split('/')[-1].split('_')[-3])
+		#print(year,month,day)
+		date = dt.datetime(year, month, day+1, 0, 0, 0) # set base date
+		dtime=(date-basedate).total_seconds()/86400.
+		timeo[itime]=dtime
 
-	#Try reading with rasterio
-	with rs.open(name) as ds: # load accumulated data and no data rasters
+		#Try reading with rasterio
+		with rs.open(name) as ds: # load accumulated data and no data rasters
 		#data = ds.read(1)
 		#print(np.shape(data))
 		#print(np.shape(tmno[itime,:,:]))
-		tmno[itime,:,:] = ds.read(1)
+			tmno[itime,:,:] = ds.read(1)
 
-	itime=itime+1
+		itime=itime+1
 
 	nco.close()
 
