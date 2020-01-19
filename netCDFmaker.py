@@ -150,8 +150,8 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 	# refer to http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3 and http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents for metadata entry descriptions.
 
 	# enforce some defaults if they are not present
-	if 'conventions' not in metaDict.keys():
-		metaDict['conventions'] = ['CF-1.7','DD-1.3'] # conventions this was written around
+	if 'Conventions' not in metaDict.keys():
+		metaDict['Conventions'] = ['CF-1.7','DD-1.3'] # conventions this was written around
 
 	if 'grid_mapping' not in metaDict.keys():
 		metaDict['grid_mapping'] = 'crs' # mapped to projected grid
@@ -241,7 +241,7 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 	except:
 		print('Metadata incomplete.')
 
-	nco.Conventions=metaDict['conventions']
+	nco.Conventions=metaDict['Conventions']
 
 	# chunking is optional, but can improve access a lot: 
 	# (see: http://www.unidata.ucar.edu/blogs/developer/entry/chunking_data_choosing_shapes)
