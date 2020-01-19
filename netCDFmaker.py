@@ -151,7 +151,7 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 
 	# enforce some defaults if they are not present
 	if 'conventions' not in metaDict.keys():
-		metaDict['conventions'] = 'CF-1.7\nDD-1.3' # conventions this was written around
+		metaDict['conventions'] = ['CF-1.7','DD-1.3'] # conventions this was written around
 
 	if 'grid_mapping' not in metaDict.keys():
 		metaDict['grid_mapping'] = 'crs' # mapped to projected grid
@@ -210,7 +210,7 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 	basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
 
 	# create NetCDF file
-	nco = netCDF4.Dataset(outFile,'w',clobber=True)
+	nco = netCDF4.Dataset(outFile,'w',clobber=True, fomrat = 'NETCDF4_CLASSIC')
 	# try to populate the metadata
 	try:
 		nco.title = metaDict['title']
