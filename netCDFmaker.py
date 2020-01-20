@@ -151,7 +151,7 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 
 	# enforce some defaults if they are not present
 	if 'Conventions' not in metaDict.keys():
-		metaDict['Conventions'] = ['CF-1.7','DD-1.3'] # conventions this was written around
+		metaDict['Conventions'] = 'CF-1.7\nDD-1.3' # conventions this was written around
 
 	if 'grid_mapping' not in metaDict.keys():
 		metaDict['grid_mapping'] = 'crs' # mapped to projected grid
