@@ -210,7 +210,7 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 	basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
 
 	# create NetCDF file
-	nco = netCDF4.Dataset(outFile,'w',clobber=True, fomrat = 'NETCDF4_CLASSIC')
+	nco = netCDF4.Dataset(outFile,'w',clobber=True, format = 'NETCDF4_CLASSIC')
 	# try to populate the metadata
 	try:
 		nco.title = metaDict['title']
