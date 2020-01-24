@@ -15,7 +15,7 @@ if len(sys.argv) > 1:
     deleteTemp = sys.argv[10] #Whether to delete temporary files
 else:
     #If inputs aren't specified in system args, set them in the script
-    inDir = "../data/cov/ecoRegionL2/coldDeserts_eco2.tif" 
+    inDir = "../data/cov/ecoRegionL2/eco2_coldDeserts.tif" 
     taufdr = "../data/tauDEM/taufdr1002.tif" 
     taufac = "../data/tauDEM/taufac1002.tif" 
     workDir = "../work/1002"
