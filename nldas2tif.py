@@ -21,7 +21,7 @@ outDir = "../data/cov/nldas_SOILMOISTkgm2"
 #Step 1: Put the file dimensions in the correct order
 
 try:
-        cmd = "ncpdq -a time,lat,lon,lev {0} {1}".format(inCDF, reorderCDF)
+        cmd = "ncpdq -a time,lev,lat,lon{0} {1}".format(inCDF, reorderCDF)
         result = subprocess.run(cmd, shell = True)
         result.stdout
         
