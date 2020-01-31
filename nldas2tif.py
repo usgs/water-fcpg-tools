@@ -10,18 +10,18 @@ import traceback
 
 inDir = "../data/cov/nldas"
 
-inCDF = "../data/cov/soil_gridMET.nc" #Original netCDF from gridMET
-reorderCDF = "../data/cov/soil_gridMETfix.nc" #NetCDF file with reordered dimensions
-multiTIFF = "../data/cov/gridMET_SOILMOISTmm.tif" #Multiband .tif created from netCDF
+inCDF = "../data/cov/nldas/NLDAS_VIC0125_M.A197901.002.grb.SUB.nc4 " #Original netCDF from gridMET_SOILMOISTmm
+reorderCDF = "../data/cov/nldas/nldas_SOILMOISTkgm2_1979_01.nc" #NetCDF file with reordered dimensions
+multiTIFF = "../data/cov/nldas/nldas_SOILMOISTkgm2_1979_01.tif" #Multiband .tif created from netCDF
 
-baseName = "gridMET_SOILMOISTmm"
+baseName = "nldas_SOILMOISTkgm2"
 
-outDir = "../data/cov/gridMET_SOILMOISTmm"
+outDir = "../data/cov/nldas_SOILMOISTkgm2"
 
 #Step 1: Put the file dimensions in the correct order
 
 try:
-        cmd = "ncpdq -a time,lat,lon {0} {1}".format(inCDF, reorderCDF)
+        cmd = "ncpdq -a time,lat,lon,lev {0} {1}".format(inCDF, reorderCDF)
         result = subprocess.run(cmd, shell = True)
         result.stdout
         
@@ -48,7 +48,7 @@ except:
 #netCDFpath = "../data/cov/gridMET_PRmm.tif"
 
 
-
+"""
 with rs.open(multiTIFF) as ds: # load parameter raster
         numBands = ds.count
         data = ds.read()
@@ -99,3 +99,7 @@ for band in data:
 
 
         i = i + 1
+
+
+
+"""
