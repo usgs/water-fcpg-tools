@@ -36,59 +36,59 @@ for year in years:
 
 
 
-#Step 1: Put the file dimensions in the correct order
+                #Step 1: Put the file dimensions in the correct order
 
-try:
-        cmd = "ncpdq -a time,lev,lat,lon {0} {1}".format(inCDF, reorderCDF)
-        result = subprocess.run(cmd, shell = True)
-        result.stdout
-        
-except:
-        print('Error reordering NetCDF dimensions')
-        traceback.print_exc()
-
-
-#Step 2: Convert the netCDF to a multiband GeoTIFF
+                try:
+                        cmd = "ncpdq -a time,lev,lat,lon {0} {1}".format(inCDF, reorderCDF)
+                        result = subprocess.run(cmd, shell = True)
+                        result.stdout
+                        
+                except:
+                        print('Error reordering NetCDF dimensions')
+                        traceback.print_exc()
 
 
-try:
-        cmd = "gdal_translate -of GTiff -a_srs EPSG:4326 {0} {1}".format(reorderCDF, multiTIFF)
-        result = subprocess.run(cmd, shell = True)
-        result.stdout
-        
-except:
-        print('Error converting netCDF to geoTIFF')
-        traceback.print_exc()
+                #Step 2: Convert the netCDF to a multiband GeoTIFF
 
-#Step 3: Extract the band(s) we want from the GeoTIFF to individual rasters
 
-with rs.open(multiTIFF) as ds: # load parameter raster
-        numBands = ds.count
-        data = ds.read()
-        profile = ds.profile
-        paramNoData = ds.nodata
-        tags = ds.tags()
+                try:
+                        cmd = "gdal_translate -of GTiff -a_srs EPSG:4326 {0} {1}".format(reorderCDF, multiTIFF)
+                        result = subprocess.run(cmd, shell = True)
+                        result.stdout
+                        
+                except:
+                        print('Error converting netCDF to geoTIFF')
+                        traceback.print_exc()
 
-print(profile)
+                #Step 3: Extract the band(s) we want from the GeoTIFF to individual rasters
 
-band = data[3] #Get 3rd band (total column soil moisture)
+                with rs.open(multiTIFF) as ds: # load parameter raster
+                        numBands = ds.count
+                        data = ds.read()
+                        profile = ds.profile
+                        paramNoData = ds.nodata
+                        tags = ds.tags()
 
-fileName = os.path.join(outDir, baseName + "_" + str(year) + "_" + str(month) + ".tif") #Create the name for the output file
+                print(profile)
 
-#Update raster profile
-profile.update({
-        'compress':'LZW',
-        'profile':'GeoTIFF',
-        'tiled':True,
-        'count':1,
-        'sparse_ok':True,
-        'num_threads':'ALL_CPUS',
-        'bigtiff':'IF_SAFER'})
+                band = data[3] #Get 3rd band (total column soil moisture)
 
-with rs.open(fileName, 'w', **profile) as dst:
-        dst.write(band,1)
+                fileName = os.path.join(outDir, baseName + "_" + str(year) + "_" + str(month) + ".tif") #Create the name for the output file
 
-        print("Writing: " + fileName)
+                #Update raster profile
+                profile.update({
+                        'compress':'LZW',
+                        'profile':'GeoTIFF',
+                        'tiled':True,
+                        'count':1,
+                        'sparse_ok':True,
+                        'num_threads':'ALL_CPUS',
+                        'bigtiff':'IF_SAFER'})
+
+                with rs.open(fileName, 'w', **profile) as dst:
+                        dst.write(band,1)
+
+                        print("Writing: " + fileName)
 
 #day0 = datetime.datetime.strptime("01-01-1900", "%d-%m-%Y") #Set the day time is counted from
 
