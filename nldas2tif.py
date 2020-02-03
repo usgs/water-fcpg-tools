@@ -30,9 +30,9 @@ months = range(1,13)
 for year in years:
         for month in months:
 
-                inCDF = "../data/cov/nldas/NLDAS_VIC0125_M.A" + str(year) + str(month) + ".002.grb.SUB.nc4" #Original netCDF from gridMET_SOILMOISTmm
-                reorderCDF = "../data/cov/nldas/nldas_SOILMOISTkgm2_" + str(year) + "_" + str(month) + ".nc" #NetCDF file with reordered dimensions
-                multiTIFF = "../data/cov/nldas/nldas_SOILMOISTkgm2_" + str(year) + "_" + str(month) + ".tif" #Multiband .tif created from netCDF
+                inCDF = "../data/cov/nldas/NLDAS_VIC0125_M.A" + str(year) + str(month).zfill(2) + ".002.grb.SUB.nc4" #Original netCDF from gridMET_SOILMOISTmm
+                reorderCDF = "../data/cov/nldas/nldas_SOILMOISTkgm2_" + str(year) + "_" + str(month).zfill(2) + ".nc" #NetCDF file with reordered dimensions
+                multiTIFF = "../data/cov/nldas/nldas_SOILMOISTkgm2_" + str(year) + "_" + str(month).zfill(2) + ".tif" #Multiband .tif created from netCDF
 
 
 
@@ -73,7 +73,7 @@ for year in years:
 
                 band = data[3] #Get 3rd band (total column soil moisture)
 
-                fileName = os.path.join(outDir, baseName + "_" + str(year) + "_" + str(month) + ".tif") #Create the name for the output file
+                fileName = os.path.join(outDir, baseName + "_" + str(year) + "_" + str(month).zfill(2) + ".tif") #Create the name for the output file
 
                 #Update raster profile
                 profile.update({
