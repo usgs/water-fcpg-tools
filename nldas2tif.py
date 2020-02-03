@@ -24,8 +24,8 @@ baseName = "nldas_SOILMOISTkgm2"
 outDir = "../data/cov/nldas_SOILMOISTkgm2"
 
 
-years = range(1979, 2018)
-months = range(1,12)
+years = range(1979, 2019)
+months = range(1,13)
 
 for year in years:
         for month in months:
