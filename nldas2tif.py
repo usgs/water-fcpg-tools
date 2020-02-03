@@ -10,6 +10,7 @@ import traceback
 
 inDir = "../data/cov/nldas"
 
+"""
 inCDF = "../data/cov/nldas/NLDAS_VIC0125_M.A197901.002.grb.SUB.nc4 " #Original netCDF from gridMET_SOILMOISTmm
 reorderCDF = "../data/cov/nldas/nldas_SOILMOISTkgm2_1979_01.nc" #NetCDF file with reordered dimensions
 multiTIFF = "../data/cov/nldas/nldas_SOILMOISTkgm2_1979_01.tif" #Multiband .tif created from netCDF
@@ -17,10 +18,23 @@ multiTIFF = "../data/cov/nldas/nldas_SOILMOISTkgm2_1979_01.tif" #Multiband .tif 
 year = "1979"
 
 month = "01"
-
+"""
 baseName = "nldas_SOILMOISTkgm2"
 
 outDir = "../data/cov/nldas_SOILMOISTkgm2"
+
+
+years = range(1979, 2018)
+months = range(1,12)
+
+for year in years:
+        for month in months:
+
+                inCDF = "../data/cov/nldas/NLDAS_VIC0125_M.A" + str(year) + str(month) + ".002.grb.SUB.nc4" #Original netCDF from gridMET_SOILMOISTmm
+                reorderCDF = "../data/cov/nldas/nldas_SOILMOISTkgm2_" + str(year) + "_" + str(month) + ".nc" #NetCDF file with reordered dimensions
+                multiTIFF = "../data/cov/nldas/nldas_SOILMOISTkgm2" + str(year) + "_" + str(month) + ".tif" #Multiband .tif created from netCDF
+
+
 
 #Step 1: Put the file dimensions in the correct order
 
@@ -59,7 +73,7 @@ print(profile)
 
 band = data[3] #Get 3rd band (total column soil moisture)
 
-fileName = os.path.join(outDir, baseName + "_" + year + "_" + month + ".tif") #Create the name for the output file
+fileName = os.path.join(outDir, baseName + "_" + str(year) + "_" + str(month) + ".tif") #Create the name for the output file
 
 #Update raster profile
 profile.update({
