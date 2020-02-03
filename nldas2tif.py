@@ -15,7 +15,7 @@ inCDF = "../data/cov/nldas/NLDAS_VIC0125_M.A197901.002.grb.SUB.nc4 " #Original n
 reorderCDF = "../data/cov/nldas/nldas_SOILMOISTkgm2_1979_01.nc" #NetCDF file with reordered dimensions
 multiTIFF = "../data/cov/nldas/nldas_SOILMOISTkgm2_1979_01.tif" #Multiband .tif created from netCDF
 
-year = "1979"
+year = "1989"
 
 month = "01"
 """
@@ -24,7 +24,7 @@ baseName = "nldas_SOILMOISTkgm2"
 outDir = "../data/cov/nldas_SOILMOISTkgm2"
 
 
-years = range(1988, 2019)
+years = range(1989, 2019)
 months = range(1,13)
 
 for year in years:
