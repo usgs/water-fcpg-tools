@@ -62,19 +62,19 @@ band = data[3] #Get 3rd band (total column soil moisture)
 fileName = os.path.join(outDir, baseName + "_" + year + "_" + month + ".tif") #Create the name for the output file
 
 #Update raster profile
-        profile.update({
-                'compress':'LZW',
-                'profile':'GeoTIFF',
-                'tiled':True,
-                'count':1,
-                'sparse_ok':True,
-                'num_threads':'ALL_CPUS',
-                'bigtiff':'IF_SAFER'})
+profile.update({
+        'compress':'LZW',
+        'profile':'GeoTIFF',
+        'tiled':True,
+        'count':1,
+        'sparse_ok':True,
+        'num_threads':'ALL_CPUS',
+        'bigtiff':'IF_SAFER'})
 
-        with rs.open(fileName, 'w', **profile) as dst:
-                dst.write(band,1)
+with rs.open(fileName, 'w', **profile) as dst:
+        dst.write(band,1)
 
-                print("Writing: " + fileName)
+        print("Writing: " + fileName)
 
 #day0 = datetime.datetime.strptime("01-01-1900", "%d-%m-%Y") #Set the day time is counted from
 
