@@ -32,7 +32,7 @@ for year in years:
 
                 inCDF = "../data/cov/nldas/NLDAS_VIC0125_M.A" + str(year) + str(month) + ".002.grb.SUB.nc4" #Original netCDF from gridMET_SOILMOISTmm
                 reorderCDF = "../data/cov/nldas/nldas_SOILMOISTkgm2_" + str(year) + "_" + str(month) + ".nc" #NetCDF file with reordered dimensions
-                multiTIFF = "../data/cov/nldas/nldas_SOILMOISTkgm2" + str(year) + "_" + str(month) + ".tif" #Multiband .tif created from netCDF
+                multiTIFF = "../data/cov/nldas/nldas_SOILMOISTkgm2_" + str(year) + "_" + str(month) + ".tif" #Multiband .tif created from netCDF
 
 
 
