@@ -14,6 +14,10 @@ inCDF = "../data/cov/nldas/NLDAS_VIC0125_M.A197901.002.grb.SUB.nc4 " #Original n
 reorderCDF = "../data/cov/nldas/nldas_SOILMOISTkgm2_1979_01.nc" #NetCDF file with reordered dimensions
 multiTIFF = "../data/cov/nldas/nldas_SOILMOISTkgm2_1979_01.tif" #Multiband .tif created from netCDF
 
+year = "1979"
+
+month = "01"
+
 baseName = "nldas_SOILMOISTkgm2"
 
 outDir = "../data/cov/nldas_SOILMOISTkgm2"
@@ -42,13 +46,8 @@ except:
         print('Error converting netCDF to geoTIFF')
         traceback.print_exc()
 
-#Step 3: Convert each band of the GeoTIFF to its own raster
+#Step 3: Extract the band(s) we want from the GeoTIFF to individual rasters
 
-
-#netCDFpath = "../data/cov/gridMET_PRmm.tif"
-
-
-"""
 with rs.open(multiTIFF) as ds: # load parameter raster
         numBands = ds.count
         data = ds.read()
@@ -58,15 +57,34 @@ with rs.open(multiTIFF) as ds: # load parameter raster
 
 print(profile)
 
-day0 = datetime.datetime.strptime("01-01-1900", "%d-%m-%Y") #Set the day time is counted from
+band = data[3] #Get 3rd band (total column soil moisture)
+
+fileName = os.path.join(outDir, baseName + "_" + year + "_" + month + ".tif") #Create the name for the output file
+
+#Update raster profile
+        profile.update({
+                'compress':'LZW',
+                'profile':'GeoTIFF',
+                'tiled':True,
+                'count':1,
+                'sparse_ok':True,
+                'num_threads':'ALL_CPUS',
+                'bigtiff':'IF_SAFER'})
+
+        with rs.open(fileName, 'w', **profile) as dst:
+                dst.write(band,1)
+
+                print("Writing: " + fileName)
+
+#day0 = datetime.datetime.strptime("01-01-1900", "%d-%m-%Y") #Set the day time is counted from
 
 
-days = tags["NETCDF_DIM_time_VALUES"] #Get the list of dates associated with each band and convert to list
-days = days.replace("{", "")
-days = days.replace("}", "")
-days = days.split(",")
+#days = tags["NETCDF_DIM_time_VALUES"] #Get the list of dates associated with each band and convert to list
+#days = days.replace("{", "")
+#days = days.replace("}", "")
+#days = days.split(",")
 
-
+"""
 i = 0 
 
 for band in data:
@@ -101,5 +119,5 @@ for band in data:
         i = i + 1
 
 
-
 """
+
