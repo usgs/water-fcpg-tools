@@ -8,13 +8,13 @@ import traceback
 # Script to destroy the netCDF file Roy got from gridMET
 # Must have gdal and nco tools (module load tools/nco-4.7.8-gnu) modules loaded 
 
-inCDF = "../data/cov/pr_2018.nc" #Original netCDF from gridMET
-reorderCDF = "../data/cov/pr_2018fix.nc" #NetCDF file with reordered dimensions
-multiTIFF = "../data/cov/gridMET_PRmm_2018.tif" #Multiband .tif created from netCDF
+inCDF = "../data/cov/tmmn_2018.nc" #Original netCDF from gridMET
+reorderCDF = "../data/cov/tmmn_2018fix.nc" #NetCDF file with reordered dimensions
+multiTIFF = "../data/cov/gridMET_minTempK_2018.tif" #Multiband .tif created from netCDF
 
-baseName = "gridMET_PRmm"
+baseName = "gridMET_minTmpK"
 
-outDir = "../data/cov/gridMET_PRmm"
+outDir = "../data/cov/gridMET_minTempK"
 
 year = os.path.splitext(os.path.basename(inCDF))[0].split("_")[1] # Get year from input file
 
