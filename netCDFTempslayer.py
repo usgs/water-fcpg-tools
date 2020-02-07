@@ -12,7 +12,7 @@ inCDF = "../data/cov/tmmn_2018.nc" #Original netCDF from gridMET
 reorderCDF = "../data/cov/tmmn_2018fix.nc" #NetCDF file with reordered dimensions
 multiTIFF = "../data/cov/gridMET_minTempK_2018.tif" #Multiband .tif created from netCDF
 
-baseName = "gridMET_minTmpK"
+baseName = "gridMET_minTempK"
 
 outDir = "../data/cov/gridMET_minTempK"
 
