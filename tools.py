@@ -382,7 +382,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         outType = 'Float64' # Try a 64 bit complex floating point if all else fails
 
     #Check if resampling or reprojection are required
-    if paramcrs == fdrcrs and paramXsize == xsize and paramYsize == ysize:
+    if str(paramcrs) == str(fdrcrs) and paramXsize == xsize and paramYsize == ysize:
         print("Parameter does not require reprojection or resampling")
     
     else:
