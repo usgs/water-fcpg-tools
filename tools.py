@@ -347,10 +347,15 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         paramNoData = ds.nodata
         paramType = ds.dtypes[0] #Get datatype of first band
         paramcrs = ds.crs #Get parameter coordinate reference system
+        paramXsize, paramYsize = ds.res #Get parameter cell size
 
 
     # Convert flow direction spatial reference from wkt to proj4 
     print("Flow Direction WKT: " + str(fdrcrs))
+    print("Parameter WKT:" + str(paramcrs))
+
+    print("Flow Direction Xsize:" + str(xsize))
+    print("Parameter Xsize:" + str(paramXsize))
 
     
     #Over ride the output coordinate system to make it work with USGS Albers projection
@@ -376,36 +381,40 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         print("Defaulting to Float64")
         outType = 'Float64' # Try a 64 bit complex floating point if all else fails
 
+    #Check if resampling or reprojection are required
+    if paramcrs == fdrcrs and paramXsize == xsize and paramYsize == ysize:
+        print("Parameter does not require reprojection or resampling")
     
+    else:
 
-    # Resample, reproject, and clip the parameter raster with GDAL
-    try:
-        print('Resampling and Reprojecting Parameter Raster...')
-        warpParams = {
-        'inParam': inParam,
-        'outParam': outParam,
-        'fdr':fdr,
-        'cores':cores, 
-        'resampleMethod': resampleMethod,
-        'xsize': xsize, 
-        'ysize': ysize, 
-        'fdrXmin': fdrXmin,
-        'fdrXmax': fdrXmax,
-        'fdrYmin': fdrYmin,
-        'fdrYmax': fdrYmax,
-        'fdrcrs': fdrcrs, 
-        'nodata': paramNoData,
-        'datatype': outType
-        }
-        
-        cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
-        print(cmd)
-        result = subprocess.run(cmd, shell = True)
-        result.stdout
-        
-    except:
-        print('Error Reprojecting Parameter Raster')
-        traceback.print_exc()
+        # Resample, reproject, and clip the parameter raster with GDAL
+        try:
+            print('Resampling and Reprojecting Parameter Raster...')
+            warpParams = {
+            'inParam': inParam,
+            'outParam': outParam,
+            'fdr':fdr,
+            'cores':cores, 
+            'resampleMethod': resampleMethod,
+            'xsize': xsize, 
+            'ysize': ysize, 
+            'fdrXmin': fdrXmin,
+            'fdrXmax': fdrXmax,
+            'fdrYmin': fdrYmin,
+            'fdrYmax': fdrYmax,
+            'fdrcrs': fdrcrs, 
+            'nodata': paramNoData,
+            'datatype': outType
+            }
+            
+            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
+            print(cmd)
+            result = subprocess.run(cmd, shell = True)
+            result.stdout
+            
+        except:
+            print('Error Reprojecting Parameter Raster')
+            traceback.print_exc()
 
 #Tools for decayed accumulation CPGs
 
