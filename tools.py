@@ -346,6 +346,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     with rs.open(inParam) as ds: # load parameter raster in Rasterio
         paramNoData = ds.nodata
         paramType = ds.dtypes[0] #Get datatype of first band
+        paramcrs = ds.crs #Get parameter coordinate reference system
 
 
     # Convert flow direction spatial reference from wkt to proj4 
