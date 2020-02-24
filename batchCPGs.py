@@ -71,7 +71,8 @@ for cov in covList:
 
         #Set up python environment for job
         f.writelines("module load gis/TauDEM-5.3.8-gcc-mpich\n")
-        f.writelines("module load gdal/2.2.2-gcc\n")
+        #f.writelines("module load gdal/2.2.2-gcc\n")
+        f.writelines("module load gdal/2.4.1-gcc71\n")
         f.writelines("source activate py36\n")
 
         #Run the python script
