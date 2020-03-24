@@ -29,6 +29,8 @@ import geopandas as gpd
 
 def tauDrainDir(inRast, outRast):
     """
+    Reclassifies ESRI drainage directions into tauDEM drainage directions.
+
     Inputs:
         inRast - Flow direction raster from NHDPlus
 
@@ -60,15 +62,16 @@ def tauDrainDir(inRast, outRast):
 
     # edit the metadata
     profile.update({
-                'dtype':'uint8',
-                'compress':'LZW',
-                'profile':'GeoTIFF',
-                'tiled':True,
-                'sparse_ok':True,
-                'num_threads':'ALL_CPUS',
-                'nodata':0,
-                'bigtiff':'IF_SAFER',
-                'driver' : "GTiff"})
+    		'compress':'LZW',
+    		'sparse':True,
+    		'tiled':True,
+    		'blockysize':256,
+    		'blockxsize':256,
+            'driver' : "GTiff",
+            'nodata':0})
+    
+    if os.path.isfile(outRast):
+    	os.remove(outRast)
 
     with rs.open(outRast,'w',**profile) as dst:
         dst.write(tauDir,1)
@@ -1150,7 +1153,7 @@ def findLastFACFD(facfl, fl):
     dat = loadRaster(fl) # load the data file
     
     cx,cy = np.where(fac==fac.max()) # find the column, row cooridnates of the max fac.
-    print("%s,%s"%(cx,cy))
+    #print("%s,%s"%(cx,cy))
     d = dat[cx,cy][0] # query the parameter grid
     
     src = rs.open(facfl) # open the fac dataset
@@ -1307,6 +1310,13 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl):
     
     # using lists instead of single values in case there are multiple pour points between basins
     
+    if type(x) != list:
+    	x = list([x])
+    if type(y) != list:
+    	y = list([y])
+    if type(upstreamFACmax) != list:
+    	upstreamFACmax = list([upstreamFACmax])
+
     # convert lists to strings
     xs = [str(xx) for xx in x]
     ys = [str(yy) for yy in y]
@@ -1465,7 +1475,7 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
                 print("Generating FAC weighting grid.")
                 makeFACweight(facWeighttemplate,downstreamFACweightFl) 
             if os.path.isfile(downstreamFACweightFl): # if the weighting grid is present, update it with the upstream value.
-                print("Updating FAC weighting grip with value from %s FAC"%(key))
+                print("Updating FAC weighting grid with value from %s FAC"%(key))
                 updateRaster(upstreamDict['x'],
                              upstreamDict['y'],
                              upstreamDict['maxUpstreamFAC'],
