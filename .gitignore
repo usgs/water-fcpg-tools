@@ -2,4 +2,5 @@ data
 *.err
 *.log
 .ipynb_checkpoints
+*.pyc
 scratch
