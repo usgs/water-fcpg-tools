@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=CPG # name that you chose
 #SBATCH -c 1 # cpus per task
-#SBATCH -n 32 # number of tasks
+#SBATCH -n $4 # number of tasks
 #SBATCH --tasks-per-node=16
 #SBATCH -p normal                         # the partition you want to use, for this case prod is best
 #SBATCH --account=wymtwsc        # your account
@@ -15,4 +15,12 @@ source activate py36
 module load gis/TauDEM-5.3.8-gcc-mpich
 module load gdal/2.2.2-gcc
 
-python -u ./make_cpg_tauDEM.py $1 $SLURM_JOB_ID $SLURM_NTASKS
+
+fdr = $1
+weight = $2
+outFile = $3
+cores = $4
+email = $5
+
+
+mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc
