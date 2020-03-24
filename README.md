@@ -3,6 +3,8 @@
 
 Scripts to make headwaters continuous parameter grids (CPGs) by HUC2 regions for the Continental United States on Yeti.
 
+![package structure](./img/CPG_tool_structure.png)
+
 ### Current Usage:
 
 `sbatch submit_make_cpg_tauDEM.sh <region>`

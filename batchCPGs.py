@@ -15,12 +15,12 @@ if len(sys.argv) > 1:
     deleteTemp = sys.argv[10] #Whether to delete temporary files
 else:
     #If inputs aren't specified in system args, set them in the script
-    inDir = "../data/cov/landsatET/vrt/landsat_ETmm_2003_00_00.vrt" 
-    taufdr = "../data/tauDEM/taufdr1004.tif" 
-    taufac = "../data/tauDEM/taufac1004.tif" 
-    workDir = "../work/1004"
-    outDir = "../CPGs/1004"
-    logDir = "../logs/1004"
+    inDir = "../data/cov/static/elev_cm_1002.tif" 
+    taufdr = "../data/tauDEM/taufdr1002.tif" 
+    taufac = "../data/tauDEM/taufac1002.tif" 
+    workDir = "../work/1002"
+    outDir = "../CPGs/1002"
+    logDir = "../logs/1002"
     cores = 20
     accumThresh = 1000
     overwrite = True
@@ -33,7 +33,7 @@ if os.path.isdir(inDir):
     for path, subdirs, files in os.walk(inDir):
         for name in files:
             #Check if file is .tif, and if so add it to covariate list
-            if os.path.splitext(name)[1] == ".vrt":
+            if os.path.splitext(name)[1] == ".tif":
                     covList.append(os.path.join(path, name))
 elif os.path.isfile(inDir):
     #Supplied path is a single covariate file
@@ -76,6 +76,7 @@ for cov in covList:
 
         #Run the python script
         f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
+        #f.writelines("python -u ./makeCPG_noResample.py {0} {1} {2} {3} {4} {5} {6} {7} {8}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
         
     print("Launching batch job for: " + str(covname))
 

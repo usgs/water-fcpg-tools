@@ -29,6 +29,8 @@ import geopandas as gpd
 
 def tauDrainDir(inRast, outRast):
     """
+    Reclassifies ESRI drainage directions into tauDEM drainage directions.
+
     Inputs:
         inRast - Flow direction raster from NHDPlus
 
@@ -60,15 +62,16 @@ def tauDrainDir(inRast, outRast):
 
     # edit the metadata
     profile.update({
-                'dtype':'uint8',
-                'compress':'LZW',
-                'profile':'GeoTIFF',
-                'tiled':True,
-                'sparse_ok':True,
-                'num_threads':'ALL_CPUS',
-                'nodata':0,
-                'bigtiff':'IF_SAFER',
-                'driver' : "GTiff"})
+    		'compress':'LZW',
+    		'sparse':True,
+    		'tiled':True,
+    		'blockysize':256,
+    		'blockxsize':256,
+            'driver' : "GTiff",
+            'nodata':0})
+    
+    if os.path.isfile(outRast):
+    	os.remove(outRast)
 
     with rs.open(outRast,'w',**profile) as dst:
         dst.write(tauDir,1)
@@ -346,10 +349,16 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
     with rs.open(inParam) as ds: # load parameter raster in Rasterio
         paramNoData = ds.nodata
         paramType = ds.dtypes[0] #Get datatype of first band
+        paramcrs = ds.crs #Get parameter coordinate reference system
+        paramXsize, paramYsize = ds.res #Get parameter cell size
 
 
     # Convert flow direction spatial reference from wkt to proj4 
     print("Flow Direction WKT: " + str(fdrcrs))
+    print("Parameter WKT:" + str(paramcrs))
+
+    print("Flow Direction Xsize:" + str(xsize))
+    print("Parameter Xsize:" + str(paramXsize))
 
     
     #Over ride the output coordinate system to make it work with USGS Albers projection
@@ -375,36 +384,40 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         print("Defaulting to Float64")
         outType = 'Float64' # Try a 64 bit complex floating point if all else fails
 
+    #Check if resampling or reprojection are required
+    if str(paramcrs) == str(fdrcrs) and paramXsize == xsize and paramYsize == ysize:
+        print("Parameter does not require reprojection or resampling")
     
+    else:
 
-    # Resample, reproject, and clip the parameter raster with GDAL
-    try:
-        print('Resampling and Reprojecting Parameter Raster...')
-        warpParams = {
-        'inParam': inParam,
-        'outParam': outParam,
-        'fdr':fdr,
-        'cores':cores, 
-        'resampleMethod': resampleMethod,
-        'xsize': xsize, 
-        'ysize': ysize, 
-        'fdrXmin': fdrXmin,
-        'fdrXmax': fdrXmax,
-        'fdrYmin': fdrYmin,
-        'fdrYmax': fdrYmax,
-        'fdrcrs': fdrcrs, 
-        'nodata': paramNoData,
-        'datatype': outType
-        }
-        
-        cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
-        print(cmd)
-        result = subprocess.run(cmd, shell = True)
-        result.stdout
-        
-    except:
-        print('Error Reprojecting Parameter Raster')
-        traceback.print_exc()
+        # Resample, reproject, and clip the parameter raster with GDAL
+        try:
+            print('Resampling and Reprojecting Parameter Raster...')
+            warpParams = {
+            'inParam': inParam,
+            'outParam': outParam,
+            'fdr':fdr,
+            'cores':cores, 
+            'resampleMethod': resampleMethod,
+            'xsize': xsize, 
+            'ysize': ysize, 
+            'fdrXmin': fdrXmin,
+            'fdrXmax': fdrXmax,
+            'fdrYmin': fdrYmin,
+            'fdrYmax': fdrYmax,
+            'fdrcrs': fdrcrs, 
+            'nodata': paramNoData,
+            'datatype': outType
+            }
+            
+            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
+            print(cmd)
+            result = subprocess.run(cmd, shell = True)
+            result.stdout
+            
+        except:
+            print('Error Reprojecting Parameter Raster')
+            traceback.print_exc()
 
 #Tools for decayed accumulation CPGs
 
@@ -1140,7 +1153,7 @@ def findLastFACFD(facfl, fl):
     dat = loadRaster(fl) # load the data file
     
     cx,cy = np.where(fac==fac.max()) # find the column, row cooridnates of the max fac.
-    print("%s,%s"%(cx,cy))
+    #print("%s,%s"%(cx,cy))
     d = dat[cx,cy][0] # query the parameter grid
     
     src = rs.open(facfl) # open the fac dataset
@@ -1297,6 +1310,13 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl):
     
     # using lists instead of single values in case there are multiple pour points between basins
     
+    if type(x) != list:
+    	x = list([x])
+    if type(y) != list:
+    	y = list([y])
+    if type(upstreamFACmax) != list:
+    	upstreamFACmax = list([upstreamFACmax])
+
     # convert lists to strings
     xs = [str(xx) for xx in x]
     ys = [str(yy) for yy in y]
@@ -1455,7 +1475,7 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
                 print("Generating FAC weighting grid.")
                 makeFACweight(facWeighttemplate,downstreamFACweightFl) 
             if os.path.isfile(downstreamFACweightFl): # if the weighting grid is present, update it with the upstream value.
-                print("Updating FAC weighting grip with value from %s FAC"%(key))
+                print("Updating FAC weighting grid with value from %s FAC"%(key))
                 updateRaster(upstreamDict['x'],
                              upstreamDict['y'],
                              upstreamDict['maxUpstreamFAC'],
