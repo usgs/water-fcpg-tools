@@ -4,3 +4,6 @@ data
 .ipynb_checkpoints
 *.pyc
 scratch
+figures
+*.mxd
+*.csv

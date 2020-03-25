@@ -1,0 +1,12 @@
+name: fcpgtools
+dependencies:
+  - python>=3.6
+  - anaconda
+  - ipython
+  - jupyter
+  - rasterio
+  - geopandas
+  - pandas
+  - matplotlib
+  - netCDF4
+  - json
