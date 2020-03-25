@@ -24,4 +24,4 @@ Dependencies for this work are largely taken care of via the anaconda environmen
 
 ### Documentation
 
-View the [documentation](./documentation/index.html).
+View the [documentation](https://code.usgs.gov/StreamStats/FCPGtools/-/blob/master/documentation/html/index.html).
