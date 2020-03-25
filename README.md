@@ -24,4 +24,4 @@ Dependencies for this work are largely taken care of via the anaconda environmen
 
 ### Documentation
 
-View the documentation in the `docs` folder.
+View the [documentation](./documentation/index.html).
