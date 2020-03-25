@@ -10,3 +10,6 @@ dependencies:
   - matplotlib
   - netCDF4
   - json
+  - pip
+  - pip:
+      - https://code.usgs.gov/StreamStats/CPGtools
