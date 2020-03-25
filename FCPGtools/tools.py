@@ -3,7 +3,6 @@ import numpy as np
 import sys
 import os
 import pandas as pd
-import gdal # is this used?
 import subprocess
 import glob
 import shutil
@@ -11,7 +10,6 @@ import traceback
 import urllib.request
 import datetime
 from multiprocessing import Pool as processPool
-from osgeo import osr # is this used?
 
 # Imports for reading and writing json files
 import json

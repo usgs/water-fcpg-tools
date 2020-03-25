@@ -1,0 +1,1750 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tools &mdash; Flow-Conditioned Parameter Grid Tools 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Flow-Conditioned Parameter Grid Tools
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functions.html">Function Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../example_scripts.html">Example Scripts</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Flow-Conditioned Parameter Grid Tools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tools</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">rasterio</span> <span class="k">as</span> <span class="nn">rs</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="k">import</span> <span class="n">Pool</span> <span class="k">as</span> <span class="n">processPool</span>
+
+<span class="c1"># Imports for reading and writing json files</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">io</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">to_unicode</span> <span class="o">=</span> <span class="n">unicode</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <span class="n">to_unicode</span> <span class="o">=</span> <span class="nb">str</span>
+
+<span class="c1"># Imports for cascade tools</span>
+<span class="kn">from</span> <span class="nn">rasterio.mask</span> <span class="k">import</span> <span class="n">mask</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+
+<div class="viewcode-block" id="tauDrainDir"><a class="viewcode-back" href="../functions.html#tools.tauDrainDir">[docs]</a><span class="k">def</span> <span class="nf">tauDrainDir</span><span class="p">(</span><span class="n">inRast</span><span class="p">,</span> <span class="n">outRast</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reclassifies ESRI drainage directions into tauDEM drainage directions.</span>
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        inRast - Flow direction raster from NHDPlus</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        outRast - Flow direction raster for tauDEM</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reclassifying Flow Directions...&#39;</span><span class="p">)</span>
+
+    <span class="c1"># load input data</span>
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inRast</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">inNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># save the metadata for output later</span>
+
+    <span class="n">tauDir</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="c1"># remap NHDplus flow direction to TauDEM flow Direction</span>
+    <span class="c1"># east is ok</span>
+    
+    <span class="n">tauDir</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span> <span class="c1"># southeast</span>
+    <span class="n">tauDir</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mi">7</span> <span class="c1"># south</span>
+    <span class="n">tauDir</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span> <span class="c1"># southwest</span>
+    <span class="n">tauDir</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="mi">16</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># west</span>
+    <span class="n">tauDir</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="mi">32</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span> <span class="c1"># northwest</span>
+    <span class="n">tauDir</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="mi">64</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1"># north</span>
+    <span class="n">tauDir</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="mi">128</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># northeast</span>
+    <span class="n">tauDir</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="n">inNoData</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># no data</span>
+    <span class="n">tauDir</span> <span class="o">=</span> <span class="n">tauDir</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;uint8&#39;</span><span class="p">)</span><span class="c1">#8 bit integer is sufficient for flow directions</span>
+
+    <span class="c1"># edit the metadata</span>
+    <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    		<span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+    		<span class="s1">&#39;sparse&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+    		<span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+    		<span class="s1">&#39;blockysize&#39;</span><span class="p">:</span><span class="mi">256</span><span class="p">,</span>
+    		<span class="s1">&#39;blockxsize&#39;</span><span class="p">:</span><span class="mi">256</span><span class="p">,</span>
+            <span class="s1">&#39;driver&#39;</span> <span class="p">:</span> <span class="s2">&quot;GTiff&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;nodata&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">})</span>
+    
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">outRast</span><span class="p">):</span>
+    	<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">outRast</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outRast</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tauDir</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TauDEM drainage direction written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="accumulateParam"><a class="viewcode-back" href="../functions.html#tools.accumulateParam">[docs]</a><span class="k">def</span> <span class="nf">accumulateParam</span><span class="p">(</span><span class="n">paramRast</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">accumRast</span><span class="p">,</span> <span class="n">outNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outNoDataAccum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">zeroNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">multNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        paramRast : </span>
+<span class="sd">            Raster of parameter values to acumulate, this file is modified by the function</span>
+<span class="sd">        fdr : </span>
+<span class="sd">            Flow direction raster in tauDEM format</span>
+<span class="sd">        accumRast : </span>
+<span class="sd">            File location to store accumulated parameter values</span>
+<span class="sd">        outNoDataRast : </span>
+<span class="sd">            File location to store parameter no data raster</span>
+<span class="sd">        outNoDataAccum :</span>
+<span class="sd">            File location to store accumulated no data raster</span>
+<span class="sd">        zeroNoDataRast : </span>
+<span class="sd">        multiplier :</span>
+<span class="sd">        multNoDataRast : </span>
+<span class="sd">        cores - number of cores to use parameter accumulation</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    Outputs</span>
+<span class="sd">    -------</span>
+<span class="sd">        accumRast - raster of accumulated parameter values</span>
+<span class="sd">        outNoDataRast - raster of no data values</span>
+<span class="sd">        outNoDataRast - raster of accumulated no data values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">paramRast</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error - Parameter raster file is missing!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="c1">#Function will fail, so end it now</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fdr</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error - Flow direction file is missing!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="c1">#Function will fail, so end it now</span>
+
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">paramRast</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load parameter raster</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">profile</span>
+        <span class="n">paramNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span>
+
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fdr</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load flow direction raster</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">directionNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span> <span class="c1"># pull the accumulated area no data value</span>
+
+    <span class="c1">#print(paramNoData)</span>
+    <span class="k">if</span> <span class="n">paramNoData</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Parameter raster no data value not specified, results may be invalid&quot;</span><span class="p">)</span>
+
+
+    <span class="c1">#Deal with no data values</span>
+    <span class="n">basinNoDataCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[(</span><span class="n">data</span> <span class="o">==</span> <span class="n">paramNoData</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">direction</span> <span class="o">!=</span> <span class="n">directionNoData</span><span class="p">)])</span> <span class="c1"># Count number of cells with flow direction but no parameter value</span>
+    
+    <span class="k">if</span> <span class="n">basinNoDataCount</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">zeroNoDataRast</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning: No data parameter values exist in basin&#39;</span><span class="p">)</span>
+
+
+        <span class="c1">#Set no data values in the basin to zero so tauDEM accumulates them correctly</span>
+        <span class="n">noDataZero</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1">#noDataZero[(data == paramNoData) &amp; (direction != directionNoData)] = 0 #Set no data values in basin to 0</span>
+
+        <span class="c1"># Update profile for no data raster</span>
+        <span class="n">newProfile</span> <span class="o">=</span> <span class="n">profile</span> 
+        <span class="n">newProfile</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;profile&#39;</span><span class="p">:</span><span class="s1">&#39;GeoTIFF&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;sparse_ok&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">})</span>
+            
+        <span class="c1"># Save no data raster</span>
+        <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">zeroNoDataRast</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">newProfile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+            <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter No Data raster written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">zeroNoDataRast</span><span class="p">))</span>
+            
+        <span class="n">tauDEMweight</span> <span class="o">=</span> <span class="n">zeroNoDataRast</span> <span class="c1">#Set file to use as weight in tauDEM accumulation</span>
+
+        <span class="c1">#If a no data file path is given, accumulate no data values</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">outNoDataRast</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">outNoDataAccum</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">noDataArray</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">noDataArray</span><span class="p">[(</span><span class="n">data</span> <span class="o">==</span> <span class="n">paramNoData</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">direction</span> <span class="o">!=</span> <span class="n">directionNoData</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#Set no data values in basin to 1</span>
+            <span class="n">noDataArray</span><span class="p">[(</span><span class="n">data</span> <span class="o">!=</span> <span class="n">paramNoData</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#Set values with data to 0</span>
+            <span class="n">noDataArray</span><span class="p">[(</span><span class="n">direction</span> <span class="o">==</span> <span class="n">directionNoData</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="c1">#Set all values outside of basin to -1</span>
+            <span class="n">noDataArray</span> <span class="o">=</span> <span class="n">noDataArray</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+
+            <span class="c1"># Update profile for no data raster</span>
+            <span class="n">newProfile</span> <span class="o">=</span> <span class="n">profile</span> 
+            <span class="n">newProfile</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                    <span class="s1">&#39;dtype&#39;</span><span class="p">:</span><span class="s1">&#39;int8&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;profile&#39;</span><span class="p">:</span><span class="s1">&#39;GeoTIFF&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="s1">&#39;sparse_ok&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;nodata&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">})</span>
+            
+            <span class="c1"># Save no data raster</span>
+            <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outNoDataRast</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">newProfile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+                <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">noDataArray</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter No Data raster written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outNoDataRast</span><span class="p">))</span>
+        
+        <span class="c1"># Use tauDEM to accumulate no data values</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accumulating No Data Values&#39;</span><span class="p">)</span>
+            
+            <span class="n">outFl</span> <span class="o">=</span> <span class="n">outNoDataRast</span>
+                
+            <span class="n">tauParams</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
+            <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
+            <span class="s1">&#39;outFl&#39;</span><span class="p">:</span><span class="n">outFl</span><span class="p">,</span>
+            <span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="n">outNoDataRast</span>
+            <span class="p">}</span>
+            
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -bind-to rr -n </span><span class="si">{cores}</span><span class="s1"> aread8 -p </span><span class="si">{fdr}</span><span class="s1"> -ad8 </span><span class="si">{outFl}</span><span class="s1"> -wg </span><span class="si">{weight}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter no data accumulation written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outNoDataRast</span><span class="p">))</span>
+            
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error Accumulating Data&#39;</span><span class="p">)</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tauDEMweight</span> <span class="o">=</span> <span class="n">paramRast</span> <span class="c1">#Set file to use as weight in tauDEM accumulation</span>
+
+
+    <span class="c1">#Use tauDEM to accumulate the parameter</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accumulating Data...&#39;</span><span class="p">)</span>
+        <span class="n">tauParams</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
+        <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
+        <span class="s1">&#39;outFl&#39;</span><span class="p">:</span><span class="n">accumRast</span><span class="p">,</span> 
+        <span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="n">tauDEMweight</span>
+        <span class="p">}</span>
+        
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -bind-to rr -n </span><span class="si">{cores}</span><span class="s1"> aread8 -p </span><span class="si">{fdr}</span><span class="s1"> -ad8 </span><span class="si">{outFl}</span><span class="s1"> -wg </span><span class="si">{weight}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
+        
+        <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+        
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error Accumulating Data&#39;</span><span class="p">)</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="make_cpg"><a class="viewcode-back" href="../functions.html#tools.make_cpg">[docs]</a><span class="k">def</span> <span class="nf">make_cpg</span><span class="p">(</span><span class="n">accumParam</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">noDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">minAccum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        </span>
+<span class="sd">        accumParam - path to the accumulated parameter data raster</span>
+<span class="sd">        fac - flow accumulation grid path</span>
+<span class="sd">        outRast - output CPG file location</span>
+<span class="sd">        noDataRast - raster of accumulated parameter no data values</span>
+<span class="sd">        minAccum - Value of flow accumulation below which the CPG values will be set to no data</span>
+<span class="sd">        </span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        outRast - Parameter CPG </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">outNoData</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
+    
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">accumParam</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error - Accumulated parameter raster file is missing!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="c1">#Function will fail, so end it now</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fac</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error - Flow accumulation file is missing!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="c1">#Function will fail, so end it now</span>
+
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading accumulated parameter file </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">accumParam</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load accumulated data and no data rasters</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">profile</span>
+        <span class="n">inNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1">#Convert to 32 bit float</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">==</span> <span class="n">inNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="c1"># fill with no data values where appropriate</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading basin flow accumulation file </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fac</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># flow accumulation raster</span>
+        <span class="n">accum</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">facNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span> <span class="c1"># pull the accumulated area no data value</span>
+
+
+    <span class="k">if</span> <span class="n">noDataRast</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Correcting CPG for no data values&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">noDataRast</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># accumulated no data raster</span>
+            <span class="n">accumNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">noDataNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span> <span class="c1"># pull the accumulated no data no data value</span>
+            
+        <span class="n">accumNoData</span><span class="p">[</span><span class="n">accumNoData</span> <span class="o">==</span> <span class="n">noDataNoData</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#Set no data values to zero</span>
+
+        <span class="n">corrAccum</span> <span class="o">=</span> <span class="n">accum</span> <span class="o">-</span> <span class="n">accumNoData</span> <span class="c1"># Compute corrected accumulation</span>
+        <span class="n">corrAccum</span> <span class="o">=</span> <span class="n">corrAccum</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1"># Convert to 32 bit float</span>
+        <span class="n">corrAccum</span><span class="p">[</span><span class="n">accum</span> <span class="o">==</span> <span class="n">facNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="c1"># fill with no data values where appropriate</span>
+        
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">accum2</span> <span class="o">=</span> <span class="n">accum</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">accum2</span><span class="p">[</span><span class="n">accum</span> <span class="o">==</span> <span class="n">facNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="c1"># fill this with no data values where appropriate</span>
+        <span class="n">corrAccum</span> <span class="o">=</span> <span class="n">accum2</span> <span class="c1"># No correction required</span>
+        
+
+    
+    
+    <span class="c1"># Throw warning if there is a negative accumulation</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">corrAccum</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Negative accumulation value&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Minimum value:</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">corrAccum</span><span class="p">)))</span>
+ 
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Computing CPG values </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    <span class="n">dataCPG</span> <span class="o">=</span> <span class="n">data</span> <span class="o">/</span> <span class="p">(</span><span class="n">corrAccum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># make data CPG</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Replacing numpy nan values </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    <span class="n">dataCPG</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">dataCPG</span><span class="p">)]</span> <span class="o">=</span> <span class="n">outNoData</span> <span class="c1"># Replace numpy NaNs with no data value</span>
+
+    <span class="c1"># Replace values in cells with small flow accumulation with no data</span>
+    <span class="k">if</span> <span class="n">minAccum</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Replacing small flow accumulations </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">dataCPG</span><span class="p">[</span><span class="n">corrAccum</span> <span class="o">&lt;</span> <span class="n">minAccum</span><span class="p">]</span> <span class="o">=</span> <span class="n">outNoData</span> <span class="c1">#Set values smaller than threshold to no data</span>
+
+    <span class="c1"># Update raster profile</span>
+    <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;dtype&#39;</span><span class="p">:</span><span class="n">dataCPG</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;profile&#39;</span><span class="p">:</span><span class="s1">&#39;GeoTIFF&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;sparse_ok&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;nodata&#39;</span><span class="p">:</span><span class="n">outNoData</span><span class="p">,</span>
+                <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">})</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saving CPG raster </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outRast</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dataCPG</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CPG file written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
+    
+    
+
+<div class="viewcode-block" id="resampleParam"><a class="viewcode-back" href="../functions.html#tools.resampleParam">[docs]</a><span class="k">def</span> <span class="nf">resampleParam</span><span class="p">(</span><span class="n">inParam</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outParam</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        </span>
+<span class="sd">        inParam - input parameter data raster</span>
+<span class="sd">        fdr - flow direction raster</span>
+<span class="sd">        outParam - output file for resampled parameter raster</span>
+<span class="sd">        resampleMethod (str)- resampling method, either bilinear or nearest neighbor</span>
+<span class="sd">        cores - number of cores to use</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        outParam - resampled, reprojected, and clipped parameter raster</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fdr</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load flow direction raster in Rasterio</span>
+        <span class="n">fdrcrs</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">crs</span> <span class="c1">#Get flow direction coordinate system</span>
+        <span class="n">xsize</span><span class="p">,</span> <span class="n">ysize</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">res</span> <span class="c1">#Get flow direction cell size</span>
+        <span class="c1">#Get bounding coordinates of the flow direction raster</span>
+        <span class="n">fdrXmin</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">transform</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">fdrYmax</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">transform</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+        <span class="n">fdrXmax</span> <span class="o">=</span> <span class="n">fdrXmin</span> <span class="o">+</span> <span class="n">xsize</span><span class="o">*</span><span class="n">ds</span><span class="o">.</span><span class="n">width</span>
+        <span class="n">fdrYmin</span> <span class="o">=</span> <span class="n">fdrYmax</span> <span class="o">-</span> <span class="n">ysize</span><span class="o">*</span><span class="n">ds</span><span class="o">.</span><span class="n">height</span>
+
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inParam</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load parameter raster in Rasterio</span>
+        <span class="n">paramNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span>
+        <span class="n">paramType</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get datatype of first band</span>
+        <span class="n">paramcrs</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">crs</span> <span class="c1">#Get parameter coordinate reference system</span>
+        <span class="n">paramXsize</span><span class="p">,</span> <span class="n">paramYsize</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">res</span> <span class="c1">#Get parameter cell size</span>
+
+
+    <span class="c1"># Convert flow direction spatial reference from wkt to proj4 </span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Flow Direction WKT: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fdrcrs</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter WKT:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">paramcrs</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Flow Direction Xsize:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">xsize</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter Xsize:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">paramXsize</span><span class="p">))</span>
+
+    
+    <span class="c1">#Over ride the output coordinate system to make it work with USGS Albers projection</span>
+    <span class="n">fdrcrs</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
+    <span class="c1">#print(&quot;Flow Direction proj4: &quot; + str(fdrcrs))</span>
+    
+    <span class="c1"># Choose an appropriate gdal data type for the parameter</span>
+    <span class="k">if</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int8&#39;</span><span class="p">:</span>
+        <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Int16&#39;</span> <span class="c1"># Convert 8 bit integers to 16 bit in gdal</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: 8 bit inputs are unsupported and may not be reprojected correctly&quot;</span><span class="p">)</span> <span class="c1">#Print warning that gdal may cause problems with 8 bit rasters</span>
+    <span class="k">elif</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int16&#39;</span><span class="p">:</span>
+        <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Int16&#39;</span> 
+    <span class="k">elif</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int32&#39;</span><span class="p">:</span>
+        <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Int32&#39;</span>
+    <span class="k">elif</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int64&#39;</span><span class="p">:</span>
+        <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Int64&#39;</span>
+    <span class="k">elif</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;float32&#39;</span><span class="p">:</span>
+        <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Float32&#39;</span>
+    <span class="k">elif</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;float64&#39;</span><span class="p">:</span>
+        <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Float64&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Unsupported data type </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">paramType</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Defaulting to Float64&quot;</span><span class="p">)</span>
+        <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Float64&#39;</span> <span class="c1"># Try a 64 bit complex floating point if all else fails</span>
+
+    <span class="c1">#Check if resampling or reprojection are required</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">paramcrs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">fdrcrs</span><span class="p">)</span> <span class="ow">and</span> <span class="n">paramXsize</span> <span class="o">==</span> <span class="n">xsize</span> <span class="ow">and</span> <span class="n">paramYsize</span> <span class="o">==</span> <span class="n">ysize</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter does not require reprojection or resampling&quot;</span><span class="p">)</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># Resample, reproject, and clip the parameter raster with GDAL</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Resampling and Reprojecting Parameter Raster...&#39;</span><span class="p">)</span>
+            <span class="n">warpParams</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;inParam&#39;</span><span class="p">:</span> <span class="n">inParam</span><span class="p">,</span>
+            <span class="s1">&#39;outParam&#39;</span><span class="p">:</span> <span class="n">outParam</span><span class="p">,</span>
+            <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
+            <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
+            <span class="s1">&#39;resampleMethod&#39;</span><span class="p">:</span> <span class="n">resampleMethod</span><span class="p">,</span>
+            <span class="s1">&#39;xsize&#39;</span><span class="p">:</span> <span class="n">xsize</span><span class="p">,</span> 
+            <span class="s1">&#39;ysize&#39;</span><span class="p">:</span> <span class="n">ysize</span><span class="p">,</span> 
+            <span class="s1">&#39;fdrXmin&#39;</span><span class="p">:</span> <span class="n">fdrXmin</span><span class="p">,</span>
+            <span class="s1">&#39;fdrXmax&#39;</span><span class="p">:</span> <span class="n">fdrXmax</span><span class="p">,</span>
+            <span class="s1">&#39;fdrYmin&#39;</span><span class="p">:</span> <span class="n">fdrYmin</span><span class="p">,</span>
+            <span class="s1">&#39;fdrYmax&#39;</span><span class="p">:</span> <span class="n">fdrYmax</span><span class="p">,</span>
+            <span class="s1">&#39;fdrcrs&#39;</span><span class="p">:</span> <span class="n">fdrcrs</span><span class="p">,</span> 
+            <span class="s1">&#39;nodata&#39;</span><span class="p">:</span> <span class="n">paramNoData</span><span class="p">,</span>
+            <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="n">outType</span>
+            <span class="p">}</span>
+            
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;gdalwarp -overwrite -tr </span><span class="si">{xsize}</span><span class="s1"> </span><span class="si">{ysize}</span><span class="s1"> -t_srs </span><span class="si">{fdrcrs}</span><span class="s1"> -te </span><span class="si">{fdrXmin}</span><span class="s1"> </span><span class="si">{fdrYmin}</span><span class="s1"> </span><span class="si">{fdrXmax}</span><span class="s1"> </span><span class="si">{fdrYmax}</span><span class="s1"> -co &quot;PROFILE=GeoTIFF&quot; -co &quot;TILED=YES&quot; -co &quot;SPARSE_OK=TRUE&quot; -co &quot;COMPRESS=LZW&quot; -co &quot;NUM_THREADS=ALL_CPUS&quot; -co &quot;BIGTIFF=IF_SAFER&quot; -r </span><span class="si">{resampleMethod}</span><span class="s1"> -dstnodata </span><span class="si">{nodata}</span><span class="s1"> -ot </span><span class="si">{datatype}</span><span class="s1"> </span><span class="si">{inParam}</span><span class="s1"> </span><span class="si">{outParam}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">warpParams</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+            
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error Reprojecting Parameter Raster&#39;</span><span class="p">)</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span></div>
+
+<span class="c1">#Tools for decayed accumulation CPGs</span>
+
+<div class="viewcode-block" id="makeDecayGrid"><a class="viewcode-back" href="../functions.html#tools.makeDecayGrid">[docs]</a><span class="k">def</span> <span class="nf">makeDecayGrid</span><span class="p">(</span><span class="n">d2strm</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">outRast</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        </span>
+<span class="sd">        d2strm - Raster of flow distances from each grid cell to the nearest stream</span>
+<span class="sd">        k - constant applied to decay factor denominator</span>
+<span class="sd">        outRast - output file path for decay grid</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        outRast - decay raster computed as the inverse number of grid cells (1/number) from each grid cell to the nearest stream</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">d2strm</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error - Stream distance raster file is missing!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="c1">#Function will fail, so end it now</span>
+
+
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">d2strm</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load flow direction data</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">profile</span>
+        <span class="n">inNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span>
+        <span class="n">xsize</span><span class="p">,</span> <span class="n">ysize</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">res</span> <span class="c1">#Get flow direction cell size</span>
+    
+    <span class="k">if</span> <span class="n">xsize</span> <span class="o">!=</span> <span class="n">ysize</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning - grid cells are not square, results may be incorrect&quot;</span><span class="p">)</span>
+
+
+    <span class="n">outNoData</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#Set no data value for output raster</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Building decay grid </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    <span class="n">decayGrid</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1">#Convert to float</span>
+    <span class="n">decayGrid</span><span class="p">[</span><span class="n">data</span> <span class="o">==</span> <span class="n">inNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="c1"># fill with no data values where appropriate</span>
+    <span class="n">decayGrid</span> <span class="o">=</span> <span class="n">xsize</span><span class="o">/</span><span class="p">(</span><span class="n">decayGrid</span> <span class="o">+</span> <span class="n">k</span><span class="o">*</span><span class="n">xsize</span><span class="p">)</span> <span class="c1">#Compute decay function</span>
+
+    <span class="n">decayGrid</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">decayGrid</span><span class="p">)]</span> <span class="o">=</span> <span class="n">outNoData</span> <span class="c1"># Replace numpy NaNs with no data value</span>
+
+    <span class="c1"># Update raster profile</span>
+    <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="n">decayGrid</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;profile&#39;</span><span class="p">:</span><span class="s1">&#39;GeoTIFF&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;sparse_ok&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;nodata&#39;</span><span class="p">:</span><span class="n">inNoData</span><span class="p">,</span>
+                <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">})</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saving decay raster </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outRast</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">decayGrid</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Decay raster written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="applyMult"><a class="viewcode-back" href="../functions.html#tools.applyMult">[docs]</a><span class="k">def</span> <span class="nf">applyMult</span><span class="p">(</span><span class="n">inRast</span><span class="p">,</span> <span class="n">mult</span><span class="p">,</span> <span class="n">outRast</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        inRast- Input parameter raster</span>
+<span class="sd">        mult - multiplier raster</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        outRast - parameter raster multiplied by the multiplier raster</span>
+<span class="sd">    &#39;&#39;&#39;</span>  
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inRast</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error - Input parameter raster file is missing!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="c1">#Function will fail, so end it now</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">mult</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error - Multiplier file is missing!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="c1">#Function will fail, so end it now</span>
+
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading input rasters </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inRast</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load input rasters</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">profile</span>
+        <span class="n">inNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span>
+    
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mult</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load input rasters</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">mNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1">#Convert to 32 bit float</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">==</span> <span class="n">inNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="c1"># fill with no data values where appropriate</span>
+    <span class="n">m</span><span class="p">[</span><span class="n">m</span> <span class="o">==</span> <span class="n">mNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="c1"># fill with no data values where appropriate</span>
+    <span class="n">outData</span> <span class="o">=</span> <span class="n">data</span> <span class="o">*</span> <span class="n">multiplier</span> <span class="c1">#Multiply the parameter values by the multiplier</span>
+
+    <span class="n">outNoData</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
+    <span class="n">outData</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">outData</span><span class="p">)]</span> <span class="o">=</span> <span class="n">outNoData</span> <span class="c1"># Replace numpy NaNs with no data value</span>
+
+    <span class="c1"># Update raster profile</span>
+    <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;dtype&#39;</span><span class="p">:</span><span class="n">outData</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;profile&#39;</span><span class="p">:</span><span class="s1">&#39;GeoTIFF&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;sparse_ok&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;nodata&#39;</span><span class="p">:</span><span class="n">outNoData</span><span class="p">,</span>
+                <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">})</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saving raster </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outRast</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">outData</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Raster written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="decayAccum"><a class="viewcode-back" href="../functions.html#tools.decayAccum">[docs]</a><span class="k">def</span> <span class="nf">decayAccum</span><span class="p">(</span><span class="n">ang</span><span class="p">,</span> <span class="n">mult</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">paramRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        </span>
+<span class="sd">        ang - Flow angle from tauDEM Dinfinity flow direction tool</span>
+<span class="sd">        mult - grid of multiplier values applied to upstream accumulations, 1 corresponds to no decay, 0 corresponds to complete decay</span>
+<span class="sd">        outRast - output file path for decayed accumulation raster</span>
+<span class="sd">        paramRast - raster of parameter values to accumulate, no parameter raster will result in area being accumulated</span>
+<span class="sd">        cores - number of cores to use</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        outRast - decayed accumulation raster</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">paramRast</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accumulating parameter&#39;</span><span class="p">)</span>
+            <span class="n">tauParams</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;ang&#39;</span><span class="p">:</span><span class="n">ang</span><span class="p">,</span>
+            <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
+            <span class="s1">&#39;dm&#39;</span><span class="p">:</span><span class="n">mult</span><span class="p">,</span>
+            <span class="s1">&#39;dsca&#39;</span><span class="p">:</span> <span class="n">outRast</span><span class="p">,</span>
+            <span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="n">paramRast</span>
+            <span class="p">}</span>
+                    
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -bind-to rr -n </span><span class="si">{cores}</span><span class="s1"> dinfdecayaccum -ang </span><span class="si">{ang}</span><span class="s1"> -dm </span><span class="si">{dm}</span><span class="s1"> -dsca </span><span class="si">{dsca}</span><span class="s1">, -wg </span><span class="si">{weight}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter accumulation written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span>
+                    
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error Accumulating Data&#39;</span><span class="p">)</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accumulating parameter&#39;</span><span class="p">)</span>
+            <span class="n">tauParams</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;ang&#39;</span><span class="p">:</span><span class="n">ang</span><span class="p">,</span>
+            <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
+            <span class="s1">&#39;dm&#39;</span><span class="p">:</span><span class="n">mult</span><span class="p">,</span>
+            <span class="s1">&#39;dsca&#39;</span><span class="p">:</span> <span class="n">outRast</span><span class="p">,</span>
+            <span class="p">}</span>
+                    
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -bind-to rr -n </span><span class="si">{cores}</span><span class="s1"> dinfdecayaccum -ang </span><span class="si">{ang}</span><span class="s1"> -dm </span><span class="si">{dm}</span><span class="s1"> -dsca </span><span class="si">{dsca}</span><span class="s1">, -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter accumulation written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span>
+                
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error Accumulating Data&#39;</span><span class="p">)</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="dist2stream"><a class="viewcode-back" href="../functions.html#tools.dist2stream">[docs]</a><span class="k">def</span> <span class="nf">dist2stream</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        </span>
+<span class="sd">        fdr - flow direction raster</span>
+<span class="sd">        fac - flow accumulation raster</span>
+<span class="sd">        thresh - accumulation threshold for stream formation</span>
+<span class="sd">        outRast - output file path for distance raster</span>
+<span class="sd">        cores - number of cores to use</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        outRast - raster with values of d8 flow distance from each cell to the nearest stream</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accumulating parameter&#39;</span><span class="p">)</span>
+        <span class="n">tauParams</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
+        <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
+        <span class="s1">&#39;fac&#39;</span><span class="p">:</span><span class="n">fac</span><span class="p">,</span>
+        <span class="s1">&#39;outRast&#39;</span><span class="p">:</span> <span class="n">outRast</span><span class="p">,</span>
+        <span class="s1">&#39;thresh&#39;</span><span class="p">:</span><span class="n">thresh</span>
+        <span class="p">}</span>
+                
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -bind-to rr -n </span><span class="si">{cores}</span><span class="s1"> d8hdisttostrm -p </span><span class="si">{fdr}</span><span class="s1"> -src </span><span class="si">{fac}</span><span class="s1"> -dist </span><span class="si">{outRast}</span><span class="s1">, -thresh </span><span class="si">{thresh}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Distance raster written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span>
+                
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error computing distances&#39;</span><span class="p">)</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="maskStreams"><a class="viewcode-back" href="../functions.html#tools.maskStreams">[docs]</a><span class="k">def</span> <span class="nf">maskStreams</span><span class="p">(</span><span class="n">inRast</span><span class="p">,</span> <span class="n">streamRast</span><span class="p">,</span> <span class="n">outRast</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        </span>
+<span class="sd">        inRast - input raster to mask</span>
+<span class="sd">        streamRast - raster with all non-stream pixels set to no data</span>
+<span class="sd">        outRast - output raster file location</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        outRast - raster with non-stream cells set to no data</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+  
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inRast</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error - Parameter raster file is missing!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="c1">#Function will fail, so end it now</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">streamRast</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error - Stream raster file is missing!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="c1">#Function will fail, so end it now</span>
+
+
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inRast</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load input raster</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">profile</span>
+        <span class="n">inNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span> 
+
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">streamRast</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load input raster</span>
+        <span class="n">strmVals</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">strmNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span> 
+
+    <span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">==</span> <span class="n">inNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="c1">#Set no data values to NaN</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">strmVals</span> <span class="o">==</span> <span class="n">strmNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="c1">#Set values off streams to NaN</span>
+
+    <span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">]</span> <span class="o">=</span> <span class="n">inNoData</span> <span class="c1">#Set NaNs to input no data value</span>
+
+    <span class="c1"># Update raster profile</span>
+    <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;profile&#39;</span><span class="p">:</span><span class="s1">&#39;GeoTIFF&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;sparse_ok&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;nodata&#39;</span><span class="p">:</span><span class="n">inNoData</span><span class="p">,</span>
+                <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">})</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saving raster </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outRast</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CPG file written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="resampleParams"><a class="viewcode-back" href="../functions.html#tools.resampleParams">[docs]</a><span class="k">def</span> <span class="nf">resampleParams</span><span class="p">(</span><span class="n">inParams</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;rprj&quot;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        </span>
+<span class="sd">        inParam - list of input parameter rasters</span>
+<span class="sd">        fdr - flow direction raster</span>
+<span class="sd">        </span>
+<span class="sd">        outWorkspace - output directory for resampled rasters</span>
+<span class="sd">        resampleMethod (str)- resampling method, either bilinear or nearest neighbor</span>
+<span class="sd">        cores = number of cores to use</span>
+<span class="sd">        appStr = String of text to append to filename</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        Resampled, reprojected, and clipped parameter rasters</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of fielpaths to resampled rasters</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">fileList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of output files</span>
+
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">inParams</span><span class="p">:</span>
+
+        <span class="n">baseName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">param</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get name of input file without extention</span>
+
+        
+        <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tif&quot;</span> <span class="c1">#File extension</span>
+
+        <span class="n">outPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span> <span class="o">+</span> <span class="n">appStr</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span>
+        <span class="n">fileList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outPath</span><span class="p">)</span>
+
+        <span class="n">resampleParam</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outPath</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="p">,</span> <span class="n">cores</span><span class="p">)</span> <span class="c1">#Run the resample function for the parameter raster</span>
+
+    <span class="k">return</span> <span class="n">fileList</span></div>
+
+<div class="viewcode-block" id="accumulateParams"><a class="viewcode-back" href="../functions.html#tools.accumulateParams">[docs]</a><span class="k">def</span> <span class="nf">accumulateParams</span><span class="p">(</span><span class="n">paramRasts</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;accum&quot;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        </span>
+<span class="sd">        paramRasts - list of input parameter rasters to accumulate</span>
+<span class="sd">        fdr - flow direction raster</span>
+<span class="sd">        </span>
+<span class="sd">        outWorkspace - output directory for accumulation rasters</span>
+<span class="sd">        cores = number of cores to use</span>
+<span class="sd">        appStr = string of text to append to filename</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        raster of accumulated parameter values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list of fielpaths to accumulated parameter rasters</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">fileList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of output files</span>
+    
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">paramRasts</span><span class="p">:</span>
+
+        <span class="n">baseName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">param</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get name of input file without extention</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tif&quot;</span> <span class="c1">#File extension</span>
+
+        <span class="n">outPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span> <span class="o">+</span> <span class="n">appStr</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span>
+        <span class="n">fileList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outPath</span><span class="p">)</span>
+
+        <span class="n">nodataPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span> <span class="o">+</span> <span class="s2">&quot;nodata&quot;</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span> 
+        <span class="n">nodataAccumPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span> <span class="o">+</span> <span class="s2">&quot;nodataaccum&quot;</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span> 
+
+        <span class="n">accumulateParam</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outPath</span><span class="p">,</span> <span class="n">outNoDataRast</span><span class="o">=</span><span class="n">nodataPath</span><span class="p">,</span> <span class="n">outNoDataAccum</span><span class="o">=</span><span class="n">nodataAccumPath</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1">#Run the flow accumulation function for the parameter raster</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    processCores = min(4, cores) # Set number of cores used by each process to 4 or the number of available cores</span>
+<span class="sd">    numProcess = floor(cores / processCores) # Compute the number of processes to create</span>
+
+<span class="sd">    from functools import partial</span>
+<span class="sd">    pool = processPool(processes=numProcess)</span>
+
+<span class="sd">    # Use pool.map() to call tauDEM accumulation in parallel</span>
+<span class="sd">    fileList = pool.map(partial(accumulateParam, fdr, outPath, processCores), paramRasts)</span>
+
+<span class="sd">    #close the pool and wait for the work to finish</span>
+<span class="sd">    pool.close()</span>
+<span class="sd">    pool.join()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">fileList</span></div>
+
+<div class="viewcode-block" id="make_cpgs"><a class="viewcode-back" href="../functions.html#tools.make_cpgs">[docs]</a><span class="k">def</span> <span class="nf">make_cpgs</span><span class="p">(</span><span class="n">accumParams</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;CPG&quot;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        </span>
+<span class="sd">        accumParams - list of accumulated parameter rasters to create CPGs from</span>
+<span class="sd">        fac - flow accumulation raster</span>
+<span class="sd">        </span>
+<span class="sd">        outWorkspace - output directory for CPGs</span>
+<span class="sd">        appStr = string of text to append to filename</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        CPG</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list of fielpaths to parameter CPGs</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">fileList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of output files</span>
+
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">accumParams</span><span class="p">:</span>
+
+        <span class="n">baseName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">param</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get name of input file without extention</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tif&quot;</span> <span class="c1">#File extension</span>
+
+        <span class="n">outPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span> <span class="o">+</span> <span class="n">appStr</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span>
+        <span class="n">fileList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outPath</span><span class="p">)</span>
+
+        <span class="n">make_cpg</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outPath</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="n">minAccum</span><span class="p">)</span> <span class="c1">#Run the CPG function for the accumulated parameter raster</span>
+
+    <span class="k">return</span> <span class="n">fileList</span></div>
+
+<div class="viewcode-block" id="cat2bin"><a class="viewcode-back" href="../functions.html#tools.cat2bin">[docs]</a><span class="k">def</span> <span class="nf">cat2bin</span><span class="p">(</span><span class="n">inCat</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        </span>
+<span class="sd">        inCat - input catagorical parameter raster</span>
+<span class="sd">        outWorkspace - workspace to save binary raster outputs</span>
+<span class="sd">        </span>
+<span class="sd">    Outputs:</span>
+<span class="sd">        Binary rasters for each parameter category</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of filepaths to output files</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating binaries for </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">inCat</span><span class="p">)</span>
+    
+
+    <span class="n">baseName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">inCat</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get name of input file without extention</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tif&quot;</span> <span class="c1">#File extension</span>
+
+    <span class="c1"># load input data</span>
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inCat</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># save the metadata for output later</span>
+        <span class="n">nodata</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span>
+    
+
+    
+    <span class="n">cats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="c1"># Get unique values in raster</span>
+    <span class="n">cats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">cats</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cats</span> <span class="o">==</span>  <span class="n">nodata</span><span class="p">))</span> <span class="c1"># Remove no data value from list</span>
+
+    <span class="n">fileList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of output files</span>
+
+    <span class="c1"># edit the metadata</span>
+    <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;dtype&#39;</span><span class="p">:</span><span class="s1">&#39;int8&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;profile&#39;</span><span class="p">:</span><span class="s1">&#39;GeoTIFF&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;sparse_ok&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;nodata&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="c1">#Use -1 as no data value</span>
+                <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">})</span>
+
+    <span class="c1">#Create binary rasters for each category</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    for n in cats:</span>
+<span class="sd">        catData = dat.copy()</span>
+<span class="sd">        catData[(dat != n) &amp; (dat != nodata)] = 0</span>
+<span class="sd">        catData[dat == n] = 1</span>
+<span class="sd">        catData[dat == nodata] = -1 #Use -1 as no data value</span>
+<span class="sd">        catData = catData.astype(&#39;int8&#39;)#8 bit integer is sufficient for zeros and ones</span>
+
+<span class="sd">        catRasterName = baseName + str(n) + ext</span>
+<span class="sd">        catRaster = os.path.join(outWorkspace, catRasterName)</span>
+<span class="sd">        fileList.append(catRaster)</span>
+
+<span class="sd">        print(&quot;Saving %s&quot;%catRaster)</span>
+<span class="sd">        with rs.open(catRaster,&#39;w&#39;,**profile) as dst:</span>
+<span class="sd">            dst.write(catData,1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">processPool</span><span class="p">()</span>
+
+    <span class="c1"># Use pool.map() to create binaries in parallel</span>
+    <span class="n">fileList</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">binarizeCat</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dat</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="n">nodata</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="o">=</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span><span class="o">=</span><span class="n">baseName</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="n">ext</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">),</span> <span class="n">cats</span><span class="p">)</span>
+
+    <span class="c1">#close the pool and wait for the work to finish</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    
+    
+    <span class="k">return</span> <span class="n">fileList</span></div>
+
+<div class="viewcode-block" id="binarizeCat"><a class="viewcode-back" href="../functions.html#tools.binarizeCat">[docs]</a><span class="k">def</span> <span class="nf">binarizeCat</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">profile</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        </span>
+<span class="sd">        data - numpy arrary of raster data to convert to binary</span>
+<span class="sd">        val - raster value to extract binary for</span>
+<span class="sd">        nodata - raster no data value</span>
+<span class="sd">        outWorkspace - workspace to save binary raster outputs</span>
+<span class="sd">        baseName - base name for the raster output</span>
+<span class="sd">        ext - file extension for raster output</span>
+<span class="sd">        </span>
+<span class="sd">    Outputs:</span>
+<span class="sd">        Binary raster the specified parameter value</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Filepath to output files</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">catData</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">catData</span><span class="p">[(</span><span class="n">data</span> <span class="o">!=</span> <span class="n">val</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span> <span class="o">!=</span> <span class="n">nodata</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">catData</span><span class="p">[</span><span class="n">data</span> <span class="o">==</span> <span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">catData</span><span class="p">[</span><span class="n">data</span> <span class="o">==</span> <span class="n">nodata</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="c1">#Use -1 as no data value</span>
+    <span class="n">catData</span> <span class="o">=</span> <span class="n">catData</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int8&#39;</span><span class="p">)</span><span class="c1">#8 bit integer is sufficient for zeros and ones</span>
+
+    <span class="n">catRasterName</span> <span class="o">=</span> <span class="n">baseName</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">+</span> <span class="n">ext</span>
+    <span class="n">catRaster</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">catRasterName</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saving </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">catRaster</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">catRaster</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">catData</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    
+
+    <span class="k">return</span> <span class="n">catRaster</span> <span class="c1"># Return the path to the raster created</span></div>
+
+<div class="viewcode-block" id="tauFlowAccum"><a class="viewcode-back" href="../functions.html#tools.tauFlowAccum">[docs]</a><span class="k">def</span> <span class="nf">tauFlowAccum</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">accumRast</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        fdr - flow direction raster in tauDEM format</span>
+<span class="sd">        accumRast - file location to store accumulated parameter values</span>
+<span class="sd">        cores - number of cores to use parameter accumulation</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        accumRast - raster of accumulated parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#Use tauDEM to accumulate the parameter</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accumulating Data...&#39;</span><span class="p">)</span>
+        <span class="n">tauParams</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
+        <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
+        <span class="s1">&#39;outFl&#39;</span><span class="p">:</span><span class="n">accumRast</span><span class="p">,</span> 
+        <span class="p">}</span>
+        
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -bind-to rr -n </span><span class="si">{cores}</span><span class="s1"> aread8 -p </span><span class="si">{fdr}</span><span class="s1"> -ad8 </span><span class="si">{outFl}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
+        
+        <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+        
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error Accumulating Data&#39;</span><span class="p">)</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="downloadNHDPlusRaster"><a class="viewcode-back" href="../functions.html#tools.downloadNHDPlusRaster">[docs]</a><span class="k">def</span> <span class="nf">downloadNHDPlusRaster</span><span class="p">(</span><span class="n">HUC4</span><span class="p">,</span> <span class="n">fileDir</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        </span>
+<span class="sd">        HUC4 - 4 digit HUC to download NHDPlus raster data for</span>
+<span class="sd">        fileDir - Directory in which to save NHDPlus data</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        NHDPlus raster files saved to directory</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">compressedFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fileDir</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">HUC4</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_RASTER.7z&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Downloading File: &quot;</span> <span class="o">+</span> <span class="n">compressedFile</span><span class="p">)</span>
+    <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="s2">&quot;https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHDPlus/HU4/HighResolution/GDB/NHDPLUS_H_</span><span class="si">%s</span><span class="s2">_HU4_RASTER.7z&quot;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="n">HUC4</span><span class="p">),</span> <span class="n">compressedFile</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Extracting File...&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;7za x </span><span class="si">{0}</span><span class="s2"> -o</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">compressedFile</span><span class="p">,</span><span class="n">fileDir</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="ExtremeUpslopeValue"><a class="viewcode-back" href="../functions.html#tools.ExtremeUpslopeValue">[docs]</a><span class="k">def</span> <span class="nf">ExtremeUpslopeValue</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">accum_type</span> <span class="o">=</span> <span class="s2">&quot;MAX&quot;</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fac</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">thresh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Wrapper for the TauDEM extreme upslope value function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fdr : str</span>
+<span class="sd">        Path to TauDEM D8 flow accumulation raster</span>
+<span class="sd">    param : str</span>
+<span class="sd">        Path to parameter raster to run through the D8 Extreme Upslope Value tool</span>
+<span class="sd">    output : str</span>
+<span class="sd">        Path to outplet file</span>
+<span class="sd">    accum_type : str (optional, defaults to &quot;MAX&quot;) </span>
+<span class="sd">        Either  &quot;MAX&quot; or &quot;MIN&quot;.</span>
+<span class="sd">    cores : int</span>
+<span class="sd">        Number of cores to run this process on.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    output : str</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="n">tauParams</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
+        <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
+        <span class="s1">&#39;outFl&#39;</span><span class="p">:</span><span class="n">output</span><span class="p">,</span>
+        <span class="s1">&#39;param&#39;</span><span class="p">:</span><span class="n">param</span><span class="p">,</span>
+        <span class="s1">&#39;accum_type&#39;</span><span class="p">:</span><span class="n">accum_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">accum_type</span> <span class="o">==</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="c1"># insert flag for min </span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -bind-to rr -n </span><span class="si">{cores}</span><span class="s1"> d8flowpathextremeup -p </span><span class="si">{fdr}</span><span class="s1"> -sa </span><span class="si">{param}</span><span class="s1"> -ssa </span><span class="si">{outFl}</span><span class="s1"> -</span><span class="si">{accum_type}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># no flag for max</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -bind-to rr -n </span><span class="si">{cores}</span><span class="s1"> d8flowpathextremeup -p </span><span class="si">{fdr}</span><span class="s1"> -sa </span><span class="si">{param}</span><span class="s1"> -ssa </span><span class="si">{outFl}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
+        
+    <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+
+    <span class="k">if</span> <span class="n">fac</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">thresh</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># if a stream mask is specified</span>
+        <span class="n">outNoData</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
+
+        <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+            <span class="n">dat</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">noData</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">nodata</span>
+            <span class="n">dat</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="n">noData</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+            
+        <span class="k">del</span> <span class="n">src</span>
+
+        <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fac</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+            <span class="n">fac</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">fac</span><span class="p">[</span><span class="n">fac</span> <span class="o">==</span> <span class="n">src</span><span class="o">.</span><span class="n">nodata</span><span class="p">]</span> <span class="o">=</span> <span class="n">outNoData</span>
+
+        <span class="k">del</span> <span class="n">src</span>
+
+        <span class="n">dat</span><span class="p">[</span><span class="n">fac</span> <span class="o">&lt;</span> <span class="n">thresh</span><span class="p">]</span> <span class="o">=</span> <span class="n">outNoData</span> <span class="c1"># make low accumulation areas noData</span>
+        <span class="n">dat</span><span class="p">[</span><span class="n">fac</span> <span class="o">==</span> <span class="n">outNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">outNoData</span> <span class="c1"># make borders noData</span>
+
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;nodata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">outNoData</span>
+
+        <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span> <span class="c1"># write out raster.</span>
+            <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="getFeatures"><a class="viewcode-back" href="../functions.html#tools.getFeatures">[docs]</a><span class="k">def</span> <span class="nf">getFeatures</span><span class="p">(</span><span class="n">gdf</span><span class="p">):</span>
+    <span class="c1">#Function to parse features from GeoDataFrame in such a manner that rasterio wants them</span>
+    <span class="kn">import</span> <span class="nn">json</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">gdf</span><span class="o">.</span><span class="n">to_json</span><span class="p">())[</span><span class="s1">&#39;features&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;geometry&#39;</span><span class="p">]]</span></div>
+
+<div class="viewcode-block" id="getHUC4"><a class="viewcode-back" href="../functions.html#tools.getHUC4">[docs]</a><span class="k">def</span> <span class="nf">getHUC4</span><span class="p">(</span><span class="n">HUC12</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HUC12</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="getToHUC4"><a class="viewcode-back" href="../functions.html#tools.getToHUC4">[docs]</a><span class="k">def</span> <span class="nf">getToHUC4</span><span class="p">(</span><span class="n">toHUC12</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">toHUC12</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="makePourBasins"><a class="viewcode-back" href="../functions.html#tools.makePourBasins">[docs]</a><span class="k">def</span> <span class="nf">makePourBasins</span><span class="p">(</span><span class="n">wbd</span><span class="p">,</span><span class="n">fromHUC4</span><span class="p">,</span><span class="n">toHUC4</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Make geodataframe of HUC12 basis flowing from fromHUC4 to toHUC4.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wbd : geodataframe</span>
+<span class="sd">        HUC12-level geodataframe projected to the same CRS as the FAC and FDR grids being used.</span>
+<span class="sd">    fromHUC4 : str</span>
+<span class="sd">        HUC4 string for the upstream basin.</span>
+<span class="sd">    toHUC4 : str</span>
+<span class="sd">        HUC string for the downstream basin.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pourBasins : geodataframe</span>
+<span class="sd">        HUC12-level geodataframe of units that drain from fromHUC4 to toHUC4.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">wbd</span><span class="p">[</span><span class="s1">&#39;HUC4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wbd</span><span class="o">.</span><span class="n">HUC12</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">getHUC4</span><span class="p">)</span>
+    <span class="n">wbd</span><span class="p">[</span><span class="s1">&#39;ToHUC4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wbd</span><span class="o">.</span><span class="n">ToHUC</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">getToHUC4</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">wbd</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">wbd</span><span class="o">.</span><span class="n">HUC4</span> <span class="o">==</span> <span class="n">fromHUC4</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">wbd</span><span class="o">.</span><span class="n">ToHUC4</span> <span class="o">==</span> <span class="n">toHUC4</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="findPourPoints"><a class="viewcode-back" href="../functions.html#tools.findPourPoints">[docs]</a><span class="k">def</span> <span class="nf">findPourPoints</span><span class="p">(</span><span class="n">pourBasins</span><span class="p">,</span> <span class="n">upfacfl</span><span class="p">,</span> <span class="n">upfdrfl</span><span class="p">,</span> <span class="n">plotBasins</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Finds unique pour points between two HUC4s.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pourBasins : geodataframe</span>
+<span class="sd">        Geodataframe of the HUC12 basins that flow into the downstream HUC4. Used to clip the upstream FAC grid to identify pour points.</span>
+<span class="sd">    upfacfl : str (path)</span>
+<span class="sd">        Path to the upstream flow accumulation grid.</span>
+<span class="sd">    upfdrfl : str (path)</span>
+<span class="sd">        Path to the upstream tauDEM flow direction grid.</span>
+<span class="sd">    plotBasins : bool (False)</span>
+<span class="sd">        Boolean to make plots of upstream HUC12s and identified pour points.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    finalPoints : list</span>
+<span class="sd">        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not CPGed) upstream parameter grids for information to cascade down to </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">pourPoints</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pourBasins</span><span class="p">)):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">upfacfl</span><span class="p">)</span> <span class="c1"># open the FAC grid</span>
+
+        <span class="c1"># make a shape out of the HUC boundary</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">pourBasins</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">row</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">getFeatures</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="n">out_img</span><span class="p">,</span> <span class="n">out_transform</span> <span class="o">=</span> <span class="n">mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">shapes</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">crop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># get the raster for the HUC</span>
+
+        <span class="n">cx</span><span class="p">,</span><span class="n">cy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">out_img</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">out_img</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="c1"># find the location of max values</span>
+
+        <span class="n">w</span> <span class="o">=</span> <span class="n">out_img</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="c1"># get the value to propagate to the downstream grid.</span>
+
+        <span class="n">newx</span><span class="p">,</span><span class="n">newy</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">xy</span><span class="p">(</span><span class="n">out_transform</span><span class="p">,</span><span class="n">cx</span><span class="p">,</span><span class="n">cy</span><span class="p">)</span> <span class="c1"># convert the row, column locations to coordinates given the new affine</span>
+
+        <span class="c1"># zip the coordinates to points, when moved downstream, only one of these should land on a no data pixel</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">)</span> <span class="k">for</span> <span class="n">nx</span><span class="p">,</span><span class="n">ny</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">newx</span><span class="p">,</span><span class="n">newy</span><span class="p">)]</span>
+
+        <span class="c1"># test if a point lands on a noData pixel.</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">point</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">queryPoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">upfdrfl</span><span class="p">)</span>
+            <span class="n">newx</span><span class="p">,</span><span class="n">newy</span> <span class="o">=</span> <span class="n">FindDownstreamCellTauDir</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">out_transform</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">queryPoint</span><span class="p">(</span><span class="n">newx</span><span class="p">,</span><span class="n">newy</span><span class="p">,</span><span class="n">upfacfl</span><span class="p">)</span> <span class="o">==</span> <span class="n">data</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;nodata&#39;</span><span class="p">]:</span>
+                <span class="n">pourPoints</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">))</span> <span class="c1"># keep the point if it does. Original points retained</span>
+    
+    <span class="k">if</span> <span class="n">plotBasins</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">pourBasins</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">px</span><span class="p">,</span><span class="n">py</span><span class="p">,</span><span class="n">pw</span> <span class="ow">in</span> <span class="n">pourPoints</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">px</span><span class="p">,</span><span class="n">py</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    
+    <span class="c1"># get the unique pour points...</span>
+    <span class="n">xs</span><span class="p">,</span><span class="n">ys</span><span class="p">,</span><span class="n">ws</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">pourPoints</span><span class="p">)</span>
+
+    <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
+    <span class="n">ws</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
+
+    <span class="n">pts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span><span class="n">ys</span><span class="p">,</span><span class="n">ws</span><span class="p">):</span>
+        <span class="n">pts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s%s%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">))</span>
+
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span><span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="c1"># use the indicies to make a set of final pour points</span>
+    <span class="n">finalPoints</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span><span class="n">ys</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span><span class="n">ws</span><span class="p">[</span><span class="n">idx</span><span class="p">]):</span>
+        <span class="n">finalPoints</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">))</span>
+        
+    <span class="k">return</span> <span class="n">finalPoints</span></div>
+
+<div class="viewcode-block" id="loadRaster"><a class="viewcode-back" href="../functions.html#tools.loadRaster">[docs]</a><span class="k">def</span> <span class="nf">loadRaster</span><span class="p">(</span><span class="n">fl</span><span class="p">,</span> <span class="n">returnMeta</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+            <span class="n">dat</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="n">returnMeta</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dat</span><span class="p">,</span> <span class="n">meta</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dat</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to open </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">fl</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="findLastFACFD"><a class="viewcode-back" href="../functions.html#tools.findLastFACFD">[docs]</a><span class="k">def</span> <span class="nf">findLastFACFD</span><span class="p">(</span><span class="n">facfl</span><span class="p">,</span> <span class="n">fl</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Find the coordinate of the greatest FAC cell, return the value from the upfl at that point.</span>
+<span class="sd">    </span>
+<span class="sd">    This can be used to find the flow direction of the FAC cell with the greatest accumulation, or the parameter value.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    facfl : str (path)</span>
+<span class="sd">        Upstream FAC grid</span>
+<span class="sd">    fl : str (path)</span>
+<span class="sd">        Upstream </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x : float</span>
+<span class="sd">        Horizontal coordinate of the greatest FAC cell.</span>
+<span class="sd">    y : float</span>
+<span class="sd">        Vertical coordinate of the greatest FAC cell.</span>
+<span class="sd">    d : int or float</span>
+<span class="sd">        Value from the parameter grid queried.</span>
+<span class="sd">    w : float</span>
+<span class="sd">        Cell size of the grid.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">fac</span><span class="p">,</span><span class="n">meta</span> <span class="o">=</span> <span class="n">loadRaster</span><span class="p">(</span><span class="n">facfl</span><span class="p">,</span><span class="n">returnMeta</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># load the fac file</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">loadRaster</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span> <span class="c1"># load the data file</span>
+    
+    <span class="n">cx</span><span class="p">,</span><span class="n">cy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">fac</span><span class="o">==</span><span class="n">fac</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="c1"># find the column, row cooridnates of the max fac.</span>
+    <span class="c1">#print(&quot;%s,%s&quot;%(cx,cy))</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="n">cx</span><span class="p">,</span><span class="n">cy</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># query the parameter grid</span>
+    
+    <span class="n">src</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">facfl</span><span class="p">)</span> <span class="c1"># open the fac dataset</span>
+    <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">xy</span><span class="p">(</span><span class="n">cx</span><span class="p">,</span><span class="n">cy</span><span class="p">)</span> <span class="c1"># convert the column, row coordinates to map coordinates</span>
+    
+    <span class="n">w</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;transform&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># get the cell size of the grid</span>
+    
+    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">d</span><span class="p">,</span><span class="n">w</span></div>
+
+<div class="viewcode-block" id="queryPoint"><a class="viewcode-back" href="../functions.html#tools.queryPoint">[docs]</a><span class="k">def</span> <span class="nf">queryPoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">grd</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Query grid based on a supplied point.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : float</span>
+<span class="sd">        Horizontal coordinate in grd projection.</span>
+<span class="sd">    y : float</span>
+<span class="sd">        Vertical coordinate in grd projection.</span>
+<span class="sd">    grd : str (path)</span>
+<span class="sd">        Path to raster to query based on the supplied x and y.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    value : float or int</span>
+<span class="sd">        Value queried from the raster.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">grd</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">sample</span><span class="p">([(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)],</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="FindDownstreamCellTauDir"><a class="viewcode-back" href="../functions.html#tools.FindDownstreamCellTauDir">[docs]</a><span class="k">def</span> <span class="nf">FindDownstreamCellTauDir</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Find downstream cell given the flow direction of a cell using TauDEM directions.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d : int</span>
+<span class="sd">        Flow direction of cell to find downstream cell of.</span>
+<span class="sd">    x : float</span>
+<span class="sd">        Horizontal coordinate (either projected or unprojected).</span>
+<span class="sd">    y : float</span>
+<span class="sd">        Vertical coordinate (either projected or unprojected).</span>
+<span class="sd">    w : float</span>
+<span class="sd">        Cell size in map units.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x : float</span>
+<span class="sd">        Horizontal coordinate of the downstream cell.</span>
+<span class="sd">    y : float</span>
+<span class="sd">        Verital coordinate of the downstream cell.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="c1"># figure out how to correct the point location</span>
+    <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># east</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">w</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">elif</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># northeast</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">w</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">w</span>
+    <span class="k">elif</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># north</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">w</span>
+    <span class="k">elif</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># northwest</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">w</span><span class="o">*-</span><span class="mf">1.</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">w</span>
+    <span class="k">elif</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span> <span class="c1"># west</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">w</span><span class="o">*-</span><span class="mf">1.</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">elif</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span> <span class="c1"># southwest</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">w</span><span class="o">*-</span><span class="mf">1.</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">w</span><span class="o">*-</span><span class="mf">1.</span>
+    <span class="k">elif</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span> <span class="c1"># south</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">w</span><span class="o">*-</span><span class="mf">1.</span>
+    <span class="k">elif</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span> <span class="c1"># southeast</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">w</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">w</span><span class="o">*-</span><span class="mf">1.</span>
+        
+    <span class="c1"># update the location</span>
+    <span class="n">newX</span> <span class="o">=</span> <span class="n">x</span><span class="o">+</span><span class="n">dx</span>
+    <span class="n">newY</span> <span class="o">=</span> <span class="n">y</span><span class="o">+</span><span class="n">dy</span>
+    
+    <span class="k">return</span> <span class="n">newX</span><span class="p">,</span><span class="n">newY</span></div>
+
+<div class="viewcode-block" id="saveJSON"><a class="viewcode-back" href="../functions.html#tools.saveJSON">[docs]</a><span class="k">def</span> <span class="nf">saveJSON</span><span class="p">(</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">outfl</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Save dictionary to JSON file.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dictionary : dict</span>
+<span class="sd">        Dictionary to be saved.</span>
+<span class="sd">    outfl : str (path)</span>
+<span class="sd">        Path for where to generate the JSON</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Write JSON file</span>
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outfl</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+        <span class="n">str_</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">dictionary</span><span class="p">,</span>
+                      <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                      <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;: &#39;</span><span class="p">),</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">to_unicode</span><span class="p">(</span><span class="n">str_</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="loadJSON"><a class="viewcode-back" href="../functions.html#tools.loadJSON">[docs]</a><span class="k">def</span> <span class="nf">loadJSON</span><span class="p">(</span><span class="n">infl</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Load dictionary stored in a JSON file.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    infl : str (path)</span>
+<span class="sd">        Path to the JSON to be loaded.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dictionary : dict</span>
+<span class="sd">        Dictionary that was loaded.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Read JSON file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">infl</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_file</span><span class="p">:</span>
+        <span class="n">dictionary</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_file</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">dictionary</span></div>
+
+<div class="viewcode-block" id="createUpdateDict"><a class="viewcode-back" href="../functions.html#tools.createUpdateDict">[docs]</a><span class="k">def</span> <span class="nf">createUpdateDict</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">upstreamFACmax</span><span class="p">,</span> <span class="n">fromHUC</span><span class="p">,</span> <span class="n">outfl</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Create a dictionary for updating downstream FAC and parameter grids using values pulled from the next grid upstream.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : list</span>
+<span class="sd">        Horizontal coordinate(s) for where the update needs to happen in the downstream grid. </span>
+<span class="sd">    y : list</span>
+<span class="sd">        Vertical coordinate(s) for where the update needs to happen in the downstream grid.</span>
+<span class="sd">    upstreamFACmax : list</span>
+<span class="sd">        Value(s) to insert into the downstream FAC grid.</span>
+<span class="sd">    fromHUC : str</span>
+<span class="sd">        The upstream HUC that the values are coming from.</span>
+<span class="sd">    outfl : str (path)</span>
+<span class="sd">        Path to where to save the json of this dictionary. The convention is to name this by the downstream HUC.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    updateDict : dict</span>
+<span class="sd">        Update dictionary</span>
+<span class="sd">    </span>
+<span class="sd">    Outputs</span>
+<span class="sd">    -------</span>
+<span class="sd">    updateDict : json (dict)</span>
+<span class="sd">        Update dictionary saved to a json at outfl.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="c1"># using lists instead of single values in case there are multiple pour points between basins</span>
+    
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
+    	<span class="n">x</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
+    	<span class="n">y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">y</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">upstreamFACmax</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
+    	<span class="n">upstreamFACmax</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">upstreamFACmax</span><span class="p">])</span>
+
+    <span class="c1"># convert lists to strings</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">yy</span><span class="p">)</span> <span class="k">for</span> <span class="n">yy</span> <span class="ow">in</span> <span class="n">y</span><span class="p">]</span>
+    <span class="n">facs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">fac</span><span class="p">)</span> <span class="k">for</span> <span class="n">fac</span> <span class="ow">in</span> <span class="n">upstreamFACmax</span><span class="p">]</span>
+    
+    <span class="n">subDict</span> <span class="o">=</span> <span class="p">{</span> <span class="c1"># make dictionary for the upstream FAC</span>
+        <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">xs</span><span class="p">,</span>
+        <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">ys</span><span class="p">,</span>
+        <span class="s1">&#39;maxUpstreamFAC&#39;</span><span class="p">:</span><span class="n">facs</span><span class="p">,</span>
+        <span class="s1">&#39;vars&#39;</span><span class="p">:[</span><span class="s1">&#39;maxUpstreamFAC&#39;</span><span class="p">]</span> <span class="c1"># list of contained variables</span>
+                <span class="p">}</span>
+    
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outfl</span><span class="p">):</span> <span class="c1"># if the update dictionary exists, update it.</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Update dictionary found: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">outfl</span><span class="p">)</span>
+        <span class="n">updateDict</span> <span class="o">=</span> <span class="n">loadJSON</span><span class="p">(</span><span class="n">outfl</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Updating dictionary...&#39;</span><span class="p">)</span>
+        <span class="n">updateDict</span><span class="p">[</span><span class="n">fromHUC</span><span class="p">]</span> <span class="o">=</span> <span class="n">subDict</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">updateDict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">fromHUC</span> <span class="p">:</span> <span class="n">subDict</span>
+        <span class="p">}</span>
+        
+    <span class="n">saveJSON</span><span class="p">(</span><span class="n">updateDict</span><span class="p">,</span> <span class="n">outfl</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">updateDict</span></div>
+
+<div class="viewcode-block" id="updateRaster"><a class="viewcode-back" href="../functions.html#tools.updateRaster">[docs]</a><span class="k">def</span> <span class="nf">updateRaster</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">val</span><span class="p">,</span><span class="n">grd</span><span class="p">,</span><span class="n">outgrd</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Insert val into grd as location specified by x,y, writes to outgrd.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : list or float</span>
+<span class="sd">    y : list of float</span>
+<span class="sd">        Vertical coordinate in map</span>
+<span class="sd">    val : int or float</span>
+<span class="sd">        Value to insert into grd</span>
+<span class="sd">    grd : str (path)</span>
+<span class="sd">        File path to read grd to update from.</span>
+<span class="sd">    outgrd : str (path)</span>
+<span class="sd">        File path to write output to.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    </span>
+<span class="sd">    Output</span>
+<span class="sd">    ------</span>
+<span class="sd">    dat : raster</span>
+<span class="sd">        Writes raster dataset to supplied grdout destination.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    
+    <span class="n">dat</span><span class="p">,</span><span class="n">meta</span> <span class="o">=</span> <span class="n">loadRaster</span><span class="p">(</span><span class="n">grd</span><span class="p">,</span> <span class="n">returnMeta</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">grd</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span> <span class="c1"># iterate over the supplied points </span>
+        <span class="k">for</span> <span class="n">xx</span><span class="p">,</span><span class="n">yy</span><span class="p">,</span><span class="n">vv</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">val</span><span class="p">):</span>
+            <span class="n">c</span><span class="p">,</span><span class="n">r</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">xx</span><span class="p">),</span><span class="nb">float</span><span class="p">(</span><span class="n">yy</span><span class="p">))</span> <span class="c1"># get column, row coordinates</span>
+            <span class="n">dat</span><span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">vv</span><span class="p">))</span> <span class="c1"># update the dataset</span>
+            
+    <span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+        <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;profile&#39;</span><span class="p">:</span><span class="s1">&#39;GeoTIFF&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;sparse_ok&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;driver&#39;</span> <span class="p">:</span> <span class="s2">&quot;GTiff&quot;</span>
+    <span class="p">})</span>
+            
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outgrd</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">meta</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span> <span class="c1"># open dataset for output</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="makeFACweight"><a class="viewcode-back" href="../functions.html#tools.makeFACweight">[docs]</a><span class="k">def</span> <span class="nf">makeFACweight</span><span class="p">(</span><span class="n">ingrd</span><span class="p">,</span><span class="n">outWeight</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Make FAC weighting grid of ones based on the extents of the input grid. No data cells are persisted.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ingrd : str (path)</span>
+<span class="sd">    outWeight : str (path)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    </span>
+<span class="sd">    Output</span>
+<span class="sd">    ------</span>
+<span class="sd">    outWeight : raster</span>
+<span class="sd">        Raster of the same extent and resolution as the input grid, but filled with ones where data exist. </span>
+<span class="sd">        No data cells are persisted.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">dat</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">loadRaster</span><span class="p">(</span><span class="n">ingrd</span><span class="p">,</span> <span class="n">returnMeta</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="n">ones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> <span class="c1"># make a grid of ones shaped like the original FAC grid. These will be used</span>
+    <span class="c1"># as a weighting grid that can be corrected.</span>
+    
+    <span class="n">ones</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;nodata&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;nodata&#39;</span><span class="p">]</span> <span class="c1"># persist the noData value into the grid</span>
+    <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ones</span><span class="o">.</span><span class="n">dtype</span> <span class="c1"># update the datatype</span>
+    <span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+        <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;profile&#39;</span><span class="p">:</span><span class="s1">&#39;GeoTIFF&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;sparse_ok&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;driver&#39;</span> <span class="p">:</span> <span class="s2">&quot;GTiff&quot;</span>
+    <span class="p">})</span>
+    
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outWeight</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">meta</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ones</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="adjustFAC"><a class="viewcode-back" href="../functions.html#tools.adjustFAC">[docs]</a><span class="k">def</span> <span class="nf">adjustFAC</span><span class="p">(</span><span class="n">facWeighttemplate</span><span class="p">,</span> <span class="n">downstreamFACweightFl</span><span class="p">,</span> <span class="n">updateDictFl</span><span class="p">,</span> <span class="n">downstreamFDRFl</span><span class="p">,</span> <span class="n">adjFACFl</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Generate updated FAC given an update dictionary.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    facWeighttemplate : str (path)</span>
+<span class="sd">        Path to a FDR or FAC grid used to make the FAC weighting grid.</span>
+<span class="sd">    downstreamFACweightFl : str (path)</span>
+<span class="sd">        Path to output the FAC weighting grid.</span>
+<span class="sd">    updateDictFl : str (path)</span>
+<span class="sd">        Path to update dictionary used to update the FAC weighting grid.</span>
+<span class="sd">    downstreamFDRFl : str (path)</span>
+<span class="sd">        Path to downstream FDR to use when computing the adjusted FAC grid.</span>
+<span class="sd">    adjFACFl : str (path)</span>
+<span class="sd">        Path to output adjusted FAC grid.</span>
+<span class="sd">    cores : int (default 1)</span>
+<span class="sd">        Number of cores to run </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    </span>
+<span class="sd">    Outputs</span>
+<span class="sd">    -------</span>
+<span class="sd">    adjFACFl : raster</span>
+<span class="sd">        Adjusted flow accumulation raster</span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">updateDict</span> <span class="o">=</span> <span class="n">loadJSON</span><span class="p">(</span><span class="n">updateDictFl</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">updateDict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c1"># for each upstream HUC.</span>
+
+        <span class="n">upstreamDict</span> <span class="o">=</span> <span class="n">updateDict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="c1"># subset out the upstream HUC of interest</span>
+        <span class="k">if</span> <span class="s1">&#39;maxUpstreamFAC&#39;</span> <span class="ow">in</span> <span class="n">upstreamDict</span><span class="p">[</span><span class="s1">&#39;vars&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">downstreamFACweightFl</span><span class="p">):</span> <span class="c1"># If weighting file not present, create one at the supplied path.</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating FAC weighting grid.&quot;</span><span class="p">)</span>
+                <span class="n">makeFACweight</span><span class="p">(</span><span class="n">facWeighttemplate</span><span class="p">,</span><span class="n">downstreamFACweightFl</span><span class="p">)</span> 
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">downstreamFACweightFl</span><span class="p">):</span> <span class="c1"># if the weighting grid is present, update it with the upstream value.</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Updating FAC weighting grid with value from </span><span class="si">%s</span><span class="s2"> FAC&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+                <span class="n">updateRaster</span><span class="p">(</span><span class="n">upstreamDict</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span>
+                             <span class="n">upstreamDict</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span>
+                             <span class="n">upstreamDict</span><span class="p">[</span><span class="s1">&#39;maxUpstreamFAC&#39;</span><span class="p">],</span>
+                             <span class="n">downstreamFACweightFl</span><span class="p">,</span><span class="n">downstreamFACweightFl</span><span class="p">)</span> <span class="c1"># update with lists</span>
+            
+    <span class="n">accumulateParam</span><span class="p">(</span><span class="n">downstreamFACweightFl</span><span class="p">,</span> <span class="n">downstreamFDRFl</span><span class="p">,</span> <span class="n">adjFACFl</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="n">cores</span><span class="p">)</span> <span class="c1"># run a parameter accumulation on the weighting grid.</span></div>
+
+<div class="viewcode-block" id="updateDict"><a class="viewcode-back" href="../functions.html#tools.updateDict">[docs]</a><span class="k">def</span> <span class="nf">updateDict</span><span class="p">(</span><span class="n">ud</span><span class="p">,</span> <span class="n">upHUC</span><span class="p">,</span> <span class="n">varName</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Update dictionary with parameter value.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ud : dict</span>
+<span class="sd">        Update dictionary to add a variable to.</span>
+<span class="sd">    upHUC : str</span>
+<span class="sd">        Name of the upstream HUC that the variable cooresponds to.</span>
+<span class="sd">    varName : str</span>
+<span class="sd">        Name to use for the variable.</span>
+<span class="sd">    val : list or int or float</span>
+<span class="sd">        Value to add to the upstream dictonary.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    </span>
+<span class="sd">    Outputs</span>
+<span class="sd">    -------</span>
+<span class="sd">    ud : dict (JSON)</span>
+<span class="sd">        Update dictionary written back out to file.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    
+    <span class="n">UD</span> <span class="o">=</span> <span class="n">loadJSON</span><span class="p">(</span><span class="n">ud</span><span class="p">)</span>
+    
+    <span class="n">upstream</span> <span class="o">=</span> <span class="n">UD</span><span class="p">[</span><span class="n">upHUC</span><span class="p">]</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="n">upstream</span><span class="p">[</span><span class="s1">&#39;vars&#39;</span><span class="p">]</span>
+    <span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">varName</span><span class="p">)</span>
+    <span class="n">upstream</span><span class="p">[</span><span class="s1">&#39;vars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">variables</span>
+    
+    <span class="n">upstream</span><span class="p">[</span><span class="n">varName</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+    
+    <span class="n">UD</span><span class="p">[</span><span class="n">upHUC</span><span class="p">]</span> <span class="o">=</span> <span class="n">upstream</span> <span class="c1"># update dictionary with upstream sub-dictionary</span>
+    <span class="n">saveJSON</span><span class="p">(</span><span class="n">ud</span><span class="p">)</span> <span class="c1"># write out file</span></div>
+
+<div class="viewcode-block" id="adjustParam"><a class="viewcode-back" href="../functions.html#tools.adjustParam">[docs]</a><span class="k">def</span> <span class="nf">adjustParam</span><span class="p">(</span><span class="n">updatedParam</span><span class="p">,</span> <span class="n">downstreamParamFL</span><span class="p">,</span> <span class="n">updateDictFl</span><span class="p">,</span> <span class="n">adjParamFl</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Generate updated FAC given an update dictionary.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    updatedParam : str</span>
+<span class="sd">        Name of the parameter to update.</span>
+<span class="sd">    downstreamParamFL : str (path)</span>
+<span class="sd">        Path to downstream parameter grid to update.</span>
+<span class="sd">    updateDictFl : str (path)</span>
+<span class="sd">        Path to update dictionary to use.</span>
+<span class="sd">    adjParamFl : str (path)</span>
+<span class="sd">        Path to output adjusted parameter file.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    </span>
+<span class="sd">    Outputs</span>
+<span class="sd">    -------</span>
+<span class="sd">    adjParamFl : raster</span>
+<span class="sd">        Adjusted parameter file that can be accumulated prior to CPG creation.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">updateDict</span> <span class="o">=</span> <span class="n">loadJSON</span><span class="p">(</span><span class="n">updateDictFl</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">updateDict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c1"># for each upstream HUC.</span>
+
+        <span class="n">upstreamDict</span> <span class="o">=</span> <span class="n">updateDict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="c1"># subset out the upstream HUC of interest</span>
+        <span class="k">if</span> <span class="n">updatedParam</span> <span class="ow">in</span> <span class="n">upstreamDict</span><span class="p">[</span><span class="s1">&#39;vars&#39;</span><span class="p">]:</span> 
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">downstreamParamFL</span><span class="p">):</span> <span class="c1"># if the weighting grid is present, update it with the upstream value.</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Updating parameter grid with value from </span><span class="si">%s</span><span class="s2"> FAC&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+                <span class="n">updateRaster</span><span class="p">(</span><span class="n">upstreamDict</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span>
+                             <span class="n">upstreamDict</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span>
+                             <span class="n">upstreamDict</span><span class="p">[</span><span class="n">updatedParam</span><span class="p">],</span>
+                             <span class="n">downstreamParamFL</span><span class="p">,</span><span class="n">adjParamFl</span><span class="p">)</span> <span class="c1"># update with lists</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Theodore Barnhart, Roy Sando, Seth Siefkin, Peter McCarthy, and Al Rea
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
