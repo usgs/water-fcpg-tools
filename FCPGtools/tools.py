@@ -556,17 +556,25 @@ def applyMult(inRast, mult, outRast):
 
 
 def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
-    '''
-    Inputs:
-        
-        ang - Flow angle from tauDEM Dinfinity flow direction tool
-        mult - grid of multiplier values applied to upstream accumulations, 1 corresponds to no decay, 0 corresponds to complete decay
-        outRast - output file path for decayed accumulation raster
-        paramRast - raster of parameter values to accumulate, no parameter raster will result in area being accumulated
-        cores - number of cores to use
+    '''Decay the accumulation of a parameter raster.
 
-    Outputs:
-        outRast - decayed accumulation raster
+    Parameters
+    ----------
+    ang : str
+        Path to flow angle raster from the TauDEM Dinfinity flow direction tool.
+    mult : str
+        Path to raster of multiplier values applied to upstream accumulations, 1 corresponds to no decay, 0 corresponds to complete decay.
+    outRast : str
+        Path to output raster for decayed accumulation raster.
+    paramRast : str (optional)
+        Raster of parameter values to accumulate. If not supplied area will be accumulated. Defaults to None.
+    cores : int (optional)
+        Number of cores to use. Defaults to 1.
+
+    Returns
+    -------
+    outRast : raster
+        Decayed accumulation raster, either area or parameter depending on what is supplied to the function.
     '''
 
     if paramRast != None:
@@ -612,21 +620,27 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
 
 
 def dist2stream(fdr, fac, thresh, outRast, cores=1) :
-    '''
-    Inputs:
-        
-        fdr - flow direction raster
-        fac - flow accumulation raster
-        thresh - accumulation threshold for stream formation
-        outRast - output file path for distance raster
-        cores - number of cores to use
+    '''Compute distance to streams.
+    Parameters
+    ----------
+    fdr : str
+        Path to flow direction raster in TauDEM format.
+    fac : str
+        Path to flow accumulation raster.
+    thresh : int
+        Accumulation threshold for stream formation in number of grid cells.
+    outRast : str
+        Path to output the distance raster.
+    cores : int (optional)
+        The number of cores to use. Defaults to 1.
 
-    Outputs:
-        outRast - raster with values of d8 flow distance from each cell to the nearest stream
+    Returns
+    -------
+    outRast : raster 
+        Raster with values of d8 flow distance from each cell to the nearest stream.
     '''
 
     try:
-        print('Accumulating parameter')
         tauParams = {
         'fdr':fdr,
         'cores':cores, 
@@ -646,15 +660,21 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1) :
         traceback.print_exc()
 
 def maskStreams(inRast, streamRast, outRast):
-    '''
-    Inputs:
-        
-        inRast - input raster to mask
-        streamRast - raster with all non-stream pixels set to no data
-        outRast - output raster file location
+    '''Mask areas not on the stream network.
 
-    Outputs:
-        outRast - raster with non-stream cells set to no data
+    Parameters
+    ----------
+    inRast : str
+        Path to the input raster to mask.
+    streamRast : str
+        Path to the stream raster where all non-stream pixels set to no data.
+    outRast : str
+        Path to output raster file.
+
+    Returns
+    -------
+    outRast : raster
+        Raster with non-stream cells set to the no data value from inRast.
     '''
   
     if not os.path.isfile(inRast):
@@ -695,22 +715,27 @@ def maskStreams(inRast, streamRast, outRast):
         print("CPG file written to: {0}".format(outRast))
 
 def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj"):
-    '''
-    Inputs:
-        
-        inParam - list of input parameter rasters
-        fdr - flow direction raster
-        
-        outWorkspace - output directory for resampled rasters
-        resampleMethod (str)- resampling method, either bilinear or nearest neighbor
-        cores = number of cores to use
-        appStr = String of text to append to filename
+    '''Batch version of :code:`resampleParam`.
 
-    Outputs:
-        Resampled, reprojected, and clipped parameter rasters
+    Parameters
+    ----------
+    inParam : list
+        List of input parameter raster paths.
+    fdr : str
+        Path to the flow direction raster.
+    outWorkspace :  
+        Path to the output directory for the resampled rasters.
+    resampleMethod : str (optional)
+        Resampling method, either bilinear or nearest neighbor. Defaults to bilinear.
+    cores :
+        Number of cores to use. Defaults to 1.
+    appStr : str (optional)
+        String of text to append to the input parameter filenames. Defaults to "rprj".
 
-    Returns:
-        List of fielpaths to resampled rasters
+    Returns
+    -------
+    fileList : list
+        Paths to resampled, reprojected, and clipped parameter rasters.
     '''
 
     fileList = [] #Initialize list of output files
