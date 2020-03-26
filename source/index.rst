@@ -26,7 +26,7 @@ On a HPC system you may need to load the correct Python module before building t
 Dependencies
 ============
 
-Dependencies for this work are largely taken care of via the anaconda environment specified by the yml file; however, the tools do rely on [TauDEM 5.3.8](https://github.com/dtarb/TauDEM/tree/v5.3.8), which needs to be installed and visible to your conda environment.
+Dependencies for this work are largely taken care of via the anaconda environment specified by the yml file; however, the tools do rely on `TauDEM 5.3.8 <https://github.com/dtarb/TauDEM/tree/v5.3.8>`_, which needs to be installed and visible to your conda environment.
 
 .. toctree::
    :maxdepth: 2

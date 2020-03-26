@@ -755,21 +755,25 @@ def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores
     return fileList
 
 def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
-    '''
-    Inputs:
-        
-        paramRasts - list of input parameter rasters to accumulate
-        fdr - flow direction raster
-        
-        outWorkspace - output directory for accumulation rasters
-        cores = number of cores to use
-        appStr = string of text to append to filename
+    '''Batch version of :code:`accumulateParam`.
 
-    Outputs:
-        raster of accumulated parameter values
+    Parameters
+    ----------
+    paramRasts : list
+        List of input parameter raster paths to accumulate along the supplied fdr.
+    fdr : str
+        Path to the flow direction raster.
+    outWorkspace : str
+        Path to the output directory for accumulation rasters.
+    cores : int (optional)
+        Number of cores to use. Defaults to 1.
+    appStr :str (optional)
+        String of text to append to accumulated parameter filenames. Defaults to "accum."
 
-    Returns:
-        list of fielpaths to accumulated parameter rasters
+    Returns
+    -------
+    fileList : list
+        List of file paths to accumulated parameter rasters.
     '''
 
     fileList = [] #Initialize list of output files

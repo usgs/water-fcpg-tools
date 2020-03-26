@@ -25,6 +25,7 @@
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
         <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -232,41 +233,46 @@
 
 <dl class="function">
 <dt id="tools.accumulateParam">
-<code class="descclassname">tools.</code><code class="descname">accumulateParam</code><span class="sig-paren">(</span><em>paramRast</em>, <em>fdr</em>, <em>accumRast</em>, <em>outNoDataRast=None</em>, <em>outNoDataAccum=None</em>, <em>zeroNoDataRast=None</em>, <em>multiplier=None</em>, <em>multNoDataRast=None</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#accumulateParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.accumulateParam" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">tools.</code><code class="descname">accumulateParam</code><span class="sig-paren">(</span><em>paramRast</em>, <em>fdr</em>, <em>accumRast</em>, <em>outNoDataRast=None</em>, <em>outNoDataAccum=None</em>, <em>zeroNoDataRast=None</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#accumulateParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.accumulateParam" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>paramRast :</strong></dt>
-<dd><blockquote class="first">
-<div><p>Raster of parameter values to acumulate, this file is modified by the function</p>
-</div></blockquote>
-<dl class="docutils">
-<dt>fdr <span class="classifier-delimiter">:</span> <span class="classifier"></span></dt>
-<dd><p class="first last">Flow direction raster in tauDEM format</p>
+<dt><strong>paramRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Raster of parameter values to acumulate, this file is modified by the function.</p>
 </dd>
-<dt>accumRast <span class="classifier-delimiter">:</span> <span class="classifier"></span></dt>
-<dd><p class="first last">File location to store accumulated parameter values</p>
+<dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Flow direction raster in TauDEM format.</p>
 </dd>
-<dt>outNoDataRast <span class="classifier-delimiter">:</span> <span class="classifier"></span></dt>
-<dd><p class="first last">File location to store parameter no data raster</p>
+<dt><strong>accumRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">File location to store accumulated parameter values.</p>
 </dd>
-<dt>outNoDataAccum :</dt>
-<dd><p class="first last">File location to store accumulated no data raster</p>
+<dt><strong>outNoDataRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">File location to store parameter no data raster.</p>
 </dd>
-</dl>
-<p class="last">zeroNoDataRast : 
-multiplier :
-multNoDataRast : 
-cores - number of cores to use parameter accumulation</p>
+<dt><strong>outNoDataAccum</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">File location to store accumulated no data raster.</p>
+</dd>
+<dt><strong>zeroNoDataRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">File location to store the no data raster filled with zeros.</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">The number of cores to use for parameter accumulation. Defaults to 1.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>None</dt>
-<dd></dd>
+<dt><strong>accumRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster of accumulated parameter values.</p>
+</dd>
+<dt><strong>outNoDataRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster of no data values.</p>
+</dd>
+<dt><strong>outNoDataRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster of accumulated no data values.</p>
+</dd>
 </dl>
 </td>
 </tr>
@@ -277,20 +283,39 @@ cores - number of cores to use parameter accumulation</p>
 <dl class="function">
 <dt id="tools.accumulateParams">
 <code class="descclassname">tools.</code><code class="descname">accumulateParams</code><span class="sig-paren">(</span><em>paramRasts</em>, <em>fdr</em>, <em>outWorkspace</em>, <em>cores=1</em>, <em>appStr='accum'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#accumulateParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.accumulateParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inputs:</p>
-<blockquote>
-<div><p>paramRasts - list of input parameter rasters to accumulate
-fdr - flow direction raster</p>
-<p>outWorkspace - output directory for accumulation rasters
-cores = number of cores to use
-appStr = string of text to append to filename</p>
-</div></blockquote>
-<dl class="docutils">
-<dt>Outputs:</dt>
-<dd>raster of accumulated parameter values</dd>
-<dt>Returns:</dt>
-<dd>list of fielpaths to accumulated parameter rasters</dd>
+<dd><p>Batch version of <code class="code docutils literal notranslate"><span class="pre">accumulateParam</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>paramRasts</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of input parameter raster paths to accumulate along the supplied fdr.</p>
+</dd>
+<dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the flow direction raster.</p>
+</dd>
+<dt><strong>outWorkspace</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the output directory for accumulation rasters.</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">Number of cores to use. Defaults to 1.</p>
+</dd>
+<dt><strong>appStr :str (optional)</strong></dt>
+<dd><p class="first last">String of text to append to accumulated parameter filenames. Defaults to “accum.”</p>
+</dd>
 </dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>fileList</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of file paths to accumulated parameter rasters.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -364,13 +389,33 @@ appStr = string of text to append to filename</p>
 <dl class="function">
 <dt id="tools.applyMult">
 <code class="descclassname">tools.</code><code class="descname">applyMult</code><span class="sig-paren">(</span><em>inRast</em>, <em>mult</em>, <em>outRast</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#applyMult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.applyMult" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Inputs:</dt>
-<dd>inRast- Input parameter raster
-mult - multiplier raster</dd>
-<dt>Outputs:</dt>
-<dd>outRast - parameter raster multiplied by the multiplier raster</dd>
+<dd><p>Multiply input raster by mult.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>inRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to input raster.</p>
+</dd>
+<dt><strong>mult</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to multiplier raster.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output raster.</p>
+</dd>
 </dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Input raster multiplied by the multiplier raster.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -448,33 +493,73 @@ outWorkspace - workspace to save binary raster outputs</div></blockquote>
 <dl class="function">
 <dt id="tools.decayAccum">
 <code class="descclassname">tools.</code><code class="descname">decayAccum</code><span class="sig-paren">(</span><em>ang</em>, <em>mult</em>, <em>outRast</em>, <em>paramRast=None</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#decayAccum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.decayAccum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inputs:</p>
-<blockquote>
-<div>ang - Flow angle from tauDEM Dinfinity flow direction tool
-mult - grid of multiplier values applied to upstream accumulations, 1 corresponds to no decay, 0 corresponds to complete decay
-outRast - output file path for decayed accumulation raster
-paramRast - raster of parameter values to accumulate, no parameter raster will result in area being accumulated
-cores - number of cores to use</div></blockquote>
-<dl class="docutils">
-<dt>Outputs:</dt>
-<dd>outRast - decayed accumulation raster</dd>
+<dd><p>Decay the accumulation of a parameter raster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>ang</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to flow angle raster from the TauDEM Dinfinity flow direction tool.</p>
+</dd>
+<dt><strong>mult</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to raster of multiplier values applied to upstream accumulations, 1 corresponds to no decay, 0 corresponds to complete decay.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output raster for decayed accumulation raster.</p>
+</dd>
+<dt><strong>paramRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">Raster of parameter values to accumulate. If not supplied area will be accumulated. Defaults to None.</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">Number of cores to use. Defaults to 1.</p>
+</dd>
 </dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Decayed accumulation raster, either area or parameter depending on what is supplied to the function.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="tools.dist2stream">
 <code class="descclassname">tools.</code><code class="descname">dist2stream</code><span class="sig-paren">(</span><em>fdr</em>, <em>fac</em>, <em>thresh</em>, <em>outRast</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#dist2stream"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.dist2stream" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inputs:</p>
+<dd><p>Compute distance to streams.
+Parameters
+———-
+fdr : str</p>
 <blockquote>
-<div>fdr - flow direction raster
-fac - flow accumulation raster
-thresh - accumulation threshold for stream formation
-outRast - output file path for distance raster
-cores - number of cores to use</div></blockquote>
+<div>Path to flow direction raster in TauDEM format.</div></blockquote>
 <dl class="docutils">
-<dt>Outputs:</dt>
-<dd>outRast - raster with values of d8 flow distance from each cell to the nearest stream</dd>
+<dt>fac <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Path to flow accumulation raster.</dd>
+<dt>thresh <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Accumulation threshold for stream formation in number of grid cells.</dd>
+<dt>outRast <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Path to output the distance raster.</dd>
+<dt>cores <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd>The number of cores to use. Defaults to 1.</dd>
 </dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster with values of d8 flow distance from each cell to the nearest stream.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -613,15 +698,33 @@ fileDir - Directory in which to save NHDPlus data</div></blockquote>
 <dl class="function">
 <dt id="tools.makeDecayGrid">
 <code class="descclassname">tools.</code><code class="descname">makeDecayGrid</code><span class="sig-paren">(</span><em>d2strm</em>, <em>k</em>, <em>outRast</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#makeDecayGrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.makeDecayGrid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inputs:</p>
-<blockquote>
-<div>d2strm - Raster of flow distances from each grid cell to the nearest stream
-k - constant applied to decay factor denominator
-outRast - output file path for decay grid</div></blockquote>
-<dl class="docutils">
-<dt>Outputs:</dt>
-<dd>outRast - decay raster computed as the inverse number of grid cells (1/number) from each grid cell to the nearest stream</dd>
+<dd><p>Create a decay raster where grid cell values are computed as the inverse number of grid cells, <span class="math notranslate nohighlight">\(\frac{1}{n+k*dx}\)</span>, where n is the distance from the d2strm raster and    from each grid cell to the nearest stream, k is the constant applied to the stream distance values, and dx is the cell size of the raster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>d2strm</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to raster of flow distances from each grid cell to the nearest stream.</p>
+</dd>
+<dt><strong>k</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Constant applied to decay factor denominator, this has units equal to the horizontal map units in the d2strm raster.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Output file path for decay grid.</p>
+</dd>
 </dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster file with grid cells values representing weights decaying as they ove further from the stream.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -683,22 +786,6 @@ outRast - output file path for decay grid</div></blockquote>
 </dd></dl>
 
 <dl class="function">
-<dt id="tools.make_cpg">
-<code class="descclassname">tools.</code><code class="descname">make_cpg</code><span class="sig-paren">(</span><em>accumParam</em>, <em>fac</em>, <em>outRast</em>, <em>noDataRast=None</em>, <em>minAccum=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#make_cpg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.make_cpg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inputs:</p>
-<blockquote>
-<div>accumParam - path to the accumulated parameter data raster
-fac - flow accumulation grid path
-outRast - output CPG file location
-noDataRast - raster of accumulated parameter no data values
-minAccum - Value of flow accumulation below which the CPG values will be set to no data</div></blockquote>
-<dl class="docutils">
-<dt>Outputs:</dt>
-<dd>outRast - Parameter CPG</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
 <dt id="tools.make_cpgs">
 <code class="descclassname">tools.</code><code class="descname">make_cpgs</code><span class="sig-paren">(</span><em>accumParams</em>, <em>fac</em>, <em>outWorkspace</em>, <em>minAccum=None</em>, <em>appStr='CPG'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#make_cpgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.make_cpgs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inputs:</p>
@@ -717,17 +804,73 @@ appStr = string of text to append to filename</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="tools.make_fcpg">
+<code class="descclassname">tools.</code><code class="descname">make_fcpg</code><span class="sig-paren">(</span><em>accumParam</em>, <em>fac</em>, <em>outRast</em>, <em>noDataRast=None</em>, <em>minAccum=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#make_fcpg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.make_fcpg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a flow-conditioned parameter grid using accumulated parameter and area rasters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>accumParam :</strong></dt>
+<dd><p class="first last">File location of the accumulated parameter data raster.</p>
+</dd>
+<dt><strong>fac</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">File location of the flow accumulation raster.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">File location of the output flow-conditioned parameter grid.</p>
+</dd>
+<dt><strong>noDataRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">File location of the accumulated parameter no data raster.</p>
+</dd>
+<dt><strong>minAccum</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Value of flow accumulation below which the CPG values will be set to no data</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Flow-conditioned parameter grid file where grid cell values represent the mean upstream value of the paramter.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="tools.maskStreams">
 <code class="descclassname">tools.</code><code class="descname">maskStreams</code><span class="sig-paren">(</span><em>inRast</em>, <em>streamRast</em>, <em>outRast</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#maskStreams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.maskStreams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inputs:</p>
-<blockquote>
-<div>inRast - input raster to mask
-streamRast - raster with all non-stream pixels set to no data
-outRast - output raster file location</div></blockquote>
-<dl class="docutils">
-<dt>Outputs:</dt>
-<dd>outRast - raster with non-stream cells set to no data</dd>
+<dd><p>Mask areas not on the stream network.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>inRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the input raster to mask.</p>
+</dd>
+<dt><strong>streamRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the stream raster where all non-stream pixels set to no data.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output raster file.</p>
+</dd>
 </dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster with non-stream cells set to the no data value from inRast.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -764,38 +907,80 @@ outRast - output raster file location</div></blockquote>
 
 <dl class="function">
 <dt id="tools.resampleParam">
-<code class="descclassname">tools.</code><code class="descname">resampleParam</code><span class="sig-paren">(</span><em>inParam</em>, <em>fdr</em>, <em>outParam</em>, <em>resampleMethod='bilinear'</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#resampleParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.resampleParam" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inputs:</p>
-<blockquote>
-<div>inParam - input parameter data raster
-fdr - flow direction raster
-outParam - output file for resampled parameter raster
-resampleMethod (str)- resampling method, either bilinear or nearest neighbor
-cores - number of cores to use</div></blockquote>
-<dl class="docutils">
-<dt>Outputs:</dt>
-<dd>outParam - resampled, reprojected, and clipped parameter raster</dd>
+<code class="descclassname">tools.</code><code class="descname">resampleParam</code><span class="sig-paren">(</span><em>inParam</em>, <em>fdr</em>, <em>outParam</em>, <em>resampleMethod='bilinear'</em>, <em>cores=1</em>, <em>forceProj=False</em>, <em>forceProj4='&quot;+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs&quot;'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#resampleParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.resampleParam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the of the flow direction raster supplied.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>inParam</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the input parameter data raster</p>
+</dd>
+<dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the flow direction raster</p>
+</dd>
+<dt><strong>outParam</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the output file for the resampled parameter raster.</p>
+</dd>
+<dt><strong>resampleMethod</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">resampling method, either ‘bilinear’ or ‘nearest neighbor’. Bilinear should generally be used for continuous data sets such as precipitation while nearest neighbor should generally be used for categorical datasets such as land cover type. Defaults to bilinear.</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">The number of cores to use. Defaults to 1.</p>
+</dd>
+<dt><strong>forceProj</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (optional)</span></dt>
+<dd><p class="first last">Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.</p>
+</dd>
+<dt><strong>forceProj4</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True.</p>
+</dd>
 </dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="tools.resampleParams">
 <code class="descclassname">tools.</code><code class="descname">resampleParams</code><span class="sig-paren">(</span><em>inParams</em>, <em>fdr</em>, <em>outWorkspace</em>, <em>resampleMethod='bilinear'</em>, <em>cores=1</em>, <em>appStr='rprj'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#resampleParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.resampleParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inputs:</p>
-<blockquote>
-<div><p>inParam - list of input parameter rasters
-fdr - flow direction raster</p>
-<p>outWorkspace - output directory for resampled rasters
-resampleMethod (str)- resampling method, either bilinear or nearest neighbor
-cores = number of cores to use
-appStr = String of text to append to filename</p>
-</div></blockquote>
-<dl class="docutils">
-<dt>Outputs:</dt>
-<dd>Resampled, reprojected, and clipped parameter rasters</dd>
-<dt>Returns:</dt>
-<dd>List of fielpaths to resampled rasters</dd>
+<dd><p>Batch version of <code class="code docutils literal notranslate"><span class="pre">resampleParam</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>inParam</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of input parameter raster paths.</p>
+</dd>
+<dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the flow direction raster.</p>
+</dd>
+<dt><strong>outWorkspace :</strong></dt>
+<dd><p class="first last">Path to the output directory for the resampled rasters.</p>
+</dd>
+<dt><strong>resampleMethod</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">Resampling method, either bilinear or nearest neighbor. Defaults to bilinear.</p>
+</dd>
+<dt><strong>cores :</strong></dt>
+<dd><p class="first last">Number of cores to use. Defaults to 1.</p>
+</dd>
+<dt><strong>appStr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">String of text to append to the input parameter filenames. Defaults to “rprj”.</p>
+</dd>
 </dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>fileList</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">Paths to resampled, reprojected, and clipped parameter rasters.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -828,14 +1013,34 @@ appStr = String of text to append to filename</p>
 
 <dl class="function">
 <dt id="tools.tauDrainDir">
-<code class="descclassname">tools.</code><code class="descname">tauDrainDir</code><span class="sig-paren">(</span><em>inRast</em>, <em>outRast</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#tauDrainDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.tauDrainDir" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">tools.</code><code class="descname">tauDrainDir</code><span class="sig-paren">(</span><em>inRast</em>, <em>outRast</em>, <em>updateDict={'compress': 'LZW'</em>, <em>'sparse': True</em>, <em>'tiled': True</em>, <em>'blockysize': 256</em>, <em>'blockxsize': 256</em>, <em>'driver': 'GTiff'</em>, <em>'nodata': 0}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#tauDrainDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.tauDrainDir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reclassifies ESRI drainage directions into tauDEM drainage directions.</p>
-<dl class="docutils">
-<dt>Inputs:</dt>
-<dd>inRast - Flow direction raster from NHDPlus</dd>
-<dt>Outputs:</dt>
-<dd>outRast - Flow direction raster for tauDEM</dd>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>inRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to a raster encoded with ESRI flow direction values.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output a raster with flow directions encoded for TauDEM.</p>
+</dd>
+<dt><strong>updateDict</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict (optional)</span></dt>
+<dd><p class="first last">Dictionary of rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.</p>
+</dd>
 </dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Reclassified flow direction raster at the path specified above.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -921,83 +1126,104 @@ cores - number of cores to use parameter accumulation</dd>
 </table>
 </dd></dl>
 
-<span class="target" id="module-netCDFmaker"></span><p>Based on code from Rich Signell
-Convert a bunch of GDAL readable grids to a NetCDF Time Series.
-Here we read a bunch of files that have names like:
-CPGs/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif
-CPGs/gridMET_minTempK_1979_05_00_HUC1002_CPG.tif
-…
-CPGs/gridMET_minTempK_1980_04_00_HUC1002_CPG.tif</p>
-<dl class="docutils">
-<dt>metaDict = {</dt>
-<dd>‘title’:’’,
-‘institution’:’’,
-‘source’:’’,
-‘id’:’’,
-‘naming_authority’:’’,
-‘references’:’’,
-‘comment’:’’,
-‘history’:’’,
-‘license’:’’, 
-‘acknowledgement’:’’, # 
-‘metadata_link’:’’, 
-‘date_creates’:’’,
-‘creator_type’:’’,
-‘creator_email’:’’,
-‘creator_name’:’’,
-‘creator_url’:’’,
-‘creator_institution’:’’,
-‘publisher_type’:’’,
-‘publisher_name’:’’,
-‘publisher_email’:’’,
-‘publisher_url’:’’,
-‘publisher_institution’:’’, 
-‘var_name’:’Tmin’,
-‘units’:’K’,
-‘add_offset’:0.0,
-‘standard_name’:’min_temperature’,
-‘long_name’:’minimum monthly temperature’,
-‘grid_mapping’:’crs’,
-‘scale_factor’:1.0,
-‘coverage_content_type’:’’
-}</dd>
-</dl>
-<dl class="function">
+<span class="target" id="module-netCDFmaker"></span><dl class="function">
 <dt id="netCDFmaker.buildNC">
 <code class="descclassname">netCDFmaker.</code><code class="descname">buildNC</code><span class="sig-paren">(</span><em>inDir</em>, <em>outFile</em>, <em>metaDict</em>, <em>cl=9</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/netCDFmaker.html#buildNC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#netCDFmaker.buildNC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build netCDF file from a stack of geotiffs</p>
+<dd><p>Build netCDF file from a stack of geotiffs.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt><strong>inDir</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd></dd>
-<dt><strong>Directory with geotiff files to be converted, specified as ‘/dir/here/*.tif’</strong></dt>
-<dd></dd>
+<dd><p class="first last">Directory with geotiff files to be converted, specified as ‘/dir/here/<a href="#id1"><span class="problematic" id="id2">*</span></a>.tif’</p>
+</dd>
 <dt><strong>outFile</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd></dd>
-<dt><strong>Output filename with ‘.nc’ included.</strong></dt>
-<dd></dd>
+<dd><p class="first last">Output filename with ‘.nc’ included.</p>
+</dd>
 <dt><strong>metaDict</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
-<dd></dd>
-<dt><strong>Metadata dictionary used to populate fields in the netCDF.</strong></dt>
-<dd></dd>
+<dd><p class="first last">Metadata dictionary used to populate fields in the netCDF. See Notes below for a description of fields to include.</p>
+</dd>
 <dt><strong>cl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd></dd>
-<dt><strong>Compression level, 1-9.</strong></dt>
-<dd></dd>
+<dd><p class="first last">Compression level, 1-9. A higher value will result in a smaller output file, but will take longer.</p>
+</dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>NetCDF file at outFile.</dt>
-<dd></dd>
+<dt><strong>NetCDF</strong> <span class="classifier-delimiter">:</span> <span class="classifier">file</span></dt>
+<dd><p class="first last">A NetCDF file at <em>outFile</em>.</p>
+</dd>
 </dl>
 </td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Notes</p>
+<p><em>Metadata Dictionary</em></p>
+<p>The metadata dictionary is expecting a particular set of keys to specify the metadata fields within the netCDF file being generated. These fields have been chose to make the resulting netCDF file compliant with the Climate and Forecast and the Data Discovery metadata conventions. Fields are described below, many descriptions are the same as <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents">http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents</a> or <a class="reference external" href="http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3">http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3</a>.</p>
+<dl class="docutils">
+<dt>title</dt>
+<dd>A succinct description of what is in the dataset.</dd>
+<dt>institution</dt>
+<dd>Specifies where the original data was produced.</dd>
+<dt>source</dt>
+<dd>The method of production of the original data. If it was model-generated, source should name the model and its version, as specifically as could be useful. If it is observational, source should characterize it (e.g., “surface observation” or “radiosonde”).</dd>
+<dt>id </dt>
+<dd>An identifier for the data set, provided by and unique within its naming authority. The combination of the “naming authority” and the “id” should be globally unique, but the id can be globally unique by itself also. IDs can be URLs, URNs, DOIs, meaningful text strings, a local key, or any other unique string of characters. The id should not include white space characters.</dd>
+<dt>naming_authority</dt>
+<dd>The organization that provides the initial id (see above) for the dataset. The naming authority should be uniquely specified by this attribute. We recommend using reverse-DNS naming for the naming authority; URIs are also acceptable. Example: ‘edu.ucar.unidata’.</dd>
+<dt>references</dt>
+<dd>Published or web-based references that describe the data or methods used to produce it.</dd>
+<dt>comment</dt>
+<dd>Miscellaneous information about the data or methods used to produce it.</dd>
+<dt>history</dt>
+<dd>Provides an audit trail for modifications to the original data. Well-behaved generic netCDF filters will automatically append their name and the parameters with which they were invoked to the global history attribute of an input netCDF file. We recommend that each line begin with a timestamp indicating the date and time of day that the program was executed.</dd>
+<dt>license</dt>
+<dd>Provide the URL to a standard or specific license, enter “Freely Distributed” or “None”, or describe any restrictions to data access and distribution in free text.</dd>
+<dt>acknowledgement</dt>
+<dd>A place to acknowledge various types of support for the project that produced this data.</dd>
+<dt>metadata_link</dt>
+<dd>A URL that gives the location of more complete metadata. A persistent URL is recommended for this attribute.</dd>
+<dt>date_created</dt>
+<dd>The date on which this version of the data was created. (Modification of values implies a new version, hence this would be assigned the date of the most recent values modification.) Metadata changes are not considered when assigning the date_created. The ISO 8601:2004 extended date format is recommended, as described in the Attribute Content Guidance section.</dd>
+<dt>creator_type</dt>
+<dd>Specifies type of creator with one of the following: ‘person’, ‘group’, ‘institution’, or ‘position’. If this attribute is not specified, the creator is assumed to be a person.</dd>
+<dt>creator_email</dt>
+<dd>The email address of the person (or other creator type specified by the creator_type attribute) principally responsible for creating this data.</dd>
+<dt>creator_name</dt>
+<dd>The name of the person (or other creator type specified by the creator_type attribute) principally responsible for creating this data.</dd>
+<dt>creator_url</dt>
+<dd>The URL of the person (or other creator type specified by the creator_type attribute) principally responsible for creating this data.</dd>
+<dt>creator_institution</dt>
+<dd>The institution of the creator; should uniquely identify the creator’s institution. This attribute’s value should be specified even if it matches the value of publisher_institution, or if creator_type is institution.</dd>
+<dt>publisher_type</dt>
+<dd>Specifies type of publisher with one of the following: ‘person’, ‘group’, ‘institution’, or ‘position’. If this attribute is not specified, the publisher is assumed to be a person.</dd>
+<dt>publisher_name</dt>
+<dd>The name of the person (or other entity specified by the publisher_type attribute) responsible for publishing the data file or product to users, with its current metadata and format.</dd>
+<dt>publisher_email</dt>
+<dd>The email address of the person (or other entity specified by the publisher_type attribute) responsible for publishing the data file or product to users, with its current metadata and format.</dd>
+<dt>publisher_url</dt>
+<dd>The URL of the person (or other entity specified by the publisher_type attribute) responsible for publishing the data file or product to users, with its current metadata and format.</dd>
+<dt>publisher_institution</dt>
+<dd>The institution that presented the data file or equivalent product to users; should uniquely identify the institution. If publisher_type is institution, this should have the same value as publisher_name.</dd>
+<dt>var_name</dt>
+<dd>Variable name given to the dataset. For example minimum temperature would be Tmin.</dd>
+<dt>units</dt>
+<dd>Unit value associated with quantity described by the dataset.</dd>
+<dt>add_offset</dt>
+<dd>Offset value use with the data, usually 0.0 if no offset is used with the data.</dd>
+<dt>standard_name</dt>
+<dd>Short name associated with the dataset.</dd>
+<dt>long_name</dt>
+<dd>More descriptive name associated with the dataset.</dd>
+<dt>grid_mapping</dt>
+<dd>The way data values are mapped to a grid, usually ‘crs’.</dd>
+<dt>scale_factor</dt>
+<dd>Numeric value the data are scaled by to save space, usually 1.0 if data are not scaled.</dd>
+<dt>coverage_content_type</dt>
+<dd>An ISO 19115-1 code to indicate the source of the data (image, thematicClassification, physicalMeasurement, auxiliaryInformation, qualityInformation, referenceInformation, modelResult, or coordinate).</dd>
+</dl>
 </dd></dl>
 
 </div>

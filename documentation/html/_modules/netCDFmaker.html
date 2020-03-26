@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../_static/underscore.js"></script>
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -150,48 +151,46 @@
            <div itemprop="articleBody">
             
   <h1>Source code for netCDFmaker</h1><div class="highlight"><pre>
-<span></span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">Based on code from Rich Signell</span>
-<span class="sd">Convert a bunch of GDAL readable grids to a NetCDF Time Series.</span>
-<span class="sd">Here we read a bunch of files that have names like:</span>
-<span class="sd">CPGs/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif</span>
-<span class="sd">CPGs/gridMET_minTempK_1979_05_00_HUC1002_CPG.tif</span>
-<span class="sd">...</span>
-<span class="sd">CPGs/gridMET_minTempK_1980_04_00_HUC1002_CPG.tif</span>
-
-<span class="sd">metaDict = {</span>
-<span class="sd">	&#39;title&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;institution&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;source&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;id&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;naming_authority&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;references&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;comment&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;history&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;license&#39;:&#39;&#39;, </span>
-<span class="sd">	&#39;acknowledgement&#39;:&#39;&#39;, # </span>
-<span class="sd">	&#39;metadata_link&#39;:&#39;&#39;, </span>
-<span class="sd">	&#39;date_creates&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;creator_type&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;creator_email&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;creator_name&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;creator_url&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;creator_institution&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;publisher_type&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;publisher_name&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;publisher_email&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;publisher_url&#39;:&#39;&#39;,</span>
-<span class="sd">	&#39;publisher_institution&#39;:&#39;&#39;, </span>
-<span class="sd">	&#39;var_name&#39;:&#39;Tmin&#39;,</span>
-<span class="sd">	&#39;units&#39;:&#39;K&#39;,</span>
-<span class="sd">	&#39;add_offset&#39;:0.0,</span>
-<span class="sd">	&#39;standard_name&#39;:&#39;min_temperature&#39;,</span>
-<span class="sd">	&#39;long_name&#39;:&#39;minimum monthly temperature&#39;,</span>
-<span class="sd">	&#39;grid_mapping&#39;:&#39;crs&#39;,</span>
-<span class="sd">	&#39;scale_factor&#39;:1.0,</span>
-<span class="sd">	&#39;coverage_content_type&#39;:&#39;&#39;</span>
-<span class="sd">	}</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span></span><span class="c1"># Based on code from Rich Signell</span>
+<span class="c1"># Convert a bunch of GDAL readable grids to a NetCDF Time Series.</span>
+<span class="c1"># Here we read a bunch of files that have names like:</span>
+<span class="c1"># CPGs/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif</span>
+<span class="c1"># CPGs/gridMET_minTempK_1979_05_00_HUC1002_CPG.tif</span>
+<span class="c1"># ...</span>
+<span class="c1"># CPGs/gridMET_minTempK_1980_04_00_HUC1002_CPG.tif</span>
+<span class="c1">#</span>
+<span class="c1"># metaDict = {</span>
+<span class="c1"># 	&#39;title&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;institution&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;source&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;id&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;naming_authority&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;references&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;comment&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;history&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;license&#39;:&#39;&#39;, </span>
+<span class="c1"># 	&#39;acknowledgement&#39;:&#39;&#39;, # </span>
+<span class="c1"># 	&#39;metadata_link&#39;:&#39;&#39;, </span>
+<span class="c1"># 	&#39;date_creates&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;creator_type&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;creator_email&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;creator_name&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;creator_url&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;creator_institution&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;publisher_type&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;publisher_name&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;publisher_email&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;publisher_url&#39;:&#39;&#39;,</span>
+<span class="c1"># 	&#39;publisher_institution&#39;:&#39;&#39;, </span>
+<span class="c1"># 	&#39;var_name&#39;:&#39;Tmin&#39;,</span>
+<span class="c1"># 	&#39;units&#39;:&#39;K&#39;,</span>
+<span class="c1"># 	&#39;add_offset&#39;:0.0,</span>
+<span class="c1"># 	&#39;standard_name&#39;:&#39;min_temperature&#39;,</span>
+<span class="c1"># 	&#39;long_name&#39;:&#39;minimum monthly temperature&#39;,</span>
+<span class="c1"># 	&#39;grid_mapping&#39;:&#39;crs&#39;,</span>
+<span class="c1"># 	&#39;scale_factor&#39;:1.0,</span>
+<span class="c1"># 	&#39;coverage_content_type&#39;:&#39;&#39;</span>
+<span class="c1"># 	}</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
@@ -203,27 +202,28 @@
 <span class="kn">import</span> <span class="nn">time</span>
 
 <div class="viewcode-block" id="buildNC"><a class="viewcode-back" href="../functions.html#netCDFmaker.buildNC">[docs]</a><span class="k">def</span> <span class="nf">buildNC</span><span class="p">(</span><span class="n">inDir</span><span class="p">,</span> <span class="n">outFile</span><span class="p">,</span> <span class="n">metaDict</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mi">9</span><span class="p">):</span>
-	<span class="sd">&#39;&#39;&#39;Build netCDF file from a stack of geotiffs</span>
+	<span class="sd">&#39;&#39;&#39;Build netCDF file from a stack of geotiffs.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 <span class="sd">	inDir : str</span>
-<span class="sd">	Directory with geotiff files to be converted, specified as &#39;/dir/here/*.tif&#39;</span>
+<span class="sd">		Directory with geotiff files to be converted, specified as &#39;/dir/here/*.tif&#39;</span>
 <span class="sd">	outFile : str</span>
-<span class="sd">	Output filename with &#39;.nc&#39; included.</span>
+<span class="sd">		Output filename with &#39;.nc&#39; included.</span>
 <span class="sd">	metaDict : dict</span>
-<span class="sd">	Metadata dictionary used to populate fields in the netCDF.</span>
+<span class="sd">		Metadata dictionary used to populate fields in the netCDF. See Notes below for a description of fields to include.</span>
 <span class="sd">	cl : int</span>
-<span class="sd">	Compression level, 1-9.</span>
+<span class="sd">		Compression level, 1-9. A higher value will result in a smaller output file, but will take longer.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
-<span class="sd">	NetCDF file at outFile.</span>
+<span class="sd">	NetCDF : file</span>
+<span class="sd">		A NetCDF file at *outFile*.</span>
 
-<span class="sd">	Note</span>
-<span class="sd">	----</span>
-<span class="sd">	Metadata Dictionary</span>
-<span class="sd">	===================</span>
+<span class="sd">	Notes</span>
+<span class="sd">	-----</span>
+<span class="sd">	*Metadata Dictionary*</span>
+<span class="sd">	</span>
 <span class="sd">	The metadata dictionary is expecting a particular set of keys to specify the metadata fields within the netCDF file being generated. These fields have been chose to make the resulting netCDF file compliant with the Climate and Forecast and the Data Discovery metadata conventions. Fields are described below, many descriptions are the same as http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents or http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3. </span>
 
 <span class="sd">	title</span>

@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../_static/underscore.js"></script>
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -177,15 +178,29 @@
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
 
-<div class="viewcode-block" id="tauDrainDir"><a class="viewcode-back" href="../functions.html#tools.tauDrainDir">[docs]</a><span class="k">def</span> <span class="nf">tauDrainDir</span><span class="p">(</span><span class="n">inRast</span><span class="p">,</span> <span class="n">outRast</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Reclassifies ESRI drainage directions into tauDEM drainage directions.</span>
+<div class="viewcode-block" id="tauDrainDir"><a class="viewcode-back" href="../functions.html#tools.tauDrainDir">[docs]</a><span class="k">def</span> <span class="nf">tauDrainDir</span><span class="p">(</span><span class="n">inRast</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">updateDict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;sparse&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;blockysize&#39;</span><span class="p">:</span><span class="mi">256</span><span class="p">,</span>
+            <span class="s1">&#39;blockxsize&#39;</span><span class="p">:</span><span class="mi">256</span><span class="p">,</span>
+            <span class="s1">&#39;driver&#39;</span> <span class="p">:</span> <span class="s2">&quot;GTiff&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;nodata&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">}):</span>
+    <span class="sd">&quot;&quot;&quot;Reclassifies ESRI drainage directions into tauDEM drainage directions.</span>
 
-<span class="sd">    Inputs:</span>
-<span class="sd">        inRast - Flow direction raster from NHDPlus</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inRast : str</span>
+<span class="sd">        Path to a raster encoded with ESRI flow direction values.</span>
+<span class="sd">    outRast : str</span>
+<span class="sd">        Path to output a raster with flow directions encoded for TauDEM.</span>
+<span class="sd">    updateDict : dict (optional)</span>
+<span class="sd">        Dictionary of rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.</span>
 
-<span class="sd">    Outputs:</span>
-<span class="sd">        outRast - Flow direction raster for tauDEM</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outRast : raster</span>
+<span class="sd">        Reclassified flow direction raster at the path specified above.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reclassifying Flow Directions...&#39;</span><span class="p">)</span>
@@ -210,15 +225,8 @@
     <span class="n">tauDir</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="n">inNoData</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># no data</span>
     <span class="n">tauDir</span> <span class="o">=</span> <span class="n">tauDir</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;uint8&#39;</span><span class="p">)</span><span class="c1">#8 bit integer is sufficient for flow directions</span>
 
-    <span class="c1"># edit the metadata</span>
-    <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-    		<span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
-    		<span class="s1">&#39;sparse&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
-    		<span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
-    		<span class="s1">&#39;blockysize&#39;</span><span class="p">:</span><span class="mi">256</span><span class="p">,</span>
-    		<span class="s1">&#39;blockxsize&#39;</span><span class="p">:</span><span class="mi">256</span><span class="p">,</span>
-            <span class="s1">&#39;driver&#39;</span> <span class="p">:</span> <span class="s2">&quot;GTiff&quot;</span><span class="p">,</span>
-            <span class="s1">&#39;nodata&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">})</span>
+    <span class="c1"># edit the metadata, probably should make this an input to the script...</span>
+    <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
     
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">outRast</span><span class="p">):</span>
     	<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">outRast</span><span class="p">)</span>
@@ -227,34 +235,33 @@
         <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tauDir</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TauDEM drainage direction written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="accumulateParam"><a class="viewcode-back" href="../functions.html#tools.accumulateParam">[docs]</a><span class="k">def</span> <span class="nf">accumulateParam</span><span class="p">(</span><span class="n">paramRast</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">accumRast</span><span class="p">,</span> <span class="n">outNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outNoDataAccum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">zeroNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">multNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="accumulateParam"><a class="viewcode-back" href="../functions.html#tools.accumulateParam">[docs]</a><span class="k">def</span> <span class="nf">accumulateParam</span><span class="p">(</span><span class="n">paramRast</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">accumRast</span><span class="p">,</span> <span class="n">outNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outNoDataAccum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">zeroNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        paramRast : </span>
-<span class="sd">            Raster of parameter values to acumulate, this file is modified by the function</span>
-<span class="sd">        fdr : </span>
-<span class="sd">            Flow direction raster in tauDEM format</span>
-<span class="sd">        accumRast : </span>
-<span class="sd">            File location to store accumulated parameter values</span>
-<span class="sd">        outNoDataRast : </span>
-<span class="sd">            File location to store parameter no data raster</span>
-<span class="sd">        outNoDataAccum :</span>
-<span class="sd">            File location to store accumulated no data raster</span>
-<span class="sd">        zeroNoDataRast : </span>
-<span class="sd">        multiplier :</span>
-<span class="sd">        multNoDataRast : </span>
-<span class="sd">        cores - number of cores to use parameter accumulation</span>
+<span class="sd">    paramRast : str </span>
+<span class="sd">        Raster of parameter values to acumulate, this file is modified by the function.</span>
+<span class="sd">    fdr : str</span>
+<span class="sd">        Flow direction raster in TauDEM format.</span>
+<span class="sd">    accumRast : str</span>
+<span class="sd">        File location to store accumulated parameter values.</span>
+<span class="sd">    outNoDataRast : str (optional)</span>
+<span class="sd">        File location to store parameter no data raster.</span>
+<span class="sd">    outNoDataAccum : str (optional)</span>
+<span class="sd">        File location to store accumulated no data raster.</span>
+<span class="sd">    zeroNoDataRast : str (optional)</span>
+<span class="sd">        File location to store the no data raster filled with zeros.</span>
+<span class="sd">    cores : int (optional)</span>
+<span class="sd">        The number of cores to use for parameter accumulation. Defaults to 1.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    None</span>
-
-<span class="sd">    Outputs</span>
-<span class="sd">    -------</span>
-<span class="sd">        accumRast - raster of accumulated parameter values</span>
-<span class="sd">        outNoDataRast - raster of no data values</span>
-<span class="sd">        outNoDataRast - raster of accumulated no data values</span>
+<span class="sd">    accumRast : raster</span>
+<span class="sd">        Raster of accumulated parameter values.</span>
+<span class="sd">    outNoDataRast : raster</span>
+<span class="sd">        Raster of no data values.</span>
+<span class="sd">    outNoDataRast : raster</span>
+<span class="sd">        Raster of accumulated no data values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">paramRast</span><span class="p">):</span>
@@ -380,19 +387,26 @@
         <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span></div>
 
     
-<div class="viewcode-block" id="make_cpg"><a class="viewcode-back" href="../functions.html#tools.make_cpg">[docs]</a><span class="k">def</span> <span class="nf">make_cpg</span><span class="p">(</span><span class="n">accumParam</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">noDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">minAccum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Inputs:</span>
-<span class="sd">        </span>
-<span class="sd">        accumParam - path to the accumulated parameter data raster</span>
-<span class="sd">        fac - flow accumulation grid path</span>
-<span class="sd">        outRast - output CPG file location</span>
-<span class="sd">        noDataRast - raster of accumulated parameter no data values</span>
-<span class="sd">        minAccum - Value of flow accumulation below which the CPG values will be set to no data</span>
-<span class="sd">        </span>
+<div class="viewcode-block" id="make_fcpg"><a class="viewcode-back" href="../functions.html#tools.make_fcpg">[docs]</a><span class="k">def</span> <span class="nf">make_fcpg</span><span class="p">(</span><span class="n">accumParam</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">noDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">minAccum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Create a flow-conditioned parameter grid using accumulated parameter and area rasters.</span>
 
-<span class="sd">    Outputs:</span>
-<span class="sd">        outRast - Parameter CPG </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    accumParam : </span>
+<span class="sd">        File location of the accumulated parameter data raster.</span>
+<span class="sd">    fac : str</span>
+<span class="sd">        File location of the flow accumulation raster.</span>
+<span class="sd">    outRast : str</span>
+<span class="sd">        File location of the output flow-conditioned parameter grid.</span>
+<span class="sd">    noDataRast : str</span>
+<span class="sd">        File location of the accumulated parameter no data raster.</span>
+<span class="sd">    minAccum : float</span>
+<span class="sd">        Value of flow accumulation below which the CPG values will be set to no data</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outRast : raster</span>
+<span class="sd">        Flow-conditioned parameter grid file where grid cell values represent the mean upstream value of the paramter. </span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">outNoData</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
     
@@ -437,9 +451,6 @@
         <span class="n">accum2</span><span class="p">[</span><span class="n">accum</span> <span class="o">==</span> <span class="n">facNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="c1"># fill this with no data values where appropriate</span>
         <span class="n">corrAccum</span> <span class="o">=</span> <span class="n">accum2</span> <span class="c1"># No correction required</span>
         
-
-    
-    
     <span class="c1"># Throw warning if there is a negative accumulation</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">corrAccum</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Negative accumulation value&quot;</span><span class="p">)</span>
@@ -471,20 +482,30 @@
         <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dataCPG</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CPG file written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
     
-    
+<div class="viewcode-block" id="resampleParam"><a class="viewcode-back" href="../functions.html#tools.resampleParam">[docs]</a><span class="k">def</span> <span class="nf">resampleParam</span><span class="p">(</span><span class="n">inParam</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outParam</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">forceProj</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">forceProj4</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the of the flow direction raster supplied.</span>
 
-<div class="viewcode-block" id="resampleParam"><a class="viewcode-back" href="../functions.html#tools.resampleParam">[docs]</a><span class="k">def</span> <span class="nf">resampleParam</span><span class="p">(</span><span class="n">inParam</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outParam</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Inputs:</span>
-<span class="sd">        </span>
-<span class="sd">        inParam - input parameter data raster</span>
-<span class="sd">        fdr - flow direction raster</span>
-<span class="sd">        outParam - output file for resampled parameter raster</span>
-<span class="sd">        resampleMethod (str)- resampling method, either bilinear or nearest neighbor</span>
-<span class="sd">        cores - number of cores to use</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inParam : str</span>
+<span class="sd">        Path to the input parameter data raster</span>
+<span class="sd">    fdr : str</span>
+<span class="sd">        Path to the flow direction raster</span>
+<span class="sd">    outParam : str</span>
+<span class="sd">        Path to the output file for the resampled parameter raster.</span>
+<span class="sd">    resampleMethod : str (optional)</span>
+<span class="sd">        resampling method, either &#39;bilinear&#39; or &#39;nearest neighbor&#39;. Bilinear should generally be used for continuous data sets such as precipitation while nearest neighbor should generally be used for categorical datasets such as land cover type. Defaults to bilinear.</span>
+<span class="sd">    cores : int (optional)</span>
+<span class="sd">        The number of cores to use. Defaults to 1.</span>
+<span class="sd">    forceProj : bool (optional)</span>
+<span class="sd">        Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.</span>
+<span class="sd">    forceProj4 : str</span>
+<span class="sd">        Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True. </span>
 
-<span class="sd">    Outputs:</span>
-<span class="sd">        outParam - resampled, reprojected, and clipped parameter raster</span>
+<span class="sd">    Outputs</span>
+<span class="sd">    -------</span>
+<span class="sd">    outParam : raster</span>
+<span class="sd">        Resampled, reprojected, and clipped parameter raster.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fdr</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load flow direction raster in Rasterio</span>
@@ -502,18 +523,15 @@
         <span class="n">paramcrs</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">crs</span> <span class="c1">#Get parameter coordinate reference system</span>
         <span class="n">paramXsize</span><span class="p">,</span> <span class="n">paramYsize</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">res</span> <span class="c1">#Get parameter cell size</span>
 
+    <span class="c1"># override the FDR projection if specified.</span>
+    <span class="k">if</span> <span class="n">forceProj</span><span class="p">:</span>
+        <span class="n">fdrcrs</span> <span class="o">=</span> <span class="n">forceProj4</span>
 
-    <span class="c1"># Convert flow direction spatial reference from wkt to proj4 </span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Flow Direction WKT: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fdrcrs</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter WKT:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">paramcrs</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Flow Direction Proj4: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fdrcrs</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter Proj4:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">paramcrs</span><span class="p">))</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Flow Direction Xsize:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">xsize</span><span class="p">))</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter Xsize:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">paramXsize</span><span class="p">))</span>
-
-    
-    <span class="c1">#Over ride the output coordinate system to make it work with USGS Albers projection</span>
-    <span class="n">fdrcrs</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
-    <span class="c1">#print(&quot;Flow Direction proj4: &quot; + str(fdrcrs))</span>
     
     <span class="c1"># Choose an appropriate gdal data type for the parameter</span>
     <span class="k">if</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int8&#39;</span><span class="p">:</span>
@@ -547,7 +565,7 @@
             <span class="s1">&#39;inParam&#39;</span><span class="p">:</span> <span class="n">inParam</span><span class="p">,</span>
             <span class="s1">&#39;outParam&#39;</span><span class="p">:</span> <span class="n">outParam</span><span class="p">,</span>
             <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
-            <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
+            <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">cores</span><span class="p">),</span> 
             <span class="s1">&#39;resampleMethod&#39;</span><span class="p">:</span> <span class="n">resampleMethod</span><span class="p">,</span>
             <span class="s1">&#39;xsize&#39;</span><span class="p">:</span> <span class="n">xsize</span><span class="p">,</span> 
             <span class="s1">&#39;ysize&#39;</span><span class="p">:</span> <span class="n">ysize</span><span class="p">,</span> 
@@ -560,7 +578,7 @@
             <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="n">outType</span>
             <span class="p">}</span>
             
-            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;gdalwarp -overwrite -tr </span><span class="si">{xsize}</span><span class="s1"> </span><span class="si">{ysize}</span><span class="s1"> -t_srs </span><span class="si">{fdrcrs}</span><span class="s1"> -te </span><span class="si">{fdrXmin}</span><span class="s1"> </span><span class="si">{fdrYmin}</span><span class="s1"> </span><span class="si">{fdrXmax}</span><span class="s1"> </span><span class="si">{fdrYmax}</span><span class="s1"> -co &quot;PROFILE=GeoTIFF&quot; -co &quot;TILED=YES&quot; -co &quot;SPARSE_OK=TRUE&quot; -co &quot;COMPRESS=LZW&quot; -co &quot;NUM_THREADS=ALL_CPUS&quot; -co &quot;BIGTIFF=IF_SAFER&quot; -r </span><span class="si">{resampleMethod}</span><span class="s1"> -dstnodata </span><span class="si">{nodata}</span><span class="s1"> -ot </span><span class="si">{datatype}</span><span class="s1"> </span><span class="si">{inParam}</span><span class="s1"> </span><span class="si">{outParam}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">warpParams</span><span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;gdalwarp -overwrite -tr </span><span class="si">{xsize}</span><span class="s1"> </span><span class="si">{ysize}</span><span class="s1"> -t_srs </span><span class="si">{fdrcrs}</span><span class="s1"> -te </span><span class="si">{fdrXmin}</span><span class="s1"> </span><span class="si">{fdrYmin}</span><span class="s1"> </span><span class="si">{fdrXmax}</span><span class="s1"> </span><span class="si">{fdrYmax}</span><span class="s1"> -co &quot;PROFILE=GeoTIFF&quot; -co &quot;TILED=YES&quot; -co &quot;SPARSE_OK=TRUE&quot; -co &quot;COMPRESS=LZW&quot; -co &quot;NUM_THREADS=</span><span class="si">{cores}</span><span class="s1">&quot; -co &quot;BIGTIFF=IF_SAFER&quot; -r </span><span class="si">{resampleMethod}</span><span class="s1"> -dstnodata </span><span class="si">{nodata}</span><span class="s1"> -ot </span><span class="si">{datatype}</span><span class="s1"> </span><span class="si">{inParam}</span><span class="s1"> </span><span class="si">{outParam}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">warpParams</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
             <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
@@ -572,15 +590,21 @@
 <span class="c1">#Tools for decayed accumulation CPGs</span>
 
 <div class="viewcode-block" id="makeDecayGrid"><a class="viewcode-back" href="../functions.html#tools.makeDecayGrid">[docs]</a><span class="k">def</span> <span class="nf">makeDecayGrid</span><span class="p">(</span><span class="n">d2strm</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">outRast</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Inputs:</span>
-<span class="sd">        </span>
-<span class="sd">        d2strm - Raster of flow distances from each grid cell to the nearest stream</span>
-<span class="sd">        k - constant applied to decay factor denominator</span>
-<span class="sd">        outRast - output file path for decay grid</span>
+    <span class="sd">&#39;&#39;&#39;Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{1}{n+k*dx}`, where n is the distance from the d2strm raster and    from each grid cell to the nearest stream, k is the constant applied to the stream distance values, and dx is the cell size of the raster.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d2strm : str</span>
+<span class="sd">        Path to raster of flow distances from each grid cell to the nearest stream.</span>
+<span class="sd">    k : float</span>
+<span class="sd">        Constant applied to decay factor denominator, this has units equal to the horizontal map units in the d2strm raster.</span>
+<span class="sd">    outRast : str</span>
+<span class="sd">        Output file path for decay grid.</span>
 
-<span class="sd">    Outputs:</span>
-<span class="sd">        outRast - decay raster computed as the inverse number of grid cells (1/number) from each grid cell to the nearest stream</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        outRast : raster</span>
+<span class="sd">            Raster file with grid cells values representing weights decaying as they ove further from the stream.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">d2strm</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error - Stream distance raster file is missing!&quot;</span><span class="p">)</span>
@@ -624,13 +648,21 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Decay raster written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="applyMult"><a class="viewcode-back" href="../functions.html#tools.applyMult">[docs]</a><span class="k">def</span> <span class="nf">applyMult</span><span class="p">(</span><span class="n">inRast</span><span class="p">,</span> <span class="n">mult</span><span class="p">,</span> <span class="n">outRast</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Inputs:</span>
-<span class="sd">        inRast- Input parameter raster</span>
-<span class="sd">        mult - multiplier raster</span>
+    <span class="sd">&#39;&#39;&#39;Multiply input raster by mult.</span>
 
-<span class="sd">    Outputs:</span>
-<span class="sd">        outRast - parameter raster multiplied by the multiplier raster</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inRast : str</span>
+<span class="sd">        Path to input raster.</span>
+<span class="sd">    mult : str</span>
+<span class="sd">        Path to multiplier raster.</span>
+<span class="sd">    outRast : str</span>
+<span class="sd">        Path to output raster.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outRast : raster</span>
+<span class="sd">        Input raster multiplied by the multiplier raster.</span>
 <span class="sd">    &#39;&#39;&#39;</span>  
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inRast</span><span class="p">):</span>
@@ -677,17 +709,25 @@
 
 
 <div class="viewcode-block" id="decayAccum"><a class="viewcode-back" href="../functions.html#tools.decayAccum">[docs]</a><span class="k">def</span> <span class="nf">decayAccum</span><span class="p">(</span><span class="n">ang</span><span class="p">,</span> <span class="n">mult</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">paramRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Inputs:</span>
-<span class="sd">        </span>
-<span class="sd">        ang - Flow angle from tauDEM Dinfinity flow direction tool</span>
-<span class="sd">        mult - grid of multiplier values applied to upstream accumulations, 1 corresponds to no decay, 0 corresponds to complete decay</span>
-<span class="sd">        outRast - output file path for decayed accumulation raster</span>
-<span class="sd">        paramRast - raster of parameter values to accumulate, no parameter raster will result in area being accumulated</span>
-<span class="sd">        cores - number of cores to use</span>
+    <span class="sd">&#39;&#39;&#39;Decay the accumulation of a parameter raster.</span>
 
-<span class="sd">    Outputs:</span>
-<span class="sd">        outRast - decayed accumulation raster</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ang : str</span>
+<span class="sd">        Path to flow angle raster from the TauDEM Dinfinity flow direction tool.</span>
+<span class="sd">    mult : str</span>
+<span class="sd">        Path to raster of multiplier values applied to upstream accumulations, 1 corresponds to no decay, 0 corresponds to complete decay.</span>
+<span class="sd">    outRast : str</span>
+<span class="sd">        Path to output raster for decayed accumulation raster.</span>
+<span class="sd">    paramRast : str (optional)</span>
+<span class="sd">        Raster of parameter values to accumulate. If not supplied area will be accumulated. Defaults to None.</span>
+<span class="sd">    cores : int (optional)</span>
+<span class="sd">        Number of cores to use. Defaults to 1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outRast : raster</span>
+<span class="sd">        Decayed accumulation raster, either area or parameter depending on what is supplied to the function.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">if</span> <span class="n">paramRast</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
@@ -733,21 +773,27 @@
 
 
 <div class="viewcode-block" id="dist2stream"><a class="viewcode-back" href="../functions.html#tools.dist2stream">[docs]</a><span class="k">def</span> <span class="nf">dist2stream</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Inputs:</span>
-<span class="sd">        </span>
-<span class="sd">        fdr - flow direction raster</span>
-<span class="sd">        fac - flow accumulation raster</span>
-<span class="sd">        thresh - accumulation threshold for stream formation</span>
-<span class="sd">        outRast - output file path for distance raster</span>
-<span class="sd">        cores - number of cores to use</span>
+    <span class="sd">&#39;&#39;&#39;Compute distance to streams.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fdr : str</span>
+<span class="sd">        Path to flow direction raster in TauDEM format.</span>
+<span class="sd">    fac : str</span>
+<span class="sd">        Path to flow accumulation raster.</span>
+<span class="sd">    thresh : int</span>
+<span class="sd">        Accumulation threshold for stream formation in number of grid cells.</span>
+<span class="sd">    outRast : str</span>
+<span class="sd">        Path to output the distance raster.</span>
+<span class="sd">    cores : int (optional)</span>
+<span class="sd">        The number of cores to use. Defaults to 1.</span>
 
-<span class="sd">    Outputs:</span>
-<span class="sd">        outRast - raster with values of d8 flow distance from each cell to the nearest stream</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outRast : raster </span>
+<span class="sd">        Raster with values of d8 flow distance from each cell to the nearest stream.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accumulating parameter&#39;</span><span class="p">)</span>
         <span class="n">tauParams</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
         <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
@@ -767,15 +813,21 @@
         <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="maskStreams"><a class="viewcode-back" href="../functions.html#tools.maskStreams">[docs]</a><span class="k">def</span> <span class="nf">maskStreams</span><span class="p">(</span><span class="n">inRast</span><span class="p">,</span> <span class="n">streamRast</span><span class="p">,</span> <span class="n">outRast</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Inputs:</span>
-<span class="sd">        </span>
-<span class="sd">        inRast - input raster to mask</span>
-<span class="sd">        streamRast - raster with all non-stream pixels set to no data</span>
-<span class="sd">        outRast - output raster file location</span>
+    <span class="sd">&#39;&#39;&#39;Mask areas not on the stream network.</span>
 
-<span class="sd">    Outputs:</span>
-<span class="sd">        outRast - raster with non-stream cells set to no data</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inRast : str</span>
+<span class="sd">        Path to the input raster to mask.</span>
+<span class="sd">    streamRast : str</span>
+<span class="sd">        Path to the stream raster where all non-stream pixels set to no data.</span>
+<span class="sd">    outRast : str</span>
+<span class="sd">        Path to output raster file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outRast : raster</span>
+<span class="sd">        Raster with non-stream cells set to the no data value from inRast.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
   
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inRast</span><span class="p">):</span>
@@ -816,22 +868,27 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CPG file written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="resampleParams"><a class="viewcode-back" href="../functions.html#tools.resampleParams">[docs]</a><span class="k">def</span> <span class="nf">resampleParams</span><span class="p">(</span><span class="n">inParams</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;rprj&quot;</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Inputs:</span>
-<span class="sd">        </span>
-<span class="sd">        inParam - list of input parameter rasters</span>
-<span class="sd">        fdr - flow direction raster</span>
-<span class="sd">        </span>
-<span class="sd">        outWorkspace - output directory for resampled rasters</span>
-<span class="sd">        resampleMethod (str)- resampling method, either bilinear or nearest neighbor</span>
-<span class="sd">        cores = number of cores to use</span>
-<span class="sd">        appStr = String of text to append to filename</span>
+    <span class="sd">&#39;&#39;&#39;Batch version of :code:`resampleParam`.</span>
 
-<span class="sd">    Outputs:</span>
-<span class="sd">        Resampled, reprojected, and clipped parameter rasters</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inParam : list</span>
+<span class="sd">        List of input parameter raster paths.</span>
+<span class="sd">    fdr : str</span>
+<span class="sd">        Path to the flow direction raster.</span>
+<span class="sd">    outWorkspace :  </span>
+<span class="sd">        Path to the output directory for the resampled rasters.</span>
+<span class="sd">    resampleMethod : str (optional)</span>
+<span class="sd">        Resampling method, either bilinear or nearest neighbor. Defaults to bilinear.</span>
+<span class="sd">    cores :</span>
+<span class="sd">        Number of cores to use. Defaults to 1.</span>
+<span class="sd">    appStr : str (optional)</span>
+<span class="sd">        String of text to append to the input parameter filenames. Defaults to &quot;rprj&quot;.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        List of fielpaths to resampled rasters</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fileList : list</span>
+<span class="sd">        Paths to resampled, reprojected, and clipped parameter rasters.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">fileList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of output files</span>
@@ -851,21 +908,25 @@
     <span class="k">return</span> <span class="n">fileList</span></div>
 
 <div class="viewcode-block" id="accumulateParams"><a class="viewcode-back" href="../functions.html#tools.accumulateParams">[docs]</a><span class="k">def</span> <span class="nf">accumulateParams</span><span class="p">(</span><span class="n">paramRasts</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;accum&quot;</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Inputs:</span>
-<span class="sd">        </span>
-<span class="sd">        paramRasts - list of input parameter rasters to accumulate</span>
-<span class="sd">        fdr - flow direction raster</span>
-<span class="sd">        </span>
-<span class="sd">        outWorkspace - output directory for accumulation rasters</span>
-<span class="sd">        cores = number of cores to use</span>
-<span class="sd">        appStr = string of text to append to filename</span>
+    <span class="sd">&#39;&#39;&#39;Batch version of :code:`accumulateParam`.</span>
 
-<span class="sd">    Outputs:</span>
-<span class="sd">        raster of accumulated parameter values</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    paramRasts : list</span>
+<span class="sd">        List of input parameter raster paths to accumulate along the supplied fdr.</span>
+<span class="sd">    fdr : str</span>
+<span class="sd">        Path to the flow direction raster.</span>
+<span class="sd">    outWorkspace : str</span>
+<span class="sd">        Path to the output directory for accumulation rasters.</span>
+<span class="sd">    cores : int (optional)</span>
+<span class="sd">        Number of cores to use. Defaults to 1.</span>
+<span class="sd">    appStr :str (optional)</span>
+<span class="sd">        String of text to append to accumulated parameter filenames. Defaults to &quot;accum.&quot;</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        list of fielpaths to accumulated parameter rasters</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fileList : list</span>
+<span class="sd">        List of file paths to accumulated parameter rasters.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">fileList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of output files</span>
