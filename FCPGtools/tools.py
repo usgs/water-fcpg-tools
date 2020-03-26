@@ -730,7 +730,7 @@ def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores
     cores :
         Number of cores to use. Defaults to 1.
     appStr : str (optional)
-        String of text to append to the input parameter filenames. Defaults to "rprj".
+        String of text to append to the input parameter filenames. Defaults to "rprj."
 
     Returns
     -------
