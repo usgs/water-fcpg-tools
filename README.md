@@ -1,7 +1,7 @@
 # StreamStats CPGtools
 ## Theodore Barnhart | tbarnhart@usgs.gov
 
-Scripts to make flow-conditioned parameter grids (FCPGs) by either HUC2, HUC4, or other geospatial tiling schemes. These tools can be used in a Linux HPC environment or locally on your system. These tools are written for Linux and are tested for Windows 10 using the Window's Subsystem for Linux Ubuntu 18 LTS.
+A Python library to make flow-conditioned parameter grids (FCPGs) by either HUC2, HUC4, or other geospatial tiling schemes. These tools can be used in a Linux HPC environment or locally on your system. These tools are written for Linux and are tested for Windows 10 using the Window's Subsystem for Linux Ubuntu 18 LTS.
 
 ![package structure](./img/CPG_tool_structure.png)
 
@@ -18,7 +18,9 @@ Then, install the repository using `pip install git+file:<Full Path to the FCPGt
 
 For example, `pip install git+file:/home/<username>/projects/FCPGtools`
 
-### Dependencies:
+On a HPC system you may need to load the correct Python module before building the Anaconda environment. This might be done with `module load python/anaconda3`
+
+### Dependencies
 
 Dependencies for this work are largely taken care of via the anaconda environment specified by the yml file; however, the tools do rely on [TauDEM 5.3.8](https://github.com/dtarb/TauDEM/tree/v5.3.8), which needs to be installed and visible to your conda environment.
 
