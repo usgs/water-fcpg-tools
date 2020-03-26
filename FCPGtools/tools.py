@@ -25,15 +25,29 @@ from rasterio.mask import mask
 import matplotlib.pyplot as plt
 import geopandas as gpd
 
-def tauDrainDir(inRast, outRast):
-    """
-    Reclassifies ESRI drainage directions into tauDEM drainage directions.
+def tauDrainDir(inRast, outRast, updateDict = {
+            'compress':'LZW',
+            'sparse':True,
+            'tiled':True,
+            'blockysize':256,
+            'blockxsize':256,
+            'driver' : "GTiff",
+            'nodata':0}):
+    """Reclassifies ESRI drainage directions into tauDEM drainage directions.
 
-    Inputs:
-        inRast - Flow direction raster from NHDPlus
+    Parameters
+    ----------
+    inRast : str
+        Path to a raster encoded with ESRI flow direction values.
+    outRast : str
+        Path to output a raster with flow directions encoded for TauDEM.
+    updateDict : dict (optional)
+        Dictionary of rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.
 
-    Outputs:
-        outRast - Flow direction raster for tauDEM
+    Returns
+    -------
+    outRast : raster
+        Reclassified flow direction raster at the path specified above.
     """
 
     print('Reclassifying Flow Directions...')
@@ -58,15 +72,8 @@ def tauDrainDir(inRast, outRast):
     tauDir[dat == inNoData] = 0 # no data
     tauDir = tauDir.astype('uint8')#8 bit integer is sufficient for flow directions
 
-    # edit the metadata
-    profile.update({
-    		'compress':'LZW',
-    		'sparse':True,
-    		'tiled':True,
-    		'blockysize':256,
-    		'blockxsize':256,
-            'driver' : "GTiff",
-            'nodata':0})
+    # edit the metadata, probably should make this an input to the script...
+    profile.update()
     
     if os.path.isfile(outRast):
     	os.remove(outRast)
@@ -75,34 +82,33 @@ def tauDrainDir(inRast, outRast):
         dst.write(tauDir,1)
         print("TauDEM drainage direction written to: {0}".format(outRast))
 
-def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, zeroNoDataRast = None, multiplier = None, multNoDataRast = None, cores = 1):
+def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, zeroNoDataRast = None, cores = 1):
     """
     Parameters
     ----------
-        paramRast : 
-            Raster of parameter values to acumulate, this file is modified by the function
-        fdr : 
-            Flow direction raster in tauDEM format
-        accumRast : 
-            File location to store accumulated parameter values
-        outNoDataRast : 
-            File location to store parameter no data raster
-        outNoDataAccum :
-            File location to store accumulated no data raster
-        zeroNoDataRast : 
-        multiplier :
-        multNoDataRast : 
-        cores - number of cores to use parameter accumulation
+    paramRast : str 
+        Raster of parameter values to acumulate, this file is modified by the function.
+    fdr : str
+        Flow direction raster in TauDEM format.
+    accumRast : str
+        File location to store accumulated parameter values.
+    outNoDataRast : str (optional)
+        File location to store parameter no data raster.
+    outNoDataAccum : str (optional)
+        File location to store accumulated no data raster.
+    zeroNoDataRast : str (optional)
+        File location to store the no data raster filled with zeros.
+    cores : int (optional)
+        The number of cores to use for parameter accumulation. Defaults to 1.
 
     Returns
     -------
-    None
-
-    Outputs
-    -------
-        accumRast - raster of accumulated parameter values
-        outNoDataRast - raster of no data values
-        outNoDataRast - raster of accumulated no data values
+    accumRast : raster
+        Raster of accumulated parameter values.
+    outNoDataRast : raster
+        Raster of no data values.
+    outNoDataRast : raster
+        Raster of accumulated no data values.
     """
 
     if not os.path.isfile(paramRast):
@@ -228,19 +234,26 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         traceback.print_exc()
 
     
-def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
-    '''
-    Inputs:
-        
-        accumParam - path to the accumulated parameter data raster
-        fac - flow accumulation grid path
-        outRast - output CPG file location
-        noDataRast - raster of accumulated parameter no data values
-        minAccum - Value of flow accumulation below which the CPG values will be set to no data
-        
+def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
+    '''Create a flow-conditioned parameter grid using accumulated parameter and area rasters.
 
-    Outputs:
-        outRast - Parameter CPG 
+    Parameters
+    ----------
+    accumParam : 
+        File location of the accumulated parameter data raster.
+    fac : str
+        File location of the flow accumulation raster.
+    outRast : str
+        File location of the output flow-conditioned parameter grid.
+    noDataRast : str
+        File location of the accumulated parameter no data raster.
+    minAccum : float
+        Value of flow accumulation below which the CPG values will be set to no data
+        
+    Returns
+    -------
+    outRast : raster
+        Flow-conditioned parameter grid file where grid cell values represent the mean upstream value of the paramter. 
     '''
     outNoData = -9999
     
@@ -285,9 +298,6 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
         accum2[accum == facNoData] = np.NaN # fill this with no data values where appropriate
         corrAccum = accum2 # No correction required
         
-
-    
-    
     # Throw warning if there is a negative accumulation
     if np.nanmin(corrAccum) < 0:
         print("Warning: Negative accumulation value")
@@ -319,20 +329,30 @@ def make_cpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
         dst.write(dataCPG,1)
         print("CPG file written to: {0}".format(outRast))
     
-    
+def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, forceProj=False, forceProj4="\"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs\""):
+    '''Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the of the flow direction raster supplied.
 
-def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
-    '''
-    Inputs:
-        
-        inParam - input parameter data raster
-        fdr - flow direction raster
-        outParam - output file for resampled parameter raster
-        resampleMethod (str)- resampling method, either bilinear or nearest neighbor
-        cores - number of cores to use
+    Parameters
+    ----------
+    inParam : str
+        Path to the input parameter data raster
+    fdr : str
+        Path to the flow direction raster
+    outParam : str
+        Path to the output file for the resampled parameter raster.
+    resampleMethod : str (optional)
+        resampling method, either 'bilinear' or 'nearest neighbor'. Bilinear should generally be used for continuous data sets such as precipitation while nearest neighbor should generally be used for categorical datasets such as land cover type. Defaults to bilinear.
+    cores : int (optional)
+        The number of cores to use. Defaults to 1.
+    forceProj : bool (optional)
+        Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.
+    forceProj4 : str
+        Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True. 
 
-    Outputs:
-        outParam - resampled, reprojected, and clipped parameter raster
+    Outputs
+    -------
+    outParam : raster
+        Resampled, reprojected, and clipped parameter raster.
     '''
 
     with rs.open(fdr) as ds: # load flow direction raster in Rasterio
@@ -350,18 +370,15 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
         paramcrs = ds.crs #Get parameter coordinate reference system
         paramXsize, paramYsize = ds.res #Get parameter cell size
 
+    # override the FDR projection if specified.
+    if forceProj:
+        fdrcrs = forceProj4
 
-    # Convert flow direction spatial reference from wkt to proj4 
-    print("Flow Direction WKT: " + str(fdrcrs))
-    print("Parameter WKT:" + str(paramcrs))
+    print("Flow Direction Proj4: " + str(fdrcrs))
+    print("Parameter Proj4:" + str(paramcrs))
 
     print("Flow Direction Xsize:" + str(xsize))
     print("Parameter Xsize:" + str(paramXsize))
-
-    
-    #Over ride the output coordinate system to make it work with USGS Albers projection
-    fdrcrs = "\"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs\""
-    #print("Flow Direction proj4: " + str(fdrcrs))
     
     # Choose an appropriate gdal data type for the parameter
     if paramType == 'int8':
@@ -395,7 +412,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
             'inParam': inParam,
             'outParam': outParam,
             'fdr':fdr,
-            'cores':cores, 
+            'cores':str(cores), 
             'resampleMethod': resampleMethod,
             'xsize': xsize, 
             'ysize': ysize, 
@@ -408,7 +425,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
             'datatype': outType
             }
             
-            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS=ALL_CPUS" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
+            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
             print(cmd)
             result = subprocess.run(cmd, shell = True)
             result.stdout
@@ -420,15 +437,21 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1):
 #Tools for decayed accumulation CPGs
 
 def makeDecayGrid(d2strm, k, outRast):
-    '''
-    Inputs:
-        
-        d2strm - Raster of flow distances from each grid cell to the nearest stream
-        k - constant applied to decay factor denominator
-        outRast - output file path for decay grid
+    '''Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{1}{n+k*dx}`, where n is the distance from the d2strm raster and    from each grid cell to the nearest stream, k is the constant applied to the stream distance values, and dx is the cell size of the raster.
+    
+    Parameters
+    ----------
+    d2strm : str
+        Path to raster of flow distances from each grid cell to the nearest stream.
+    k : float
+        Constant applied to decay factor denominator, this has units equal to the horizontal map units in the d2strm raster.
+    outRast : str
+        Output file path for decay grid.
 
-    Outputs:
-        outRast - decay raster computed as the inverse number of grid cells (1/number) from each grid cell to the nearest stream
+    Returns
+    -------
+        outRast : raster
+            Raster file with grid cells values representing weights decaying as they ove further from the stream.
     '''
     if not os.path.isfile(d2strm):
         print("Error - Stream distance raster file is missing!")
@@ -472,13 +495,21 @@ def makeDecayGrid(d2strm, k, outRast):
         print("Decay raster written to: {0}".format(outRast))
 
 def applyMult(inRast, mult, outRast):
-    '''
-    Inputs:
-        inRast- Input parameter raster
-        mult - multiplier raster
+    '''Multiply input raster by mult.
 
-    Outputs:
-        outRast - parameter raster multiplied by the multiplier raster
+    Parameters
+    ----------
+    inRast : str
+        Path to input raster.
+    mult : str
+        Path to multiplier raster.
+    outRast : str
+        Path to output raster.
+
+    Returns
+    -------
+    outRast : raster
+        Input raster multiplied by the multiplier raster.
     '''  
 
     if not os.path.isfile(inRast):

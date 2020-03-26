@@ -1,45 +1,43 @@
-'''
-Based on code from Rich Signell
-Convert a bunch of GDAL readable grids to a NetCDF Time Series.
-Here we read a bunch of files that have names like:
-CPGs/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif
-CPGs/gridMET_minTempK_1979_05_00_HUC1002_CPG.tif
-...
-CPGs/gridMET_minTempK_1980_04_00_HUC1002_CPG.tif
-
-metaDict = {
-	'title':'',
-	'institution':'',
-	'source':'',
-	'id':'',
-	'naming_authority':'',
-	'references':'',
-	'comment':'',
-	'history':'',
-	'license':'', 
-	'acknowledgement':'', # 
-	'metadata_link':'', 
-	'date_creates':'',
-	'creator_type':'',
-	'creator_email':'',
-	'creator_name':'',
-	'creator_url':'',
-	'creator_institution':'',
-	'publisher_type':'',
-	'publisher_name':'',
-	'publisher_email':'',
-	'publisher_url':'',
-	'publisher_institution':'', 
-	'var_name':'Tmin',
-	'units':'K',
-	'add_offset':0.0,
-	'standard_name':'min_temperature',
-	'long_name':'minimum monthly temperature',
-	'grid_mapping':'crs',
-	'scale_factor':1.0,
-	'coverage_content_type':''
-	}
-'''
+# Based on code from Rich Signell
+# Convert a bunch of GDAL readable grids to a NetCDF Time Series.
+# Here we read a bunch of files that have names like:
+# CPGs/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif
+# CPGs/gridMET_minTempK_1979_05_00_HUC1002_CPG.tif
+# ...
+# CPGs/gridMET_minTempK_1980_04_00_HUC1002_CPG.tif
+#
+# metaDict = {
+# 	'title':'',
+# 	'institution':'',
+# 	'source':'',
+# 	'id':'',
+# 	'naming_authority':'',
+# 	'references':'',
+# 	'comment':'',
+# 	'history':'',
+# 	'license':'', 
+# 	'acknowledgement':'', # 
+# 	'metadata_link':'', 
+# 	'date_creates':'',
+# 	'creator_type':'',
+# 	'creator_email':'',
+# 	'creator_name':'',
+# 	'creator_url':'',
+# 	'creator_institution':'',
+# 	'publisher_type':'',
+# 	'publisher_name':'',
+# 	'publisher_email':'',
+# 	'publisher_url':'',
+# 	'publisher_institution':'', 
+# 	'var_name':'Tmin',
+# 	'units':'K',
+# 	'add_offset':0.0,
+# 	'standard_name':'min_temperature',
+# 	'long_name':'minimum monthly temperature',
+# 	'grid_mapping':'crs',
+# 	'scale_factor':1.0,
+# 	'coverage_content_type':''
+# 	}
 
 import numpy as np
 import datetime as dt
@@ -51,27 +49,28 @@ import glob
 import time
 
 def buildNC(inDir, outFile, metaDict, cl=9):
-	'''Build netCDF file from a stack of geotiffs
+	'''Build netCDF file from a stack of geotiffs.
 
 	Parameters
 	----------
 	inDir : str
-	Directory with geotiff files to be converted, specified as '/dir/here/*.tif'
+		Directory with geotiff files to be converted, specified as '/dir/here/*.tif'
 	outFile : str
-	Output filename with '.nc' included.
+		Output filename with '.nc' included.
 	metaDict : dict
-	Metadata dictionary used to populate fields in the netCDF.
+		Metadata dictionary used to populate fields in the netCDF. See Notes below for a description of fields to include.
 	cl : int
-	Compression level, 1-9.
+		Compression level, 1-9. A higher value will result in a smaller output file, but will take longer.
 
 	Returns
 	-------
-	NetCDF file at outFile.
+	NetCDF : file
+		A NetCDF file at *outFile*.
 
-	Note
-	----
-	Metadata Dictionary
-	===================
+	Notes
+	-----
+	*Metadata Dictionary*
+	
 	The metadata dictionary is expecting a particular set of keys to specify the metadata fields within the netCDF file being generated. These fields have been chose to make the resulting netCDF file compliant with the Climate and Forecast and the Data Discovery metadata conventions. Fields are described below, many descriptions are the same as http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents or http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3. 
 
 	title
