@@ -20,6 +20,10 @@ For example, `pip install git+file:/home/<username>/projects/FCPGtools`
 
 On a HPC system you may need to load the correct Python module before building the Anaconda environment. This might be done with `module load python/anaconda3`
 
+#### Updating the installation
+
+Pull new changes from the repository using `git pull`. Then update the installation using pip `pip install pip install git+file:<Full Path to the FCPGtools repository> --upgrade`.
+
 ### Dependencies
 
 Dependencies for this work are largely taken care of via the anaconda environment specified by the yml file; however, the tools do rely on [TauDEM 5.3.8](https://github.com/dtarb/TauDEM/tree/v5.3.8), which needs to be installed and visible to your conda environment.

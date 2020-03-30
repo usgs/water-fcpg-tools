@@ -794,20 +794,25 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
     return fileList
 
 def make_fcpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"):
-    '''
-    Inputs:
-        
-        accumParams - list of accumulated parameter rasters to create CPGs from
-        fac - flow accumulation raster
-        
-        outWorkspace - output directory for CPGs
-        appStr = string of text to append to filename
+    '''Batch version of make_fcpg.
 
-    Outputs:
-        CPG
-
-    Returns:
-        list of fielpaths to parameter CPGs
+    Parameters
+    ----------
+    accumParams : list
+        List of accumulated parameter rasters to create FCPGs from.
+    fac : str
+        Path to the flow accumulation raster.
+    outWorkspace : str
+        Path to an oiutput directory for produced FCPGs.
+    minAccum : int (optional)
+        Minimum accumulation value below which the output FCPG will be turned to no data values. Defaults to None.
+    appStr : str (optional)
+        String of text to append to filenames of the produced FCPG grids.
+    
+    Returns
+    -------
+    fileList : list
+        List of file paths to the produced FCPGs.
     '''
 
     fileList = [] #Initialize list of output files
