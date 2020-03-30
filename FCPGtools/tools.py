@@ -791,23 +791,9 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
 
         accumulateParam(param, fdr, outPath, outNoDataRast=nodataPath, outNoDataAccum=nodataAccumPath, cores=cores) #Run the flow accumulation function for the parameter raster
 
-    """
-    processCores = min(4, cores) # Set number of cores used by each process to 4 or the number of available cores
-    numProcess = floor(cores / processCores) # Compute the number of processes to create
-
-    from functools import partial
-    pool = processPool(processes=numProcess)
-
-    # Use pool.map() to call tauDEM accumulation in parallel
-    fileList = pool.map(partial(accumulateParam, fdr, outPath, processCores), paramRasts)
-
-    #close the pool and wait for the work to finish
-    pool.close()
-    pool.join()
-    """
     return fileList
 
-def make_cpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="CPG"):
+def make_fcpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"):
     '''
     Inputs:
         

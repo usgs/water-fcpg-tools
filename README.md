@@ -27,3 +27,13 @@ Dependencies for this work are largely taken care of via the anaconda environmen
 ### Documentation
 
 View the [documentation](https://code.usgs.gov/StreamStats/FCPGtools/-/blob/master/documentation/html/index.html).
+
+## Citation
+
+Barnhart, T.B., Sando, T.R., Siefken, S.A., McCarthy, P.M., Rea, A.H. (2020). Flow-Conditioned Parameter Grid Tools. U.S. Geological Survey Software Release. DOI: https://doi.org/10.5066/P9FPZUI0
+
+## Disclaimers
+
+Any use of trade, firm, or product names is for descriptive purposes only and does not imply endorsement by the U.S. Government.
+
+This software has been approved for release by the U.S. Geological Survey (USGS). Although the software has been subjected to rigorous review, the USGS reserves the right to update the software as needed pursuant to further analysis and review. No warranty, expressed or implied, is made by the USGS or the U.S. Government as to the functionality of the software and related material nor shall the fact of release constitute any such warranty. Furthermore, the software is released on condition that neither the USGS nor the U.S. Government shall be held liable for any damages resulting from its authorized or unauthorized use.
