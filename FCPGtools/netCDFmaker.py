@@ -54,7 +54,7 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 	Parameters
 	----------
 	inDir : str
-		Directory with geotiff files to be converted, specified as '/dir/here/*.tif'
+		Directory with geotiff files to be converted, specified as '/dir/here/\*.tif'
 	outFile : str
 		Output filename with '.nc' included.
 	metaDict : dict

@@ -388,7 +388,7 @@
 
     
 <div class="viewcode-block" id="make_fcpg"><a class="viewcode-back" href="../functions.html#tools.make_fcpg">[docs]</a><span class="k">def</span> <span class="nf">make_fcpg</span><span class="p">(</span><span class="n">accumParam</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">noDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">minAccum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Create a flow-conditioned parameter grid using accumulated parameter and area rasters.</span>
+    <span class="sd">&#39;&#39;&#39;Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also :py:func:`make_fcpgs`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -483,7 +483,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CPG file written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
     
 <div class="viewcode-block" id="resampleParam"><a class="viewcode-back" href="../functions.html#tools.resampleParam">[docs]</a><span class="k">def</span> <span class="nf">resampleParam</span><span class="p">(</span><span class="n">inParam</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outParam</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">forceProj</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">forceProj4</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the of the flow direction raster supplied.</span>
+    <span class="sd">&#39;&#39;&#39;Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the of the flow direction raster supplied. See also :py:func:`resampleParams`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -502,7 +502,7 @@
 <span class="sd">    forceProj4 : str</span>
 <span class="sd">        Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True. </span>
 
-<span class="sd">    Outputs</span>
+<span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    outParam : raster</span>
 <span class="sd">        Resampled, reprojected, and clipped parameter raster.</span>
@@ -774,6 +774,7 @@
 
 <div class="viewcode-block" id="dist2stream"><a class="viewcode-back" href="../functions.html#tools.dist2stream">[docs]</a><span class="k">def</span> <span class="nf">dist2stream</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
     <span class="sd">&#39;&#39;&#39;Compute distance to streams.</span>
+<span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    fdr : str</span>
@@ -868,7 +869,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CPG file written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="resampleParams"><a class="viewcode-back" href="../functions.html#tools.resampleParams">[docs]</a><span class="k">def</span> <span class="nf">resampleParams</span><span class="p">(</span><span class="n">inParams</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;rprj&quot;</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Batch version of :code:`resampleParam`.</span>
+    <span class="sd">&#39;&#39;&#39;Batch version of :py:func:`resampleParam`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -908,7 +909,7 @@
     <span class="k">return</span> <span class="n">fileList</span></div>
 
 <div class="viewcode-block" id="accumulateParams"><a class="viewcode-back" href="../functions.html#tools.accumulateParams">[docs]</a><span class="k">def</span> <span class="nf">accumulateParams</span><span class="p">(</span><span class="n">paramRasts</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;accum&quot;</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Batch version of :code:`accumulateParam`.</span>
+    <span class="sd">&#39;&#39;&#39;Batch version of :py:func:`accumulateParam`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -944,37 +945,28 @@
 
         <span class="n">accumulateParam</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outPath</span><span class="p">,</span> <span class="n">outNoDataRast</span><span class="o">=</span><span class="n">nodataPath</span><span class="p">,</span> <span class="n">outNoDataAccum</span><span class="o">=</span><span class="n">nodataAccumPath</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1">#Run the flow accumulation function for the parameter raster</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    processCores = min(4, cores) # Set number of cores used by each process to 4 or the number of available cores</span>
-<span class="sd">    numProcess = floor(cores / processCores) # Compute the number of processes to create</span>
-
-<span class="sd">    from functools import partial</span>
-<span class="sd">    pool = processPool(processes=numProcess)</span>
-
-<span class="sd">    # Use pool.map() to call tauDEM accumulation in parallel</span>
-<span class="sd">    fileList = pool.map(partial(accumulateParam, fdr, outPath, processCores), paramRasts)</span>
-
-<span class="sd">    #close the pool and wait for the work to finish</span>
-<span class="sd">    pool.close()</span>
-<span class="sd">    pool.join()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">fileList</span></div>
 
-<div class="viewcode-block" id="make_cpgs"><a class="viewcode-back" href="../functions.html#tools.make_cpgs">[docs]</a><span class="k">def</span> <span class="nf">make_cpgs</span><span class="p">(</span><span class="n">accumParams</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;CPG&quot;</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Inputs:</span>
-<span class="sd">        </span>
-<span class="sd">        accumParams - list of accumulated parameter rasters to create CPGs from</span>
-<span class="sd">        fac - flow accumulation raster</span>
-<span class="sd">        </span>
-<span class="sd">        outWorkspace - output directory for CPGs</span>
-<span class="sd">        appStr = string of text to append to filename</span>
+<div class="viewcode-block" id="make_fcpgs"><a class="viewcode-back" href="../functions.html#tools.make_fcpgs">[docs]</a><span class="k">def</span> <span class="nf">make_fcpgs</span><span class="p">(</span><span class="n">accumParams</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;FCPG&quot;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Batch version of :py:func:`make_fcpg`.</span>
 
-<span class="sd">    Outputs:</span>
-<span class="sd">        CPG</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        list of fielpaths to parameter CPGs</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    accumParams : list</span>
+<span class="sd">        List of accumulated parameter rasters to create FCPGs from.</span>
+<span class="sd">    fac : str</span>
+<span class="sd">        Path to the flow accumulation raster.</span>
+<span class="sd">    outWorkspace : str</span>
+<span class="sd">        Path to an oiutput directory for produced FCPGs.</span>
+<span class="sd">    minAccum : int (optional)</span>
+<span class="sd">        Minimum accumulation value below which the output FCPG will be turned to no data values. Defaults to None.</span>
+<span class="sd">    appStr : str (optional)</span>
+<span class="sd">        String of text to append to filenames of the produced FCPG grids.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fileList : list</span>
+<span class="sd">        List of file paths to the produced FCPGs.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">fileList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of output files</span>
@@ -992,21 +984,22 @@
     <span class="k">return</span> <span class="n">fileList</span></div>
 
 <div class="viewcode-block" id="cat2bin"><a class="viewcode-back" href="../functions.html#tools.cat2bin">[docs]</a><span class="k">def</span> <span class="nf">cat2bin</span><span class="p">(</span><span class="n">inCat</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Inputs:</span>
-<span class="sd">        </span>
-<span class="sd">        inCat - input catagorical parameter raster</span>
-<span class="sd">        outWorkspace - workspace to save binary raster outputs</span>
-<span class="sd">        </span>
-<span class="sd">    Outputs:</span>
-<span class="sd">        Binary rasters for each parameter category</span>
+    <span class="sd">&#39;&#39;&#39;Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, and -1 for regions of no data in the supplied raster. Wrapper on :py:func:`binarizeCat`.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        List of filepaths to output files</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inCat : str</span>
+<span class="sd">        Input catagorical parameter raster.</span>
+<span class="sd">    outWorkspace : str</span>
+<span class="sd">        Workspace to save binary raster output files.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fileList : list</span>
+<span class="sd">        List of filepaths to output files.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating binaries for </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">inCat</span><span class="p">)</span>
     
-
     <span class="n">baseName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">inCat</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get name of input file without extention</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tif&quot;</span> <span class="c1">#File extension</span>
 
@@ -1015,8 +1008,6 @@
         <span class="n">dat</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">profile</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># save the metadata for output later</span>
         <span class="n">nodata</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span>
-    
-
     
     <span class="n">cats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="c1"># Get unique values in raster</span>
     <span class="n">cats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">cats</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cats</span> <span class="o">==</span>  <span class="n">nodata</span><span class="p">))</span> <span class="c1"># Remove no data value from list</span>
@@ -1034,22 +1025,7 @@
                 <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">})</span>
 
     <span class="c1">#Create binary rasters for each category</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    for n in cats:</span>
-<span class="sd">        catData = dat.copy()</span>
-<span class="sd">        catData[(dat != n) &amp; (dat != nodata)] = 0</span>
-<span class="sd">        catData[dat == n] = 1</span>
-<span class="sd">        catData[dat == nodata] = -1 #Use -1 as no data value</span>
-<span class="sd">        catData = catData.astype(&#39;int8&#39;)#8 bit integer is sufficient for zeros and ones</span>
-
-<span class="sd">        catRasterName = baseName + str(n) + ext</span>
-<span class="sd">        catRaster = os.path.join(outWorkspace, catRasterName)</span>
-<span class="sd">        fileList.append(catRaster)</span>
-
-<span class="sd">        print(&quot;Saving %s&quot;%catRaster)</span>
-<span class="sd">        with rs.open(catRaster,&#39;w&#39;,**profile) as dst:</span>
-<span class="sd">            dst.write(catData,1)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+   
     <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
     <span class="n">pool</span> <span class="o">=</span> <span class="n">processPool</span><span class="p">()</span>
 
@@ -1060,26 +1036,30 @@
     <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
     
-    
     <span class="k">return</span> <span class="n">fileList</span></div>
 
 <div class="viewcode-block" id="binarizeCat"><a class="viewcode-back" href="../functions.html#tools.binarizeCat">[docs]</a><span class="k">def</span> <span class="nf">binarizeCat</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">profile</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, and -1 for regions of no data in the supplied raster. See also :py:func:`cat2bin`.</span>
 
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Inputs:</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.array</span>
+<span class="sd">        Numpy arrary of raster data to convert to binary.</span>
+<span class="sd">    val : int</span>
+<span class="sd">        Raster value to extract binary for from data.</span>
+<span class="sd">    nodata : int or float</span>
+<span class="sd">        Raster no data value.</span>
+<span class="sd">    outWorkspace : str</span>
+<span class="sd">        Path to folder to save binary output rasters to.</span>
+<span class="sd">    baseName : str</span>
+<span class="sd">        Base name for the output rasters.</span>
+<span class="sd">    ext : str</span>
+<span class="sd">        File extension for output rasters.</span>
 <span class="sd">        </span>
-<span class="sd">        data - numpy arrary of raster data to convert to binary</span>
-<span class="sd">        val - raster value to extract binary for</span>
-<span class="sd">        nodata - raster no data value</span>
-<span class="sd">        outWorkspace - workspace to save binary raster outputs</span>
-<span class="sd">        baseName - base name for the raster output</span>
-<span class="sd">        ext - file extension for raster output</span>
-<span class="sd">        </span>
-<span class="sd">    Outputs:</span>
-<span class="sd">        Binary raster the specified parameter value</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        Filepath to output files</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    catRaster : str</span>
+<span class="sd">        Filepath to the binary raster created.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">catData</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -1094,19 +1074,25 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saving </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">catRaster</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">catRaster</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
         <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">catData</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-    
 
     <span class="k">return</span> <span class="n">catRaster</span> <span class="c1"># Return the path to the raster created</span></div>
 
 <div class="viewcode-block" id="tauFlowAccum"><a class="viewcode-back" href="../functions.html#tools.tauFlowAccum">[docs]</a><span class="k">def</span> <span class="nf">tauFlowAccum</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">accumRast</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Inputs:</span>
-<span class="sd">        fdr - flow direction raster in tauDEM format</span>
-<span class="sd">        accumRast - file location to store accumulated parameter values</span>
-<span class="sd">        cores - number of cores to use parameter accumulation</span>
+    <span class="sd">&quot;&quot;&quot;Accumulate flow direction grid using TauDEM.</span>
 
-<span class="sd">    Outputs:</span>
-<span class="sd">        accumRast - raster of accumulated parameter values</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fdr : str</span>
+<span class="sd">        Path to a flow direction raster in TauDEM format.</span>
+<span class="sd">    accumRast : str</span>
+<span class="sd">        Path to output the flow accumulation raster.</span>
+<span class="sd">    cores : int (optional)</span>
+<span class="sd">        Number of cores to use. Defaults to 1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    accumRast : raster</span>
+<span class="sd">        Raster of accumulated parameter values at the path specified above.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#Use tauDEM to accumulate the parameter</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1127,25 +1113,23 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error Accumulating Data&#39;</span><span class="p">)</span>
         <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="downloadNHDPlusRaster"><a class="viewcode-back" href="../functions.html#tools.downloadNHDPlusRaster">[docs]</a><span class="k">def</span> <span class="nf">downloadNHDPlusRaster</span><span class="p">(</span><span class="n">HUC4</span><span class="p">,</span> <span class="n">fileDir</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Inputs:</span>
-<span class="sd">        </span>
-<span class="sd">        HUC4 - 4 digit HUC to download NHDPlus raster data for</span>
-<span class="sd">        fileDir - Directory in which to save NHDPlus data</span>
+<span class="c1"># def downloadNHDPlusRaster(HUC4, fileDir):</span>
+<span class="c1">#     &#39;&#39;&#39;</span>
+<span class="c1">#     Inputs:</span>
+        
+<span class="c1">#         HUC4 - 4 digit HUC to download NHDPlus raster data for</span>
+<span class="c1">#         fileDir - Directory in which to save NHDPlus data</span>
 
-<span class="sd">    Outputs:</span>
-<span class="sd">        NHDPlus raster files saved to directory</span>
+<span class="c1">#     Outputs:</span>
+<span class="c1">#         NHDPlus raster files saved to directory</span>
 
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">compressedFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fileDir</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">HUC4</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_RASTER.7z&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Downloading File: &quot;</span> <span class="o">+</span> <span class="n">compressedFile</span><span class="p">)</span>
-    <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="s2">&quot;https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHDPlus/HU4/HighResolution/GDB/NHDPLUS_H_</span><span class="si">%s</span><span class="s2">_HU4_RASTER.7z&quot;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="n">HUC4</span><span class="p">),</span> <span class="n">compressedFile</span><span class="p">)</span>
+<span class="c1">#     &#39;&#39;&#39;</span>
+<span class="c1">#     compressedFile = os.path.join(fileDir, str(HUC4) + &quot;_RASTER.7z&quot;)</span>
+<span class="c1">#     print(&quot;Downloading File: &quot; + compressedFile)</span>
+<span class="c1">#     urllib.request.urlretrieve(&quot;https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHDPlus/HU4/HighResolution/GDB/NHDPLUS_H_%s_HU4_RASTER.7z&quot;%str(HUC4), compressedFile)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Extracting File...&quot;</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;7za x </span><span class="si">{0}</span><span class="s2"> -o</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">compressedFile</span><span class="p">,</span><span class="n">fileDir</span><span class="p">))</span></div>
-
-
+<span class="c1">#     print(&quot;Extracting File...&quot;)</span>
+<span class="c1">#     os.system(&quot;7za x {0} -o{1}&quot;.format(compressedFile,fileDir))</span>
 
 <div class="viewcode-block" id="ExtremeUpslopeValue"><a class="viewcode-back" href="../functions.html#tools.ExtremeUpslopeValue">[docs]</a><span class="k">def</span> <span class="nf">ExtremeUpslopeValue</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">accum_type</span> <span class="o">=</span> <span class="s2">&quot;MAX&quot;</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fac</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">thresh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
@@ -1154,19 +1138,24 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    fdr : str</span>
-<span class="sd">        Path to TauDEM D8 flow accumulation raster</span>
+<span class="sd">        Path to a flow direction grid in TauDEM format.</span>
 <span class="sd">    param : str</span>
 <span class="sd">        Path to parameter raster to run through the D8 Extreme Upslope Value tool</span>
 <span class="sd">    output : str</span>
-<span class="sd">        Path to outplet file</span>
-<span class="sd">    accum_type : str (optional, defaults to &quot;MAX&quot;) </span>
-<span class="sd">        Either  &quot;MAX&quot; or &quot;MIN&quot;.</span>
-<span class="sd">    cores : int</span>
-<span class="sd">        Number of cores to run this process on.</span>
+<span class="sd">        Path to output raster file.</span>
+<span class="sd">    accum_type : str (optional) </span>
+<span class="sd">        Either  &quot;MAX&quot; or &quot;MIN.&quot; Defaults to &quot;MAX.&quot;</span>
+<span class="sd">    cores : int (optional) </span>
+<span class="sd">        Number of cores to run this process on. Defaults to 1.</span>
+<span class="sd">    fac : str (optional)</span>
+<span class="sd">        Path to a flow accumulation raster. Defaults to None.</span>
+<span class="sd">    thresh : int (optional)</span>
+<span class="sd">        Threshold values, in the same units as fac to mask output to stream channels. Defaults to None.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    output : str</span>
+<span class="sd">    output : raster</span>
+<span class="sd">        Raster of either the maximum or minumum upslope value of the parameter supplied to the function.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
     <span class="nb">print</span><span class="p">()</span>
@@ -1216,23 +1205,44 @@
     <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="getFeatures"><a class="viewcode-back" href="../functions.html#tools.getFeatures">[docs]</a><span class="k">def</span> <span class="nf">getFeatures</span><span class="p">(</span><span class="n">gdf</span><span class="p">):</span>
-    <span class="c1">#Function to parse features from GeoDataFrame in such a manner that rasterio wants them</span>
+    <span class="sd">&quot;&quot;&quot;Helper function to parse features from a GeoPandas GeoDataframe in such a manner that Rasterio can handle them.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gdf : GeoDataframe</span>
+<span class="sd">        GeoPandas GeoDataframe with a geometry column.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    features : geoJSON</span>
+<span class="sd">        GeoJSON representation of geometry features from the input GeoDataFrame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="kn">import</span> <span class="nn">json</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">gdf</span><span class="o">.</span><span class="n">to_json</span><span class="p">())[</span><span class="s1">&#39;features&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;geometry&#39;</span><span class="p">]]</span></div>
 
 <div class="viewcode-block" id="getHUC4"><a class="viewcode-back" href="../functions.html#tools.getHUC4">[docs]</a><span class="k">def</span> <span class="nf">getHUC4</span><span class="p">(</span><span class="n">HUC12</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">HUC12</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span></div>
+    <span class="sd">&#39;&#39;&#39;Helper function to return HUC4 representation from a HUC12 identifier.</span>
 
-<div class="viewcode-block" id="getToHUC4"><a class="viewcode-back" href="../functions.html#tools.getToHUC4">[docs]</a><span class="k">def</span> <span class="nf">getToHUC4</span><span class="p">(</span><span class="n">toHUC12</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">toHUC12</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span></div>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    HUC12 : str</span>
+<span class="sd">        Text representation of the 12-digit HUC12 code.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    HUC4 : str</span>
+<span class="sd">        HUC4 identifier.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">HUC12</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="makePourBasins"><a class="viewcode-back" href="../functions.html#tools.makePourBasins">[docs]</a><span class="k">def</span> <span class="nf">makePourBasins</span><span class="p">(</span><span class="n">wbd</span><span class="p">,</span><span class="n">fromHUC4</span><span class="p">,</span><span class="n">toHUC4</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Make geodataframe of HUC12 basis flowing from fromHUC4 to toHUC4.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    wbd : geodataframe</span>
-<span class="sd">        HUC12-level geodataframe projected to the same CRS as the FAC and FDR grids being used.</span>
+<span class="sd">    wbd : GeoDataframe</span>
+<span class="sd">        HUC12-level geodataframe projected to the same coordinate reference system (CRS) as the flow accumulation (FAC) and flow direction (FDR) grids being used.</span>
 <span class="sd">    fromHUC4 : str</span>
 <span class="sd">        HUC4 string for the upstream basin.</span>
 <span class="sd">    toHUC4 : str</span>
@@ -1240,12 +1250,12 @@
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    pourBasins : geodataframe</span>
+<span class="sd">    pourBasins : GeoDataframe</span>
 <span class="sd">        HUC12-level geodataframe of units that drain from fromHUC4 to toHUC4.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
     <span class="n">wbd</span><span class="p">[</span><span class="s1">&#39;HUC4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wbd</span><span class="o">.</span><span class="n">HUC12</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">getHUC4</span><span class="p">)</span>
-    <span class="n">wbd</span><span class="p">[</span><span class="s1">&#39;ToHUC4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wbd</span><span class="o">.</span><span class="n">ToHUC</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">getToHUC4</span><span class="p">)</span>
+    <span class="n">wbd</span><span class="p">[</span><span class="s1">&#39;ToHUC4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wbd</span><span class="o">.</span><span class="n">ToHUC</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">getHUC4</span><span class="p">)</span>
     
     <span class="k">return</span> <span class="n">wbd</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">wbd</span><span class="o">.</span><span class="n">HUC4</span> <span class="o">==</span> <span class="n">fromHUC4</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">wbd</span><span class="o">.</span><span class="n">ToHUC4</span> <span class="o">==</span> <span class="n">toHUC4</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
 
@@ -1254,19 +1264,19 @@
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    pourBasins : geodataframe</span>
-<span class="sd">        Geodataframe of the HUC12 basins that flow into the downstream HUC4. Used to clip the upstream FAC grid to identify pour points.</span>
-<span class="sd">    upfacfl : str (path)</span>
+<span class="sd">    pourBasins : GeoDataframe</span>
+<span class="sd">        GeoDataframe of the HUC12 basins that flow into the downstream HUC4. Used to clip the upstream FAC grid to identify pour points.</span>
+<span class="sd">    upfacfl : str</span>
 <span class="sd">        Path to the upstream flow accumulation grid.</span>
-<span class="sd">    upfdrfl : str (path)</span>
+<span class="sd">    upfdrfl : str</span>
 <span class="sd">        Path to the upstream tauDEM flow direction grid.</span>
-<span class="sd">    plotBasins : bool (False)</span>
-<span class="sd">        Boolean to make plots of upstream HUC12s and identified pour points.</span>
+<span class="sd">    plotBasins : bool (Optional)</span>
+<span class="sd">        Boolean to make plots of upstream HUC12s and identified pour points. Defaults to False.</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    finalPoints : list</span>
-<span class="sd">        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not CPGed) upstream parameter grids for information to cascade down to </span>
+<span class="sd">        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not FCPGed) upstream parameter grids for information to cascade down to </span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">pourPoints</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pourBasins</span><span class="p">)):</span>
@@ -1323,10 +1333,28 @@
         
     <span class="k">return</span> <span class="n">finalPoints</span></div>
 
-<div class="viewcode-block" id="loadRaster"><a class="viewcode-back" href="../functions.html#tools.loadRaster">[docs]</a><span class="k">def</span> <span class="nf">loadRaster</span><span class="p">(</span><span class="n">fl</span><span class="p">,</span> <span class="n">returnMeta</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="loadRaster"><a class="viewcode-back" href="../functions.html#tools.loadRaster">[docs]</a><span class="k">def</span> <span class="nf">loadRaster</span><span class="p">(</span><span class="n">fl</span><span class="p">,</span> <span class="n">returnMeta</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">band</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Helper function to load raster data and metadata.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fl : str</span>
+<span class="sd">        Path to the raster file to load.</span>
+<span class="sd">    returnMeta : bool (Optional)</span>
+<span class="sd">        Return the raster metadata. Defaults to False.</span>
+<span class="sd">    band : int (Optional)</span>
+<span class="sd">        Band to read from the raster. Defaults to one.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dat : np.array</span>
+<span class="sd">        Numpy array of the data in the selected raster band.</span>
+<span class="sd">    meta : dict</span>
+<span class="sd">        Dictionary of raster metadata.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
-            <span class="n">dat</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">dat</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">band</span><span class="p">)</span>
             <span class="n">meta</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         
         <span class="k">if</span> <span class="n">returnMeta</span><span class="p">:</span>
@@ -1336,17 +1364,15 @@
     <span class="k">except</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to open </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">fl</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="findLastFACFD"><a class="viewcode-back" href="../functions.html#tools.findLastFACFD">[docs]</a><span class="k">def</span> <span class="nf">findLastFACFD</span><span class="p">(</span><span class="n">facfl</span><span class="p">,</span> <span class="n">fl</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Find the coordinate of the greatest FAC cell, return the value from the upfl at that point.</span>
-<span class="sd">    </span>
-<span class="sd">    This can be used to find the flow direction of the FAC cell with the greatest accumulation, or the parameter value.</span>
+<div class="viewcode-block" id="findLastFACFD"><a class="viewcode-back" href="../functions.html#tools.findLastFACFD">[docs]</a><span class="k">def</span> <span class="nf">findLastFACFD</span><span class="p">(</span><span class="n">facfl</span><span class="p">,</span> <span class="n">fl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Find the coordinate of the greatest cell in facfl, return the value from fl at that point.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    facfl : str (path)</span>
-<span class="sd">        Upstream FAC grid</span>
-<span class="sd">    fl : str (path)</span>
-<span class="sd">        Upstream </span>
+<span class="sd">    facfl : str</span>
+<span class="sd">        Path to a flow accumulation grid.</span>
+<span class="sd">    fl : str (optional)</span>
+<span class="sd">        Path to an accumulated parameter file. Defaults to None. If None, the facfl is queried.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1358,11 +1384,20 @@
 <span class="sd">        Value from the parameter grid queried.</span>
 <span class="sd">    w : float</span>
 <span class="sd">        Cell size of the grid.</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This can be used to find the flow direction of the FAC cell with the greatest accumulation value or the parameter value of the cell with the greatest accumulation value.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
     <span class="n">fac</span><span class="p">,</span><span class="n">meta</span> <span class="o">=</span> <span class="n">loadRaster</span><span class="p">(</span><span class="n">facfl</span><span class="p">,</span><span class="n">returnMeta</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># load the fac file</span>
-    <span class="n">dat</span> <span class="o">=</span> <span class="n">loadRaster</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span> <span class="c1"># load the data file</span>
     
+    <span class="k">if</span> <span class="n">fl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">fac</span> <span class="c1"># use the fac raster as the parameter grid to query.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">loadRaster</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span> <span class="c1"># load the data file</span>
+
     <span class="n">cx</span><span class="p">,</span><span class="n">cy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">fac</span><span class="o">==</span><span class="n">fac</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="c1"># find the column, row cooridnates of the max fac.</span>
     <span class="c1">#print(&quot;%s,%s&quot;%(cx,cy))</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="n">cx</span><span class="p">,</span><span class="n">cy</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># query the parameter grid</span>
@@ -1379,17 +1414,17 @@
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    x : float</span>
+<span class="sd">    x : float or int</span>
 <span class="sd">        Horizontal coordinate in grd projection.</span>
-<span class="sd">    y : float</span>
+<span class="sd">    y : float or int</span>
 <span class="sd">        Vertical coordinate in grd projection.</span>
-<span class="sd">    grd : str (path)</span>
-<span class="sd">        Path to raster to query based on the supplied x and y.</span>
+<span class="sd">    grd : str</span>
+<span class="sd">        Path to raster to query based on the supplied x and y coordinates.</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    value : float or int</span>
-<span class="sd">        Value queried from the raster.</span>
+<span class="sd">        Value queried from the supplied raster.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
     <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">grd</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
@@ -1397,7 +1432,7 @@
             <span class="k">return</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="FindDownstreamCellTauDir"><a class="viewcode-back" href="../functions.html#tools.FindDownstreamCellTauDir">[docs]</a><span class="k">def</span> <span class="nf">FindDownstreamCellTauDir</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Find downstream cell given the flow direction of a cell using TauDEM directions.</span>
+    <span class="sd">&#39;&#39;&#39;Find downstream cell given the flow direction of a cell using TauDEM flow directions.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1457,7 +1492,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    dictionary : dict</span>
 <span class="sd">        Dictionary to be saved.</span>
-<span class="sd">    outfl : str (path)</span>
+<span class="sd">    outfl : str</span>
 <span class="sd">        Path for where to generate the JSON</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
@@ -1478,7 +1513,7 @@
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    infl : str (path)</span>
+<span class="sd">    infl : str</span>
 <span class="sd">        Path to the JSON to be loaded.</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
@@ -1511,12 +1546,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    updateDict : dict</span>
-<span class="sd">        Update dictionary</span>
-<span class="sd">    </span>
-<span class="sd">    Outputs</span>
-<span class="sd">    -------</span>
-<span class="sd">    updateDict : json (dict)</span>
-<span class="sd">        Update dictionary saved to a json at outfl.</span>
+<span class="sd">        Update dictionary that is also written to outfl.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
     <span class="c1"># using lists instead of single values in case there are multiple pour points between basins</span>
@@ -1555,26 +1585,23 @@
     <span class="k">return</span> <span class="n">updateDict</span></div>
 
 <div class="viewcode-block" id="updateRaster"><a class="viewcode-back" href="../functions.html#tools.updateRaster">[docs]</a><span class="k">def</span> <span class="nf">updateRaster</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">val</span><span class="p">,</span><span class="n">grd</span><span class="p">,</span><span class="n">outgrd</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Insert val into grd as location specified by x,y, writes to outgrd.</span>
+    <span class="sd">&#39;&#39;&#39;Insert val into grd at location specified by x,y, writes new raster to outgrd.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    x : list or float</span>
+<span class="sd">        Horizontal coordinate in map units.</span>
 <span class="sd">    y : list of float</span>
-<span class="sd">        Vertical coordinate in map</span>
+<span class="sd">        Vertical coordinate in map units.</span>
 <span class="sd">    val : int or float</span>
-<span class="sd">        Value to insert into grd</span>
-<span class="sd">    grd : str (path)</span>
-<span class="sd">        File path to read grd to update from.</span>
+<span class="sd">        Value to insert into raster at grd.</span>
+<span class="sd">    grd : str</span>
+<span class="sd">        Path to raster to be updated.</span>
 <span class="sd">    outgrd : str (path)</span>
-<span class="sd">        File path to write output to.</span>
+<span class="sd">        Path to write updated raster to.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    None</span>
-<span class="sd">    </span>
-<span class="sd">    Output</span>
-<span class="sd">    ------</span>
 <span class="sd">    dat : raster</span>
 <span class="sd">        Writes raster dataset to supplied grdout destination.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -1615,18 +1642,15 @@
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    ingrd : str (path)</span>
-<span class="sd">    outWeight : str (path)</span>
+<span class="sd">    ingrd : str</span>
+<span class="sd">        Path to input raster from which to generate the weighting grid from.</span>
+<span class="sd">    outWeight : str</span>
+<span class="sd">        Path to the output weighting raster generated.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    None</span>
-<span class="sd">    </span>
-<span class="sd">    Output</span>
-<span class="sd">    ------</span>
 <span class="sd">    outWeight : raster</span>
-<span class="sd">        Raster of the same extent and resolution as the input grid, but filled with ones where data exist. </span>
-<span class="sd">        No data cells are persisted.</span>
+<span class="sd">        Raster of the same extent and resolution as the input grid, but filled with ones where data exist. No data cells are persisted.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">dat</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">loadRaster</span><span class="p">(</span><span class="n">ingrd</span><span class="p">,</span> <span class="n">returnMeta</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     
@@ -1651,31 +1675,27 @@
     <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="adjustFAC"><a class="viewcode-back" href="../functions.html#tools.adjustFAC">[docs]</a><span class="k">def</span> <span class="nf">adjustFAC</span><span class="p">(</span><span class="n">facWeighttemplate</span><span class="p">,</span> <span class="n">downstreamFACweightFl</span><span class="p">,</span> <span class="n">updateDictFl</span><span class="p">,</span> <span class="n">downstreamFDRFl</span><span class="p">,</span> <span class="n">adjFACFl</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Generate updated FAC given an update dictionary.</span>
+    <span class="sd">&#39;&#39;&#39;Generate an updated flow accumulation grid (FAC) given an update dictionary produced by :py:func:`createUpdateDict`.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    facWeighttemplate : str (path)</span>
+<span class="sd">    facWeighttemplate : str</span>
 <span class="sd">        Path to a FDR or FAC grid used to make the FAC weighting grid.</span>
-<span class="sd">    downstreamFACweightFl : str (path)</span>
+<span class="sd">    downstreamFACweightFl : str</span>
 <span class="sd">        Path to output the FAC weighting grid.</span>
-<span class="sd">    updateDictFl : str (path)</span>
+<span class="sd">    updateDictFl : str</span>
 <span class="sd">        Path to update dictionary used to update the FAC weighting grid.</span>
-<span class="sd">    downstreamFDRFl : str (path)</span>
+<span class="sd">    downstreamFDRFl : str</span>
 <span class="sd">        Path to downstream FDR to use when computing the adjusted FAC grid.</span>
-<span class="sd">    adjFACFl : str (path)</span>
-<span class="sd">        Path to output adjusted FAC grid.</span>
-<span class="sd">    cores : int (default 1)</span>
-<span class="sd">        Number of cores to run </span>
+<span class="sd">    adjFACFl : str</span>
+<span class="sd">        Path to output the adjusted FAC raster.</span>
+<span class="sd">    cores : int (Optional)</span>
+<span class="sd">        Number of cores to use. Defaults to 1. </span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    </span>
-<span class="sd">    Outputs</span>
-<span class="sd">    -------</span>
 <span class="sd">    adjFACFl : raster</span>
-<span class="sd">        Adjusted flow accumulation raster</span>
-<span class="sd">    </span>
+<span class="sd">        Adjusted flow accumulation raster at adjFACFl</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">updateDict</span> <span class="o">=</span> <span class="n">loadJSON</span><span class="p">(</span><span class="n">updateDictFl</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">updateDict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c1"># for each upstream HUC.</span>
@@ -1695,12 +1715,12 @@
     <span class="n">accumulateParam</span><span class="p">(</span><span class="n">downstreamFACweightFl</span><span class="p">,</span> <span class="n">downstreamFDRFl</span><span class="p">,</span> <span class="n">adjFACFl</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="n">cores</span><span class="p">)</span> <span class="c1"># run a parameter accumulation on the weighting grid.</span></div>
 
 <div class="viewcode-block" id="updateDict"><a class="viewcode-back" href="../functions.html#tools.updateDict">[docs]</a><span class="k">def</span> <span class="nf">updateDict</span><span class="p">(</span><span class="n">ud</span><span class="p">,</span> <span class="n">upHUC</span><span class="p">,</span> <span class="n">varName</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Update dictionary with parameter value.</span>
+    <span class="sd">&#39;&#39;&#39;Update dictionary created using :py:func:`createUpdateDict` with a parameter value.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    ud : dict</span>
-<span class="sd">        Update dictionary to add a variable to.</span>
+<span class="sd">    ud : st</span>
+<span class="sd">        Path to the update dictionary to add a variable to.</span>
 <span class="sd">    upHUC : str</span>
 <span class="sd">        Name of the upstream HUC that the variable cooresponds to.</span>
 <span class="sd">    varName : str</span>
@@ -1710,12 +1730,8 @@
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    None</span>
-<span class="sd">    </span>
-<span class="sd">    Outputs</span>
-<span class="sd">    -------</span>
-<span class="sd">    ud : dict (JSON)</span>
-<span class="sd">        Update dictionary written back out to file.</span>
+<span class="sd">    ud : json</span>
+<span class="sd">        Update dictionary written back out to ud.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
@@ -1734,27 +1750,23 @@
     <span class="n">saveJSON</span><span class="p">(</span><span class="n">ud</span><span class="p">)</span> <span class="c1"># write out file</span></div>
 
 <div class="viewcode-block" id="adjustParam"><a class="viewcode-back" href="../functions.html#tools.adjustParam">[docs]</a><span class="k">def</span> <span class="nf">adjustParam</span><span class="p">(</span><span class="n">updatedParam</span><span class="p">,</span> <span class="n">downstreamParamFL</span><span class="p">,</span> <span class="n">updateDictFl</span><span class="p">,</span> <span class="n">adjParamFl</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Generate updated FAC given an update dictionary.</span>
+    <span class="sd">&#39;&#39;&#39;Generate an updated parameter grid given an update dictionary from :py:func:`createUpdateDict`.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    updatedParam : str</span>
 <span class="sd">        Name of the parameter to update.</span>
-<span class="sd">    downstreamParamFL : str (path)</span>
+<span class="sd">    downstreamParamFL : str</span>
 <span class="sd">        Path to downstream parameter grid to update.</span>
-<span class="sd">    updateDictFl : str (path)</span>
+<span class="sd">    updateDictFl : str</span>
 <span class="sd">        Path to update dictionary to use.</span>
-<span class="sd">    adjParamFl : str (path)</span>
+<span class="sd">    adjParamFl : str</span>
 <span class="sd">        Path to output adjusted parameter file.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    None</span>
-<span class="sd">    </span>
-<span class="sd">    Outputs</span>
-<span class="sd">    -------</span>
 <span class="sd">    adjParamFl : raster</span>
-<span class="sd">        Adjusted parameter file that can be accumulated prior to CPG creation.</span>
+<span class="sd">        Adjusted parameter raster that can be accumulated prior to FCPG creation.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">updateDict</span> <span class="o">=</span> <span class="n">loadJSON</span><span class="p">(</span><span class="n">updateDictFl</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">updateDict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c1"># for each upstream HUC.</span>

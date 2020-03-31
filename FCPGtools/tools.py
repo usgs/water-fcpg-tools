@@ -235,7 +235,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
 
     
 def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
-    '''Create a flow-conditioned parameter grid using accumulated parameter and area rasters.
+    '''Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also :py:func:`make_fcpgs`.
 
     Parameters
     ----------
@@ -330,7 +330,7 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
         print("CPG file written to: {0}".format(outRast))
     
 def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, forceProj=False, forceProj4="\"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs\""):
-    '''Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the of the flow direction raster supplied.
+    '''Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the of the flow direction raster supplied. See also :py:func:`resampleParams`.
 
     Parameters
     ----------
@@ -349,7 +349,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     forceProj4 : str
         Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True. 
 
-    Outputs
+    Returns
     -------
     outParam : raster
         Resampled, reprojected, and clipped parameter raster.
@@ -621,6 +621,7 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
 
 def dist2stream(fdr, fac, thresh, outRast, cores=1) :
     '''Compute distance to streams.
+    
     Parameters
     ----------
     fdr : str
@@ -715,7 +716,7 @@ def maskStreams(inRast, streamRast, outRast):
         print("CPG file written to: {0}".format(outRast))
 
 def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj"):
-    '''Batch version of :code:`resampleParam`.
+    '''Batch version of :py:func:`resampleParam`.
 
     Parameters
     ----------
@@ -755,7 +756,7 @@ def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores
     return fileList
 
 def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
-    '''Batch version of :code:`accumulateParam`.
+    '''Batch version of :py:func:`accumulateParam`.
 
     Parameters
     ----------
@@ -794,7 +795,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
     return fileList
 
 def make_fcpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"):
-    '''Batch version of make_fcpg.
+    '''Batch version of :py:func:`make_fcpg`.
 
     Parameters
     ----------
@@ -830,21 +831,22 @@ def make_fcpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"):
     return fileList
 
 def cat2bin(inCat, outWorkspace):
-    '''
-    Inputs:
-        
-        inCat - input catagorical parameter raster
-        outWorkspace - workspace to save binary raster outputs
-        
-    Outputs:
-        Binary rasters for each parameter category
+    '''Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, and -1 for regions of no data in the supplied raster. Wrapper on :py:func:`binarizeCat`.
 
-    Returns:
-        List of filepaths to output files
+    Parameters
+    ----------
+    inCat : str
+        Input catagorical parameter raster.
+    outWorkspace : str
+        Workspace to save binary raster output files.
+        
+    Returns
+    -------
+    fileList : list
+        List of filepaths to output files.
     '''
     print("Creating binaries for %s"%inCat)
     
-
     baseName = os.path.splitext(os.path.basename(inCat))[0] #Get name of input file without extention
     ext = ".tif" #File extension
 
@@ -853,8 +855,6 @@ def cat2bin(inCat, outWorkspace):
         dat = ds.read(1)
         profile = ds.profile.copy() # save the metadata for output later
         nodata = ds.nodata
-    
-
     
     cats = np.unique(dat) # Get unique values in raster
     cats = np.delete(cats, np.where(cats ==  nodata)) # Remove no data value from list
@@ -872,22 +872,7 @@ def cat2bin(inCat, outWorkspace):
                 'bigtiff':'IF_SAFER'})
 
     #Create binary rasters for each category
-    """
-    for n in cats:
-        catData = dat.copy()
-        catData[(dat != n) & (dat != nodata)] = 0
-        catData[dat == n] = 1
-        catData[dat == nodata] = -1 #Use -1 as no data value
-        catData = catData.astype('int8')#8 bit integer is sufficient for zeros and ones
-
-        catRasterName = baseName + str(n) + ext
-        catRaster = os.path.join(outWorkspace, catRasterName)
-        fileList.append(catRaster)
-
-        print("Saving %s"%catRaster)
-        with rs.open(catRaster,'w',**profile) as dst:
-            dst.write(catData,1)
-    """
+   
     from functools import partial
     pool = processPool()
 
@@ -898,26 +883,30 @@ def cat2bin(inCat, outWorkspace):
     pool.close()
     pool.join()
     
-    
     return fileList
 
 def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
+    '''Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, and -1 for regions of no data in the supplied raster. See also :py:func:`cat2bin`.
 
-    '''
-    Inputs:
+    Parameters
+    ----------
+    data : np.array
+        Numpy arrary of raster data to convert to binary.
+    val : int
+        Raster value to extract binary for from data.
+    nodata : int or float
+        Raster no data value.
+    outWorkspace : str
+        Path to folder to save binary output rasters to.
+    baseName : str
+        Base name for the output rasters.
+    ext : str
+        File extension for output rasters.
         
-        data - numpy arrary of raster data to convert to binary
-        val - raster value to extract binary for
-        nodata - raster no data value
-        outWorkspace - workspace to save binary raster outputs
-        baseName - base name for the raster output
-        ext - file extension for raster output
-        
-    Outputs:
-        Binary raster the specified parameter value
-
-    Returns:
-        Filepath to output files
+    Returns
+    -------
+    catRaster : str
+        Filepath to the binary raster created.
     '''
 
     catData = data.copy()
@@ -932,19 +921,25 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
     print("Saving %s"%catRaster)
     with rs.open(catRaster,'w',**profile) as dst:
         dst.write(catData,1)
-    
 
     return catRaster # Return the path to the raster created
 
 def tauFlowAccum(fdr, accumRast, cores = 1):
-    """
-    Inputs:
-        fdr - flow direction raster in tauDEM format
-        accumRast - file location to store accumulated parameter values
-        cores - number of cores to use parameter accumulation
+    """Accumulate flow direction grid using TauDEM.
 
-    Outputs:
-        accumRast - raster of accumulated parameter values
+    Parameters
+    ----------
+    fdr : str
+        Path to a flow direction raster in TauDEM format.
+    accumRast : str
+        Path to output the flow accumulation raster.
+    cores : int (optional)
+        Number of cores to use. Defaults to 1.
+
+    Returns
+    -------
+    accumRast : raster
+        Raster of accumulated parameter values at the path specified above.
     """
     #Use tauDEM to accumulate the parameter
     try:
@@ -965,25 +960,23 @@ def tauFlowAccum(fdr, accumRast, cores = 1):
         print('Error Accumulating Data')
         traceback.print_exc()
 
-def downloadNHDPlusRaster(HUC4, fileDir):
-    '''
-    Inputs:
+# def downloadNHDPlusRaster(HUC4, fileDir):
+#     '''
+#     Inputs:
         
-        HUC4 - 4 digit HUC to download NHDPlus raster data for
-        fileDir - Directory in which to save NHDPlus data
+#         HUC4 - 4 digit HUC to download NHDPlus raster data for
+#         fileDir - Directory in which to save NHDPlus data
 
-    Outputs:
-        NHDPlus raster files saved to directory
+#     Outputs:
+#         NHDPlus raster files saved to directory
 
-    '''
-    compressedFile = os.path.join(fileDir, str(HUC4) + "_RASTER.7z")
-    print("Downloading File: " + compressedFile)
-    urllib.request.urlretrieve("https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHDPlus/HU4/HighResolution/GDB/NHDPLUS_H_%s_HU4_RASTER.7z"%str(HUC4), compressedFile)
+#     '''
+#     compressedFile = os.path.join(fileDir, str(HUC4) + "_RASTER.7z")
+#     print("Downloading File: " + compressedFile)
+#     urllib.request.urlretrieve("https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHDPlus/HU4/HighResolution/GDB/NHDPLUS_H_%s_HU4_RASTER.7z"%str(HUC4), compressedFile)
 
-    print("Extracting File...")
-    os.system("7za x {0} -o{1}".format(compressedFile,fileDir))
-
-
+#     print("Extracting File...")
+#     os.system("7za x {0} -o{1}".format(compressedFile,fileDir))
 
 def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac = None, thresh = None):
     '''
@@ -992,19 +985,24 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
     Parameters
     ----------
     fdr : str
-        Path to TauDEM D8 flow accumulation raster
+        Path to a flow direction grid in TauDEM format.
     param : str
         Path to parameter raster to run through the D8 Extreme Upslope Value tool
     output : str
-        Path to outplet file
-    accum_type : str (optional, defaults to "MAX") 
-        Either  "MAX" or "MIN".
-    cores : int
-        Number of cores to run this process on.
+        Path to output raster file.
+    accum_type : str (optional) 
+        Either  "MAX" or "MIN." Defaults to "MAX."
+    cores : int (optional) 
+        Number of cores to run this process on. Defaults to 1.
+    fac : str (optional)
+        Path to a flow accumulation raster. Defaults to None.
+    thresh : int (optional)
+        Threshold values, in the same units as fac to mask output to stream channels. Defaults to None.
 
     Returns
     -------
-    output : str
+    output : raster
+        Raster of either the maximum or minumum upslope value of the parameter supplied to the function.
     '''
     
     print()
@@ -1054,23 +1052,44 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
     return None
 
 def getFeatures(gdf):
-    #Function to parse features from GeoDataFrame in such a manner that rasterio wants them
+    """Helper function to parse features from a GeoPandas GeoDataframe in such a manner that Rasterio can handle them.
+    
+    Parameters
+    ----------
+    gdf : GeoDataframe
+        GeoPandas GeoDataframe with a geometry column.
+
+    Returns
+    -------
+    features : geoJSON
+        GeoJSON representation of geometry features from the input GeoDataFrame.
+    """
+
     import json
     return [json.loads(gdf.to_json())['features'][0]['geometry']]
 
 def getHUC4(HUC12):
-    return HUC12[:4]
+    '''Helper function to return HUC4 representation from a HUC12 identifier.
 
-def getToHUC4(toHUC12):
-    return toHUC12[:4]
+    Parameters
+    ----------
+    HUC12 : str
+        Text representation of the 12-digit HUC12 code.
+
+    Returns
+    -------
+    HUC4 : str
+        HUC4 identifier.
+    '''
+    return HUC12[:4]
 
 def makePourBasins(wbd,fromHUC4,toHUC4):
     '''Make geodataframe of HUC12 basis flowing from fromHUC4 to toHUC4.
     
     Parameters
     ----------
-    wbd : geodataframe
-        HUC12-level geodataframe projected to the same CRS as the FAC and FDR grids being used.
+    wbd : GeoDataframe
+        HUC12-level geodataframe projected to the same coordinate reference system (CRS) as the flow accumulation (FAC) and flow direction (FDR) grids being used.
     fromHUC4 : str
         HUC4 string for the upstream basin.
     toHUC4 : str
@@ -1078,12 +1097,12 @@ def makePourBasins(wbd,fromHUC4,toHUC4):
         
     Returns
     -------
-    pourBasins : geodataframe
+    pourBasins : GeoDataframe
         HUC12-level geodataframe of units that drain from fromHUC4 to toHUC4.
     '''
     
     wbd['HUC4'] = wbd.HUC12.map(getHUC4)
-    wbd['ToHUC4'] = wbd.ToHUC.map(getToHUC4)
+    wbd['ToHUC4'] = wbd.ToHUC.map(getHUC4)
     
     return wbd.loc[(wbd.HUC4 == fromHUC4) & (wbd.ToHUC4 == toHUC4)].copy()
 
@@ -1092,19 +1111,19 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins = False):
     
     Parameters
     ----------
-    pourBasins : geodataframe
-        Geodataframe of the HUC12 basins that flow into the downstream HUC4. Used to clip the upstream FAC grid to identify pour points.
-    upfacfl : str (path)
+    pourBasins : GeoDataframe
+        GeoDataframe of the HUC12 basins that flow into the downstream HUC4. Used to clip the upstream FAC grid to identify pour points.
+    upfacfl : str
         Path to the upstream flow accumulation grid.
-    upfdrfl : str (path)
+    upfdrfl : str
         Path to the upstream tauDEM flow direction grid.
-    plotBasins : bool (False)
-        Boolean to make plots of upstream HUC12s and identified pour points.
+    plotBasins : bool (Optional)
+        Boolean to make plots of upstream HUC12s and identified pour points. Defaults to False.
         
     Returns
     -------
     finalPoints : list
-        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not CPGed) upstream parameter grids for information to cascade down to 
+        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not FCPGed) upstream parameter grids for information to cascade down to 
     '''
     pourPoints = []
     for i in range(len(pourBasins)):
@@ -1161,10 +1180,28 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins = False):
         
     return finalPoints
 
-def loadRaster(fl, returnMeta = False):
+def loadRaster(fl, returnMeta = False, band = 1):
+    '''Helper function to load raster data and metadata.
+    
+    Parameters
+    ----------
+    fl : str
+        Path to the raster file to load.
+    returnMeta : bool (Optional)
+        Return the raster metadata. Defaults to False.
+    band : int (Optional)
+        Band to read from the raster. Defaults to one.
+
+    Returns
+    -------
+    dat : np.array
+        Numpy array of the data in the selected raster band.
+    meta : dict
+        Dictionary of raster metadata.
+    '''
     try:
         with rs.open(fl) as src:
-            dat = src.read(1)
+            dat = src.read(band)
             meta = src.meta.copy()
         
         if returnMeta:
@@ -1174,17 +1211,15 @@ def loadRaster(fl, returnMeta = False):
     except:
         print("Unable to open %s"%(fl))
 
-def findLastFACFD(facfl, fl):
-    '''Find the coordinate of the greatest FAC cell, return the value from the upfl at that point.
-    
-    This can be used to find the flow direction of the FAC cell with the greatest accumulation, or the parameter value.
+def findLastFACFD(facfl, fl = None):
+    '''Find the coordinate of the greatest cell in facfl, return the value from fl at that point.
     
     Parameters
     ----------
-    facfl : str (path)
-        Upstream FAC grid
-    fl : str (path)
-        Upstream 
+    facfl : str
+        Path to a flow accumulation grid.
+    fl : str (optional)
+        Path to an accumulated parameter file. Defaults to None. If None, the facfl is queried.
     
     Returns
     -------
@@ -1196,11 +1231,20 @@ def findLastFACFD(facfl, fl):
         Value from the parameter grid queried.
     w : float
         Cell size of the grid.
+
+
+    Notes
+    -----
+    This can be used to find the flow direction of the FAC cell with the greatest accumulation value or the parameter value of the cell with the greatest accumulation value.
     '''
     
     fac,meta = loadRaster(facfl,returnMeta=True) # load the fac file
-    dat = loadRaster(fl) # load the data file
     
+    if fl is None:
+        dat = fac # use the fac raster as the parameter grid to query.
+    else:
+        dat = loadRaster(fl) # load the data file
+
     cx,cy = np.where(fac==fac.max()) # find the column, row cooridnates of the max fac.
     #print("%s,%s"%(cx,cy))
     d = dat[cx,cy][0] # query the parameter grid
@@ -1217,17 +1261,17 @@ def queryPoint(x,y,grd):
     
     Parameters
     ----------
-    x : float
+    x : float or int
         Horizontal coordinate in grd projection.
-    y : float
+    y : float or int
         Vertical coordinate in grd projection.
-    grd : str (path)
-        Path to raster to query based on the supplied x and y.
+    grd : str
+        Path to raster to query based on the supplied x and y coordinates.
         
     Returns
     -------
     value : float or int
-        Value queried from the raster.
+        Value queried from the supplied raster.
     '''
     
     with rs.open(grd) as src:
@@ -1235,7 +1279,7 @@ def queryPoint(x,y,grd):
             return i[0]
 
 def FindDownstreamCellTauDir(d,x,y,w):
-    '''Find downstream cell given the flow direction of a cell using TauDEM directions.
+    '''Find downstream cell given the flow direction of a cell using TauDEM flow directions.
     
     Parameters
     ----------
@@ -1295,7 +1339,7 @@ def saveJSON(dictionary, outfl):
     ----------
     dictionary : dict
         Dictionary to be saved.
-    outfl : str (path)
+    outfl : str
         Path for where to generate the JSON
         
     Returns
@@ -1316,7 +1360,7 @@ def loadJSON(infl):
     
     Parameters
     ----------
-    infl : str (path)
+    infl : str
         Path to the JSON to be loaded.
         
     Returns
@@ -1349,12 +1393,7 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl):
     Returns
     -------
     updateDict : dict
-        Update dictionary
-    
-    Outputs
-    -------
-    updateDict : json (dict)
-        Update dictionary saved to a json at outfl.
+        Update dictionary that is also written to outfl.
     '''
     
     # using lists instead of single values in case there are multiple pour points between basins
@@ -1393,26 +1432,23 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl):
     return updateDict
 
 def updateRaster(x,y,val,grd,outgrd):
-    '''Insert val into grd as location specified by x,y, writes to outgrd.
+    '''Insert val into grd at location specified by x,y, writes new raster to outgrd.
     
     Parameters
     ----------
     x : list or float
+        Horizontal coordinate in map units.
     y : list of float
-        Vertical coordinate in map
+        Vertical coordinate in map units.
     val : int or float
-        Value to insert into grd
-    grd : str (path)
-        File path to read grd to update from.
+        Value to insert into raster at grd.
+    grd : str
+        Path to raster to be updated.
     outgrd : str (path)
-        File path to write output to.
+        Path to write updated raster to.
     
     Returns
     -------
-    None
-    
-    Output
-    ------
     dat : raster
         Writes raster dataset to supplied grdout destination.
     '''
@@ -1453,18 +1489,15 @@ def makeFACweight(ingrd,outWeight):
     
     Parameters
     ----------
-    ingrd : str (path)
-    outWeight : str (path)
+    ingrd : str
+        Path to input raster from which to generate the weighting grid from.
+    outWeight : str
+        Path to the output weighting raster generated.
     
     Returns
     -------
-    None
-    
-    Output
-    ------
     outWeight : raster
-        Raster of the same extent and resolution as the input grid, but filled with ones where data exist. 
-        No data cells are persisted.
+        Raster of the same extent and resolution as the input grid, but filled with ones where data exist. No data cells are persisted.
     '''
     dat, meta = loadRaster(ingrd, returnMeta=True)
     
@@ -1489,31 +1522,27 @@ def makeFACweight(ingrd,outWeight):
     return None
 
 def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstreamFDRFl, adjFACFl, cores=1):
-    '''Generate updated FAC given an update dictionary.
+    '''Generate an updated flow accumulation grid (FAC) given an update dictionary produced by :py:func:`createUpdateDict`.
     
     Parameters
     ----------
-    facWeighttemplate : str (path)
+    facWeighttemplate : str
         Path to a FDR or FAC grid used to make the FAC weighting grid.
-    downstreamFACweightFl : str (path)
+    downstreamFACweightFl : str
         Path to output the FAC weighting grid.
-    updateDictFl : str (path)
+    updateDictFl : str
         Path to update dictionary used to update the FAC weighting grid.
-    downstreamFDRFl : str (path)
+    downstreamFDRFl : str
         Path to downstream FDR to use when computing the adjusted FAC grid.
-    adjFACFl : str (path)
-        Path to output adjusted FAC grid.
-    cores : int (default 1)
-        Number of cores to run 
+    adjFACFl : str
+        Path to output the adjusted FAC raster.
+    cores : int (Optional)
+        Number of cores to use. Defaults to 1. 
     
     Returns
     -------
-    
-    Outputs
-    -------
     adjFACFl : raster
-        Adjusted flow accumulation raster
-    
+        Adjusted flow accumulation raster at adjFACFl
     '''
     updateDict = loadJSON(updateDictFl)
     for key in updateDict.keys(): # for each upstream HUC.
@@ -1533,12 +1562,12 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
     accumulateParam(downstreamFACweightFl, downstreamFDRFl, adjFACFl, cores = cores) # run a parameter accumulation on the weighting grid.
 
 def updateDict(ud, upHUC, varName, val):
-    '''Update dictionary with parameter value.
+    '''Update dictionary created using :py:func:`createUpdateDict` with a parameter value.
     
     Parameters
     ----------
-    ud : dict
-        Update dictionary to add a variable to.
+    ud : st
+        Path to the update dictionary to add a variable to.
     upHUC : str
         Name of the upstream HUC that the variable cooresponds to.
     varName : str
@@ -1548,12 +1577,8 @@ def updateDict(ud, upHUC, varName, val):
     
     Returns
     -------
-    None
-    
-    Outputs
-    -------
-    ud : dict (JSON)
-        Update dictionary written back out to file.
+    ud : json
+        Update dictionary written back out to ud.
     '''
     
     if type(val) != list:
@@ -1572,27 +1597,23 @@ def updateDict(ud, upHUC, varName, val):
     saveJSON(ud) # write out file
 
 def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl):
-    '''Generate updated FAC given an update dictionary.
+    '''Generate an updated parameter grid given an update dictionary from :py:func:`createUpdateDict`.
     
     Parameters
     ----------
     updatedParam : str
         Name of the parameter to update.
-    downstreamParamFL : str (path)
+    downstreamParamFL : str
         Path to downstream parameter grid to update.
-    updateDictFl : str (path)
+    updateDictFl : str
         Path to update dictionary to use.
-    adjParamFl : str (path)
+    adjParamFl : str
         Path to output adjusted parameter file.
     
     Returns
     -------
-    None
-    
-    Outputs
-    -------
     adjParamFl : raster
-        Adjusted parameter file that can be accumulated prior to CPG creation.
+        Adjusted parameter raster that can be accumulated prior to FCPG creation.
     '''
     updateDict = loadJSON(updateDictFl)
     for key in updateDict.keys(): # for each upstream HUC.

@@ -166,26 +166,33 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd><p class="first last">Path to TauDEM D8 flow accumulation raster</p>
+<dd><p class="first last">Path to a flow direction grid in TauDEM format.</p>
 </dd>
 <dt><strong>param</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to parameter raster to run through the D8 Extreme Upslope Value tool</p>
 </dd>
 <dt><strong>output</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd><p class="first last">Path to outplet file</p>
+<dd><p class="first last">Path to output raster file.</p>
 </dd>
-<dt><strong>accum_type</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional, defaults to “MAX”)</span></dt>
-<dd><p class="first last">Either  “MAX” or “MIN”.</p>
+<dt><strong>accum_type</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">Either  “MAX” or “MIN.” Defaults to “MAX.”</p>
 </dd>
-<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd><p class="first last">Number of cores to run this process on.</p>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">Number of cores to run this process on. Defaults to 1.</p>
+</dd>
+<dt><strong>fac</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">Path to a flow accumulation raster. Defaults to None.</p>
+</dd>
+<dt><strong>thresh</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">Threshold values, in the same units as fac to mask output to stream channels. Defaults to None.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>output</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd></dd>
+<dt><strong>output</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster of either the maximum or minumum upslope value of the parameter supplied to the function.</p>
+</dd>
 </dl>
 </td>
 </tr>
@@ -196,7 +203,7 @@
 <dl class="function">
 <dt id="tools.FindDownstreamCellTauDir">
 <code class="descname">FindDownstreamCellTauDir</code><span class="sig-paren">(</span><em>d</em>, <em>x</em>, <em>y</em>, <em>w</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#FindDownstreamCellTauDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.FindDownstreamCellTauDir" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find downstream cell given the flow direction of a cell using TauDEM directions.</p>
+<dd><p>Find downstream cell given the flow direction of a cell using TauDEM flow directions.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -283,7 +290,7 @@
 <dl class="function">
 <dt id="tools.accumulateParams">
 <code class="descname">accumulateParams</code><span class="sig-paren">(</span><em>paramRasts</em>, <em>fdr</em>, <em>outWorkspace</em>, <em>cores=1</em>, <em>appStr='accum'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#accumulateParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.accumulateParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch version of <code class="code docutils literal notranslate"><span class="pre">accumulateParam</span></code>.</p>
+<dd><p>Batch version of <a class="reference internal" href="#tools.accumulateParam" title="tools.accumulateParam"><code class="xref py py-func docutils literal notranslate"><span class="pre">accumulateParam()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -321,29 +328,36 @@
 <dl class="function">
 <dt id="tools.adjustFAC">
 <code class="descname">adjustFAC</code><span class="sig-paren">(</span><em>facWeighttemplate</em>, <em>downstreamFACweightFl</em>, <em>updateDictFl</em>, <em>downstreamFDRFl</em>, <em>adjFACFl</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#adjustFAC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.adjustFAC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate updated FAC given an update dictionary.</p>
+<dd><p>Generate an updated flow accumulation grid (FAC) given an update dictionary produced by <a class="reference internal" href="#tools.createUpdateDict" title="tools.createUpdateDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">createUpdateDict()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>facWeighttemplate</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>facWeighttemplate</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to a FDR or FAC grid used to make the FAC weighting grid.</p>
 </dd>
-<dt><strong>downstreamFACweightFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
+<dt><strong>downstreamFACweightFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to output the FAC weighting grid.</p>
 </dd>
-<dt><strong>updateDictFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
+<dt><strong>updateDictFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to update dictionary used to update the FAC weighting grid.</p>
 </dd>
-<dt><strong>downstreamFDRFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
+<dt><strong>downstreamFDRFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to downstream FDR to use when computing the adjusted FAC grid.</p>
 </dd>
-<dt><strong>adjFACFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
-<dd><p class="first last">Path to output adjusted FAC grid.</p>
+<dt><strong>adjFACFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output the adjusted FAC raster.</p>
 </dd>
-<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default 1)</span></dt>
-<dd><p class="first last">Number of cores to run</p>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (Optional)</span></dt>
+<dd><p class="first last">Number of cores to use. Defaults to 1.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>adjFACFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Adjusted flow accumulation raster at adjFACFl</p>
 </dd>
 </dl>
 </td>
@@ -355,7 +369,7 @@
 <dl class="function">
 <dt id="tools.adjustParam">
 <code class="descname">adjustParam</code><span class="sig-paren">(</span><em>updatedParam</em>, <em>downstreamParamFL</em>, <em>updateDictFl</em>, <em>adjParamFl</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#adjustParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.adjustParam" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate updated FAC given an update dictionary.</p>
+<dd><p>Generate an updated parameter grid given an update dictionary from <a class="reference internal" href="#tools.createUpdateDict" title="tools.createUpdateDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">createUpdateDict()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -364,21 +378,22 @@
 <dt><strong>updatedParam</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Name of the parameter to update.</p>
 </dd>
-<dt><strong>downstreamParamFL</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
+<dt><strong>downstreamParamFL</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to downstream parameter grid to update.</p>
 </dd>
-<dt><strong>updateDictFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
+<dt><strong>updateDictFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to update dictionary to use.</p>
 </dd>
-<dt><strong>adjParamFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
+<dt><strong>adjParamFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to output adjusted parameter file.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>None</dt>
-<dd></dd>
+<dt><strong>adjParamFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Adjusted parameter raster that can be accumulated prior to FCPG creation.</p>
+</dd>
 </dl>
 </td>
 </tr>
@@ -421,35 +436,71 @@
 <dl class="function">
 <dt id="tools.binarizeCat">
 <code class="descname">binarizeCat</code><span class="sig-paren">(</span><em>val</em>, <em>data</em>, <em>nodata</em>, <em>outWorkspace</em>, <em>baseName</em>, <em>ext</em>, <em>profile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#binarizeCat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.binarizeCat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inputs:</p>
-<blockquote>
-<div>data - numpy arrary of raster data to convert to binary
-val - raster value to extract binary for
-nodata - raster no data value
-outWorkspace - workspace to save binary raster outputs
-baseName - base name for the raster output
-ext - file extension for raster output</div></blockquote>
-<dl class="docutils">
-<dt>Outputs:</dt>
-<dd>Binary raster the specified parameter value</dd>
-<dt>Returns:</dt>
-<dd>Filepath to output files</dd>
+<dd><p>Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, and -1 for regions of no data in the supplied raster. See also <a class="reference internal" href="#tools.cat2bin" title="tools.cat2bin"><code class="xref py py-func docutils literal notranslate"><span class="pre">cat2bin()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>data</strong> <span class="classifier-delimiter">:</span> <span class="classifier">np.array</span></dt>
+<dd><p class="first last">Numpy arrary of raster data to convert to binary.</p>
+</dd>
+<dt><strong>val</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Raster value to extract binary for from data.</p>
+</dd>
+<dt><strong>nodata</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int or float</span></dt>
+<dd><p class="first last">Raster no data value.</p>
+</dd>
+<dt><strong>outWorkspace</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to folder to save binary output rasters to.</p>
+</dd>
+<dt><strong>baseName</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Base name for the output rasters.</p>
+</dd>
+<dt><strong>ext</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">File extension for output rasters.</p>
+</dd>
 </dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>catRaster</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Filepath to the binary raster created.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="tools.cat2bin">
 <code class="descname">cat2bin</code><span class="sig-paren">(</span><em>inCat</em>, <em>outWorkspace</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#cat2bin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.cat2bin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inputs:</p>
-<blockquote>
-<div>inCat - input catagorical parameter raster
-outWorkspace - workspace to save binary raster outputs</div></blockquote>
-<dl class="docutils">
-<dt>Outputs:</dt>
-<dd>Binary rasters for each parameter category</dd>
-<dt>Returns:</dt>
-<dd>List of filepaths to output files</dd>
+<dd><p>Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, and -1 for regions of no data in the supplied raster. Wrapper on <a class="reference internal" href="#tools.binarizeCat" title="tools.binarizeCat"><code class="xref py py-func docutils literal notranslate"><span class="pre">binarizeCat()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>inCat</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Input catagorical parameter raster.</p>
+</dd>
+<dt><strong>outWorkspace</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Workspace to save binary raster output files.</p>
+</dd>
 </dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>fileList</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of filepaths to output files.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -481,7 +532,7 @@ outWorkspace - workspace to save binary raster outputs</div></blockquote>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><strong>updateDict</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
-<dd><p class="first last">Update dictionary</p>
+<dd><p class="first last">Update dictionary that is also written to outfl.</p>
 </dd>
 </dl>
 </td>
@@ -531,27 +582,31 @@ outWorkspace - workspace to save binary raster outputs</div></blockquote>
 <dl class="function">
 <dt id="tools.dist2stream">
 <code class="descname">dist2stream</code><span class="sig-paren">(</span><em>fdr</em>, <em>fac</em>, <em>thresh</em>, <em>outRast</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#dist2stream"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.dist2stream" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute distance to streams.
-Parameters
-———-
-fdr : str</p>
-<blockquote>
-<div>Path to flow direction raster in TauDEM format.</div></blockquote>
-<dl class="docutils">
-<dt>fac <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Path to flow accumulation raster.</dd>
-<dt>thresh <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd>Accumulation threshold for stream formation in number of grid cells.</dd>
-<dt>outRast <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Path to output the distance raster.</dd>
-<dt>cores <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
-<dd>The number of cores to use. Defaults to 1.</dd>
-</dl>
+<dd><p>Compute distance to streams.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to flow direction raster in TauDEM format.</p>
+</dd>
+<dt><strong>fac</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to flow accumulation raster.</p>
+</dd>
+<dt><strong>thresh</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Accumulation threshold for stream formation in number of grid cells.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output the distance raster.</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">The number of cores to use. Defaults to 1.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
 <dd><p class="first last">Raster with values of d8 flow distance from each cell to the nearest stream.</p>
 </dd>
@@ -563,33 +618,19 @@ fdr : str</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="tools.downloadNHDPlusRaster">
-<code class="descname">downloadNHDPlusRaster</code><span class="sig-paren">(</span><em>HUC4</em>, <em>fileDir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#downloadNHDPlusRaster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.downloadNHDPlusRaster" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inputs:</p>
-<blockquote>
-<div>HUC4 - 4 digit HUC to download NHDPlus raster data for
-fileDir - Directory in which to save NHDPlus data</div></blockquote>
-<dl class="docutils">
-<dt>Outputs:</dt>
-<dd>NHDPlus raster files saved to directory</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
 <dt id="tools.findLastFACFD">
-<code class="descname">findLastFACFD</code><span class="sig-paren">(</span><em>facfl</em>, <em>fl</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#findLastFACFD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.findLastFACFD" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find the coordinate of the greatest FAC cell, return the value from the upfl at that point.</p>
-<p>This can be used to find the flow direction of the FAC cell with the greatest accumulation, or the parameter value.</p>
+<code class="descname">findLastFACFD</code><span class="sig-paren">(</span><em>facfl</em>, <em>fl=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#findLastFACFD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.findLastFACFD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the coordinate of the greatest cell in facfl, return the value from fl at that point.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>facfl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
-<dd><p class="first last">Upstream FAC grid</p>
+<dt><strong>facfl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to a flow accumulation grid.</p>
 </dd>
-<dt><strong>fl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
-<dd><p class="first last">Upstream</p>
+<dt><strong>fl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">Path to an accumulated parameter file. Defaults to None. If None, the facfl is queried.</p>
 </dd>
 </dl>
 </td>
@@ -612,6 +653,8 @@ fileDir - Directory in which to save NHDPlus data</div></blockquote>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Notes</p>
+<p>This can be used to find the flow direction of the FAC cell with the greatest accumulation value or the parameter value of the cell with the greatest accumulation value.</p>
 </dd></dl>
 
 <dl class="function">
@@ -623,24 +666,24 @@ fileDir - Directory in which to save NHDPlus data</div></blockquote>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>pourBasins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">geodataframe</span></dt>
-<dd><p class="first last">Geodataframe of the HUC12 basins that flow into the downstream HUC4. Used to clip the upstream FAC grid to identify pour points.</p>
+<dt><strong>pourBasins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">GeoDataframe</span></dt>
+<dd><p class="first last">GeoDataframe of the HUC12 basins that flow into the downstream HUC4. Used to clip the upstream FAC grid to identify pour points.</p>
 </dd>
-<dt><strong>upfacfl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
+<dt><strong>upfacfl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to the upstream flow accumulation grid.</p>
 </dd>
-<dt><strong>upfdrfl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
+<dt><strong>upfdrfl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to the upstream tauDEM flow direction grid.</p>
 </dd>
-<dt><strong>plotBasins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (False)</span></dt>
-<dd><p class="first last">Boolean to make plots of upstream HUC12s and identified pour points.</p>
+<dt><strong>plotBasins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (Optional)</span></dt>
+<dd><p class="first last">Boolean to make plots of upstream HUC12s and identified pour points. Defaults to False.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><strong>finalPoints</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
-<dd><p class="first last">List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not CPGed) upstream parameter grids for information to cascade down to</p>
+<dd><p class="first last">List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not FCPGed) upstream parameter grids for information to cascade down to</p>
 </dd>
 </dl>
 </td>
@@ -652,17 +695,54 @@ fileDir - Directory in which to save NHDPlus data</div></blockquote>
 <dl class="function">
 <dt id="tools.getFeatures">
 <code class="descname">getFeatures</code><span class="sig-paren">(</span><em>gdf</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#getFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.getFeatures" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Helper function to parse features from a GeoPandas GeoDataframe in such a manner that Rasterio can handle them.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>gdf</strong> <span class="classifier-delimiter">:</span> <span class="classifier">GeoDataframe</span></dt>
+<dd><p class="first last">GeoPandas GeoDataframe with a geometry column.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>features</strong> <span class="classifier-delimiter">:</span> <span class="classifier">geoJSON</span></dt>
+<dd><p class="first last">GeoJSON representation of geometry features from the input GeoDataFrame.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="tools.getHUC4">
 <code class="descname">getHUC4</code><span class="sig-paren">(</span><em>HUC12</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#getHUC4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.getHUC4" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="tools.getToHUC4">
-<code class="descname">getToHUC4</code><span class="sig-paren">(</span><em>toHUC12</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#getToHUC4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.getToHUC4" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Helper function to return HUC4 representation from a HUC12 identifier.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>HUC12</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Text representation of the 12-digit HUC12 code.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>HUC4</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">HUC4 identifier.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="tools.loadJSON">
@@ -673,7 +753,7 @@ fileDir - Directory in which to save NHDPlus data</div></blockquote>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>infl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
+<dt><strong>infl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to the JSON to be loaded.</p>
 </dd>
 </dl>
@@ -692,8 +772,38 @@ fileDir - Directory in which to save NHDPlus data</div></blockquote>
 
 <dl class="function">
 <dt id="tools.loadRaster">
-<code class="descname">loadRaster</code><span class="sig-paren">(</span><em>fl</em>, <em>returnMeta=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#loadRaster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.loadRaster" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">loadRaster</code><span class="sig-paren">(</span><em>fl</em>, <em>returnMeta=False</em>, <em>band=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#loadRaster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.loadRaster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to load raster data and metadata.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>fl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the raster file to load.</p>
+</dd>
+<dt><strong>returnMeta</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (Optional)</span></dt>
+<dd><p class="first last">Return the raster metadata. Defaults to False.</p>
+</dd>
+<dt><strong>band</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (Optional)</span></dt>
+<dd><p class="first last">Band to read from the raster. Defaults to one.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>dat</strong> <span class="classifier-delimiter">:</span> <span class="classifier">np.array</span></dt>
+<dd><p class="first last">Numpy array of the data in the selected raster band.</p>
+</dd>
+<dt><strong>meta</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><p class="first last">Dictionary of raster metadata.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="tools.makeDecayGrid">
@@ -736,16 +846,19 @@ fileDir - Directory in which to save NHDPlus data</div></blockquote>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>ingrd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
-<dd></dd>
-<dt><strong>outWeight</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
-<dd></dd>
+<dt><strong>ingrd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to input raster from which to generate the weighting grid from.</p>
+</dd>
+<dt><strong>outWeight</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the output weighting raster generated.</p>
+</dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>None</dt>
-<dd></dd>
+<dt><strong>outWeight</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster of the same extent and resolution as the input grid, but filled with ones where data exist. No data cells are persisted.</p>
+</dd>
 </dl>
 </td>
 </tr>
@@ -762,8 +875,8 @@ fileDir - Directory in which to save NHDPlus data</div></blockquote>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>wbd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">geodataframe</span></dt>
-<dd><p class="first last">HUC12-level geodataframe projected to the same CRS as the FAC and FDR grids being used.</p>
+<dt><strong>wbd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">GeoDataframe</span></dt>
+<dd><p class="first last">HUC12-level geodataframe projected to the same coordinate reference system (CRS) as the flow accumulation (FAC) and flow direction (FDR) grids being used.</p>
 </dd>
 <dt><strong>fromHUC4</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">HUC4 string for the upstream basin.</p>
@@ -775,7 +888,7 @@ fileDir - Directory in which to save NHDPlus data</div></blockquote>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>pourBasins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">geodataframe</span></dt>
+<dt><strong>pourBasins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">GeoDataframe</span></dt>
 <dd><p class="first last">HUC12-level geodataframe of units that drain from fromHUC4 to toHUC4.</p>
 </dd>
 </dl>
@@ -786,27 +899,9 @@ fileDir - Directory in which to save NHDPlus data</div></blockquote>
 </dd></dl>
 
 <dl class="function">
-<dt id="tools.make_cpgs">
-<code class="descname">make_cpgs</code><span class="sig-paren">(</span><em>accumParams</em>, <em>fac</em>, <em>outWorkspace</em>, <em>minAccum=None</em>, <em>appStr='CPG'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#make_cpgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.make_cpgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inputs:</p>
-<blockquote>
-<div><p>accumParams - list of accumulated parameter rasters to create CPGs from
-fac - flow accumulation raster</p>
-<p>outWorkspace - output directory for CPGs
-appStr = string of text to append to filename</p>
-</div></blockquote>
-<dl class="docutils">
-<dt>Outputs:</dt>
-<dd>CPG</dd>
-<dt>Returns:</dt>
-<dd>list of fielpaths to parameter CPGs</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
 <dt id="tools.make_fcpg">
 <code class="descname">make_fcpg</code><span class="sig-paren">(</span><em>accumParam</em>, <em>fac</em>, <em>outRast</em>, <em>noDataRast=None</em>, <em>minAccum=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#make_fcpg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.make_fcpg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a flow-conditioned parameter grid using accumulated parameter and area rasters.</p>
+<dd><p>Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also <a class="reference internal" href="#tools.make_fcpgs" title="tools.make_fcpgs"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpgs()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -833,6 +928,44 @@ appStr = string of text to append to filename</p>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
 <dd><p class="first last">Flow-conditioned parameter grid file where grid cell values represent the mean upstream value of the paramter.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.make_fcpgs">
+<code class="descname">make_fcpgs</code><span class="sig-paren">(</span><em>accumParams</em>, <em>fac</em>, <em>outWorkspace</em>, <em>minAccum=None</em>, <em>appStr='FCPG'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#make_fcpgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.make_fcpgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Batch version of <a class="reference internal" href="#tools.make_fcpg" title="tools.make_fcpg"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpg()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>accumParams</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of accumulated parameter rasters to create FCPGs from.</p>
+</dd>
+<dt><strong>fac</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the flow accumulation raster.</p>
+</dd>
+<dt><strong>outWorkspace</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to an oiutput directory for produced FCPGs.</p>
+</dd>
+<dt><strong>minAccum</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">Minimum accumulation value below which the output FCPG will be turned to no data values. Defaults to None.</p>
+</dd>
+<dt><strong>appStr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">String of text to append to filenames of the produced FCPG grids.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>fileList</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of file paths to the produced FCPGs.</p>
 </dd>
 </dl>
 </td>
@@ -882,21 +1015,21 @@ appStr = string of text to append to filename</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>x</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dt><strong>x</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float or int</span></dt>
 <dd><p class="first last">Horizontal coordinate in grd projection.</p>
 </dd>
-<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float or int</span></dt>
 <dd><p class="first last">Vertical coordinate in grd projection.</p>
 </dd>
-<dt><strong>grd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
-<dd><p class="first last">Path to raster to query based on the supplied x and y.</p>
+<dt><strong>grd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to raster to query based on the supplied x and y coordinates.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><strong>value</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float or int</span></dt>
-<dd><p class="first last">Value queried from the raster.</p>
+<dd><p class="first last">Value queried from the supplied raster.</p>
 </dd>
 </dl>
 </td>
@@ -908,12 +1041,12 @@ appStr = string of text to append to filename</p>
 <dl class="function">
 <dt id="tools.resampleParam">
 <code class="descname">resampleParam</code><span class="sig-paren">(</span><em>inParam</em>, <em>fdr</em>, <em>outParam</em>, <em>resampleMethod='bilinear'</em>, <em>cores=1</em>, <em>forceProj=False</em>, <em>forceProj4='&quot;+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs&quot;'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#resampleParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.resampleParam" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the of the flow direction raster supplied.</p>
+<dd><p>Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the of the flow direction raster supplied. See also <a class="reference internal" href="#tools.resampleParams" title="tools.resampleParams"><code class="xref py py-func docutils literal notranslate"><span class="pre">resampleParams()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt><strong>inParam</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to the input parameter data raster</p>
 </dd>
@@ -938,6 +1071,13 @@ appStr = string of text to append to filename</p>
 </dl>
 </td>
 </tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outParam</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Resampled, reprojected, and clipped parameter raster.</p>
+</dd>
+</dl>
+</td>
+</tr>
 </tbody>
 </table>
 </dd></dl>
@@ -945,7 +1085,7 @@ appStr = string of text to append to filename</p>
 <dl class="function">
 <dt id="tools.resampleParams">
 <code class="descname">resampleParams</code><span class="sig-paren">(</span><em>inParams</em>, <em>fdr</em>, <em>outWorkspace</em>, <em>resampleMethod='bilinear'</em>, <em>cores=1</em>, <em>appStr='rprj'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#resampleParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.resampleParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch version of <code class="code docutils literal notranslate"><span class="pre">resampleParam</span></code>.</p>
+<dd><p>Batch version of <a class="reference internal" href="#tools.resampleParam" title="tools.resampleParam"><code class="xref py py-func docutils literal notranslate"><span class="pre">resampleParam()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -995,7 +1135,7 @@ appStr = string of text to append to filename</p>
 <dt><strong>dictionary</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
 <dd><p class="first last">Dictionary to be saved.</p>
 </dd>
-<dt><strong>outfl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
+<dt><strong>outfl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path for where to generate the JSON</p>
 </dd>
 </dl>
@@ -1046,27 +1186,46 @@ appStr = string of text to append to filename</p>
 <dl class="function">
 <dt id="tools.tauFlowAccum">
 <code class="descname">tauFlowAccum</code><span class="sig-paren">(</span><em>fdr</em>, <em>accumRast</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#tauFlowAccum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.tauFlowAccum" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Inputs:</dt>
-<dd>fdr - flow direction raster in tauDEM format
-accumRast - file location to store accumulated parameter values
-cores - number of cores to use parameter accumulation</dd>
-<dt>Outputs:</dt>
-<dd>accumRast - raster of accumulated parameter values</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="tools.updateDict">
-<code class="descname">updateDict</code><span class="sig-paren">(</span><em>ud</em>, <em>upHUC</em>, <em>varName</em>, <em>val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#updateDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.updateDict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update dictionary with parameter value.</p>
+<dd><p>Accumulate flow direction grid using TauDEM.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>ud</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
-<dd><p class="first last">Update dictionary to add a variable to.</p>
+<dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to a flow direction raster in TauDEM format.</p>
+</dd>
+<dt><strong>accumRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output the flow accumulation raster.</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">Number of cores to use. Defaults to 1.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>accumRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster of accumulated parameter values at the path specified above.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.updateDict">
+<code class="descname">updateDict</code><span class="sig-paren">(</span><em>ud</em>, <em>upHUC</em>, <em>varName</em>, <em>val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#updateDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.updateDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update dictionary created using <a class="reference internal" href="#tools.createUpdateDict" title="tools.createUpdateDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">createUpdateDict()</span></code></a> with a parameter value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>ud</strong> <span class="classifier-delimiter">:</span> <span class="classifier">st</span></dt>
+<dd><p class="first last">Path to the update dictionary to add a variable to.</p>
 </dd>
 <dt><strong>upHUC</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Name of the upstream HUC that the variable cooresponds to.</p>
@@ -1081,8 +1240,9 @@ cores - number of cores to use parameter accumulation</dd>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>None</dt>
-<dd></dd>
+<dt><strong>ud</strong> <span class="classifier-delimiter">:</span> <span class="classifier">json</span></dt>
+<dd><p class="first last">Update dictionary written back out to ud.</p>
+</dd>
 </dl>
 </td>
 </tr>
@@ -1093,32 +1253,34 @@ cores - number of cores to use parameter accumulation</dd>
 <dl class="function">
 <dt id="tools.updateRaster">
 <code class="descname">updateRaster</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>val</em>, <em>grd</em>, <em>outgrd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#updateRaster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.updateRaster" title="Permalink to this definition">¶</a></dt>
-<dd><p>Insert val into grd as location specified by x,y, writes to outgrd.</p>
+<dd><p>Insert val into grd at location specified by x,y, writes new raster to outgrd.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt><strong>x</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or float</span></dt>
-<dd></dd>
+<dd><p class="first last">Horizontal coordinate in map units.</p>
+</dd>
 <dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list of float</span></dt>
-<dd><p class="first last">Vertical coordinate in map</p>
+<dd><p class="first last">Vertical coordinate in map units.</p>
 </dd>
 <dt><strong>val</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int or float</span></dt>
-<dd><p class="first last">Value to insert into grd</p>
+<dd><p class="first last">Value to insert into raster at grd.</p>
 </dd>
-<dt><strong>grd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
-<dd><p class="first last">File path to read grd to update from.</p>
+<dt><strong>grd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to raster to be updated.</p>
 </dd>
 <dt><strong>outgrd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
-<dd><p class="first last">File path to write output to.</p>
+<dd><p class="first last">Path to write updated raster to.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>None</dt>
-<dd></dd>
+<dt><strong>dat</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Writes raster dataset to supplied grdout destination.</p>
+</dd>
 </dl>
 </td>
 </tr>
@@ -1136,7 +1298,7 @@ cores - number of cores to use parameter accumulation</dd>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt><strong>inDir</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd><p class="first last">Directory with geotiff files to be converted, specified as ‘/dir/here/<a href="#id1"><span class="problematic" id="id2">*</span></a>.tif’</p>
+<dd><p class="first last">Directory with geotiff files to be converted, specified as ‘/dir/here/*.tif’</p>
 </dd>
 <dt><strong>outFile</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Output filename with ‘.nc’ included.</p>

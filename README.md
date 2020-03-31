@@ -22,7 +22,7 @@ On a HPC system you may need to load the correct Python module before building t
 
 #### Updating the installation
 
-Pull new changes from the repository using `git pull`. Then update the installation using pip `pip install pip install git+file:<Full Path to the FCPGtools repository> --upgrade`.
+Pull new changes from the repository using `git pull`. Then update the installation using pip `pip install git+file:<Full Path to the FCPGtools repository> --upgrade`.
 
 ### Dependencies
 
