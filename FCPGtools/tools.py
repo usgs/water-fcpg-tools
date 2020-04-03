@@ -25,6 +25,23 @@ from rasterio.mask import mask
 import matplotlib.pyplot as plt
 import geopandas as gpd
 
+def parsebool(b):
+    '''Parse a boolean argument from the command line.
+
+    Parameters
+    ----------
+    b : str
+        String of either True or False.
+
+    Returns
+    -------
+    res : bool
+        True if b is "True" or False if b is not "True."
+
+    '''
+
+    return b == "True"
+
 def tauDrainDir(inRast, outRast, updateDict = {
             'compress':'LZW',
             'sparse':True,
@@ -73,7 +90,7 @@ def tauDrainDir(inRast, outRast, updateDict = {
     tauDir = tauDir.astype('uint8')#8 bit integer is sufficient for flow directions
 
     # edit the metadata, probably should make this an input to the script...
-    profile.update()
+    profile.update(updateDict)
     
     if os.path.isfile(outRast):
     	os.remove(outRast)

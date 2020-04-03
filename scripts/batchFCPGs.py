@@ -1,5 +1,8 @@
-from tools import *
 import time
+import sys
+import os
+
+hpcAccount = 'your_hpc_account_here'
 
 #Check if system arguments were provided
 if len(sys.argv) > 1:
@@ -14,17 +17,8 @@ if len(sys.argv) > 1:
     overwrite = sys.argv[9] #Whether to overwrite existing CPGs
     deleteTemp = sys.argv[10] #Whether to delete temporary files
 else:
-    #If inputs aren't specified in system args, set them in the script
-    inDir = "../data/cov/static/elev_cm_1002.tif" 
-    taufdr = "../data/tauDEM/taufdr1002.tif" 
-    taufac = "../data/tauDEM/taufac1002.tif" 
-    workDir = "../work/1002"
-    outDir = "../CPGs/1002"
-    logDir = "../logs/1002"
-    cores = 20
-    accumThresh = 1000
-    overwrite = True
-    deleteTemp = True
+    print('No arguments provided.')
+    sys.exit(1)
 
 covList = [] #Initialize list of covariates
 
@@ -41,16 +35,15 @@ elif os.path.isfile(inDir):
 else:
     print("Invalid covariate directory")
 
-print("The following covariate files were located in the specified directory:")
-print(covList)
+print("The following parameter grids were located:")
+[print(cov) for cov in covList]
 
-for cov in covList:
+for cov in covList: #Iterate through the parameter grids
 
     covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
 
     #Create batch job which runs python script
     jobfile = os.path.join(workDir, "{0}.slurm".format(str(covname))) # Create path to slurm job file, consider adding timestamp in name?
-
 
     with open(jobfile, 'w+') as f:
         
@@ -62,7 +55,7 @@ for cov in covList:
         f.writelines("#SBATCH --tasks-per-node=20\n") # Set number of tasks per node
         f.writelines("#SBATCH -o {0}/slurm-%A.out\n".format(logDir)) # Set log file name 
         f.writelines("#SBATCH -p normal\n") # the partition you want to use, for this case prod is best
-        f.writelines("#SBATCH --account=wymtwsc\n") # your account
+        f.writelines("#SBATCH --account={0}\n".format(hpcAccount)) # your account
         f.writelines("#SBATCH --time=01:00:00\n") # Overestimated guess at time
         f.writelines("#SBATCH --mem=128000\n") #memory in MB
         f.writelines("#SBATCH --mail-type=ALL\n") # Send email only for all events
@@ -70,13 +63,13 @@ for cov in covList:
         f.writelines("#SBATCH --exclusive\n") # Require exclusive use of nodes
 
         #Set up python environment for job
-        f.writelines("module load gis/TauDEM-5.3.8-gcc-mpich\n")
-        f.writelines("module load gdal/2.2.2-gcc\n")
-        f.writelines("source activate py36\n")
+        f.writelines("module load gis/TauDEM-5.3.8-gcc-mpich\n") # load TauDEM
+        f.writelines("module load gdal/2.2.2-gcc\n") # load gdal for use with TauDEM
+        f.writelines("module load python/anaconda3") # load Python 3
+        f.writelines("source activate FCPGtools\n") # activate the correct Python environment
 
-        #Run the python script
+        #Run the Python script
         f.writelines("python -u ./makeCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
-        #f.writelines("python -u ./makeCPG_noResample.py {0} {1} {2} {3} {4} {5} {6} {7} {8}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
         
     print("Launching batch job for: " + str(covname))
 

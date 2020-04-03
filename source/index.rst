@@ -48,6 +48,7 @@ This software has been approved for release by the U.S. Geological Survey (USGS)
    cookbook
    functions
    example_scripts
+   glossary
 
 
 Indices and tables

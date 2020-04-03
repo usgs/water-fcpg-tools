@@ -1,0 +1,528 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Batch FCPG Creation on a HPC &mdash; Flow-Conditioned Parameter Grid Tools 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Cascade FCPG results between geospatial tiles" href="cascade_fcpg.html" />
+    <link rel="prev" title="Cookbook" href="cookbook.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Flow-Conditioned Parameter Grid Tools
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="cookbook.html">Cookbook</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Batch FCPG Creation on a HPC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#parse-parameter-grids-and-submit-slurm-jobs">Parse parameter grids and submit SLURM jobs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-a-fcpg-given-a-parameter-and-fdr-grid">Generate a FCPG given a parameter and FDR grid</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cascade_fcpg.html">Cascade FCPG results between geospatial tiles</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_scripts.html">Example Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Flow-Conditioned Parameter Grid Tools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="cookbook.html">Cookbook</a> &raquo;</li>
+        
+      <li>Batch FCPG Creation on a HPC</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/batch_fcpgs_hpc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="batch-fcpg-creation-on-a-hpc">
+<h1>Batch FCPG Creation on a HPC<a class="headerlink" href="#batch-fcpg-creation-on-a-hpc" title="Permalink to this headline">¶</a></h1>
+<p>This recipe provides an example of batch creating FCPG grids from a folder of parameter grids and a flow direction grid. This recipe requires two <code class="code docutils literal notranslate"><span class="pre">Python</span></code> scripts. The first script sorts through the parameter grids and submits a SLURM job for each one and the second actually creates the FCPG within the SLURM job.</p>
+<div class="section" id="parse-parameter-grids-and-submit-slurm-jobs">
+<h2>Parse parameter grids and submit SLURM jobs<a class="headerlink" href="#parse-parameter-grids-and-submit-slurm-jobs" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">hpcAccount</span> <span class="o">=</span> <span class="s1">&#39;your_hpc_account_here&#39;</span>
+
+<span class="c1">#Check if system arguments were provided</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">inDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#Input directory in which to search for parameter rasters</span>
+    <span class="n">taufdr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1">#Flow direction grid in tauDEM format</span>
+    <span class="n">taufac</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c1">#Flow accumulation grid in tauDEM format</span>
+    <span class="n">workDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="c1">#Working directory to save intermediate files</span>
+    <span class="n">outDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1">#Output directory to save CPGs</span>
+    <span class="n">logDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="c1">#Directory to save slurm log files</span>
+    <span class="n">cores</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="c1">#Number of cores to use for each slurm job</span>
+    <span class="n">accumThresh</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="c1">#Number of cells in flow accumulation grid below which CPG will be set to no data</span>
+    <span class="n">overwrite</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="c1">#Whether to overwrite existing CPGs</span>
+    <span class="n">deleteTemp</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="c1">#Whether to delete temporary files</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;No arguments provided.&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">covList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of covariates</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
+    <span class="c1">#Get all covariate files in directory</span>
+    <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">subdirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="c1">#Check if file is .tif, and if so add it to covariate list</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;.tif&quot;</span><span class="p">:</span>
+                    <span class="n">covList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+<span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
+    <span class="c1">#Supplied path is a single covariate file</span>
+    <span class="n">covList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inDir</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Invalid covariate directory&quot;</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;The following parameter grids were located:&quot;</span><span class="p">)</span>
+<span class="p">[</span><span class="k">print</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span> <span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">covList</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">covList</span><span class="p">:</span> <span class="c1">#Iterate through the parameter grids</span>
+
+    <span class="n">covname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">cov</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get the name of the covariate</span>
+
+    <span class="c1">#Create batch job which runs python script</span>
+    <span class="n">jobfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="s2">&quot;{0}.slurm&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">covname</span><span class="p">)))</span> <span class="c1"># Create path to slurm job file, consider adding timestamp in name?</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">jobfile</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        
+        <span class="c1">#Write slurm job details</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#!/bin/bash</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --job-name=</span><span class="si">%s</span><span class="s2">.job</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">covname</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -c 1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># cpus per task</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -n {0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cores</span><span class="p">))</span> <span class="c1"># number of tasks</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --tasks-per-node=20</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Set number of tasks per node</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -o {0}/slurm-%A.out</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">logDir</span><span class="p">))</span> <span class="c1"># Set log file name </span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -p normal</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># the partition you want to use, for this case prod is best</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --account={0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hpcAccount</span><span class="p">))</span> <span class="c1"># your account</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --time=01:00:00</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Overestimated guess at time</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mem=128000</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1">#memory in MB</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mail-type=ALL</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Send email only for all events</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mail-user={0}@usgs.gov</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getlogin</span><span class="p">()))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --exclusive</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Require exclusive use of nodes</span>
+
+        <span class="c1">#Set up python environment for job</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load gis/TauDEM-5.3.8-gcc-mpich</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># load TauDEM</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load gdal/2.2.2-gcc</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># load gdal for use with TauDEM</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load python/anaconda3&quot;</span><span class="p">)</span> <span class="c1"># load Python 3</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;source activate FCPGtools</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># activate the correct Python environment</span>
+
+        <span class="c1">#Run the Python script</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;python -u ./makeCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">taufdr</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">workDir</span><span class="p">,</span> <span class="n">outDir</span><span class="p">,</span> <span class="n">cores</span><span class="p">,</span> <span class="n">accumThresh</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">deleteTemp</span><span class="p">))</span>
+        
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Launching batch job for: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">covname</span><span class="p">))</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;sbatch {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">jobfile</span><span class="p">))</span> <span class="c1">#Send command to console</span>
+
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="c1">#Wait between submitting jobs</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="generate-a-fcpg-given-a-parameter-and-fdr-grid">
+<h2>Generate a FCPG given a parameter and FDR grid<a class="headerlink" href="#generate-a-fcpg-given-a-parameter-and-fdr-grid" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FCPGtools</span> <span class="kn">as</span> <span class="nn">fc</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+
+<span class="c1">#Set up Inputs</span>
+<span class="n">paramRast</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#Path to parameter raster with name in format of &quot;source_var_dd_mm_yyyy.tif&quot;</span>
+<span class="n">taufdr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1">#Path to tauDEM flow direction grid with in format of &quot;taufdrXXXX.tif&quot;, where XXXX is a HUC code of any length</span>
+<span class="n">taufac</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c1">#Path to tauDEM flow accumulation grid</span>
+<span class="n">workDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="c1">#Path to working directory</span>
+<span class="n">outDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1">#Path to output directory for FCPG files</span>
+<span class="n">cores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="c1">#Number of cores to use </span>
+<span class="n">accumThresh</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span> <span class="c1">#Number of cells in flow accumulation grid below which FCPG will be set to no data</span>
+<span class="n">overwrite</span> <span class="o">=</span> <span class="n">fc</span><span class="o">.</span><span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span> <span class="c1">#Whether to overwrite CPGs or not </span>
+<span class="n">deleteTemp</span> <span class="o">=</span> <span class="n">fc</span><span class="o">.</span><span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span> <span class="c1">#Whether to delete temporary files</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting FCPG process for:&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Parameter Raster: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">paramRast</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Flow Driection Grid: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taufdr</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Flow Accumulation Grid: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taufac</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Working Directory: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">workDir</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Output Directory: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outDir</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Number of Cores: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cores</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Accumulation Threshold: {0} cells&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accumThresh</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Overwrite Existing CPG: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">overwrite</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Delete Temporary Files: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">deleteTemp</span><span class="p">))</span>
+
+<span class="c1">#Get name of input parameter without extention</span>
+<span class="n">paramName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">paramRast</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> 
+
+<span class="c1">#Get HUC number from tau flow direction raster name</span>
+<span class="k">try</span><span class="p">:</span>
+        <span class="n">HUC</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">taufdr</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;taufdr&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">except</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error - Flow direction raster has inappropriate name&quot;</span><span class="p">)</span>
+
+<span class="c1">#Prepare some file paths to things which will be created</span>
+<span class="n">rprjFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span> <span class="s2">&quot;rprj.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for reprojected parameter file</span>
+<span class="n">accumFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span> <span class="s2">&quot;accum.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for accumulated parameter file</span>
+<span class="n">nodataFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span> <span class="s2">&quot;nodata.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for parameter no data file</span>
+<span class="n">nodataaccumFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span> <span class="s2">&quot;accumnodata.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for parameter accumulated no data file</span>
+<span class="n">zeronodataFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span> <span class="s2">&quot;zeronodata.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for parameter zeroed no data file</span>
+<span class="n">CPGFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span><span class="s2">&quot;_FCPG.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for parameter FCPG file</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">CPGFile</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">overwrite</span> <span class="o">==</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error: Specified FCPG file exists and will not be overwritten&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+        <span class="c1">#Run the FCPG tools</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Calling resample function {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">fc</span><span class="o">.</span><span class="n">resampleParam</span><span class="p">(</span><span class="n">paramRast</span><span class="p">,</span> <span class="n">taufdr</span><span class="p">,</span> <span class="n">rprjFile</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1">#Resample and reprojected parameter raster</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Calling flow accumulation function {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">fc</span><span class="o">.</span><span class="n">accumulateParam</span><span class="p">(</span><span class="n">rprjFile</span><span class="p">,</span> <span class="n">taufdr</span><span class="p">,</span> <span class="n">accumFile</span><span class="p">,</span> <span class="n">outNoDataRast</span><span class="o">=</span><span class="n">nodataFile</span><span class="p">,</span> <span class="n">outNoDataAccum</span><span class="o">=</span><span class="n">nodataaccumFile</span><span class="p">,</span> <span class="n">zeroNoDataRast</span><span class="o">=</span><span class="n">zeronodataFile</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1">#Accumulate parameter</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Calling make_cpg function {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">nodataaccumFile</span><span class="p">):</span>
+                <span class="c1">#If no data accumulation file was created, use it in call to create FCPG</span>
+                <span class="n">fc</span><span class="o">.</span><span class="n">make_cpg</span><span class="p">(</span><span class="n">accumFile</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">CPGFile</span><span class="p">,</span> <span class="n">noDataRast</span><span class="o">=</span><span class="n">nodataaccumFile</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="n">accumThresh</span><span class="p">)</span> <span class="c1">#Create parameter FCPG with no data raster.</span>
+        <span class="k">else</span><span class="p">:</span>
+                <span class="n">fc</span><span class="o">.</span><span class="n">make_cpg</span><span class="p">(</span><span class="n">accumFile</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">CPGFile</span><span class="p">,</span>  <span class="n">minAccum</span><span class="o">=</span><span class="n">accumThresh</span><span class="p">)</span> <span class="c1">#Create parameter FCPG without no data raster.</span>
+        
+        <span class="k">if</span> <span class="n">deleteTemp</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                        <span class="c1">#Delete temporary files</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">rprjFile</span><span class="p">)</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">accumFile</span><span class="p">)</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">nodataFile</span><span class="p">)</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">nodataaccumFile</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Warning: Unable to delete temporary files&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Finished {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cascade_fcpg.html" class="btn btn-neutral float-right" title="Cascade FCPG results between geospatial tiles" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="cookbook.html" class="btn btn-neutral float-left" title="Cookbook" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Theodore Barnhart, Roy Sando, Seth Siefkin, Peter McCarthy, and Al Rea
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
