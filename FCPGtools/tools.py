@@ -66,6 +66,7 @@ def tauDrainDir(inRast, outRast, updateDict = {
     outRast : raster
         Reclassified flow direction raster at the path specified above.
     """
+    assert os.path.isfile(inRast)==True, 'inRast not found'
 
     print('Reclassifying Flow Directions...')
 
