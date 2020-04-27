@@ -29,7 +29,7 @@ with open(path.join(here, 'README.md'), encoding = 'utf-8') as f:
 	long_description = f.read()
 
 setup(
-	name = "Flow-Conditioned Parameter Grid Tools",
+	name = "FCPGtools",
 	version = __version__,
 	author = "Theodore Barnhart",
 	author_email = "tbarnhart@usgs.gov",

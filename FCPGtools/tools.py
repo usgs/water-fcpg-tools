@@ -1644,3 +1644,49 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl):
                              upstreamDict['y'],
                              upstreamDict[updatedParam],
                              downstreamParamFL,adjParamFl) # update with lists
+
+def d8todinfinity(inRast, outRast, updateDict = {
+                'dtype':'float32',
+                'compress':'LZW',
+                'profile':'GeoTIFF',
+                'tiled':True,
+                'sparse_ok':True,
+                'num_threads':'ALL_CPUS',
+                'nodata':-1,
+                'bigtiff':'IF_SAFER'}):
+    """Convert TauDEM D-8 flow directions to D-Infinity flow directions.
+
+    Parameters
+    ----------
+    inRast : str
+        Path to a TauDEM D-8 flow direction raster.
+    updateDict : dict (optional)
+        Dictionary of rasterio parameters used to write out the GeoTiff.
+    Returns
+    -------
+    outRast : str
+        Path to output the TauDEM D-Infinity flow direction raster.
+    """
+
+    print('Reclassifying Flow Directions...')
+
+    # load input data
+    with rs.open(inRast) as ds:
+        dat = ds.read(1)
+        inNoData = ds.nodata
+        profile = ds.profile.copy() # save the metadata for output later
+
+    tauDir = dat.copy()
+    tauDir = tauDir.astype('float32')#Store as 32bit float
+    tauDir[dat == inNoData] = np.nan #Set no data to nan
+
+    tauDir = (tauDir - 1) * np.pi/4
+
+    tauDir[tauDir == np.nan] = -1 # no data
+    
+    # edit the metadata
+    profile.update(updateDict)
+
+    with rs.open(outRast,'w',**profile) as dst:
+        dst.write(tauDir,1)
+        print("TauDEM drainage direction written to: {0}".format(outRast))
