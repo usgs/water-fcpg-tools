@@ -1,24 +1,33 @@
+from tools import *
 import time
-import sys
-import os
-
-hpcAccount = 'your_hpc_account_here'
 
 #Check if system arguments were provided
 if len(sys.argv) > 1:
     inDir = sys.argv[1] #Input directory in which to search for parameter rasters
-    taufdr = sys.argv[2] #Flow direction grid in tauDEM format
-    taufac = sys.argv[3] #Flow accumulation grid in tauDEM format
-    workDir = sys.argv[4] #Working directory to save intermediate files
-    outDir = sys.argv[5] #Output directory to save CPGs
-    logDir = sys.argv[6] #Directory to save slurm log files
-    cores = sys.argv[7] #Number of cores to use for each slurm job
-    accumThresh = sys.argv[8] #Number of cells in flow accumulation grid below which CPG will be set to no data
-    overwrite = sys.argv[9] #Whether to overwrite existing CPGs
-    deleteTemp = sys.argv[10] #Whether to delete temporary files
+    tauDINFang = sys.argv[2] #Path to tauDEM d-infinity flow direction grid
+    strmRast = sys.argv[3] #Path to raster with all non-stream cells set to no data
+    decayRast = sys.argv[4] #Path to raster with decay coefficients for each cell
+    workDir = sys.argv[5] #Working directory to save intermediate files
+    outDir = sys.argv[6] #Output directory to save CPGs
+    logDir = sys.argv[7] #Directory to save slurm log files
+    cores = sys.argv[8] #Number of cores to use for each slurm job
+    accumThresh = sys.argv[9] #Number of cells in flow accumulation grid below which CPG will be set to no data
+    overwrite = sys.argv[10] #Whether to overwrite existing CPGs
+    deleteTemp = sys.argv[11] #Whether to delete temporary files
 else:
-    print('No arguments provided.')
-    sys.exit(1)
+    #If inputs aren't specified in system args, set them in the script
+    inDir = "../data/cov/static/XXX_springs.tif" 
+    #inDir = "../data/cov/static/CHILI_10.vrt" 
+    tauDINFang = "../data/tauDEM/tauRADang1012.tif" 
+    strmRast = "../CPGs/1012/gridMET_minTempK_2017_12_00_HUC1012_CPG.tif" 
+    decayRast = "../data/tauDEM/oneFourthDecay1012.tif" 
+    workDir = "../work/1012"
+    outDir = "../CPGs/1012"
+    logDir = "../logs/1012"
+    cores = 20
+    accumThresh = 1000
+    overwrite = True
+    deleteTemp = True
 
 covList = [] #Initialize list of covariates
 
@@ -27,7 +36,7 @@ if os.path.isdir(inDir):
     for path, subdirs, files in os.walk(inDir):
         for name in files:
             #Check if file is .tif, and if so add it to covariate list
-            if os.path.splitext(name)[1] == ".tif":
+            if os.path.splitext(name)[1] == ".vrt":
                     covList.append(os.path.join(path, name))
 elif os.path.isfile(inDir):
     #Supplied path is a single covariate file
@@ -35,15 +44,16 @@ elif os.path.isfile(inDir):
 else:
     print("Invalid covariate directory")
 
-print("The following parameter grids were located:")
-[print(cov) for cov in covList]
+print("The following covariate files were located in the specified directory:")
+print(covList)
 
-for cov in covList: #Iterate through the parameter grids
+for cov in covList:
 
     covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
 
     #Create batch job which runs python script
     jobfile = os.path.join(workDir, "{0}.slurm".format(str(covname))) # Create path to slurm job file, consider adding timestamp in name?
+
 
     with open(jobfile, 'w+') as f:
         
@@ -55,7 +65,7 @@ for cov in covList: #Iterate through the parameter grids
         f.writelines("#SBATCH --tasks-per-node=20\n") # Set number of tasks per node
         f.writelines("#SBATCH -o {0}/slurm-%A.out\n".format(logDir)) # Set log file name 
         f.writelines("#SBATCH -p normal\n") # the partition you want to use, for this case prod is best
-        f.writelines("#SBATCH --account={0}\n".format(hpcAccount)) # your account
+        f.writelines("#SBATCH --account=wymtwsc\n") # your account
         f.writelines("#SBATCH --time=01:00:00\n") # Overestimated guess at time
         f.writelines("#SBATCH --mem=128000\n") #memory in MB
         f.writelines("#SBATCH --mail-type=ALL\n") # Send email only for all events
@@ -63,13 +73,12 @@ for cov in covList: #Iterate through the parameter grids
         f.writelines("#SBATCH --exclusive\n") # Require exclusive use of nodes
 
         #Set up python environment for job
-        f.writelines("module load gis/TauDEM-5.3.8-gcc-mpich\n") # load TauDEM
-        f.writelines("module load gdal/2.2.2-gcc\n") # load gdal for use with TauDEM
-        f.writelines("module load python/anaconda3") # load Python 3
-        f.writelines("source activate FCPGtools\n") # activate the correct Python environment
+        f.writelines("module load gis/TauDEM-5.3.8-gcc-mpich\n")
+        f.writelines("module load gdal/2.2.2-gcc\n")
+        f.writelines("source activate py36\n")
 
-        #Run the Python script
-        f.writelines("python -u ./makeFCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
+        #Run the python script
+        f.writelines("python -u ./makeDecayCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}\n".format(cov, tauDINFang, strmRast, decayRast, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
         
     print("Launching batch job for: " + str(covname))
 

@@ -1,19 +1,9 @@
-from tools import *
+import fcpgtools as fcpg
 
-#HUClist = [ "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012"]
-
-HUClist = ["1013"]
-outDir = "../data/tauDEM"
-
-cores = 16
-
-for HUC in HUClist:
-
-    fdr = "../data/NHDPlus05_06_2019/HRNHDPlusRasters{0}/fdr.tif".format(HUC)
-    taufdr = os.path.join(outDir, "taufdr" + HUC + ".tif")
-    taufac = os.path.join(outDir, "taufac" + HUC + ".tif")
+cores = 6 # Computer cores to use.
+fdr = '' # Input ESRI flow direction grid.
+fdrTau = '' # Output TauDEM formatted flow direction grid.
+facTau = '' # Output flow accumulation grid.
     
-    tauDrainDir(fdr, taufdr)
-    tauFlowAccum(taufdr, taufac, cores=cores)
-
-
+fcpg.tauDrainDir(fdr, taufdr) # Reclassify flow directions.
+fcpg.tauFlowAccum(taufdr, taufac, cores=cores) # Compute flow accumulation.

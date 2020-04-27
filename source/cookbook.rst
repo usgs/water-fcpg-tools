@@ -5,7 +5,10 @@ Example scripts, recipes, for common FCPG tasks on local workstations and HPC en
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Examples:
 
    batch_fcpgs_hpc
    cascade_fcpg
+   detect_missing
+   decayed_fcpgs
+   make_TauDEM_files

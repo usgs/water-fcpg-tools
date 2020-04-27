@@ -179,6 +179,23 @@
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
 
+<div class="viewcode-block" id="parsebool"><a class="viewcode-back" href="../functions.html#tools.parsebool">[docs]</a><span class="k">def</span> <span class="nf">parsebool</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Parse a boolean argument from the command line.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    b : str</span>
+<span class="sd">        String of either True or False.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    res : bool</span>
+<span class="sd">        True if b is &quot;True&quot; or False if b is not &quot;True.&quot;</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">return</span> <span class="n">b</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span></div>
+
 <div class="viewcode-block" id="tauDrainDir"><a class="viewcode-back" href="../functions.html#tools.tauDrainDir">[docs]</a><span class="k">def</span> <span class="nf">tauDrainDir</span><span class="p">(</span><span class="n">inRast</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">updateDict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
             <span class="s1">&#39;sparse&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
@@ -203,6 +220,7 @@
 <span class="sd">    outRast : raster</span>
 <span class="sd">        Reclassified flow direction raster at the path specified above.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inRast</span><span class="p">)</span><span class="o">==</span><span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;inRast not found&#39;</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reclassifying Flow Directions...&#39;</span><span class="p">)</span>
 
@@ -227,7 +245,7 @@
     <span class="n">tauDir</span> <span class="o">=</span> <span class="n">tauDir</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;uint8&#39;</span><span class="p">)</span><span class="c1">#8 bit integer is sufficient for flow directions</span>
 
     <span class="c1"># edit the metadata, probably should make this an input to the script...</span>
-    <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+    <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">updateDict</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">outRast</span><span class="p">):</span>
     	<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">outRast</span><span class="p">)</span>
@@ -1780,6 +1798,52 @@
                              <span class="n">upstreamDict</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span>
                              <span class="n">upstreamDict</span><span class="p">[</span><span class="n">updatedParam</span><span class="p">],</span>
                              <span class="n">downstreamParamFL</span><span class="p">,</span><span class="n">adjParamFl</span><span class="p">)</span> <span class="c1"># update with lists</span></div>
+
+<div class="viewcode-block" id="d8todinfinity"><a class="viewcode-back" href="../functions.html#tools.d8todinfinity">[docs]</a><span class="k">def</span> <span class="nf">d8todinfinity</span><span class="p">(</span><span class="n">inRast</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">updateDict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;dtype&#39;</span><span class="p">:</span><span class="s1">&#39;float32&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;profile&#39;</span><span class="p">:</span><span class="s1">&#39;GeoTIFF&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;sparse_ok&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;nodata&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">}):</span>
+    <span class="sd">&quot;&quot;&quot;Convert TauDEM D-8 flow directions to D-Infinity flow directions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inRast : str</span>
+<span class="sd">        Path to a TauDEM D-8 flow direction raster.</span>
+<span class="sd">    updateDict : dict (optional)</span>
+<span class="sd">        Dictionary of rasterio parameters used to write out the GeoTiff.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outRast : str</span>
+<span class="sd">        Path to output the TauDEM D-Infinity flow direction raster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reclassifying Flow Directions...&#39;</span><span class="p">)</span>
+
+    <span class="c1"># load input data</span>
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inRast</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">inNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># save the metadata for output later</span>
+
+    <span class="n">tauDir</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">tauDir</span> <span class="o">=</span> <span class="n">tauDir</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span><span class="c1">#Store as 32bit float</span>
+    <span class="n">tauDir</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="n">inNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="c1">#Set no data to nan</span>
+
+    <span class="n">tauDir</span> <span class="o">=</span> <span class="p">(</span><span class="n">tauDir</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span>
+
+    <span class="n">tauDir</span><span class="p">[</span><span class="n">tauDir</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="c1"># no data</span>
+    
+    <span class="c1"># edit the metadata</span>
+    <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">updateDict</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outRast</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tauDir</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TauDEM drainage direction written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
 </pre></div>
 
            </div>

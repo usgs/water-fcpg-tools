@@ -37,7 +37,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Example Scripts" href="example_scripts.html" />
-    <link rel="prev" title="Cascade FCPG results between geospatial tiles" href="cascade_fcpg.html" /> 
+    <link rel="prev" title="Generate TauDEM Files From An ESRI Flow Direction Grid" href="make_TauDEM_files.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -543,6 +543,35 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="tools.d8todinfinity">
+<code class="descname">d8todinfinity</code><span class="sig-paren">(</span><em>inRast</em>, <em>outRast</em>, <em>updateDict={'dtype': 'float32'</em>, <em>'compress': 'LZW'</em>, <em>'profile': 'GeoTIFF'</em>, <em>'tiled': True</em>, <em>'sparse_ok': True</em>, <em>'num_threads': 'ALL_CPUS'</em>, <em>'nodata': -1</em>, <em>'bigtiff': 'IF_SAFER'}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#d8todinfinity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.d8todinfinity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert TauDEM D-8 flow directions to D-Infinity flow directions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>inRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to a TauDEM D-8 flow direction raster.</p>
+</dd>
+<dt><strong>updateDict</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict (optional)</span></dt>
+<dd><p class="first last">Dictionary of rasterio parameters used to write out the GeoTiff.</p>
+</dd>
+<dt><strong>Returns</strong></dt>
+<dd></dd>
+<dt><strong>——-</strong></dt>
+<dd></dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output the TauDEM D-Infinity flow direction raster.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="tools.decayAccum">
 <code class="descname">decayAccum</code><span class="sig-paren">(</span><em>ang</em>, <em>mult</em>, <em>outRast</em>, <em>paramRast=None</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#decayAccum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.decayAccum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decay the accumulation of a parameter raster.</p>
@@ -1008,6 +1037,32 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="tools.parsebool">
+<code class="descname">parsebool</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#parsebool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.parsebool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a boolean argument from the command line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>b</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">String of either True or False.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>res</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd><p class="first last">True if b is “True” or False if b is not “True.”</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="tools.queryPoint">
 <code class="descname">queryPoint</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>grd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#queryPoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.queryPoint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Query grid based on a supplied point.</p>
@@ -1402,7 +1457,7 @@
         <a href="example_scripts.html" class="btn btn-neutral float-right" title="Example Scripts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="cascade_fcpg.html" class="btn btn-neutral float-left" title="Cascade FCPG results between geospatial tiles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="make_TauDEM_files.html" class="btn btn-neutral float-left" title="Generate TauDEM Files From An ESRI Flow Direction Grid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
