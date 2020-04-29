@@ -87,8 +87,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cookbook.html">Cookbook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../functions.html">Function Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../example_scripts.html">Example Scripts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
 </ul>
 
             
@@ -1844,6 +1842,49 @@
     <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outRast</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
         <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tauDir</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TauDEM drainage direction written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="changeNoData"><a class="viewcode-back" href="../functions.html#tools.changeNoData">[docs]</a><span class="k">def</span> <span class="nf">changeNoData</span><span class="p">(</span><span class="n">inRast</span><span class="p">,</span> <span class="n">newNoData</span><span class="p">,</span> <span class="n">updateDict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;profile&#39;</span><span class="p">:</span><span class="s1">&#39;GeoTIFF&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;sparse_ok&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">}):</span>
+    <span class="sd">&quot;&quot;&quot;Update raster no data value to a new value.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inRast : str</span>
+<span class="sd">        Path to input raster file.</span>
+<span class="sd">    newNoData : str</span>
+<span class="sd">        New no data value for the raster.</span>
+<span class="sd">    updateDict : dict (optional)</span>
+<span class="sd">        Dictionary of rasterio parameters used to create the updated raster.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Opening raster...&#39;</span><span class="p">)</span>
+
+    <span class="c1">#load input data</span>
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inRast</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">inNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># save the metadata for output later</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Changing no data values...&#39;</span><span class="p">)</span>
+    <span class="n">dat</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="n">inNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">newNoData</span> <span class="c1">#Change no data value</span>
+
+    <span class="n">updateDict</span><span class="p">[</span><span class="s1">&#39;nodata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newNoData</span> <span class="c1"># add new noData value to the update dictionary.</span>
+
+    <span class="c1"># edit the metadata</span>
+    <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">updateDict</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inRast</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Raster written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inRast</span><span class="p">))</span></div>
 </pre></div>
 
            </div>

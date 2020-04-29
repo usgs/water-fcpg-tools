@@ -36,7 +36,6 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Example Scripts" href="example_scripts.html" />
     <link rel="prev" title="Generate TauDEM Files From An ESRI Flow Direction Grid" href="make_TauDEM_files.html" /> 
 </head>
 
@@ -89,8 +88,6 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Function Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_scripts.html">Example Scripts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 </ul>
 
             
@@ -497,6 +494,37 @@
 <dt><strong>fileList</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
 <dd><p class="first last">List of filepaths to output files.</p>
 </dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.changeNoData">
+<code class="descname">changeNoData</code><span class="sig-paren">(</span><em>inRast</em>, <em>newNoData</em>, <em>updateDict={'compress': 'LZW'</em>, <em>'profile': 'GeoTIFF'</em>, <em>'tiled': True</em>, <em>'sparse_ok': True</em>, <em>'num_threads': 'ALL_CPUS'</em>, <em>'bigtiff': 'IF_SAFER'}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#changeNoData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.changeNoData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update raster no data value to a new value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>inRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to input raster file.</p>
+</dd>
+<dt><strong>newNoData</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">New no data value for the raster.</p>
+</dd>
+<dt><strong>updateDict</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict (optional)</span></dt>
+<dd><p class="first last">Dictionary of rasterio parameters used to create the updated raster.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>None</dt>
+<dd></dd>
 </dl>
 </td>
 </tr>
@@ -1453,8 +1481,6 @@
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="example_scripts.html" class="btn btn-neutral float-right" title="Example Scripts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="make_TauDEM_files.html" class="btn btn-neutral float-left" title="Generate TauDEM Files From An ESRI Flow Direction Grid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -10,5 +10,4 @@ Example scripts, recipes, for common FCPG tasks on local workstations and HPC en
    batch_fcpgs_hpc
    cascade_fcpg
    detect_missing
-   decayed_fcpgs
    make_TauDEM_files

@@ -1,0 +1,2460 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Flow-Conditioned Parameter Grid Tools 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html#document-index" class="icon icon-home"> Flow-Conditioned Parameter Grid Tools
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-cookbook">Cookbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#document-batch_fcpgs_hpc">Batch FCPG Creation on a HPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#document-cascade_fcpg">Cascade FCPG results between geospatial tiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#document-detect_missing">Detect Missing FCPGs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#document-decayed_fcpgs">Decayed FCPGs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#document-make_TauDEM_files">Generate TauDEM Files From An ESRI Flow Direction Grid</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-functions">Function Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-glossary">Glossary</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html#document-index">Flow-Conditioned Parameter Grid Tools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html#document-index">Docs</a> &raquo;</li>
+        
+      <li>Flow-Conditioned Parameter Grid Tools 0.7.0 documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="welcome-to-flow-conditioned-parameter-grid-tools-s-documentation">
+<h1>Welcome to Flow-Conditioned Parameter Grid Tools’s documentation!<a class="headerlink" href="#welcome-to-flow-conditioned-parameter-grid-tools-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>A Python library to make flow-conditioned parameter grids (FCPGs) by either HUC2, HUC4, or other geospatial tiling schemes. These tools can be used in a Linux HPC environment or locally on your system. These tools are written for Linux and are tested for Windows 10 using the Window’s Subsystem for Linux Ubuntu 18 LTS.</p>
+</div>
+<div class="section" id="quick-start">
+<h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
+<p>Load the FCPGtools using <code class="code docutils literal notranslate"><span class="pre">import</span> <span class="pre">FCPGtools</span> <span class="pre">as</span> <span class="pre">fcpg</span></code>.</p>
+</div>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>Clone the repository using <code class="code docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://code.usgs.gov/StreamStats/FCPGtools.git</span></code>.</p>
+<p>Then <code class="code docutils literal notranslate"><span class="pre">cd</span></code> into the repository and create a Anaconda environment using the supplied <code class="code docutils literal notranslate"><span class="pre">FCPGtools_env.yml</span></code> file by calling <code class="code docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span> <span class="pre">-f</span> <span class="pre">FCPGtools_env.yml</span></code>.</p>
+<p>Then, install the repository using <code class="code docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+file:&lt;Full</span> <span class="pre">Path</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">FCPGtools</span> <span class="pre">repository&gt;</span></code></p>
+<p>For example, <code class="code docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+file:/home/&lt;username&gt;/projects/FCPGtools</span></code></p>
+<p>On a HPC system you may need to load the correct Python module before building the Anaconda environment. This might be done with <code class="code docutils literal notranslate"><span class="pre">module</span> <span class="pre">load</span> <span class="pre">python/anaconda3</span></code></p>
+</div>
+<div class="section" id="dependencies">
+<h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h1>
+<p>Dependencies for this work are largely taken care of via the anaconda environment specified by the yml file; however, the tools do rely on <a class="reference external" href="https://github.com/dtarb/TauDEM/tree/v5.3.8">TauDEM 5.3.8</a>, which needs to be installed and visible to your conda environment.</p>
+</div>
+<div class="section" id="citation">
+<h1>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h1>
+<p>Barnhart, T.B., Sando, T.R., Siefken, S.A., McCarthy, P.M., Rea, A.H. (2020). Flow-Conditioned Parameter Grid Tools. U.S. Geological Survey Software Release. DOI: <a class="reference external" href="https://doi.org/10.5066/P9FPZUI0">https://doi.org/10.5066/P9FPZUI0</a></p>
+</div>
+<div class="section" id="disclaimers">
+<h1>Disclaimers<a class="headerlink" href="#disclaimers" title="Permalink to this headline">¶</a></h1>
+<p>Any use of trade, firm, or product names is for descriptive purposes only and does not imply endorsement by the U.S. Government.</p>
+<p>This software has been approved for release by the U.S. Geological Survey (USGS). Although the software has been subjected to rigorous review, the USGS reserves the right to update the software as needed pursuant to further analysis and review. No warranty, expressed or implied, is made by the USGS or the U.S. Government as to the functionality of the software and related material nor shall the fact of release constitute any such warranty. Furthermore, the software is released on condition that neither the USGS nor the U.S. Government shall be held liable for any damages resulting from its authorized or unauthorized use.</p>
+<div class="toctree-wrapper compound">
+<span id="document-cookbook"></span><div class="section" id="cookbook">
+<h2>Cookbook<a class="headerlink" href="#cookbook" title="Permalink to this headline">¶</a></h2>
+<p>Example scripts, recipes, for common FCPG tasks on local workstations and HPC environments. These recipes have not been turned into FCPGtools library functions because of the the variability in HPC and local systems that the FCPGtools may be used with.</p>
+<div class="toctree-wrapper compound">
+<span id="document-batch_fcpgs_hpc"></span><div class="section" id="batch-fcpg-creation-on-a-hpc">
+<h3>Batch FCPG Creation on a HPC<a class="headerlink" href="#batch-fcpg-creation-on-a-hpc" title="Permalink to this headline">¶</a></h3>
+<p>This recipe provides an example of batch creating FCPG grids from a folder of parameter grids and a flow direction grid. This recipe requires two <code class="code docutils literal notranslate"><span class="pre">Python</span></code> scripts. The first script sorts through the parameter grids and submits a SLURM job for each one and the second script, <code class="code docutils literal notranslate"><span class="pre">makeFCPG.py</span></code>, creates the FCPG within the SLURM job.</p>
+<div class="section" id="parse-parameter-grids-and-submit-slurm-jobs">
+<h4>Parse parameter grids and submit SLURM jobs<a class="headerlink" href="#parse-parameter-grids-and-submit-slurm-jobs" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">hpcAccount</span> <span class="o">=</span> <span class="s1">&#39;your_hpc_account_here&#39;</span>
+
+<span class="c1">#Check if system arguments were provided</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">inDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#Input directory in which to search for parameter rasters</span>
+    <span class="n">taufdr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1">#Flow direction grid in tauDEM format</span>
+    <span class="n">taufac</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c1">#Flow accumulation grid in tauDEM format</span>
+    <span class="n">workDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="c1">#Working directory to save intermediate files</span>
+    <span class="n">outDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1">#Output directory to save CPGs</span>
+    <span class="n">logDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="c1">#Directory to save slurm log files</span>
+    <span class="n">cores</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="c1">#Number of cores to use for each slurm job</span>
+    <span class="n">accumThresh</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="c1">#Number of cells in flow accumulation grid below which CPG will be set to no data</span>
+    <span class="n">overwrite</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="c1">#Whether to overwrite existing CPGs</span>
+    <span class="n">deleteTemp</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="c1">#Whether to delete temporary files</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;No arguments provided.&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">covList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of covariates</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
+    <span class="c1">#Get all covariate files in directory</span>
+    <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">subdirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="c1">#Check if file is .tif, and if so add it to covariate list</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;.tif&quot;</span><span class="p">:</span>
+                    <span class="n">covList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+<span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
+    <span class="c1">#Supplied path is a single covariate file</span>
+    <span class="n">covList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inDir</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Invalid covariate directory&quot;</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;The following parameter grids were located:&quot;</span><span class="p">)</span>
+<span class="p">[</span><span class="k">print</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span> <span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">covList</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">covList</span><span class="p">:</span> <span class="c1">#Iterate through the parameter grids</span>
+
+    <span class="n">covname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">cov</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get the name of the covariate</span>
+
+    <span class="c1">#Create batch job which runs python script</span>
+    <span class="n">jobfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="s2">&quot;{0}.slurm&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">covname</span><span class="p">)))</span> <span class="c1"># Create path to slurm job file, consider adding timestamp in name?</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">jobfile</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        
+        <span class="c1">#Write slurm job details</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#!/bin/bash</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --job-name=</span><span class="si">%s</span><span class="s2">.job</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">covname</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -c 1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># cpus per task</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -n {0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cores</span><span class="p">))</span> <span class="c1"># number of tasks</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --tasks-per-node=20</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Set number of tasks per node</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -o {0}/slurm-%A.out</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">logDir</span><span class="p">))</span> <span class="c1"># Set log file name </span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -p normal</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># the partition you want to use, for this case prod is best</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --account={0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hpcAccount</span><span class="p">))</span> <span class="c1"># your account</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --time=01:00:00</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Overestimated guess at time</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mem=128000</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1">#memory in MB</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mail-type=ALL</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Send email only for all events</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mail-user={0}@usgs.gov</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getlogin</span><span class="p">()))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --exclusive</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Require exclusive use of nodes</span>
+
+        <span class="c1">#Set up python environment for job</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load gis/TauDEM-5.3.8-gcc-mpich</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># load TauDEM</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load gdal/2.2.2-gcc</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># load gdal for use with TauDEM</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load python/anaconda3&quot;</span><span class="p">)</span> <span class="c1"># load Python 3</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;source activate FCPGtools</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># activate the correct Python environment</span>
+
+        <span class="c1">#Run the Python script</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;python -u ./makeFCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">taufdr</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">workDir</span><span class="p">,</span> <span class="n">outDir</span><span class="p">,</span> <span class="n">cores</span><span class="p">,</span> <span class="n">accumThresh</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">deleteTemp</span><span class="p">))</span>
+        
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Launching batch job for: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">covname</span><span class="p">))</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;sbatch {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">jobfile</span><span class="p">))</span> <span class="c1">#Send command to console</span>
+
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="c1">#Wait between submitting jobs</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="generate-a-fcpg-given-a-parameter-and-fdr-grid">
+<h4>Generate a FCPG given a parameter and FDR grid<a class="headerlink" href="#generate-a-fcpg-given-a-parameter-and-fdr-grid" title="Permalink to this headline">¶</a></h4>
+<p><code class="code docutils literal notranslate"><span class="pre">makeFCPG.py</span></code></p>
+<div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FCPGtools</span> <span class="kn">as</span> <span class="nn">fc</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+
+<span class="c1">#Set up Inputs</span>
+<span class="n">paramRast</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#Path to parameter raster with name in format of &quot;source_var_dd_mm_yyyy.tif&quot;</span>
+<span class="n">taufdr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1">#Path to tauDEM flow direction grid with in format of &quot;taufdrXXXX.tif&quot;, where XXXX is a HUC code of any length</span>
+<span class="n">taufac</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c1">#Path to tauDEM flow accumulation grid</span>
+<span class="n">workDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="c1">#Path to working directory</span>
+<span class="n">outDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1">#Path to output directory for FCPG files</span>
+<span class="n">cores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="c1">#Number of cores to use </span>
+<span class="n">accumThresh</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span> <span class="c1">#Number of cells in flow accumulation grid below which FCPG will be set to no data</span>
+<span class="n">overwrite</span> <span class="o">=</span> <span class="n">fc</span><span class="o">.</span><span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span> <span class="c1">#Whether to overwrite CPGs or not </span>
+<span class="n">deleteTemp</span> <span class="o">=</span> <span class="n">fc</span><span class="o">.</span><span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span> <span class="c1">#Whether to delete temporary files</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting FCPG process for:&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Parameter Raster: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">paramRast</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Flow Driection Grid: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taufdr</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Flow Accumulation Grid: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taufac</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Working Directory: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">workDir</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Output Directory: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outDir</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Number of Cores: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cores</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Accumulation Threshold: {0} cells&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accumThresh</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Overwrite Existing CPG: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">overwrite</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Delete Temporary Files: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">deleteTemp</span><span class="p">))</span>
+
+<span class="c1">#Get name of input parameter without extention</span>
+<span class="n">paramName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">paramRast</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> 
+
+<span class="c1">#Get HUC number from tau flow direction raster name</span>
+<span class="k">try</span><span class="p">:</span>
+        <span class="n">HUC</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">taufdr</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;taufdr&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">except</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error - Flow direction raster has inappropriate name&quot;</span><span class="p">)</span>
+
+<span class="c1">#Prepare some file paths to things which will be created</span>
+<span class="n">rprjFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span> <span class="s2">&quot;rprj.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for reprojected parameter file</span>
+<span class="n">accumFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span> <span class="s2">&quot;accum.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for accumulated parameter file</span>
+<span class="n">nodataFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span> <span class="s2">&quot;nodata.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for parameter no data file</span>
+<span class="n">nodataaccumFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span> <span class="s2">&quot;accumnodata.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for parameter accumulated no data file</span>
+<span class="n">zeronodataFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span> <span class="s2">&quot;zeronodata.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for parameter zeroed no data file</span>
+<span class="n">CPGFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span><span class="s2">&quot;_FCPG.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for parameter FCPG file</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">CPGFile</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">overwrite</span> <span class="o">==</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error: Specified FCPG file exists and will not be overwritten&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+        <span class="c1">#Run the FCPG tools</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Calling resample function {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">fc</span><span class="o">.</span><span class="n">resampleParam</span><span class="p">(</span><span class="n">paramRast</span><span class="p">,</span> <span class="n">taufdr</span><span class="p">,</span> <span class="n">rprjFile</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1">#Resample and reprojected parameter raster</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Calling flow accumulation function {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">fc</span><span class="o">.</span><span class="n">accumulateParam</span><span class="p">(</span><span class="n">rprjFile</span><span class="p">,</span> <span class="n">taufdr</span><span class="p">,</span> <span class="n">accumFile</span><span class="p">,</span> <span class="n">outNoDataRast</span><span class="o">=</span><span class="n">nodataFile</span><span class="p">,</span> <span class="n">outNoDataAccum</span><span class="o">=</span><span class="n">nodataaccumFile</span><span class="p">,</span> <span class="n">zeroNoDataRast</span><span class="o">=</span><span class="n">zeronodataFile</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1">#Accumulate parameter</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Calling make_cpg function {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">nodataaccumFile</span><span class="p">):</span>
+                <span class="c1">#If no data accumulation file was created, use it in call to create FCPG</span>
+                <span class="n">fc</span><span class="o">.</span><span class="n">make_cpg</span><span class="p">(</span><span class="n">accumFile</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">CPGFile</span><span class="p">,</span> <span class="n">noDataRast</span><span class="o">=</span><span class="n">nodataaccumFile</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="n">accumThresh</span><span class="p">)</span> <span class="c1">#Create parameter FCPG with no data raster.</span>
+        <span class="k">else</span><span class="p">:</span>
+                <span class="n">fc</span><span class="o">.</span><span class="n">make_cpg</span><span class="p">(</span><span class="n">accumFile</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">CPGFile</span><span class="p">,</span>  <span class="n">minAccum</span><span class="o">=</span><span class="n">accumThresh</span><span class="p">)</span> <span class="c1">#Create parameter FCPG without no data raster.</span>
+        
+        <span class="k">if</span> <span class="n">deleteTemp</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                        <span class="c1">#Delete temporary files</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">rprjFile</span><span class="p">)</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">accumFile</span><span class="p">)</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">nodataFile</span><span class="p">)</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">nodataaccumFile</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Warning: Unable to delete temporary files&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Finished {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<span id="document-cascade_fcpg"></span><div class="section" id="cascade-fcpg-results-between-geospatial-tiles">
+<h3>Cascade FCPG results between geospatial tiles<a class="headerlink" href="#cascade-fcpg-results-between-geospatial-tiles" title="Permalink to this headline">¶</a></h3>
+<p>Watersheds or hydrologic units, e.g. the <a class="reference external" href="https://www.usgs.gov/core-science-systems/ngp/national-hydrography/watershed-boundary-dataset?qt-science_support_page_related_con=4#qt-science_support_page_related_con">Watershed Boundary Dataset</a>, are often used as geospatial tiling schemes for digital elevation models. These pose a challenge for FCPGs as downstream accumulated area and parameter grids must be corrected with values from upstream to be correct. This section contains recipes for cascading flow between 4-digit hydrologic units and large 2-digit hydrologic units or other geospatial tiling schemes.</p>
+<div class="toctree-wrapper compound">
+<span id="document-four_digit"></span><div class="section" id="cascade-four-digit-hydrologic-regions">
+<h4>Cascade Four-Digit Hydrologic Regions<a class="headerlink" href="#cascade-four-digit-hydrologic-regions" title="Permalink to this headline">¶</a></h4>
+<p>This script provides an example work flow of how to cascade the last (maximum) accumulated area values from an upstream basin, e.g. HUC 1002 – Upper Missouri, to the first cell of a downstream basin, e.g. HUC 1003 – Missouri-Marias. The process creates a json file containing the values to be cascaded, creates a weighting grid of ones for the downstream region, inserts the upstream value into the weighting grid at the correct location, and accumulates the weighting grid using the downstream flow direction grid to produce an adjusted flow accumulation grid for the downstream region. This process can be repeated for each parameter grid and then used with <code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpg()</span></code> to create FCPGs corrected for upstream basins.</p>
+<div class="section" id="example-huc-4-cascading-work-flow">
+<h5>Example HUC-4 Cascading Work Flow<a class="headerlink" href="#example-huc-4-cascading-work-flow" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FCPGtools</span> <span class="kn">as</span> <span class="nn">fcpg</span> <span class="c1"># Import the tools. </span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="kn">as</span> <span class="nn">gpd</span>
+
+<span class="c1"># Define the file input and output paths and the upstream region.</span>
+<span class="n">upstreamFACfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Upstream flow accumulation grid from TauDEM.</span>
+<span class="n">upstreamFDRfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Upstream flow direction grid in TauDEM format.</span>
+<span class="n">downstreamFACfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Downstream flow accumuation grid from TauDEM.</span>
+<span class="n">downstreamFDRfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Downstream flow direction grid in TauDEM format.</span>
+<span class="n">region</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Hydrologic region to make the update dictionary for.</span>
+<span class="n">updateDict</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to the update dictionary to create.</span>
+<span class="n">downstreamFACWeight</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to the downstream FAC weighting grid. This is where the upstream value will be inserted.</span>
+<span class="n">downstreamAdjFAC</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to output the adjusted FAC weighting grid.</span>
+<span class="n">wbdPth</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to the watershed boundary dataset for the HUC-2 region you are working in.</span>
+<span class="n">dstCRS</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Proj4 represenation of the projection that the FCPGs will be in.</span>
+
+<span class="c1"># Define upstream and downstream basins.</span>
+<span class="n">upstream</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">downstream</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+<span class="c1"># Load the WBD.</span>
+<span class="n">layer</span> <span class="o">=</span> <span class="s1">&#39;WBDHU12&#39;</span> <span class="c1"># HUC12 WBD layer with ToHUC codes.</span>
+<span class="n">wbd</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">wbdPth</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="n">layer</span><span class="p">)</span> <span class="c1"># Load the WBD to a geodataframe.</span>
+
+<span class="c1"># Convert HUC12 and ToHUC codes to 4-digit codes.,</span>
+<span class="n">wbd</span><span class="p">[</span><span class="s1">&#39;HUC4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wbd</span><span class="o">.</span><span class="n">HUC12</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">fcpg</span><span class="o">.</span><span class="n">getHUC4</span><span class="p">)</span>
+<span class="n">wbd</span><span class="p">[</span><span class="s1">&#39;ToHUC4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wbd</span><span class="o">.</span><span class="n">ToHUC</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">fcpg</span><span class="o">.</span><span class="n">getHUC4</span><span class="p">)</span>
+
+<span class="c1"># Find basins that contain pour points.</span>
+<span class="n">pourBasins</span> <span class="o">=</span> <span class="n">fcpg</span><span class="o">.</span><span class="n">makePourBasins</span><span class="p">(</span><span class="n">wbd</span><span class="p">,</span><span class="n">upstream</span><span class="p">,</span><span class="n">downstream</span><span class="p">)</span>
+
+<span class="c1"># Find pour points between the upstream and downstream basins.</span>
+<span class="n">pourPoints</span> <span class="o">=</span> <span class="n">fcpg</span><span class="o">.</span><span class="n">findPourPoints</span><span class="p">(</span><span class="n">pourBasins</span><span class="p">,</span> <span class="n">upstreamFACfltau</span><span class="p">,</span> <span class="n">upstreamFDRfltau</span><span class="p">,</span> <span class="n">plotBasins</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+
+<span class="c1"># create update dictionary from the pour points.</span>
+<span class="n">newX</span><span class="p">,</span><span class="n">newY</span><span class="p">,</span><span class="n">maxFAC</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">pourPoints</span><span class="p">)</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">createUpdateDict</span><span class="p">(</span><span class="n">newX</span><span class="p">,</span><span class="n">newY</span><span class="p">,</span><span class="n">maxFAC</span><span class="p">,</span><span class="n">upstream</span><span class="p">,</span><span class="n">updateDict</span><span class="p">)</span>
+
+<span class="c1"># Update the downstream basin using the update dictionary.</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">adjustFAC</span><span class="p">(</span><span class="n">downstreamFACfltau</span><span class="p">,</span><span class="n">downstreamFACWeight</span><span class="p">,</span><span class="n">updateDict</span><span class="p">,</span><span class="n">downstreamFDRfltau</span><span class="p">,</span><span class="n">downstreamAdjFAC</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span> <span class="c1"># note that this tool will create downstreamFACWeight if it does not exist based on downstreamFACfltau, see function documentation.</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<span id="document-two_digit"></span><div class="section" id="cascade-two-digit-hydrologic-regions">
+<h4>Cascade Two-Digit Hydrologic Regions<a class="headerlink" href="#cascade-two-digit-hydrologic-regions" title="Permalink to this headline">¶</a></h4>
+<p>This script provides an example work flow of how to cascade the last (maximum) accumulated area value from an upstream region, e.g. Region 14 – Upper Colorado, to the first cell of a downstream region, e.g. Region 15 – Lower Colorado. The process creates a json file containing the value to be cascaded, creates a weighting grid of ones for the downstream region, inserts the upstream value into the weighting grid at the correct location, and accumulates the weighting grid using the downstream flow direction grid to produce an adjusted flow accumulation grid for the downstream region. This process can be repeated for each parameter grid and then used with <code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpg()</span></code> to create FCPGs corrected for upstream regions.</p>
+<div class="section" id="example-huc-2-cascading-work-flow">
+<h5>Example HUC-2 Cascading Work Flow<a class="headerlink" href="#example-huc-2-cascading-work-flow" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FCPGtools</span> <span class="kn">as</span> <span class="nn">fcpg</span> <span class="c1"># Import the tools. </span>
+
+<span class="c1"># Define the file input and output paths and the upstream region.</span>
+<span class="n">upstreamFDRflesri</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Upstream flow direction grid in ESRI format.</span>
+<span class="n">downstreamFDRflesri</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Downstream flow direction grid in ESRI format.</span>
+<span class="n">upstreamFACfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Upstream flow accumulation grid from TauDEM.</span>
+<span class="n">upstreamFDRfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Upstream flow direction grid in TauDEM format.</span>
+<span class="n">downstreamFACfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Downstream flow accumuation grid from TauDEM.</span>
+<span class="n">downstreamFDRfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Downstream flow direction grid in TauDEM format.</span>
+<span class="n">region</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Hydrologic region to make the update dictionary for.</span>
+<span class="n">updateDict</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to the update dictionary to create.</span>
+<span class="n">downstreamFACWeight</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to the downstream FAC weighting grid. This is where the upstream value will be inserted.</span>
+<span class="n">downstreamAdjFAC</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to output the adjusted FAC weighting grid.</span>
+
+<span class="c1"># convert ESRI flow directions to TauDEM flow directions.</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">tauDrainDir</span><span class="p">(</span><span class="n">upstreamFDRflesri</span><span class="p">,</span> <span class="n">upstreamFDRfltau</span><span class="p">)</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">tauDrainDir</span><span class="p">(</span><span class="n">downstreamFDRflesri</span><span class="p">,</span> <span class="n">downstreamFDRfltau</span><span class="p">)</span>
+
+<span class="c1"># Accumulate upstream FDR grid.</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">tauFlowAccum</span><span class="p">(</span><span class="n">upstreamFDRfltau</span><span class="p">,</span> <span class="n">upstreamFACfltau</span><span class="p">)</span>
+
+<span class="c1"># Create the update dictionary to move data between HUC2 regions.</span>
+<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">w</span> <span class="o">=</span> <span class="n">fcpg</span><span class="o">.</span><span class="n">findLastFACFD</span><span class="p">(</span><span class="n">upstreamFACfltau</span><span class="p">,</span> <span class="n">upstreamFACfltau</span><span class="p">)</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">createUpdateDict</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">region</span><span class="p">,</span><span class="n">updateDict</span><span class="p">)</span>
+
+<span class="c1"># Make a grid of ones based on the downstream grid.</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">makeFACweight</span><span class="p">(</span><span class="n">downstreamFDRfltau</span><span class="p">,</span><span class="n">downstreamFACWeight</span><span class="p">)</span>
+
+<span class="c1"># Create the updated flow accumulation grid with information from the upstream HUC inserted into the source grid.</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">adjustFAC</span><span class="p">(</span><span class="n">downstreamFDRfltau</span><span class="p">,</span><span class="n">downstreamFACWeight</span><span class="p">,</span>
+              <span class="n">updateDict</span><span class="p">,</span><span class="n">downstreamFDRfltau</span><span class="p">,</span><span class="n">downstreamAdjFAC</span><span class="p">,</span><span class="n">cores</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+</div>
+</div>
+<span id="document-detect_missing"></span><div class="section" id="detect-missing-fcpgs">
+<h3>Detect Missing FCPGs<a class="headerlink" href="#detect-missing-fcpgs" title="Permalink to this headline">¶</a></h3>
+<p>Helper script to iterate through geospatial tiles, HUC4 basins here, and to check for completed FCPGs. This is useful if you have many FCPGs to process.</p>
+<div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">HUClist</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1002&quot;</span><span class="p">,</span> <span class="s2">&quot;1003&quot;</span><span class="p">,</span> <span class="s2">&quot;1004&quot;</span><span class="p">,</span> <span class="s2">&quot;1005&quot;</span><span class="p">,</span> <span class="s2">&quot;1006&quot;</span><span class="p">,</span> <span class="s2">&quot;1007&quot;</span><span class="p">,</span> <span class="s2">&quot;1008&quot;</span><span class="p">,</span> <span class="s2">&quot;1009&quot;</span><span class="p">,</span> <span class="s2">&quot;1010&quot;</span><span class="p">,</span> <span class="s2">&quot;1011&quot;</span><span class="p">,</span> <span class="s2">&quot;1012&quot;</span><span class="p">,</span> <span class="s2">&quot;1013&quot;</span><span class="p">]</span>
+
+<span class="n">inDir</span> <span class="o">=</span> <span class="s2">&quot;../data/cov/static&quot;</span> <span class="c1"># Source parameter grid folder.</span>
+
+<span class="n">CPGdir</span> <span class="o">=</span> <span class="s2">&quot;../FCPGs&quot;</span> <span class="c1"># Output FCPG folder.</span>
+
+<span class="n">covList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of covariates</span>
+
+<span class="c1"># iterate through all source parameter grids.</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">subdirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                        <span class="c1">#Check if file is .tif, and if so add it to covariate list</span>
+                        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;.tif&quot;</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;.vrt&quot;</span><span class="p">:</span>
+                                <span class="n">covList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;The following covariate files were located in the specified directory:&quot;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">covList</span><span class="p">)</span>
+
+        <span class="n">missingList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of missing files</span>
+
+        <span class="c1"># iterate through source grids and test if FCPGs have been created.</span>
+        <span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">covList</span><span class="p">:</span>
+
+                <span class="n">covname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">cov</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get the name of the covariate</span>
+
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">CPGdir</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">HUC</span> <span class="ow">in</span> <span class="n">HUClist</span><span class="p">:</span>
+                                <span class="c1">#Create the file name corresponding to the HUC and covariate</span>
+                                <span class="n">CPGFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CPGdir</span><span class="p">,</span> <span class="n">HUC</span><span class="p">,</span><span class="n">covname</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span><span class="s2">&quot;_FCPG.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for parameter CPG file</span>
+
+                                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">CPGFile</span><span class="p">):</span>
+                                        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Missing File: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CPGFile</span><span class="p">))</span>
+                                        <span class="n">missingList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CPGFile</span><span class="p">)</span>
+
+                        
+                <span class="k">else</span><span class="p">:</span>
+                        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error FCPG directory does  not exist: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CPGdir</span><span class="p">))</span>
+                        
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;{0} missing files found&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">missingList</span><span class="p">)))</span>
+
+<span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error input directory does  not exist: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inDir</span><span class="p">))</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<span id="document-decayed_fcpgs"></span><div class="section" id="decayed-fcpgs">
+<h3>Decayed FCPGs<a class="headerlink" href="#decayed-fcpgs" title="Permalink to this headline">¶</a></h3>
+<p>Decayed FCPGs only consider parameter grid values close to the stream channel, i.e. the further a value is away from a stream channel the less important it is. These examples can be tailored to many applications, e.g. the decay distance could be computed from landscape features other than stream channels.</p>
+<div class="toctree-wrapper compound">
+<span id="document-batch_decay_fcpgs_hpc"></span><div class="section" id="batch-create-decayed-fcpgs">
+<h4>Batch Create Decayed FCPGs<a class="headerlink" href="#batch-create-decayed-fcpgs" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="submit-decay-fcpgs-to-hpc-using-slurm">
+<h5>Submit Decay FCPGs to HPC using SLURM<a class="headerlink" href="#submit-decay-fcpgs-to-hpc-using-slurm" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tools</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1">#Check if system arguments were provided</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">inDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#Input directory in which to search for parameter rasters</span>
+    <span class="n">tauDINFang</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1">#Path to tauDEM d-infinity flow direction grid</span>
+    <span class="n">strmRast</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c1">#Path to raster with all non-stream cells set to no data</span>
+    <span class="n">decayRast</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="c1">#Path to raster with decay coefficients for each cell</span>
+    <span class="n">workDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1">#Working directory to save intermediate files</span>
+    <span class="n">outDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="c1">#Output directory to save CPGs</span>
+    <span class="n">logDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="c1">#Directory to save slurm log files</span>
+    <span class="n">cores</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="c1">#Number of cores to use for each slurm job</span>
+    <span class="n">accumThresh</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="c1">#Number of cells in flow accumulation grid below which CPG will be set to no data</span>
+    <span class="n">overwrite</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="c1">#Whether to overwrite existing CPGs</span>
+    <span class="n">deleteTemp</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="c1">#Whether to delete temporary files</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1">#If inputs aren&#39;t specified in system args, set them in the script</span>
+    <span class="n">inDir</span> <span class="o">=</span> <span class="s2">&quot;../data/cov/static/XXX_springs.tif&quot;</span> 
+    <span class="c1">#inDir = &quot;../data/cov/static/CHILI_10.vrt&quot; </span>
+    <span class="n">tauDINFang</span> <span class="o">=</span> <span class="s2">&quot;../data/tauDEM/tauRADang1012.tif&quot;</span> 
+    <span class="n">strmRast</span> <span class="o">=</span> <span class="s2">&quot;../CPGs/1012/gridMET_minTempK_2017_12_00_HUC1012_CPG.tif&quot;</span> 
+    <span class="n">decayRast</span> <span class="o">=</span> <span class="s2">&quot;../data/tauDEM/oneFourthDecay1012.tif&quot;</span> 
+    <span class="n">workDir</span> <span class="o">=</span> <span class="s2">&quot;../work/1012&quot;</span>
+    <span class="n">outDir</span> <span class="o">=</span> <span class="s2">&quot;../CPGs/1012&quot;</span>
+    <span class="n">logDir</span> <span class="o">=</span> <span class="s2">&quot;../logs/1012&quot;</span>
+    <span class="n">cores</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">accumThresh</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">overwrite</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">deleteTemp</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="n">covList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of covariates</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
+    <span class="c1">#Get all covariate files in directory</span>
+    <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">subdirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="c1">#Check if file is .tif, and if so add it to covariate list</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;.vrt&quot;</span><span class="p">:</span>
+                    <span class="n">covList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+<span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
+    <span class="c1">#Supplied path is a single covariate file</span>
+    <span class="n">covList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inDir</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Invalid covariate directory&quot;</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;The following covariate files were located in the specified directory:&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">covList</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">covList</span><span class="p">:</span>
+
+    <span class="n">covname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">cov</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get the name of the covariate</span>
+
+    <span class="c1">#Create batch job which runs python script</span>
+    <span class="n">jobfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="s2">&quot;{0}.slurm&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">covname</span><span class="p">)))</span> <span class="c1"># Create path to slurm job file, consider adding timestamp in name?</span>
+
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">jobfile</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        
+        <span class="c1">#Write slurm job details</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#!/bin/bash</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --job-name=</span><span class="si">%s</span><span class="s2">.job</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">covname</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -c 1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># cpus per task</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -n {0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cores</span><span class="p">))</span> <span class="c1"># number of tasks</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --tasks-per-node=20</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Set number of tasks per node</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -o {0}/slurm-%A.out</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">logDir</span><span class="p">))</span> <span class="c1"># Set log file name </span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -p normal</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># the partition you want to use, for this case prod is best</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --account=wymtwsc</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># your account</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --time=01:00:00</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Overestimated guess at time</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mem=128000</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1">#memory in MB</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mail-type=ALL</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Send email only for all events</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mail-user={0}@usgs.gov</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getlogin</span><span class="p">()))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --exclusive</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Require exclusive use of nodes</span>
+
+        <span class="c1">#Set up python environment for job</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load gis/TauDEM-5.3.8-gcc-mpich</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load gdal/2.2.2-gcc</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;source activate py36</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1">#Run the python script</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;python -u ./makeDecayCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">tauDINFang</span><span class="p">,</span> <span class="n">strmRast</span><span class="p">,</span> <span class="n">decayRast</span><span class="p">,</span> <span class="n">workDir</span><span class="p">,</span> <span class="n">outDir</span><span class="p">,</span> <span class="n">cores</span><span class="p">,</span> <span class="n">accumThresh</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">deleteTemp</span><span class="p">))</span>
+        
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Launching batch job for: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">covname</span><span class="p">))</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;sbatch {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">jobfile</span><span class="p">))</span> <span class="c1">#Send command to console</span>
+
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="c1">#Wait between submitting jobs</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="make-decayed-fcpgs-within-the-slurm-jobs-above">
+<h5>Make Decayed FCPGs Within the SLURM Jobs Above<a class="headerlink" href="#make-decayed-fcpgs-within-the-slurm-jobs-above" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tools</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+
+<span class="k">def</span> <span class="nf">parsebool</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">b</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+<span class="c1">#Set up Inputs</span>
+<span class="c1">#print(sys.argv)</span>
+<span class="n">paramRast</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#Path to parameter raster with name in format of &quot;source_var_dd_mm_yyyy.tif&quot;</span>
+<span class="n">tauRADang</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1">#Path to tauDEM radian flow direction grid in format of &quot;tauRADangXXXX.tif&quot;, where XXXX is a HUC code of any length</span>
+<span class="n">strmRast</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c1">#Path to raster with all non-stream cells set to no data</span>
+<span class="n">decayRast</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="c1">#Path to raster with decay coefficients for each cell</span>
+<span class="n">workDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1">#Path to working directory</span>
+<span class="n">outDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="c1">#Path to output directory for CPG files</span>
+<span class="n">cores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span> <span class="c1">#Number of cores to use </span>
+<span class="n">accumThresh</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span> <span class="c1">#Number of cells in flow accumulation grid below which CPG will be set to no data</span>
+<span class="n">overwrite</span> <span class="o">=</span> <span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span> <span class="c1">#Whether to overwrite CPGs or not </span>
+<span class="n">deleteTemp</span> <span class="o">=</span> <span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">10</span><span class="p">])</span> <span class="c1">#Whether to delete temporary files</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting CPG process for:&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Parameter Raster: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">paramRast</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Flow Direction Grid: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tauRADang</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Stream Raster: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">strmRast</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Decay Grid: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">decayRast</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Working Directory: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">workDir</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Output Directory: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outDir</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Number of Cores: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cores</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Accumulation Threshold: {0} cells&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accumThresh</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Overwrite Existing CPG: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">overwrite</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Delete Temporary Files: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">deleteTemp</span><span class="p">))</span>
+
+<span class="c1">#Get name of input parameter without extention</span>
+<span class="n">paramName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">paramRast</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> 
+
+
+<span class="c1">#Get HUC number from tau flow direction raster name</span>
+<span class="k">try</span><span class="p">:</span>
+        <span class="n">HUC</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">tauRADang</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;tauRADang&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">except</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error - Flow direction raster has inappropriate name&quot;</span><span class="p">)</span>
+
+<span class="c1">#Prepare some file paths to things which will be created</span>
+<span class="n">rprjFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span> <span class="s2">&quot;rprj.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for reprojected parameter file</span>
+<span class="n">accumFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span> <span class="s2">&quot;accum.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for accumulated parameter file</span>
+<span class="c1">#nodataFile = os.path.join(workDir, paramName + &quot;_HUC&quot; + HUC + &quot;nodata.tif&quot;) #Create filepath for parameter no data file</span>
+<span class="c1">#nodataaccumFile = os.path.join(workDir, paramName + &quot;_HUC&quot; + HUC + &quot;accumnodata.tif&quot;) #Create filepath for parameter accumulated no data file</span>
+<span class="n">CPGFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outDir</span><span class="p">,</span> <span class="n">paramName</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span><span class="s2">&quot;_CPG.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for parameter CPG file</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">CPGFile</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">overwrite</span> <span class="o">==</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error: Specified CPG file exists and will not be overwritten&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+        <span class="c1">#Run the CPG tools</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Calling resample function {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">resampleParam</span><span class="p">(</span><span class="n">paramRast</span><span class="p">,</span> <span class="n">tauRADang</span><span class="p">,</span> <span class="n">rprjFile</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1">#Resample and reprojected parameter raster</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Calling decay accumulation function {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">decayAccum</span><span class="p">(</span><span class="n">tauRADang</span><span class="p">,</span>  <span class="n">decayRast</span><span class="p">,</span> <span class="n">accumFile</span><span class="p">,</span> <span class="n">paramRast</span><span class="o">=</span><span class="n">rprjFile</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Calling masking CPG {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">maskStreams</span><span class="p">(</span><span class="n">accumFile</span><span class="p">,</span> <span class="n">strmRast</span><span class="p">,</span> <span class="n">CPGFile</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">deleteTemp</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                        <span class="c1">#Delete temporary files</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">rprjFile</span><span class="p">)</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">accumFile</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Warning: Unable to delete temporary files&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Finished {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+</div>
+</div>
+<span id="document-make_TauDEM_files"></span><div class="section" id="generate-taudem-files-from-an-esri-flow-direction-grid">
+<h3>Generate TauDEM Files From An ESRI Flow Direction Grid<a class="headerlink" href="#generate-taudem-files-from-an-esri-flow-direction-grid" title="Permalink to this headline">¶</a></h3>
+<p>Helper script to reclassify an ESRI flow direction grid to TauDEM flow directions and generate a TauDEM flow accumulation grid.</p>
+<div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">fcpgtools</span> <span class="kn">as</span> <span class="nn">fcpg</span>
+
+<span class="n">cores</span> <span class="o">=</span> <span class="mi">6</span> <span class="c1"># Computer cores to use.</span>
+<span class="n">fdr</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Input ESRI flow direction grid.</span>
+<span class="n">fdrTau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Output TauDEM formatted flow direction grid.</span>
+<span class="n">facTau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Output flow accumulation grid.</span>
+    
+<span class="n">fcpg</span><span class="o">.</span><span class="n">tauDrainDir</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">taufdr</span><span class="p">)</span> <span class="c1"># Reclassify flow directions.</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">tauFlowAccum</span><span class="p">(</span><span class="n">taufdr</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1"># Compute flow accumulation.</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+</div>
+<span id="document-functions"></span><div class="section" id="module-tools">
+<span id="function-documentation"></span><h2>Function Documentation<a class="headerlink" href="#module-tools" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="tools.ExtremeUpslopeValue">
+<code class="descname">ExtremeUpslopeValue</code><span class="sig-paren">(</span><em>fdr</em>, <em>param</em>, <em>output</em>, <em>accum_type='MAX'</em>, <em>cores=1</em>, <em>fac=None</em>, <em>thresh=None</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.ExtremeUpslopeValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for the TauDEM extreme upslope value function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to a flow direction grid in TauDEM format.</p>
+</dd>
+<dt><strong>param</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to parameter raster to run through the D8 Extreme Upslope Value tool</p>
+</dd>
+<dt><strong>output</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output raster file.</p>
+</dd>
+<dt><strong>accum_type</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">Either  “MAX” or “MIN.” Defaults to “MAX.”</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">Number of cores to run this process on. Defaults to 1.</p>
+</dd>
+<dt><strong>fac</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">Path to a flow accumulation raster. Defaults to None.</p>
+</dd>
+<dt><strong>thresh</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">Threshold values, in the same units as fac to mask output to stream channels. Defaults to None.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>output</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster of either the maximum or minumum upslope value of the parameter supplied to the function.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.FindDownstreamCellTauDir">
+<code class="descname">FindDownstreamCellTauDir</code><span class="sig-paren">(</span><em>d</em>, <em>x</em>, <em>y</em>, <em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.FindDownstreamCellTauDir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find downstream cell given the flow direction of a cell using TauDEM flow directions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>d</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Flow direction of cell to find downstream cell of.</p>
+</dd>
+<dt><strong>x</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Horizontal coordinate (either projected or unprojected).</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Vertical coordinate (either projected or unprojected).</p>
+</dd>
+<dt><strong>w</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Cell size in map units.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>x</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Horizontal coordinate of the downstream cell.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Verital coordinate of the downstream cell.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.accumulateParam">
+<code class="descname">accumulateParam</code><span class="sig-paren">(</span><em>paramRast</em>, <em>fdr</em>, <em>accumRast</em>, <em>outNoDataRast=None</em>, <em>outNoDataAccum=None</em>, <em>zeroNoDataRast=None</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.accumulateParam" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>paramRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Raster of parameter values to acumulate, this file is modified by the function.</p>
+</dd>
+<dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Flow direction raster in TauDEM format.</p>
+</dd>
+<dt><strong>accumRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">File location to store accumulated parameter values.</p>
+</dd>
+<dt><strong>outNoDataRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">File location to store parameter no data raster.</p>
+</dd>
+<dt><strong>outNoDataAccum</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">File location to store accumulated no data raster.</p>
+</dd>
+<dt><strong>zeroNoDataRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">File location to store the no data raster filled with zeros.</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">The number of cores to use for parameter accumulation. Defaults to 1.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>accumRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster of accumulated parameter values.</p>
+</dd>
+<dt><strong>outNoDataRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster of no data values.</p>
+</dd>
+<dt><strong>outNoDataRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster of accumulated no data values.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.accumulateParams">
+<code class="descname">accumulateParams</code><span class="sig-paren">(</span><em>paramRasts</em>, <em>fdr</em>, <em>outWorkspace</em>, <em>cores=1</em>, <em>appStr='accum'</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.accumulateParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Batch version of <a class="reference internal" href="#tools.accumulateParam" title="tools.accumulateParam"><code class="xref py py-func docutils literal notranslate"><span class="pre">accumulateParam()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>paramRasts</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of input parameter raster paths to accumulate along the supplied fdr.</p>
+</dd>
+<dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the flow direction raster.</p>
+</dd>
+<dt><strong>outWorkspace</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the output directory for accumulation rasters.</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">Number of cores to use. Defaults to 1.</p>
+</dd>
+<dt><strong>appStr :str (optional)</strong></dt>
+<dd><p class="first last">String of text to append to accumulated parameter filenames. Defaults to “accum.”</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>fileList</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of file paths to accumulated parameter rasters.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.adjustFAC">
+<code class="descname">adjustFAC</code><span class="sig-paren">(</span><em>facWeighttemplate</em>, <em>downstreamFACweightFl</em>, <em>updateDictFl</em>, <em>downstreamFDRFl</em>, <em>adjFACFl</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.adjustFAC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate an updated flow accumulation grid (FAC) given an update dictionary produced by <a class="reference internal" href="#tools.createUpdateDict" title="tools.createUpdateDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">createUpdateDict()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>facWeighttemplate</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to a FDR or FAC grid used to make the FAC weighting grid.</p>
+</dd>
+<dt><strong>downstreamFACweightFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output the FAC weighting grid.</p>
+</dd>
+<dt><strong>updateDictFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to update dictionary used to update the FAC weighting grid.</p>
+</dd>
+<dt><strong>downstreamFDRFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to downstream FDR to use when computing the adjusted FAC grid.</p>
+</dd>
+<dt><strong>adjFACFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output the adjusted FAC raster.</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (Optional)</span></dt>
+<dd><p class="first last">Number of cores to use. Defaults to 1.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>adjFACFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Adjusted flow accumulation raster at adjFACFl</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.adjustParam">
+<code class="descname">adjustParam</code><span class="sig-paren">(</span><em>updatedParam</em>, <em>downstreamParamFL</em>, <em>updateDictFl</em>, <em>adjParamFl</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.adjustParam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate an updated parameter grid given an update dictionary from <a class="reference internal" href="#tools.createUpdateDict" title="tools.createUpdateDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">createUpdateDict()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>updatedParam</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Name of the parameter to update.</p>
+</dd>
+<dt><strong>downstreamParamFL</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to downstream parameter grid to update.</p>
+</dd>
+<dt><strong>updateDictFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to update dictionary to use.</p>
+</dd>
+<dt><strong>adjParamFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output adjusted parameter file.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>adjParamFl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Adjusted parameter raster that can be accumulated prior to FCPG creation.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.applyMult">
+<code class="descname">applyMult</code><span class="sig-paren">(</span><em>inRast</em>, <em>mult</em>, <em>outRast</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.applyMult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiply input raster by mult.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>inRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to input raster.</p>
+</dd>
+<dt><strong>mult</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to multiplier raster.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output raster.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Input raster multiplied by the multiplier raster.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.binarizeCat">
+<code class="descname">binarizeCat</code><span class="sig-paren">(</span><em>val</em>, <em>data</em>, <em>nodata</em>, <em>outWorkspace</em>, <em>baseName</em>, <em>ext</em>, <em>profile</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.binarizeCat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, and -1 for regions of no data in the supplied raster. See also <a class="reference internal" href="#tools.cat2bin" title="tools.cat2bin"><code class="xref py py-func docutils literal notranslate"><span class="pre">cat2bin()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>data</strong> <span class="classifier-delimiter">:</span> <span class="classifier">np.array</span></dt>
+<dd><p class="first last">Numpy arrary of raster data to convert to binary.</p>
+</dd>
+<dt><strong>val</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Raster value to extract binary for from data.</p>
+</dd>
+<dt><strong>nodata</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int or float</span></dt>
+<dd><p class="first last">Raster no data value.</p>
+</dd>
+<dt><strong>outWorkspace</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to folder to save binary output rasters to.</p>
+</dd>
+<dt><strong>baseName</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Base name for the output rasters.</p>
+</dd>
+<dt><strong>ext</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">File extension for output rasters.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>catRaster</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Filepath to the binary raster created.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.cat2bin">
+<code class="descname">cat2bin</code><span class="sig-paren">(</span><em>inCat</em>, <em>outWorkspace</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.cat2bin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, and -1 for regions of no data in the supplied raster. Wrapper on <a class="reference internal" href="#tools.binarizeCat" title="tools.binarizeCat"><code class="xref py py-func docutils literal notranslate"><span class="pre">binarizeCat()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>inCat</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Input catagorical parameter raster.</p>
+</dd>
+<dt><strong>outWorkspace</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Workspace to save binary raster output files.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>fileList</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of filepaths to output files.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.createUpdateDict">
+<code class="descname">createUpdateDict</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>upstreamFACmax</em>, <em>fromHUC</em>, <em>outfl</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.createUpdateDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a dictionary for updating downstream FAC and parameter grids using values pulled from the next grid upstream.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>x</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">Horizontal coordinate(s) for where the update needs to happen in the downstream grid.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">Vertical coordinate(s) for where the update needs to happen in the downstream grid.</p>
+</dd>
+<dt><strong>upstreamFACmax</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">Value(s) to insert into the downstream FAC grid.</p>
+</dd>
+<dt><strong>fromHUC</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">The upstream HUC that the values are coming from.</p>
+</dd>
+<dt><strong>outfl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
+<dd><p class="first last">Path to where to save the json of this dictionary. The convention is to name this by the downstream HUC.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>updateDict</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><p class="first last">Update dictionary that is also written to outfl.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.d8todinfinity">
+<code class="descname">d8todinfinity</code><span class="sig-paren">(</span><em>inRast</em>, <em>outRast</em>, <em>updateDict={'dtype': 'float32'</em>, <em>'compress': 'LZW'</em>, <em>'profile': 'GeoTIFF'</em>, <em>'tiled': True</em>, <em>'sparse_ok': True</em>, <em>'num_threads': 'ALL_CPUS'</em>, <em>'nodata': -1</em>, <em>'bigtiff': 'IF_SAFER'}</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.d8todinfinity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert TauDEM D-8 flow directions to D-Infinity flow directions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>inRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to a TauDEM D-8 flow direction raster.</p>
+</dd>
+<dt><strong>updateDict</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict (optional)</span></dt>
+<dd><p class="first last">Dictionary of rasterio parameters used to write out the GeoTiff.</p>
+</dd>
+<dt><strong>Returns</strong></dt>
+<dd></dd>
+<dt><strong>——-</strong></dt>
+<dd></dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output the TauDEM D-Infinity flow direction raster.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.decayAccum">
+<code class="descname">decayAccum</code><span class="sig-paren">(</span><em>ang</em>, <em>mult</em>, <em>outRast</em>, <em>paramRast=None</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.decayAccum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decay the accumulation of a parameter raster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>ang</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to flow angle raster from the TauDEM Dinfinity flow direction tool.</p>
+</dd>
+<dt><strong>mult</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to raster of multiplier values applied to upstream accumulations, 1 corresponds to no decay, 0 corresponds to complete decay.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output raster for decayed accumulation raster.</p>
+</dd>
+<dt><strong>paramRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">Raster of parameter values to accumulate. If not supplied area will be accumulated. Defaults to None.</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">Number of cores to use. Defaults to 1.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Decayed accumulation raster, either area or parameter depending on what is supplied to the function.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.dist2stream">
+<code class="descname">dist2stream</code><span class="sig-paren">(</span><em>fdr</em>, <em>fac</em>, <em>thresh</em>, <em>outRast</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.dist2stream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute distance to streams.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to flow direction raster in TauDEM format.</p>
+</dd>
+<dt><strong>fac</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to flow accumulation raster.</p>
+</dd>
+<dt><strong>thresh</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Accumulation threshold for stream formation in number of grid cells.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output the distance raster.</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">The number of cores to use. Defaults to 1.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster with values of d8 flow distance from each cell to the nearest stream.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.findLastFACFD">
+<code class="descname">findLastFACFD</code><span class="sig-paren">(</span><em>facfl</em>, <em>fl=None</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.findLastFACFD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the coordinate of the greatest cell in facfl, return the value from fl at that point.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>facfl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to a flow accumulation grid.</p>
+</dd>
+<dt><strong>fl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">Path to an accumulated parameter file. Defaults to None. If None, the facfl is queried.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>x</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Horizontal coordinate of the greatest FAC cell.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Vertical coordinate of the greatest FAC cell.</p>
+</dd>
+<dt><strong>d</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int or float</span></dt>
+<dd><p class="first last">Value from the parameter grid queried.</p>
+</dd>
+<dt><strong>w</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Cell size of the grid.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This can be used to find the flow direction of the FAC cell with the greatest accumulation value or the parameter value of the cell with the greatest accumulation value.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.findPourPoints">
+<code class="descname">findPourPoints</code><span class="sig-paren">(</span><em>pourBasins</em>, <em>upfacfl</em>, <em>upfdrfl</em>, <em>plotBasins=False</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.findPourPoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds unique pour points between two HUC4s.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>pourBasins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">GeoDataframe</span></dt>
+<dd><p class="first last">GeoDataframe of the HUC12 basins that flow into the downstream HUC4. Used to clip the upstream FAC grid to identify pour points.</p>
+</dd>
+<dt><strong>upfacfl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the upstream flow accumulation grid.</p>
+</dd>
+<dt><strong>upfdrfl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the upstream tauDEM flow direction grid.</p>
+</dd>
+<dt><strong>plotBasins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (Optional)</span></dt>
+<dd><p class="first last">Boolean to make plots of upstream HUC12s and identified pour points. Defaults to False.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>finalPoints</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not FCPGed) upstream parameter grids for information to cascade down to</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.getFeatures">
+<code class="descname">getFeatures</code><span class="sig-paren">(</span><em>gdf</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.getFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to parse features from a GeoPandas GeoDataframe in such a manner that Rasterio can handle them.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>gdf</strong> <span class="classifier-delimiter">:</span> <span class="classifier">GeoDataframe</span></dt>
+<dd><p class="first last">GeoPandas GeoDataframe with a geometry column.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>features</strong> <span class="classifier-delimiter">:</span> <span class="classifier">geoJSON</span></dt>
+<dd><p class="first last">GeoJSON representation of geometry features from the input GeoDataFrame.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.getHUC4">
+<code class="descname">getHUC4</code><span class="sig-paren">(</span><em>HUC12</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.getHUC4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to return HUC4 representation from a HUC12 identifier.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>HUC12</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Text representation of the 12-digit HUC12 code.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>HUC4</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">HUC4 identifier.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.loadJSON">
+<code class="descname">loadJSON</code><span class="sig-paren">(</span><em>infl</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.loadJSON" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load dictionary stored in a JSON file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>infl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the JSON to be loaded.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>dictionary</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><p class="first last">Dictionary that was loaded.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.loadRaster">
+<code class="descname">loadRaster</code><span class="sig-paren">(</span><em>fl</em>, <em>returnMeta=False</em>, <em>band=1</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.loadRaster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to load raster data and metadata.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>fl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the raster file to load.</p>
+</dd>
+<dt><strong>returnMeta</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (Optional)</span></dt>
+<dd><p class="first last">Return the raster metadata. Defaults to False.</p>
+</dd>
+<dt><strong>band</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (Optional)</span></dt>
+<dd><p class="first last">Band to read from the raster. Defaults to one.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>dat</strong> <span class="classifier-delimiter">:</span> <span class="classifier">np.array</span></dt>
+<dd><p class="first last">Numpy array of the data in the selected raster band.</p>
+</dd>
+<dt><strong>meta</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><p class="first last">Dictionary of raster metadata.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.makeDecayGrid">
+<code class="descname">makeDecayGrid</code><span class="sig-paren">(</span><em>d2strm</em>, <em>k</em>, <em>outRast</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.makeDecayGrid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a decay raster where grid cell values are computed as the inverse number of grid cells, <span class="math notranslate nohighlight">\(\frac{1}{n+k*dx}\)</span>, where n is the distance from the d2strm raster and    from each grid cell to the nearest stream, k is the constant applied to the stream distance values, and dx is the cell size of the raster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>d2strm</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to raster of flow distances from each grid cell to the nearest stream.</p>
+</dd>
+<dt><strong>k</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Constant applied to decay factor denominator, this has units equal to the horizontal map units in the d2strm raster.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Output file path for decay grid.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster file with grid cells values representing weights decaying as they ove further from the stream.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.makeFACweight">
+<code class="descname">makeFACweight</code><span class="sig-paren">(</span><em>ingrd</em>, <em>outWeight</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.makeFACweight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make FAC weighting grid of ones based on the extents of the input grid. No data cells are persisted.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>ingrd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to input raster from which to generate the weighting grid from.</p>
+</dd>
+<dt><strong>outWeight</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the output weighting raster generated.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outWeight</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster of the same extent and resolution as the input grid, but filled with ones where data exist. No data cells are persisted.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.makePourBasins">
+<code class="descname">makePourBasins</code><span class="sig-paren">(</span><em>wbd</em>, <em>fromHUC4</em>, <em>toHUC4</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.makePourBasins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make geodataframe of HUC12 basis flowing from fromHUC4 to toHUC4.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>wbd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">GeoDataframe</span></dt>
+<dd><p class="first last">HUC12-level geodataframe projected to the same coordinate reference system (CRS) as the flow accumulation (FAC) and flow direction (FDR) grids being used.</p>
+</dd>
+<dt><strong>fromHUC4</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">HUC4 string for the upstream basin.</p>
+</dd>
+<dt><strong>toHUC4</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">HUC string for the downstream basin.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>pourBasins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">GeoDataframe</span></dt>
+<dd><p class="first last">HUC12-level geodataframe of units that drain from fromHUC4 to toHUC4.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.make_fcpg">
+<code class="descname">make_fcpg</code><span class="sig-paren">(</span><em>accumParam</em>, <em>fac</em>, <em>outRast</em>, <em>noDataRast=None</em>, <em>minAccum=None</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.make_fcpg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also <a class="reference internal" href="#tools.make_fcpgs" title="tools.make_fcpgs"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpgs()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>accumParam :</strong></dt>
+<dd><p class="first last">File location of the accumulated parameter data raster.</p>
+</dd>
+<dt><strong>fac</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">File location of the flow accumulation raster.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">File location of the output flow-conditioned parameter grid.</p>
+</dd>
+<dt><strong>noDataRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">File location of the accumulated parameter no data raster.</p>
+</dd>
+<dt><strong>minAccum</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Value of flow accumulation below which the CPG values will be set to no data</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Flow-conditioned parameter grid file where grid cell values represent the mean upstream value of the paramter.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.make_fcpgs">
+<code class="descname">make_fcpgs</code><span class="sig-paren">(</span><em>accumParams</em>, <em>fac</em>, <em>outWorkspace</em>, <em>minAccum=None</em>, <em>appStr='FCPG'</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.make_fcpgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Batch version of <a class="reference internal" href="#tools.make_fcpg" title="tools.make_fcpg"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpg()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>accumParams</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of accumulated parameter rasters to create FCPGs from.</p>
+</dd>
+<dt><strong>fac</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the flow accumulation raster.</p>
+</dd>
+<dt><strong>outWorkspace</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to an oiutput directory for produced FCPGs.</p>
+</dd>
+<dt><strong>minAccum</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">Minimum accumulation value below which the output FCPG will be turned to no data values. Defaults to None.</p>
+</dd>
+<dt><strong>appStr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">String of text to append to filenames of the produced FCPG grids.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>fileList</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of file paths to the produced FCPGs.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.maskStreams">
+<code class="descname">maskStreams</code><span class="sig-paren">(</span><em>inRast</em>, <em>streamRast</em>, <em>outRast</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.maskStreams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask areas not on the stream network.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>inRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the input raster to mask.</p>
+</dd>
+<dt><strong>streamRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the stream raster where all non-stream pixels set to no data.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output raster file.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster with non-stream cells set to the no data value from inRast.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.parsebool">
+<code class="descname">parsebool</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.parsebool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a boolean argument from the command line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>b</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">String of either True or False.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>res</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd><p class="first last">True if b is “True” or False if b is not “True.”</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.queryPoint">
+<code class="descname">queryPoint</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>grd</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.queryPoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query grid based on a supplied point.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>x</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float or int</span></dt>
+<dd><p class="first last">Horizontal coordinate in grd projection.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float or int</span></dt>
+<dd><p class="first last">Vertical coordinate in grd projection.</p>
+</dd>
+<dt><strong>grd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to raster to query based on the supplied x and y coordinates.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>value</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float or int</span></dt>
+<dd><p class="first last">Value queried from the supplied raster.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.resampleParam">
+<code class="descname">resampleParam</code><span class="sig-paren">(</span><em>inParam</em>, <em>fdr</em>, <em>outParam</em>, <em>resampleMethod='bilinear'</em>, <em>cores=1</em>, <em>forceProj=False</em>, <em>forceProj4='&quot;+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs&quot;'</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.resampleParam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the of the flow direction raster supplied. See also <a class="reference internal" href="#tools.resampleParams" title="tools.resampleParams"><code class="xref py py-func docutils literal notranslate"><span class="pre">resampleParams()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>inParam</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the input parameter data raster</p>
+</dd>
+<dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the flow direction raster</p>
+</dd>
+<dt><strong>outParam</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the output file for the resampled parameter raster.</p>
+</dd>
+<dt><strong>resampleMethod</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">resampling method, either ‘bilinear’ or ‘nearest neighbor’. Bilinear should generally be used for continuous data sets such as precipitation while nearest neighbor should generally be used for categorical datasets such as land cover type. Defaults to bilinear.</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">The number of cores to use. Defaults to 1.</p>
+</dd>
+<dt><strong>forceProj</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (optional)</span></dt>
+<dd><p class="first last">Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.</p>
+</dd>
+<dt><strong>forceProj4</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outParam</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Resampled, reprojected, and clipped parameter raster.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.resampleParams">
+<code class="descname">resampleParams</code><span class="sig-paren">(</span><em>inParams</em>, <em>fdr</em>, <em>outWorkspace</em>, <em>resampleMethod='bilinear'</em>, <em>cores=1</em>, <em>appStr='rprj'</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.resampleParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Batch version of <a class="reference internal" href="#tools.resampleParam" title="tools.resampleParam"><code class="xref py py-func docutils literal notranslate"><span class="pre">resampleParam()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>inParam</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of input parameter raster paths.</p>
+</dd>
+<dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to the flow direction raster.</p>
+</dd>
+<dt><strong>outWorkspace :</strong></dt>
+<dd><p class="first last">Path to the output directory for the resampled rasters.</p>
+</dd>
+<dt><strong>resampleMethod</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">Resampling method, either bilinear or nearest neighbor. Defaults to bilinear.</p>
+</dd>
+<dt><strong>cores :</strong></dt>
+<dd><p class="first last">Number of cores to use. Defaults to 1.</p>
+</dd>
+<dt><strong>appStr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
+<dd><p class="first last">String of text to append to the input parameter filenames. Defaults to “rprj.”</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>fileList</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">Paths to resampled, reprojected, and clipped parameter rasters.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.saveJSON">
+<code class="descname">saveJSON</code><span class="sig-paren">(</span><em>dictionary</em>, <em>outfl</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.saveJSON" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save dictionary to JSON file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>dictionary</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><p class="first last">Dictionary to be saved.</p>
+</dd>
+<dt><strong>outfl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path for where to generate the JSON</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>None</dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.tauDrainDir">
+<code class="descname">tauDrainDir</code><span class="sig-paren">(</span><em>inRast</em>, <em>outRast</em>, <em>updateDict={'compress': 'LZW'</em>, <em>'sparse': True</em>, <em>'tiled': True</em>, <em>'blockysize': 256</em>, <em>'blockxsize': 256</em>, <em>'driver': 'GTiff'</em>, <em>'nodata': 0}</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.tauDrainDir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reclassifies ESRI drainage directions into tauDEM drainage directions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>inRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to a raster encoded with ESRI flow direction values.</p>
+</dd>
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output a raster with flow directions encoded for TauDEM.</p>
+</dd>
+<dt><strong>updateDict</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict (optional)</span></dt>
+<dd><p class="first last">Dictionary of rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Reclassified flow direction raster at the path specified above.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.tauFlowAccum">
+<code class="descname">tauFlowAccum</code><span class="sig-paren">(</span><em>fdr</em>, <em>accumRast</em>, <em>cores=1</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.tauFlowAccum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accumulate flow direction grid using TauDEM.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>fdr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to a flow direction raster in TauDEM format.</p>
+</dd>
+<dt><strong>accumRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to output the flow accumulation raster.</p>
+</dd>
+<dt><strong>cores</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (optional)</span></dt>
+<dd><p class="first last">Number of cores to use. Defaults to 1.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>accumRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Raster of accumulated parameter values at the path specified above.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.updateDict">
+<code class="descname">updateDict</code><span class="sig-paren">(</span><em>ud</em>, <em>upHUC</em>, <em>varName</em>, <em>val</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.updateDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update dictionary created using <a class="reference internal" href="#tools.createUpdateDict" title="tools.createUpdateDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">createUpdateDict()</span></code></a> with a parameter value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>ud</strong> <span class="classifier-delimiter">:</span> <span class="classifier">st</span></dt>
+<dd><p class="first last">Path to the update dictionary to add a variable to.</p>
+</dd>
+<dt><strong>upHUC</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Name of the upstream HUC that the variable cooresponds to.</p>
+</dd>
+<dt><strong>varName</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Name to use for the variable.</p>
+</dd>
+<dt><strong>val</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or int or float</span></dt>
+<dd><p class="first last">Value to add to the upstream dictonary.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>ud</strong> <span class="classifier-delimiter">:</span> <span class="classifier">json</span></dt>
+<dd><p class="first last">Update dictionary written back out to ud.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.updateRaster">
+<code class="descname">updateRaster</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>val</em>, <em>grd</em>, <em>outgrd</em><span class="sig-paren">)</span><a class="headerlink" href="#tools.updateRaster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert val into grd at location specified by x,y, writes new raster to outgrd.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>x</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or float</span></dt>
+<dd><p class="first last">Horizontal coordinate in map units.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list of float</span></dt>
+<dd><p class="first last">Vertical coordinate in map units.</p>
+</dd>
+<dt><strong>val</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int or float</span></dt>
+<dd><p class="first last">Value to insert into raster at grd.</p>
+</dd>
+<dt><strong>grd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to raster to be updated.</p>
+</dd>
+<dt><strong>outgrd</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (path)</span></dt>
+<dd><p class="first last">Path to write updated raster to.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>dat</strong> <span class="classifier-delimiter">:</span> <span class="classifier">raster</span></dt>
+<dd><p class="first last">Writes raster dataset to supplied grdout destination.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-netCDFmaker"></span><dl class="function">
+<dt id="netCDFmaker.buildNC">
+<code class="descname">buildNC</code><span class="sig-paren">(</span><em>inDir</em>, <em>outFile</em>, <em>metaDict</em>, <em>cl=9</em><span class="sig-paren">)</span><a class="headerlink" href="#netCDFmaker.buildNC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build netCDF file from a stack of geotiffs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>inDir</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Directory with geotiff files to be converted, specified as ‘/dir/here/*.tif’</p>
+</dd>
+<dt><strong>outFile</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Output filename with ‘.nc’ included.</p>
+</dd>
+<dt><strong>metaDict</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><p class="first last">Metadata dictionary used to populate fields in the netCDF. See Notes below for a description of fields to include.</p>
+</dd>
+<dt><strong>cl</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Compression level, 1-9. A higher value will result in a smaller output file, but will take longer.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>NetCDF</strong> <span class="classifier-delimiter">:</span> <span class="classifier">file</span></dt>
+<dd><p class="first last">A NetCDF file at <em>outFile</em>.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p><em>Metadata Dictionary</em></p>
+<p>The metadata dictionary is expecting a particular set of keys to specify the metadata fields within the netCDF file being generated. These fields have been chose to make the resulting netCDF file compliant with the Climate and Forecast and the Data Discovery metadata conventions. Fields are described below, many descriptions are the same as <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents">http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents</a> or <a class="reference external" href="http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3">http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3</a>.</p>
+<dl class="docutils">
+<dt>title</dt>
+<dd>A succinct description of what is in the dataset.</dd>
+<dt>institution</dt>
+<dd>Specifies where the original data was produced.</dd>
+<dt>source</dt>
+<dd>The method of production of the original data. If it was model-generated, source should name the model and its version, as specifically as could be useful. If it is observational, source should characterize it (e.g., “surface observation” or “radiosonde”).</dd>
+<dt>id </dt>
+<dd>An identifier for the data set, provided by and unique within its naming authority. The combination of the “naming authority” and the “id” should be globally unique, but the id can be globally unique by itself also. IDs can be URLs, URNs, DOIs, meaningful text strings, a local key, or any other unique string of characters. The id should not include white space characters.</dd>
+<dt>naming_authority</dt>
+<dd>The organization that provides the initial id (see above) for the dataset. The naming authority should be uniquely specified by this attribute. We recommend using reverse-DNS naming for the naming authority; URIs are also acceptable. Example: ‘edu.ucar.unidata’.</dd>
+<dt>references</dt>
+<dd>Published or web-based references that describe the data or methods used to produce it.</dd>
+<dt>comment</dt>
+<dd>Miscellaneous information about the data or methods used to produce it.</dd>
+<dt>history</dt>
+<dd>Provides an audit trail for modifications to the original data. Well-behaved generic netCDF filters will automatically append their name and the parameters with which they were invoked to the global history attribute of an input netCDF file. We recommend that each line begin with a timestamp indicating the date and time of day that the program was executed.</dd>
+<dt>license</dt>
+<dd>Provide the URL to a standard or specific license, enter “Freely Distributed” or “None”, or describe any restrictions to data access and distribution in free text.</dd>
+<dt>acknowledgement</dt>
+<dd>A place to acknowledge various types of support for the project that produced this data.</dd>
+<dt>metadata_link</dt>
+<dd>A URL that gives the location of more complete metadata. A persistent URL is recommended for this attribute.</dd>
+<dt>date_created</dt>
+<dd>The date on which this version of the data was created. (Modification of values implies a new version, hence this would be assigned the date of the most recent values modification.) Metadata changes are not considered when assigning the date_created. The ISO 8601:2004 extended date format is recommended, as described in the Attribute Content Guidance section.</dd>
+<dt>creator_type</dt>
+<dd>Specifies type of creator with one of the following: ‘person’, ‘group’, ‘institution’, or ‘position’. If this attribute is not specified, the creator is assumed to be a person.</dd>
+<dt>creator_email</dt>
+<dd>The email address of the person (or other creator type specified by the creator_type attribute) principally responsible for creating this data.</dd>
+<dt>creator_name</dt>
+<dd>The name of the person (or other creator type specified by the creator_type attribute) principally responsible for creating this data.</dd>
+<dt>creator_url</dt>
+<dd>The URL of the person (or other creator type specified by the creator_type attribute) principally responsible for creating this data.</dd>
+<dt>creator_institution</dt>
+<dd>The institution of the creator; should uniquely identify the creator’s institution. This attribute’s value should be specified even if it matches the value of publisher_institution, or if creator_type is institution.</dd>
+<dt>publisher_type</dt>
+<dd>Specifies type of publisher with one of the following: ‘person’, ‘group’, ‘institution’, or ‘position’. If this attribute is not specified, the publisher is assumed to be a person.</dd>
+<dt>publisher_name</dt>
+<dd>The name of the person (or other entity specified by the publisher_type attribute) responsible for publishing the data file or product to users, with its current metadata and format.</dd>
+<dt>publisher_email</dt>
+<dd>The email address of the person (or other entity specified by the publisher_type attribute) responsible for publishing the data file or product to users, with its current metadata and format.</dd>
+<dt>publisher_url</dt>
+<dd>The URL of the person (or other entity specified by the publisher_type attribute) responsible for publishing the data file or product to users, with its current metadata and format.</dd>
+<dt>publisher_institution</dt>
+<dd>The institution that presented the data file or equivalent product to users; should uniquely identify the institution. If publisher_type is institution, this should have the same value as publisher_name.</dd>
+<dt>var_name</dt>
+<dd>Variable name given to the dataset. For example minimum temperature would be Tmin.</dd>
+<dt>units</dt>
+<dd>Unit value associated with quantity described by the dataset.</dd>
+<dt>add_offset</dt>
+<dd>Offset value use with the data, usually 0.0 if no offset is used with the data.</dd>
+<dt>standard_name</dt>
+<dd>Short name associated with the dataset.</dd>
+<dt>long_name</dt>
+<dd>More descriptive name associated with the dataset.</dd>
+<dt>grid_mapping</dt>
+<dd>The way data values are mapped to a grid, usually ‘crs’.</dd>
+<dt>scale_factor</dt>
+<dd>Numeric value the data are scaled by to save space, usually 1.0 if data are not scaled.</dd>
+<dt>coverage_content_type</dt>
+<dd>An ISO 19115-1 code to indicate the source of the data (image, thematicClassification, physicalMeasurement, auxiliaryInformation, qualityInformation, referenceInformation, modelResult, or coordinate).</dd>
+</dl>
+</dd></dl>
+
+</div>
+<span id="document-glossary"></span><div class="section" id="glossary">
+<h2>Glossary<a class="headerlink" href="#glossary" title="Permalink to this headline">¶</a></h2>
+<p>A compilation of terms and abbreviations used in this repository.</p>
+<ul class="simple">
+<li>Parameter Grid: A raster grid with geospatial information such as resolution, extent, and projection.</li>
+<li>CRS: Coordinate Reference System, the projection and/or geographic coordinate system used to locate coordinates in space.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Theodore Barnhart, Roy Sando, Seth Siefkin, Peter McCarthy, and Al Rea
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
