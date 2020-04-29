@@ -1690,3 +1690,46 @@ def d8todinfinity(inRast, outRast, updateDict = {
     with rs.open(outRast,'w',**profile) as dst:
         dst.write(tauDir,1)
         print("TauDEM drainage direction written to: {0}".format(outRast))
+
+def changeNoData(inRast, newNoData, updateDict = {
+                'compress':'LZW',
+                'profile':'GeoTIFF',
+                'tiled':True,
+                'sparse_ok':True,
+                'num_threads':'ALL_CPUS',
+                'bigtiff':'IF_SAFER'}):
+    """Update raster no data value to a new value.
+
+    Parameters
+    ----------
+    inRast : str
+        Path to input raster file.
+    newNoData : str
+        New no data value for the raster.
+    updateDict : dict (optional)
+        Dictionary of rasterio parameters used to create the updated raster.
+
+    Returns
+    -------
+    None
+    """
+    
+    print('Opening raster...')
+
+    #load input data
+    with rs.open(inRast) as ds:
+        dat = ds.read(1)
+        inNoData = ds.nodata
+        profile = ds.profile.copy() # save the metadata for output later
+
+    print('Changing no data values...')
+    dat[dat == inNoData] = newNoData #Change no data value
+
+    updateDict['nodata'] = newNoData # add new noData value to the update dictionary.
+
+    # edit the metadata
+    profile.update(updateDict)
+
+    with rs.open(inRast,'w',**profile) as dst:
+        dst.write(dat,1)
+        print("Raster written to: {0}".format(inRast))
