@@ -1,7 +1,7 @@
-Batch FCPG Creation on a HPC
-============================
+Batch FCPG Creation on an HPC
+=============================
 
-This recipe provides an example of batch creating FCPG grids from a folder of parameter grids and a flow direction grid. This recipe requires two :code:`Python` scripts. The first script sorts through the parameter grids and submits a SLURM job for each one and the second script, :code:`makeFCPG.py`, creates the FCPG within the SLURM job.
+This is an example of batch creating FCPG grids from a folder of parameter (precipitation, air temperature, land cover, etc.) grids and a flow direction grid. This example uses two Python scripts. The first script sorts through the parameter grids and submits a SLURM job for each one and the second script, :code:`makeFCPG.py`, creates the FCPG within the SLURM job.
 
 Parse parameter grids and submit SLURM jobs
 -------------------------------------------

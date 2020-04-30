@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="cookbook.html">Cookbook</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="batch_fcpgs_hpc.html">Batch FCPG Creation on a HPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="batch_fcpgs_hpc.html">Batch FCPG Creation on an HPC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cascade_fcpg.html">Cascade FCPG results between geospatial tiles</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Detect Missing FCPGs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="make_TauDEM_files.html">Generate TauDEM Files From An ESRI Flow Direction Grid</a></li>
@@ -211,13 +211,13 @@
 45
 46</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 
-<span class="n">HUClist</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1002&quot;</span><span class="p">,</span> <span class="s2">&quot;1003&quot;</span><span class="p">,</span> <span class="s2">&quot;1004&quot;</span><span class="p">,</span> <span class="s2">&quot;1005&quot;</span><span class="p">,</span> <span class="s2">&quot;1006&quot;</span><span class="p">,</span> <span class="s2">&quot;1007&quot;</span><span class="p">,</span> <span class="s2">&quot;1008&quot;</span><span class="p">,</span> <span class="s2">&quot;1009&quot;</span><span class="p">,</span> <span class="s2">&quot;1010&quot;</span><span class="p">,</span> <span class="s2">&quot;1011&quot;</span><span class="p">,</span> <span class="s2">&quot;1012&quot;</span><span class="p">,</span> <span class="s2">&quot;1013&quot;</span><span class="p">]</span>
+<span class="n">HUClist</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1002&quot;</span><span class="p">,</span> <span class="s2">&quot;1003&quot;</span><span class="p">,</span> <span class="s2">&quot;1004&quot;</span><span class="p">]</span> <span class="c1"># HUC4 geospatial tiles to search over.</span>
 
 <span class="n">inDir</span> <span class="o">=</span> <span class="s2">&quot;../data/cov/static&quot;</span> <span class="c1"># Source parameter grid folder.</span>
 
 <span class="n">CPGdir</span> <span class="o">=</span> <span class="s2">&quot;../FCPGs&quot;</span> <span class="c1"># Output FCPG folder.</span>
 
-<span class="n">covList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of covariates</span>
+<span class="n">covList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of parameter grids.</span>
 
 <span class="c1"># iterate through all source parameter grids.</span>
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
@@ -233,14 +233,14 @@
 
         <span class="n">missingList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of missing files</span>
 
-        <span class="c1"># iterate through source grids and test if FCPGs have been created.</span>
+        <span class="c1"># iterate through source parameter grids and test if FCPGs have been created.</span>
         <span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">covList</span><span class="p">:</span>
 
-                <span class="n">covname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">cov</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get the name of the covariate</span>
+                <span class="n">covname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">cov</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get the name of the parameter grid</span>
 
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">CPGdir</span><span class="p">):</span>
                         <span class="k">for</span> <span class="n">HUC</span> <span class="ow">in</span> <span class="n">HUClist</span><span class="p">:</span>
-                                <span class="c1">#Create the file name corresponding to the HUC and covariate</span>
+                                <span class="c1">#Create the file name corresponding to the HUC and parameter grid</span>
                                 <span class="n">CPGFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CPGdir</span><span class="p">,</span> <span class="n">HUC</span><span class="p">,</span><span class="n">covname</span> <span class="o">+</span> <span class="s2">&quot;_HUC&quot;</span> <span class="o">+</span> <span class="n">HUC</span> <span class="o">+</span><span class="s2">&quot;_FCPG.tif&quot;</span><span class="p">)</span> <span class="c1">#Create filepath for parameter CPG file</span>
 
                                 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">CPGFile</span><span class="p">):</span>

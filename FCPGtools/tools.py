@@ -364,7 +364,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
         The number of cores to use. Defaults to 1.
     forceProj : bool (optional)
         Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.
-    forceProj4 : str
+    forceProj4 : str (optional)
         Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True. 
 
     Returns
@@ -1584,13 +1584,13 @@ def updateDict(ud, upHUC, varName, val):
     
     Parameters
     ----------
-    ud : st
+    ud : str
         Path to the update dictionary to add a variable to.
     upHUC : str
         Name of the upstream HUC that the variable cooresponds to.
     varName : str
         Name to use for the variable.
-    val : list or int or float
+    val : list, int or float
         Value to add to the upstream dictonary.
     
     Returns
@@ -1662,6 +1662,7 @@ def d8todinfinity(inRast, outRast, updateDict = {
         Path to a TauDEM D-8 flow direction raster.
     updateDict : dict (optional)
         Dictionary of rasterio parameters used to write out the GeoTiff.
+
     Returns
     -------
     outRast : str

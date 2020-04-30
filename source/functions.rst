@@ -1,3 +1,5 @@
+.. _function-label:
+
 Function Documentation
 ======================
 

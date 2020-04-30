@@ -153,7 +153,7 @@
            <div itemprop="articleBody">
             
   <div class="section" id="module-tools">
-<span id="function-documentation"></span><h1>Function Documentation<a class="headerlink" href="#module-tools" title="Permalink to this headline">¶</a></h1>
+<span id="function-documentation"></span><span id="function-label"></span><h1>Function Documentation<a class="headerlink" href="#module-tools" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="tools.ExtremeUpslopeValue">
 <code class="descname">ExtremeUpslopeValue</code><span class="sig-paren">(</span><em>fdr</em>, <em>param</em>, <em>output</em>, <em>accum_type='MAX'</em>, <em>cores=1</em>, <em>fac=None</em>, <em>thresh=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#ExtremeUpslopeValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.ExtremeUpslopeValue" title="Permalink to this definition">¶</a></dt>
@@ -578,17 +578,17 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt><strong>inRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to a TauDEM D-8 flow direction raster.</p>
 </dd>
 <dt><strong>updateDict</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict (optional)</span></dt>
 <dd><p class="first last">Dictionary of rasterio parameters used to write out the GeoTiff.</p>
 </dd>
-<dt><strong>Returns</strong></dt>
-<dd></dd>
-<dt><strong>——-</strong></dt>
-<dd></dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><strong>outRast</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to output the TauDEM D-Infinity flow direction raster.</p>
 </dd>
@@ -1149,7 +1149,7 @@
 <dt><strong>forceProj</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (optional)</span></dt>
 <dd><p class="first last">Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.</p>
 </dd>
-<dt><strong>forceProj4</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dt><strong>forceProj4</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (optional)</span></dt>
 <dd><p class="first last">Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True.</p>
 </dd>
 </dl>
@@ -1308,7 +1308,7 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>ud</strong> <span class="classifier-delimiter">:</span> <span class="classifier">st</span></dt>
+<dt><strong>ud</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Path to the update dictionary to add a variable to.</p>
 </dd>
 <dt><strong>upHUC</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
@@ -1317,7 +1317,7 @@
 <dt><strong>varName</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd><p class="first last">Name to use for the variable.</p>
 </dd>
-<dt><strong>val</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or int or float</span></dt>
+<dt><strong>val</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list, int or float</span></dt>
 <dd><p class="first last">Value to add to the upstream dictonary.</p>
 </dd>
 </dl>

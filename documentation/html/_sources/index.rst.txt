@@ -5,17 +5,19 @@
 
 Welcome to Flow-Conditioned Parameter Grid Tools's documentation!
 =================================================================
-A Python library to make flow-conditioned parameter grids (FCPGs) by either HUC2, HUC4, or other geospatial tiling schemes. These tools can be used in a Linux HPC environment or locally on your system. These tools are written for Linux and are tested for Windows 10 using the Window's Subsystem for Linux Ubuntu 18 LTS.
+The FCPG Tools are a Python library to make flow-conditioned parameter grids (FCPGs) by either HUC2, HUC4, or other geospatial tiling schemes. These tools can be used in a Linux HPC environment or locally on your system. These tools are written for Linux and are tested for Windows 10 using the Window's Subsystem for Linux Ubuntu 18 LTS.
 
 Quick Start
 ===========
 Load the FCPGtools using :code:`import FCPGtools as fcpg`.
 
+Please refer to the :ref:`cookbook-label` and :ref:`function-label` for examples and usage.
+
 Installation
 ============
 Clone the repository using :code:`git clone https://code.usgs.gov/StreamStats/FCPGtools.git`.
 
-Then :code:`cd` into the repository and create a Anaconda environment using the supplied :code:`FCPGtools_env.yml` file by calling :code:`conda env create -f FCPGtools_env.yml`.
+Then :code:`cd` into the repository and create an Anaconda environment using the supplied :code:`FCPGtools_env.yml` file by calling :code:`conda env create -f FCPGtools_env.yml`.
 
 Then, install the repository using :code:`pip install git+file:<Full Path to the FCPGtools repository>`
 
@@ -26,7 +28,7 @@ On a HPC system you may need to load the correct Python module before building t
 Dependencies
 ============
 
-Dependencies for this work are largely taken care of via the anaconda environment specified by the yml file; however, the tools do rely on `TauDEM 5.3.8 <https://github.com/dtarb/TauDEM/tree/v5.3.8>`_, which needs to be installed and visible to your conda environment.
+Dependencies for this work are largely taken care of via the Anaconda environment specified by the yml file; however, the tools do rely on `TauDEM 5.3.8 <https://github.com/dtarb/TauDEM/tree/v5.3.8>`_, which needs to be installed and visible to your conda environment.
 
 Citation
 ========

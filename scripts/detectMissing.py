@@ -1,12 +1,12 @@
 import os
 
-HUClist = ["1002", "1003", "1004", "1005", "1006", "1007", "1008", "1009", "1010", "1011", "1012", "1013"]
+HUClist = ["1002", "1003", "1004"] # HUC4 geospatial tiles to search over.
 
 inDir = "../data/cov/static" # Source parameter grid folder.
 
 CPGdir = "../FCPGs" # Output FCPG folder.
 
-covList = [] #Initialize list of covariates
+covList = [] #Initialize list of parameter grids.
 
 # iterate through all source parameter grids.
 if os.path.isdir(inDir):
@@ -22,14 +22,14 @@ if os.path.isdir(inDir):
 
         missingList = [] #Initialize list of missing files
 
-        # iterate through source grids and test if FCPGs have been created.
+        # iterate through source parameter grids and test if FCPGs have been created.
         for cov in covList:
 
-                covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
+                covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the parameter grid
 
                 if os.path.isdir(CPGdir):
                         for HUC in HUClist:
-                                #Create the file name corresponding to the HUC and covariate
+                                #Create the file name corresponding to the HUC and parameter grid
                                 CPGFile = os.path.join(CPGdir, HUC,covname + "_HUC" + HUC +"_FCPG.tif") #Create filepath for parameter CPG file
 
                                 if not os.path.isfile(CPGFile):

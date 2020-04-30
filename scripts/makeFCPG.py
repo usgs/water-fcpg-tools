@@ -5,16 +5,16 @@ import sys
 
 print("Starting {0}".format(datetime.datetime.now()))
 
-#Set up Inputs
-paramRast = sys.argv[1] #Path to parameter raster with name in format of "source_var_dd_mm_yyyy.tif"
-taufdr = sys.argv[2] #Path to tauDEM flow direction grid with in format of "taufdrXXXX.tif", where XXXX is a HUC code of any length
-taufac = sys.argv[3] #Path to tauDEM flow accumulation grid
-workDir = sys.argv[4] #Path to working directory
-outDir = sys.argv[5] #Path to output directory for FCPG files
-cores = int(sys.argv[6]) #Number of cores to use 
-accumThresh = int(sys.argv[7]) #Number of cells in flow accumulation grid below which FCPG will be set to no data
-overwrite = fc.parsebool(sys.argv[8]) #Whether to overwrite CPGs or not 
-deleteTemp = fc.parsebool(sys.argv[9]) #Whether to delete temporary files
+# Set up Inputs
+paramRast = sys.argv[1] # Path to parameter raster with name in format of "source_var_dd_mm_yyyy.tif"
+taufdr = sys.argv[2] # Path to tauDEM flow direction grid with in format of "taufdrXXXX.tif", where XXXX is a HUC code of any length
+taufac = sys.argv[3] # Path to tauDEM flow accumulation grid
+workDir = sys.argv[4] # Path to working directory
+outDir = sys.argv[5] # Path to output directory for FCPG files
+cores = int(sys.argv[6]) # Number of cores to use 
+accumThresh = int(sys.argv[7]) # Number of cells in flow accumulation grid below which FCPG will be set to no data
+overwrite = fc.parsebool(sys.argv[8]) # Whether to overwrite CPGs or not 
+deleteTemp = fc.parsebool(sys.argv[9]) # Whether to delete temporary files
 
 print("Starting FCPG process for:")
 print("Parameter Raster: {0}".format(paramRast))

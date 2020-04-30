@@ -516,7 +516,7 @@
 <span class="sd">        The number of cores to use. Defaults to 1.</span>
 <span class="sd">    forceProj : bool (optional)</span>
 <span class="sd">        Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.</span>
-<span class="sd">    forceProj4 : str</span>
+<span class="sd">    forceProj4 : str (optional)</span>
 <span class="sd">        Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True. </span>
 
 <span class="sd">    Returns</span>
@@ -1736,13 +1736,13 @@
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    ud : st</span>
+<span class="sd">    ud : str</span>
 <span class="sd">        Path to the update dictionary to add a variable to.</span>
 <span class="sd">    upHUC : str</span>
 <span class="sd">        Name of the upstream HUC that the variable cooresponds to.</span>
 <span class="sd">    varName : str</span>
 <span class="sd">        Name to use for the variable.</span>
-<span class="sd">    val : list or int or float</span>
+<span class="sd">    val : list, int or float</span>
 <span class="sd">        Value to add to the upstream dictonary.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
@@ -1814,6 +1814,7 @@
 <span class="sd">        Path to a TauDEM D-8 flow direction raster.</span>
 <span class="sd">    updateDict : dict (optional)</span>
 <span class="sd">        Dictionary of rasterio parameters used to write out the GeoTiff.</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    outRast : str</span>

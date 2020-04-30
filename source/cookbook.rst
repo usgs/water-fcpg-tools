@@ -1,7 +1,9 @@
+.. _cookbook-label:
+
 Cookbook
 --------
 
-Example scripts, recipes, for common FCPG tasks on local workstations and HPC environments. These recipes have not been turned into FCPGtools library functions because of the the variability in HPC and local systems that the FCPGtools may be used with.
+Example scripts and work flows for common FCPG tasks on local workstations and HPC environments. These scripts have not been turned into FCPGtools functions because of the the variability in HPC and local systems that the FCPGtools may be used with.
 
 .. toctree::
    :maxdepth: 2

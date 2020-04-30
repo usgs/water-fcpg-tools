@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Batch FCPG Creation on a HPC &mdash; Flow-Conditioned Parameter Grid Tools 0.7.0 documentation</title>
+  <title>Batch FCPG Creation on an HPC &mdash; Flow-Conditioned Parameter Grid Tools 0.7.0 documentation</title>
   
 
   
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="cookbook.html">Cookbook</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Batch FCPG Creation on a HPC</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Batch FCPG Creation on an HPC</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#parse-parameter-grids-and-submit-slurm-jobs">Parse parameter grids and submit SLURM jobs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#generate-a-fcpg-given-a-parameter-and-fdr-grid">Generate a FCPG given a parameter and FDR grid</a></li>
 </ul>
@@ -146,7 +146,7 @@
         
           <li><a href="cookbook.html">Cookbook</a> &raquo;</li>
         
-      <li>Batch FCPG Creation on a HPC</li>
+      <li>Batch FCPG Creation on an HPC</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -165,9 +165,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="batch-fcpg-creation-on-a-hpc">
-<h1>Batch FCPG Creation on a HPC<a class="headerlink" href="#batch-fcpg-creation-on-a-hpc" title="Permalink to this headline">¶</a></h1>
-<p>This recipe provides an example of batch creating FCPG grids from a folder of parameter grids and a flow direction grid. This recipe requires two <code class="code docutils literal notranslate"><span class="pre">Python</span></code> scripts. The first script sorts through the parameter grids and submits a SLURM job for each one and the second script, <code class="code docutils literal notranslate"><span class="pre">makeFCPG.py</span></code>, creates the FCPG within the SLURM job.</p>
+  <div class="section" id="batch-fcpg-creation-on-an-hpc">
+<h1>Batch FCPG Creation on an HPC<a class="headerlink" href="#batch-fcpg-creation-on-an-hpc" title="Permalink to this headline">¶</a></h1>
+<p>This is an example of batch creating FCPG grids from a folder of parameter (precipitation, air temperature, land cover, etc.) grids and a flow direction grid. This example uses two Python scripts. The first script sorts through the parameter grids and submits a SLURM job for each one and the second script, <code class="code docutils literal notranslate"><span class="pre">makeFCPG.py</span></code>, creates the FCPG within the SLURM job.</p>
 <div class="section" id="parse-parameter-grids-and-submit-slurm-jobs">
 <h2>Parse parameter grids and submit SLURM jobs<a class="headerlink" href="#parse-parameter-grids-and-submit-slurm-jobs" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
@@ -253,52 +253,52 @@
 
 <span class="n">hpcAccount</span> <span class="o">=</span> <span class="s1">&#39;your_hpc_account_here&#39;</span>
 
-<span class="c1">#Check if system arguments were provided</span>
+<span class="c1"># Check if system arguments were provided</span>
 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-    <span class="n">inDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#Input directory in which to search for parameter rasters</span>
-    <span class="n">taufdr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1">#Flow direction grid in tauDEM format</span>
-    <span class="n">taufac</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c1">#Flow accumulation grid in tauDEM format</span>
-    <span class="n">workDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="c1">#Working directory to save intermediate files</span>
-    <span class="n">outDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1">#Output directory to save CPGs</span>
-    <span class="n">logDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="c1">#Directory to save slurm log files</span>
-    <span class="n">cores</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="c1">#Number of cores to use for each slurm job</span>
-    <span class="n">accumThresh</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="c1">#Number of cells in flow accumulation grid below which CPG will be set to no data</span>
-    <span class="n">overwrite</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="c1">#Whether to overwrite existing CPGs</span>
-    <span class="n">deleteTemp</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="c1">#Whether to delete temporary files</span>
+    <span class="n">inDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># Input directory in which to search for parameter rasters</span>
+    <span class="n">taufdr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># Flow direction grid in tauDEM format</span>
+    <span class="n">taufac</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c1"># Flow accumulation grid in tauDEM format</span>
+    <span class="n">workDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="c1"># Working directory to save intermediate files</span>
+    <span class="n">outDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1"># Output directory to save CPGs</span>
+    <span class="n">logDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="c1"># Directory to save slurm log files</span>
+    <span class="n">cores</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="c1"># Number of cores to use for each slurm job</span>
+    <span class="n">accumThresh</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="c1"># Number of cells in flow accumulation grid below which CPG will be set to no data</span>
+    <span class="n">overwrite</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="c1"># Whether to overwrite existing CPGs</span>
+    <span class="n">deleteTemp</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="c1"># Whether to delete temporary files</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="k">print</span><span class="p">(</span><span class="s1">&#39;No arguments provided.&#39;</span><span class="p">)</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="n">covList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of covariates</span>
+<span class="n">covList</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Initialize list of parameter grids</span>
 
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
-    <span class="c1">#Get all covariate files in directory</span>
+    <span class="c1">#Get all parameter grid files in directory</span>
     <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">subdirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-            <span class="c1">#Check if file is .tif, and if so add it to covariate list</span>
+            <span class="c1">#Check if file is .tif, and if so add it to parameter list</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;.tif&quot;</span><span class="p">:</span>
                     <span class="n">covList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
 <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inDir</span><span class="p">):</span>
-    <span class="c1">#Supplied path is a single covariate file</span>
+    <span class="c1">#Supplied path is a single parameter grid file</span>
     <span class="n">covList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inDir</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Invalid covariate directory&quot;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Invalid parameter grid directory&quot;</span><span class="p">)</span>
 
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;The following parameter grids were located:&quot;</span><span class="p">)</span>
 <span class="p">[</span><span class="k">print</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span> <span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">covList</span><span class="p">]</span>
 
 <span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">covList</span><span class="p">:</span> <span class="c1">#Iterate through the parameter grids</span>
 
-    <span class="n">covname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">cov</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get the name of the covariate</span>
+    <span class="n">covname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">cov</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get the name of the parameter</span>
 
     <span class="c1">#Create batch job which runs python script</span>
-    <span class="n">jobfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="s2">&quot;{0}.slurm&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">covname</span><span class="p">)))</span> <span class="c1"># Create path to slurm job file, consider adding timestamp in name?</span>
+    <span class="n">jobfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workDir</span><span class="p">,</span> <span class="s2">&quot;{0}.slurm&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">covname</span><span class="p">)))</span> <span class="c1"># Create path to slurm job file</span>
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">jobfile</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         
         <span class="c1">#Write slurm job details</span>
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#!/bin/bash</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --job-name=</span><span class="si">%s</span><span class="s2">.job</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">covname</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --job-name=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">covname</span><span class="p">)</span> <span class="c1"># set the name of the job</span>
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -c 1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># cpus per task</span>
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -n {0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cores</span><span class="p">))</span> <span class="c1"># number of tasks</span>
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --tasks-per-node=20</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Set number of tasks per node</span>
@@ -408,16 +408,16 @@
 
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
 
-<span class="c1">#Set up Inputs</span>
-<span class="n">paramRast</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#Path to parameter raster with name in format of &quot;source_var_dd_mm_yyyy.tif&quot;</span>
-<span class="n">taufdr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1">#Path to tauDEM flow direction grid with in format of &quot;taufdrXXXX.tif&quot;, where XXXX is a HUC code of any length</span>
-<span class="n">taufac</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c1">#Path to tauDEM flow accumulation grid</span>
-<span class="n">workDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="c1">#Path to working directory</span>
-<span class="n">outDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1">#Path to output directory for FCPG files</span>
-<span class="n">cores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="c1">#Number of cores to use </span>
-<span class="n">accumThresh</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span> <span class="c1">#Number of cells in flow accumulation grid below which FCPG will be set to no data</span>
-<span class="n">overwrite</span> <span class="o">=</span> <span class="n">fc</span><span class="o">.</span><span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span> <span class="c1">#Whether to overwrite CPGs or not </span>
-<span class="n">deleteTemp</span> <span class="o">=</span> <span class="n">fc</span><span class="o">.</span><span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span> <span class="c1">#Whether to delete temporary files</span>
+<span class="c1"># Set up Inputs</span>
+<span class="n">paramRast</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># Path to parameter raster with name in format of &quot;source_var_dd_mm_yyyy.tif&quot;</span>
+<span class="n">taufdr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># Path to tauDEM flow direction grid with in format of &quot;taufdrXXXX.tif&quot;, where XXXX is a HUC code of any length</span>
+<span class="n">taufac</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c1"># Path to tauDEM flow accumulation grid</span>
+<span class="n">workDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="c1"># Path to working directory</span>
+<span class="n">outDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1"># Path to output directory for FCPG files</span>
+<span class="n">cores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="c1"># Number of cores to use </span>
+<span class="n">accumThresh</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span> <span class="c1"># Number of cells in flow accumulation grid below which FCPG will be set to no data</span>
+<span class="n">overwrite</span> <span class="o">=</span> <span class="n">fc</span><span class="o">.</span><span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span> <span class="c1"># Whether to overwrite CPGs or not </span>
+<span class="n">deleteTemp</span> <span class="o">=</span> <span class="n">fc</span><span class="o">.</span><span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span> <span class="c1"># Whether to delete temporary files</span>
 
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting FCPG process for:&quot;</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Parameter Raster: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">paramRast</span><span class="p">))</span>

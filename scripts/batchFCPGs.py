@@ -4,52 +4,52 @@ import os
 
 hpcAccount = 'your_hpc_account_here'
 
-#Check if system arguments were provided
+# Check if system arguments were provided
 if len(sys.argv) > 1:
-    inDir = sys.argv[1] #Input directory in which to search for parameter rasters
-    taufdr = sys.argv[2] #Flow direction grid in tauDEM format
-    taufac = sys.argv[3] #Flow accumulation grid in tauDEM format
-    workDir = sys.argv[4] #Working directory to save intermediate files
-    outDir = sys.argv[5] #Output directory to save CPGs
-    logDir = sys.argv[6] #Directory to save slurm log files
-    cores = sys.argv[7] #Number of cores to use for each slurm job
-    accumThresh = sys.argv[8] #Number of cells in flow accumulation grid below which CPG will be set to no data
-    overwrite = sys.argv[9] #Whether to overwrite existing CPGs
-    deleteTemp = sys.argv[10] #Whether to delete temporary files
+    inDir = sys.argv[1] # Input directory in which to search for parameter rasters
+    taufdr = sys.argv[2] # Flow direction grid in tauDEM format
+    taufac = sys.argv[3] # Flow accumulation grid in tauDEM format
+    workDir = sys.argv[4] # Working directory to save intermediate files
+    outDir = sys.argv[5] # Output directory to save CPGs
+    logDir = sys.argv[6] # Directory to save slurm log files
+    cores = sys.argv[7] # Number of cores to use for each slurm job
+    accumThresh = sys.argv[8] # Number of cells in flow accumulation grid below which CPG will be set to no data
+    overwrite = sys.argv[9] # Whether to overwrite existing CPGs
+    deleteTemp = sys.argv[10] # Whether to delete temporary files
 else:
     print('No arguments provided.')
     sys.exit(1)
 
-covList = [] #Initialize list of covariates
+covList = [] #Initialize list of parameter grids
 
 if os.path.isdir(inDir):
-    #Get all covariate files in directory
+    #Get all parameter grid files in directory
     for path, subdirs, files in os.walk(inDir):
         for name in files:
-            #Check if file is .tif, and if so add it to covariate list
+            #Check if file is .tif, and if so add it to parameter list
             if os.path.splitext(name)[1] == ".tif":
                     covList.append(os.path.join(path, name))
 elif os.path.isfile(inDir):
-    #Supplied path is a single covariate file
+    #Supplied path is a single parameter grid file
     covList.append(inDir)
 else:
-    print("Invalid covariate directory")
+    print("Invalid parameter grid directory")
 
 print("The following parameter grids were located:")
 [print(cov) for cov in covList]
 
 for cov in covList: #Iterate through the parameter grids
 
-    covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the covariate
+    covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the parameter
 
     #Create batch job which runs python script
-    jobfile = os.path.join(workDir, "{0}.slurm".format(str(covname))) # Create path to slurm job file, consider adding timestamp in name?
+    jobfile = os.path.join(workDir, "{0}.slurm".format(str(covname))) # Create path to slurm job file
 
     with open(jobfile, 'w+') as f:
         
         #Write slurm job details
         f.writelines("#!/bin/bash\n")
-        f.writelines("#SBATCH --job-name=%s.job\n" %covname)
+        f.writelines("#SBATCH --job-name=%s\n" %covname) # set the name of the job
         f.writelines("#SBATCH -c 1\n") # cpus per task
         f.writelines("#SBATCH -n {0}\n".format(cores)) # number of tasks
         f.writelines("#SBATCH --tasks-per-node=20\n") # Set number of tasks per node
