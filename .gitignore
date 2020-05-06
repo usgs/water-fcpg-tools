@@ -3,3 +3,9 @@ data
 *.log
 .ipynb_checkpoints
 scratch
+*.mxd
+*.ipynb
+figures
+__pycache__
+*.pyc
+*.csv
