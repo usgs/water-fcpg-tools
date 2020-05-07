@@ -71,7 +71,7 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 	-----
 	*Metadata Dictionary*
 	
-	The metadata dictionary is expecting a particular set of keys to specify the metadata fields within the netCDF file being generated. These fields have been chose to make the resulting netCDF file compliant with the Climate and Forecast and the Data Discovery metadata conventions. Fields are described below, many descriptions are the same as http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents or http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3. 
+	The metadata dictionary is expecting a particular set of keys to specify the metadata fields within the netCDF file being generated. These fields have been chosen to make the resulting netCDF file compliant with the Climate and Forecast and the Data Discovery metadata conventions. Fields are described below, many descriptions are the same as http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents or http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3. 
 
 	title
 		A succinct description of what is in the dataset.
@@ -205,6 +205,9 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 		ncDataType = 'f4'
 	elif dataType == 'int32':
 		ncDataType = 'i4'
+        else:
+                print("Error: unsupported data type")
+                return
 
 	basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
 
@@ -316,8 +319,7 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 		source = baseName.split("_")[0]
 		param = baseName.split("_")[1]
 
-		#if source + "_" + param == netCDFparam: # test if netCDF file is correct.
-		print(name)
+
 		year = int(name.split('/')[-1].split('_')[-5])
 		month = int(name.split('/')[-1].split('_')[-4])
 		day = int(name.split('/')[-1].split('_')[-3])
@@ -328,9 +330,6 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 
 		#Try reading with rasterio
 		with rs.open(name) as ds: # load accumulated data and no data rasters
-		#data = ds.read(1)
-		#print(np.shape(data))
-		#print(np.shape(tmno[itime,:,:]))
 			tmno[itime,:,:] = ds.read(1)
 
 		itime=itime+1

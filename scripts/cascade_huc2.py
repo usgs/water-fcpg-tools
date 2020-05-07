@@ -11,6 +11,7 @@ region = '' # Hydrologic region to make the update dictionary for.
 updateDict = '' # Path to the update dictionary to create.
 downstreamFACWeight = '' # Path to the downstream FAC weighting grid. This is where the upstream value will be inserted.
 downstreamAdjFAC = '' # Path to output the adjusted FAC weighting grid.
+cores = 8 #Number of cores to use for fcpg.adjustFAC() function
 
 # convert ESRI flow directions to TauDEM flow directions.
 fcpg.tauDrainDir(upstreamFDRflesri, upstreamFDRfltau)
@@ -28,4 +29,4 @@ fcpg.makeFACweight(downstreamFDRfltau,downstreamFACWeight)
 
 # Create the updated flow accumulation grid with information from the upstream HUC inserted into the source grid.
 fcpg.adjustFAC(downstreamFDRfltau,downstreamFACWeight,
-              updateDict,downstreamFDRfltau,downstreamAdjFAC,cores=8)
+              updateDict,downstreamFDRfltau,downstreamAdjFAC,cores=cores)

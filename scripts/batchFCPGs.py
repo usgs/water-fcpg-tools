@@ -36,7 +36,7 @@ else:
     print("Invalid parameter grid directory")
 
 print("The following parameter grids were located:")
-[print(cov) for cov in covList]
+print(*covList, sep='\n')
 
 for cov in covList: #Iterate through the parameter grids
 
@@ -49,7 +49,7 @@ for cov in covList: #Iterate through the parameter grids
         
         #Write slurm job details
         f.writelines("#!/bin/bash\n")
-        f.writelines("#SBATCH --job-name=%s\n" %covname) # set the name of the job
+        f.writelines("#SBATCH --job-name={0}\n".format(covname)) # set the name of the job
         f.writelines("#SBATCH -c 1\n") # cpus per task
         f.writelines("#SBATCH -n {0}\n".format(cores)) # number of tasks
         f.writelines("#SBATCH --tasks-per-node=20\n") # Set number of tasks per node

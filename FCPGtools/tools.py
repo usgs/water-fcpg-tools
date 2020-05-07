@@ -57,7 +57,7 @@ def tauDrainDir(inRast, outRast, updateDict = {
     inRast : str
         Path to a raster encoded with ESRI flow direction values.
     outRast : str
-        Path to output a raster with flow directions encoded for TauDEM.
+        Path to output a raster with flow directions encoded for TauDEM. File will be overwritten if it already exists. 
     updateDict : dict (optional)
         Dictionary of rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.
 
@@ -90,7 +90,7 @@ def tauDrainDir(inRast, outRast, updateDict = {
     tauDir[dat == inNoData] = 0 # no data
     tauDir = tauDir.astype('uint8')#8 bit integer is sufficient for flow directions
 
-    # edit the metadata, probably should make this an input to the script...
+    # edit the metadata
     profile.update(updateDict)
     
     if os.path.isfile(outRast):
@@ -145,7 +145,6 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         direction = ds.read(1)
         directionNoData = ds.nodata # pull the accumulated area no data value
 
-    #print(paramNoData)
     if paramNoData == None:
         print("Warning: Parameter raster no data value not specified, results may be invalid")
 
@@ -153,33 +152,34 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
     #Deal with no data values
     basinNoDataCount = len(data[(data == paramNoData) & (direction != directionNoData)]) # Count number of cells with flow direction but no parameter value
     
-    if basinNoDataCount > 0 and zeroNoDataRast is not None:
+    if basinNoDataCount > 0:
         print('Warning: No data parameter values exist in basin')
 
 
-        #Set no data values in the basin to zero so tauDEM accumulates them correctly
-        noDataZero = data.copy()
-        #noDataZero[(data == paramNoData) & (direction != directionNoData)] = 0 #Set no data values in basin to 0
-
-        # Update profile for no data raster
-        newProfile = profile 
-        newProfile.update({
-            'compress':'LZW',
-            'profile':'GeoTIFF',
-            'tiled':True,
-            'sparse_ok':True,
-            'num_threads':'ALL_CPUS',
-            'bigtiff':'IF_SAFER'})
-            
-        # Save no data raster
-        with rs.open(zeroNoDataRast, 'w', **newProfile) as dst:
-            dst.write(data,1)
-            print("Parameter No Data raster written to: {0}".format(zeroNoDataRast))
-            
-        tauDEMweight = zeroNoDataRast #Set file to use as weight in tauDEM accumulation
-
         #If a no data file path is given, accumulate no data values
-        if (outNoDataRast != None) & (outNoDataAccum != None):
+        if (outNoDataRast != None) & (outNoDataAccum != None) & (zeroNoDataRast != None):
+
+            #Set no data parameter values in the basin to zero so tauDEM accumulates them
+            noDataZero = data.copy()
+            noDataZero[(data == paramNoData) & (direction != directionNoData)] = 0 #Set no data values in basin to 0
+
+            # Update profile for no data raster
+            newProfile = profile 
+            newProfile.update({
+                'compress':'LZW',
+                'profile':'GeoTIFF',
+                'tiled':True,
+                'sparse_ok':True,
+                'num_threads':'ALL_CPUS',
+                'bigtiff':'IF_SAFER'})
+            
+            # Save no data raster
+            with rs.open(zeroNoDataRast, 'w', **newProfile) as dst:
+                dst.write(noDataZero,1)
+                print("Parameter Zero No Data raster written to: {0}".format(zeroNoDataRast))
+
+
+            
             noDataArray = data.copy()
             noDataArray[(data == paramNoData) & (direction != directionNoData)] = 1 #Set no data values in basin to 1
             noDataArray[(data != paramNoData)] = 0 #Set values with data to 0
@@ -202,33 +202,45 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             with rs.open(outNoDataRast, 'w', **newProfile) as dst:
                 dst.write(noDataArray,1)
                 print("Parameter No Data raster written to: {0}".format(outNoDataRast))
-        
-        # Use tauDEM to accumulate no data values
-        try:
-            print('Accumulating No Data Values')
-            
-            outFl = outNoDataRast
-                
-            tauParams = {
-            'fdr':fdr,
-            'cores':cores, 
-            'outFl':outFl,
-            'weight':outNoDataRast
-            }
-            
-            cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
-            print(cmd)
-            result = subprocess.run(cmd, shell = True) # Run shell command
-            result.stdout
-            print("Parameter no data accumulation written to: {0}".format(outNoDataRast))
-            
-        except:
-            print('Error Accumulating Data')
-            traceback.print_exc()
 
+
+            # Use tauDEM to accumulate no data values
+            try:
+                print('Accumulating No Data Values')
+                
+                    
+                tauParams = {
+                'fdr':fdr,
+                'cores':cores, 
+                'outFl':outNoDataAccum,
+                'weight':outNoDataRast
+                }
+                
+                cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+                print(cmd)
+                result = subprocess.run(cmd, shell = True) # Run shell command
+                result.stdout
+                print("Parameter no data accumulation written to: {0}".format(outNoDataRast))
+                
+            except:
+                print('Error Accumulating Data')
+                traceback.print_exc()
+
+            tauDEMweight = zeroNoDataRast #Set file to use as weight in tauDEM accumulation
+
+        else:
+            #If some of the no data handling files aren't provided, accumulate the parameter with no data values included
+            #This will result in no data values being propagated downstream
+            tauDEMweight = paramRast #Set file to use as weight in tauDEM accumulation
+        
+
+            
     else:
+
+        #If there are zero no data values in the basin, simply accumulate the parameter raster
         tauDEMweight = paramRast #Set file to use as weight in tauDEM accumulation
 
+            
 
     #Use tauDEM to accumulate the parameter
     try:
@@ -257,7 +269,7 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
 
     Parameters
     ----------
-    accumParam : 
+    accumParam : str
         File location of the accumulated parameter data raster.
     fac : str
         File location of the flow accumulation raster.
@@ -415,7 +427,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     else:
         print("Warning: Unsupported data type {0}".format(paramType))
         print("Defaulting to Float64")
-        outType = 'Float64' # Try a 64 bit complex floating point if all else fails
+        outType = 'Float64' # Try a 64 bit floating point if all else fails
 
     #Check if resampling or reprojection are required
     if str(paramcrs) == str(fdrcrs) and paramXsize == xsize and paramYsize == ysize:
@@ -455,7 +467,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
 #Tools for decayed accumulation CPGs
 
 def makeDecayGrid(d2strm, k, outRast):
-    '''Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{1}{n+k*dx}`, where n is the distance from the d2strm raster and    from each grid cell to the nearest stream, k is the constant applied to the stream distance values, and dx is the cell size of the raster.
+    '''Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{dx}{n+k*dx}`, where n is the distance from the d2strm raster and    from each grid cell to the nearest stream, k is the constant applied to the stream distance values, and dx is the cell size of the raster.
     
     Parameters
     ----------
@@ -469,7 +481,7 @@ def makeDecayGrid(d2strm, k, outRast):
     Returns
     -------
         outRast : raster
-            Raster file with grid cells values representing weights decaying as they ove further from the stream.
+            Raster file with grid cells values representing weights decaying as they move further from the stream.
     '''
     if not os.path.isfile(d2strm):
         print("Error - Stream distance raster file is missing!")
@@ -849,7 +861,7 @@ def make_fcpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"):
     return fileList
 
 def cat2bin(inCat, outWorkspace):
-    '''Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, and -1 for regions of no data in the supplied raster. Wrapper on :py:func:`binarizeCat`.
+    '''Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. Wrapper on :py:func:`binarizeCat`.
 
     Parameters
     ----------
@@ -866,7 +878,7 @@ def cat2bin(inCat, outWorkspace):
     print("Creating binaries for %s"%inCat)
     
     baseName = os.path.splitext(os.path.basename(inCat))[0] #Get name of input file without extention
-    ext = ".tif" #File extension
+    
 
     # load input data
     with rs.open(inCat) as ds:
@@ -888,6 +900,8 @@ def cat2bin(inCat, outWorkspace):
                 'num_threads':'ALL_CPUS',
                 'nodata':-1,#Use -1 as no data value
                 'bigtiff':'IF_SAFER'})
+    
+    ext = ".tif" #Output file extension
 
     #Create binary rasters for each category
    
@@ -904,7 +918,7 @@ def cat2bin(inCat, outWorkspace):
     return fileList
 
 def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
-    '''Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, and -1 for regions of no data in the supplied raster. See also :py:func:`cat2bin`.
+    '''Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. See also :py:func:`cat2bin`.
 
     Parameters
     ----------
@@ -1023,7 +1037,7 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
         Raster of either the maximum or minumum upslope value of the parameter supplied to the function.
     '''
     
-    print()
+
     tauParams = {
         'fdr':fdr,
         'cores':cores, 
@@ -1264,7 +1278,7 @@ def findLastFACFD(facfl, fl = None):
         dat = loadRaster(fl) # load the data file
 
     cx,cy = np.where(fac==fac.max()) # find the column, row cooridnates of the max fac.
-    #print("%s,%s"%(cx,cy))
+    
     d = dat[cx,cy][0] # query the parameter grid
     
     src = rs.open(facfl) # open the fac dataset
@@ -1280,9 +1294,9 @@ def queryPoint(x,y,grd):
     Parameters
     ----------
     x : float or int
-        Horizontal coordinate in grd projection.
+        Horizontal coordinate in grid projection.
     y : float or int
-        Vertical coordinate in grd projection.
+        Vertical coordinate in grid projection.
     grd : str
         Path to raster to query based on the supplied x and y coordinates.
         
@@ -1450,7 +1464,7 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl):
     return updateDict
 
 def updateRaster(x,y,val,grd,outgrd):
-    '''Insert val into grd at location specified by x,y, writes new raster to outgrd.
+    '''Insert value into grid at location specified by x,y, writes new raster to output grid.
     
     Parameters
     ----------
@@ -1503,7 +1517,7 @@ def updateRaster(x,y,val,grd,outgrd):
     return None
 
 def makeFACweight(ingrd,outWeight):
-    '''Make FAC weighting grid of ones based on the extents of the input grid. No data cells are persisted.
+    '''Make FAC weighting grid of ones based on the extents of the input grid. No-data cells are persisted.
     
     Parameters
     ----------
@@ -1515,7 +1529,7 @@ def makeFACweight(ingrd,outWeight):
     Returns
     -------
     outWeight : raster
-        Raster of the same extent and resolution as the input grid, but filled with ones where data exist. No data cells are persisted.
+        Raster of the same extent and resolution as the input grid, but filled with ones where data exist. No-data cells are persisted.
     '''
     dat, meta = loadRaster(ingrd, returnMeta=True)
     
@@ -1660,6 +1674,8 @@ def d8todinfinity(inRast, outRast, updateDict = {
     ----------
     inRast : str
         Path to a TauDEM D-8 flow direction raster.
+    outRast : str
+        Path to output the TauDEM D-Infinity flow direction raster.
     updateDict : dict (optional)
         Dictionary of rasterio parameters used to write out the GeoTiff.
 
