@@ -4,7 +4,7 @@ HUClist = ["1002", "1003", "1004"] # HUC4 geospatial tiles to search over.
 
 inDir = "../data/cov/static" # Source parameter grid folder.
 
-CPGdir = "../FCPGs" # Output FCPG folder.
+FCPGdir = "../FCPGs" # Output FCPG folder.
 
 covList = [] #Initialize list of parameter grids.
 
@@ -13,7 +13,7 @@ if os.path.isdir(inDir):
 
         for path, subdirs, files in os.walk(inDir):
                 for name in files:
-                        #Check if file is .tif, and if so add it to covariate list
+                        #Check if file is .tif or .vrt file, and if so add it to covariate list
                         if os.path.splitext(name)[1] == ".tif" or os.path.splitext(name)[1] == ".vrt":
                                 covList.append(os.path.join(path, name))
 
@@ -27,18 +27,18 @@ if os.path.isdir(inDir):
 
                 covname = os.path.splitext(os.path.basename(cov))[0] #Get the name of the parameter grid
 
-                if os.path.isdir(CPGdir):
+                if os.path.isdir(FCPGdir):
                         for HUC in HUClist:
                                 #Create the file name corresponding to the HUC and parameter grid
-                                CPGFile = os.path.join(CPGdir, HUC,covname + "_HUC" + HUC +"_FCPG.tif") #Create filepath for parameter CPG file
+                                FCPGFile = os.path.join(FCPGdir, HUC,covname + "_HUC" + HUC +"_FCPG.tif") #Create filepath for parameter FCPG file
 
-                                if not os.path.isfile(CPGFile):
-                                        print("Missing File: {0}".format(CPGFile))
-                                        missingList.append(CPGFile)
+                                if not os.path.isfile(FCPGFile):
+                                        print("Missing File: {0}".format(FCPGFile))
+                                        missingList.append(FCPGFile)
 
                         
                 else:
-                        print("Error FCPG directory does  not exist: {0}".format(CPGdir))
+                        print("Error FCPG directory does  not exist: {0}".format(FCPGdir))
                         
         print("{0} missing files found".format(len(missingList)))
 

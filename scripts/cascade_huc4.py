@@ -12,6 +12,7 @@ downstreamFACWeight = '' # Path to the downstream FAC weighting grid. This is wh
 downstreamAdjFAC = '' # Path to output the adjusted FAC weighting grid.
 wbdPth = '' # Path to the watershed boundary dataset for the HUC-2 region you are working in.
 dstCRS = '' # Proj4 represenation of the projection that the FCPGs will be in.
+cores = 6 #Number of cores to use for fcpg.adjustFAC() function
 
 # Define upstream and downstream basins.
 upstream = ''
@@ -36,4 +37,4 @@ newX,newY,maxFAC = zip(*pourPoints)
 fcpg.createUpdateDict(newX,newY,maxFAC,upstream,updateDict)
 
 # Update the downstream basin using the update dictionary.
-fcpg.adjustFAC(downstreamFACfltau,downstreamFACWeight,updateDict,downstreamFDRfltau,downstreamAdjFAC, cores=6) # note that this tool will create downstreamFACWeight if it does not exist based on downstreamFACfltau, see function documentation.
+fcpg.adjustFAC(downstreamFACfltau,downstreamFACWeight,updateDict,downstreamFDRfltau,downstreamAdjFAC, cores=cores) # note that this tool will create downstreamFACWeight if it does not exist based on downstreamFACfltau, see function documentation.
