@@ -21,13 +21,13 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'Flow-Conditioned Parameter Grid Tools'
-copyright = '2020, Theodore Barnhart, Roy Sando, Seth Siefkin, Peter McCarthy, and Al Rea'
-author = 'Theodore Barnhart, Roy Sando, Seth Siefkin, Peter McCarthy, and Al Rea'
+copyright = 'Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea'
+author = 'Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea'
 
 # The short X.Y version
-version = '0.9.0'
+version = '1.0.0'
 # The full version, including alpha/beta/rc tags
-release = '0.9.0'
+release = '1.0.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -46,6 +46,7 @@ extensions = [
     'sphinx.ext.githubpages',
     'numpydoc',
     'sphinx_rtd_theme',
+    'sphinxcontrib.bibtex',
 ]
 
 autodoc_mock_imports = [

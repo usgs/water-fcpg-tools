@@ -50,7 +50,7 @@ def tauDrainDir(inRast, outRast, updateDict = {
             'blockxsize':256,
             'driver' : "GTiff",
             'nodata':0}):
-    """Reclassifies ESRI drainage directions into tauDEM drainage directions.
+    """Reclassifies ESRI flow directions into TauDEM flow directions.
 
     Parameters
     ----------
@@ -105,7 +105,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
     Parameters
     ----------
     paramRast : str 
-        Raster of parameter values to acumulate, this file is modified by the function.
+        Raster of parameter values to accumulate; this file is modified by the function.
     fdr : str
         Flow direction raster in TauDEM format.
     accumRast : str
@@ -127,6 +127,13 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         Raster of no data values.
     outNoDataRast : raster
         Raster of accumulated no data values.
+
+    Notes
+    -----
+	If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied it will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast. It will then save a raster with all no data values set to one and other values set to zero (outNoDataRast) and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the zeroNoDataRast, and a subsequent correction will be needed in the make_fcpg() function based on the values in the outNoDataAccum raster. 
+
+	If some of the output file locations for handling no data values aren’t supplied or “no data” values aren’t present in the parameter grid, it will simply accumulate the parameter grid. If “no data” values are present, this will result in them being propagated downstream. 
+
     """
 
     if not os.path.isfile(paramRast):
@@ -474,14 +481,14 @@ def makeDecayGrid(d2strm, k, outRast):
     d2strm : str
         Path to raster of flow distances from each grid cell to the nearest stream.
     k : float
-        Constant applied to decay factor denominator, this has units equal to the horizontal map units in the d2strm raster.
+        Constant applied to decay factor denominator; this has units equal to the horizontal map units in the d2strm raster.
     outRast : str
         Output file path for decay grid.
 
     Returns
     -------
         outRast : raster
-            Raster file with grid cells values representing weights decaying as they move further from the stream.
+            Raster file with grid cells values representing weights decaying as a function of the distance to stream.
     '''
     if not os.path.isfile(d2strm):
         print("Error - Stream distance raster file is missing!")
@@ -591,7 +598,7 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
     Parameters
     ----------
     ang : str
-        Path to flow angle raster from the TauDEM Dinfinity flow direction tool.
+        Path to flow angle raster from the TauDEM D-Infinity flow direction tool.
     mult : str
         Path to raster of multiplier values applied to upstream accumulations, 1 corresponds to no decay, 0 corresponds to complete decay.
     outRast : str
@@ -668,7 +675,7 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1) :
     Returns
     -------
     outRast : raster 
-        Raster with values of d8 flow distance from each cell to the nearest stream.
+        Raster with values of D-8 flow distance from each cell to the nearest stream.
     '''
 
     try:
@@ -698,7 +705,7 @@ def maskStreams(inRast, streamRast, outRast):
     inRast : str
         Path to the input raster to mask.
     streamRast : str
-        Path to the stream raster where all non-stream pixels set to no data.
+        Path to the stream raster where all non-stream cells are set to no data.
     outRast : str
         Path to output raster file.
 
@@ -834,7 +841,7 @@ def make_fcpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"):
     fac : str
         Path to the flow accumulation raster.
     outWorkspace : str
-        Path to an oiutput directory for produced FCPGs.
+        Path to an output directory for produced FCPGs.
     minAccum : int (optional)
         Minimum accumulation value below which the output FCPG will be turned to no data values. Defaults to None.
     appStr : str (optional)
@@ -923,7 +930,7 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
     Parameters
     ----------
     data : np.array
-        Numpy arrary of raster data to convert to binary.
+        Numpy array of raster data to convert to binary.
     val : int
         Raster value to extract binary for from data.
     nodata : int or float
@@ -934,7 +941,9 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
         Base name for the output rasters.
     ext : str
         File extension for output rasters.
-        
+    profile : dict
+    	Rasterio metadata dictionary decribing the properties used to create the output raster.
+
     Returns
     -------
     catRaster : str
@@ -992,27 +1001,9 @@ def tauFlowAccum(fdr, accumRast, cores = 1):
         print('Error Accumulating Data')
         traceback.print_exc()
 
-# def downloadNHDPlusRaster(HUC4, fileDir):
-#     '''
-#     Inputs:
-        
-#         HUC4 - 4 digit HUC to download NHDPlus raster data for
-#         fileDir - Directory in which to save NHDPlus data
-
-#     Outputs:
-#         NHDPlus raster files saved to directory
-
-#     '''
-#     compressedFile = os.path.join(fileDir, str(HUC4) + "_RASTER.7z")
-#     print("Downloading File: " + compressedFile)
-#     urllib.request.urlretrieve("https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHDPlus/HU4/HighResolution/GDB/NHDPLUS_H_%s_HU4_RASTER.7z"%str(HUC4), compressedFile)
-
-#     print("Extracting File...")
-#     os.system("7za x {0} -o{1}".format(compressedFile,fileDir))
-
 def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac = None, thresh = None):
     '''
-    Wrapper for the TauDEM extreme upslope value function.
+    Wrapper for the TauDEM D8 Extreme Upslope Value function :cite:`TauDEM`.
 
     Parameters
     ----------
@@ -1034,7 +1025,7 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
     Returns
     -------
     output : raster
-        Raster of either the maximum or minumum upslope value of the parameter supplied to the function.
+        Raster of either the maximum or minumum upslope value of the parameter grid supplied to the function.
     '''
     
 
@@ -1051,7 +1042,7 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
     else: # no flag for max
         cmd = 'mpiexec -bind-to rr -n {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
 
-    print(cmd)
+    print(cmd) # print the command to be run to the output.
     result = subprocess.run(cmd, shell = True) # Run shell command
         
     result.stdout
@@ -1106,7 +1097,7 @@ def getHUC4(HUC12):
     Parameters
     ----------
     HUC12 : str
-        Text representation of the 12-digit HUC12 code.
+        Text representation of the HUC12 identifier.
 
     Returns
     -------
@@ -1155,7 +1146,7 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins = False):
     Returns
     -------
     finalPoints : list
-        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not FCPGed) upstream parameter grids for information to cascade down to 
+        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not FCPGed) upstream parameter grids for information to cascade down to the next hydrologic region / geospatial tile downstream. 
     '''
     pourPoints = []
     for i in range(len(pourBasins)):
@@ -1306,30 +1297,31 @@ def queryPoint(x,y,grd):
         Value queried from the supplied raster.
     '''
     
+    # loop construct is to deal with src.sample returning an array, only the value is needed.
     with rs.open(grd) as src:
         for i in src.sample([(x,y)],1):
             return i[0]
 
 def FindDownstreamCellTauDir(d,x,y,w):
-    '''Find downstream cell given the flow direction of a cell using TauDEM flow directions.
+    '''Find downstream cell given the flow direction of a reference cell using TauDEM flow directions.
     
     Parameters
     ----------
     d : int
-        Flow direction of cell to find downstream cell of.
+        Flow direction of the reference cell.
     x : float
         Horizontal coordinate (either projected or unprojected).
     y : float
         Vertical coordinate (either projected or unprojected).
     w : float
-        Cell size in map units.
+        Cell size, in map units.
         
     Returns
     -------
     x : float
         Horizontal coordinate of the downstream cell.
     y : float
-        Verital coordinate of the downstream cell.
+        Vertical coordinate of the downstream cell.
     '''
     
     # figure out how to correct the point location
@@ -1464,7 +1456,7 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl):
     return updateDict
 
 def updateRaster(x,y,val,grd,outgrd):
-    '''Insert value into grid at location specified by x,y, writes new raster to output grid.
+    '''Insert value into grid at location specified by x,y; writes new raster to output grid.
     
     Parameters
     ----------
@@ -1482,7 +1474,7 @@ def updateRaster(x,y,val,grd,outgrd):
     Returns
     -------
     dat : raster
-        Writes raster dataset to supplied grdout destination.
+        Raster dataset written to grdout.
     '''
     
     if type(x) != list:

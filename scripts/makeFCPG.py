@@ -1,4 +1,4 @@
-import FCPGtools as fc
+import FCPGtools as fcpg
 import os
 import datetime
 import sys
@@ -13,8 +13,8 @@ workDir = sys.argv[4] # Path to working directory
 outDir = sys.argv[5] # Path to output directory for FCPG files
 cores = int(sys.argv[6]) # Number of cores to use 
 accumThresh = int(sys.argv[7]) # Number of cells in flow accumulation grid below which FCPG will be set to no data
-overwrite = fc.parsebool(sys.argv[8]) # Whether to overwrite CPGs or not 
-deleteTemp = fc.parsebool(sys.argv[9]) # Whether to delete temporary files
+overwrite = fcpg.parsebool(sys.argv[8]) # Whether to overwrite CPGs or not 
+deleteTemp = fcpg.parsebool(sys.argv[9]) # Whether to delete temporary files
 
 print("Starting FCPG process for:")
 print("Parameter Raster: {0}".format(paramRast))
@@ -49,15 +49,15 @@ if os.path.isfile(CPGFile) & (overwrite == False):
 else:
         #Run the FCPG tools
         print("Calling resample function {0}".format(datetime.datetime.now()))
-        fc.resampleParam(paramRast, taufdr, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
+        fcpg.resampleParam(paramRast, taufdr, rprjFile, resampleMethod="bilinear", cores=cores) #Resample and reprojected parameter raster
         print("Calling flow accumulation function {0}".format(datetime.datetime.now()))
-        fc.accumulateParam(rprjFile, taufdr, accumFile, outNoDataRast=nodataFile, outNoDataAccum=nodataaccumFile, zeroNoDataRast=zeronodataFile, cores=cores) #Accumulate parameter
+        fcpg.accumulateParam(rprjFile, taufdr, accumFile, outNoDataRast=nodataFile, outNoDataAccum=nodataaccumFile, zeroNoDataRast=zeronodataFile, cores=cores) #Accumulate parameter
         print("Calling make_cpg function {0}".format(datetime.datetime.now()))
         if os.path.isfile(nodataaccumFile):
                 #If no data accumulation file was created, use it in call to create FCPG
-                fc.make_cpg(accumFile, taufac, CPGFile, noDataRast=nodataaccumFile, minAccum=accumThresh) #Create parameter FCPG with no data raster.
+                fcpg.make_cpg(accumFile, taufac, CPGFile, noDataRast=nodataaccumFile, minAccum=accumThresh) #Create parameter FCPG with no data raster.
         else:
-                fc.make_cpg(accumFile, taufac, CPGFile,  minAccum=accumThresh) #Create parameter FCPG without no data raster.
+                fcpg.make_cpg(accumFile, taufac, CPGFile,  minAccum=accumThresh) #Create parameter FCPG without no data raster.
         
         if deleteTemp:
                 try:

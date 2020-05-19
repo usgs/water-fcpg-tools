@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>netCDFmaker &mdash; Flow-Conditioned Parameter Grid Tools 0.9.0 documentation</title>
+  <title>netCDFmaker &mdash; Flow-Conditioned Parameter Grid Tools 1.0.0 documentation</title>
   
 
   
@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.9.0
+                1.0.0
               </div>
             
           
@@ -87,6 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cookbook.html">Cookbook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../functions.html">Function Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../z_references.html">References</a></li>
 </ul>
 
             
@@ -200,7 +201,7 @@
 <span class="kn">import</span> <span class="nn">glob</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
-<div class="viewcode-block" id="buildNC"><a class="viewcode-back" href="../functions.html#netCDFmaker.buildNC">[docs]</a><span class="k">def</span> <span class="nf">buildNC</span><span class="p">(</span><span class="n">inDir</span><span class="p">,</span> <span class="n">outFile</span><span class="p">,</span> <span class="n">metaDict</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mi">9</span><span class="p">):</span>
+<div class="viewcode-block" id="buildNC"><a class="viewcode-back" href="../functions.html#netCDFmaker.buildNC">[docs]</a><span class="k">def</span> <span class="nf">buildNC</span><span class="p">(</span><span class="n">inDir</span><span class="p">,</span> <span class="n">outFile</span><span class="p">,</span> <span class="n">metaDict</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 	<span class="sd">&#39;&#39;&#39;Build netCDF file from a stack of geotiffs.</span>
 
 <span class="sd">	Parameters</span>
@@ -213,6 +214,8 @@
 <span class="sd">		Metadata dictionary used to populate fields in the netCDF. See Notes below for a description of fields to include.</span>
 <span class="sd">	cl : int</span>
 <span class="sd">		Compression level, 1-9. A higher value will result in a smaller output file, but will take longer.</span>
+<span class="sd">	profile : dict (optional)</span>
+<span class="sd">		Projection parameters to make the NetCDF file CF compliant. Defaults to USGS Albers Equal Area if nothing is supplied.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
@@ -223,7 +226,7 @@
 <span class="sd">	-----</span>
 <span class="sd">	*Metadata Dictionary*</span>
 <span class="sd">	</span>
-<span class="sd">	The metadata dictionary is expecting a particular set of keys to specify the metadata fields within the netCDF file being generated. These fields have been chose to make the resulting netCDF file compliant with the Climate and Forecast and the Data Discovery metadata conventions. Fields are described below, many descriptions are the same as http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents or http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3. </span>
+<span class="sd">	The metadata dictionary is expecting a particular set of keys to specify the metadata fields within the netCDF file being generated. These fields were chosen to make the resulting netCDF file compliant with the Climate and Forecast and the Data Discovery metadata conventions. Fields are described below, many descriptions are the same as http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents or http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3. </span>
 
 <span class="sd">	title</span>
 <span class="sd">		A succinct description of what is in the dataset.</span>
@@ -285,6 +288,31 @@
 <span class="sd">		Numeric value the data are scaled by to save space, usually 1.0 if data are not scaled.</span>
 <span class="sd">	coverage_content_type</span>
 <span class="sd">		An ISO 19115-1 code to indicate the source of the data (image, thematicClassification, physicalMeasurement, auxiliaryInformation, qualityInformation, referenceInformation, modelResult, or coordinate).</span>
+
+<span class="sd">	*Profile*</span>
+<span class="sd">	</span>
+<span class="sd">	The projection parameters needed and values for USGS Albers Equal Area (AEA) are supplied below.</span>
+
+<span class="sd">	grid_mapping_name (&#39;albers_conical_equal_area&#39;)</span>
+<span class="sd">		The name of the projection to use as a string.</span>
+<span class="sd">	standard_parallel ([45.5, 29.5])</span>
+<span class="sd">		Parallels for the projection as a list of floats. May differ for non-AEA projections; however, this work should be done with equal-area projections.</span>
+<span class="sd">	latitude_of_projection_origin (23.0)</span>
+<span class="sd">		Origin latitude as a float.</span>
+<span class="sd">	longitude_of_central_meridian (-96.0)</span>
+<span class="sd">		Central Meridian as a float.</span>
+<span class="sd">	false_easting (0)</span>
+<span class="sd">		Flase easting parameter as a float.</span>
+<span class="sd">	false_northing (0)</span>
+<span class="sd">		False northing parameter as a float.</span>
+<span class="sd">	semi_major_axis (6378137.0)</span>
+<span class="sd">		Ellipse parameter as a float.</span>
+<span class="sd">	inverse_flattening (298.257222101)</span>
+<span class="sd">		Ellipse parameter as a float.</span>
+<span class="sd">	unit (&#39;m&#39;)</span>
+<span class="sd">		Map units to use for the projection as a string.</span>
+<span class="sd">	wkt</span>
+<span class="sd">		Well known text (WKT) representation of the above projection parameters, e.g. &#39;PROJCS[\&quot;USA_Contiguous_Albers_Equal_Area_Conic_USGS_version\&quot;, GEOGCS[\&quot;GCS_North_American_1983\&quot;, DATUM[\&quot;D_North_American_1983\&quot;, SPHEROID[\&quot;GRS_1980\&quot;,6378137.0,298.257222101]], PRIMEM[\&quot;Greenwich\&quot;,0.0], UNIT[\&quot;Degree\&quot;,0.0174532925199433]], PROJECTION[\&quot;Albers\&quot;], PARAMETER[\&quot;False_Easting\&quot;,0.0], PARAMETER[\&quot;False_Northing\&quot;,0.0], PARAMETER[\&quot;Central_Meridian\&quot;,-96.0], PARAMETER[\&quot;Standard_Parallel_1\&quot;,29.5], PARAMETER[\&quot;Standard_Parallel_2\&quot;,45.5], PARAMETER[\&quot;Latitude_Of_Origin\&quot;,23.0], UNIT[\&quot;Meter\&quot;,1]]&#39;</span>
 <span class="sd">	&#39;&#39;&#39;</span>
 	<span class="n">strt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="c1"># start timing</span>
 
@@ -297,6 +325,21 @@
 	<span class="c1">#netCDFparam = &#39;gridMET_minTempK&#39;</span>
 	<span class="c1">#inDir = &quot;data/cpgs_to_netCDF/*.tif&quot;</span>
 	<span class="c1">#cl = 9</span>
+
+	<span class="k">if</span> <span class="n">profile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># set the profile to USGS AEA if nothing is supplied.</span>
+		<span class="n">profile</span> <span class="o">=</span> <span class="p">{</span>
+			<span class="s1">&#39;grid_mapping_name&#39;</span> <span class="p">:</span> <span class="s1">&#39;albers_conical_equal_area&#39;</span><span class="p">,</span>
+			<span class="s1">&#39;standard_parallel&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">45.5</span><span class="p">,</span> <span class="mf">29.5</span><span class="p">],</span>
+			<span class="s1">&#39;latitude_of_projection_origin&#39;</span> <span class="p">:</span> <span class="mf">23.0</span><span class="p">,</span>
+			<span class="s1">&#39;longitude_of_central_meridian&#39;</span> <span class="p">:</span> <span class="o">-</span><span class="mf">96.0</span><span class="p">,</span>
+			<span class="s1">&#39;false_easting&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+			<span class="s1">&#39;false_northing&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+			<span class="s1">&#39;semi_major_axis&#39;</span> <span class="p">:</span> <span class="mf">6378137.0</span><span class="p">,</span>
+			<span class="s1">&#39;inverse_flattening&#39;</span> <span class="p">:</span> <span class="mf">298.257222101</span><span class="p">,</span>
+			<span class="s1">&#39;unit&#39;</span> <span class="p">:</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span>
+			<span class="s1">&#39;wkt&#39;</span> <span class="p">:</span> <span class="s1">&#39;PROJCS[</span><span class="se">\&quot;</span><span class="s1">USA_Contiguous_Albers_Equal_Area_Conic_USGS_version</span><span class="se">\&quot;</span><span class="s1">,GEOGCS[</span><span class="se">\&quot;</span><span class="s1">GCS_North_American_1983</span><span class="se">\&quot;</span><span class="s1">,DATUM[</span><span class="se">\&quot;</span><span class="s1">D_North_American_1983</span><span class="se">\&quot;</span><span class="s1">,SPHEROID[</span><span class="se">\&quot;</span><span class="s1">GRS_1980</span><span class="se">\&quot;</span><span class="s1">,6378137.0,298.257222101]],PRIMEM[</span><span class="se">\&quot;</span><span class="s1">Greenwich</span><span class="se">\&quot;</span><span class="s1">,0.0],UNIT[</span><span class="se">\&quot;</span><span class="s1">Degree</span><span class="se">\&quot;</span><span class="s1">,0.0174532925199433]],PROJECTION[</span><span class="se">\&quot;</span><span class="s1">Albers</span><span class="se">\&quot;</span><span class="s1">],PARAMETER[</span><span class="se">\&quot;</span><span class="s1">False_Easting</span><span class="se">\&quot;</span><span class="s1">,0.0],PARAMETER[</span><span class="se">\&quot;</span><span class="s1">False_Northing</span><span class="se">\&quot;</span><span class="s1">,0.0],PARAMETER[</span><span class="se">\&quot;</span><span class="s1">Central_Meridian</span><span class="se">\&quot;</span><span class="s1">,-96.0],PARAMETER[</span><span class="se">\&quot;</span><span class="s1">Standard_Parallel_1</span><span class="se">\&quot;</span><span class="s1">,29.5],PARAMETER[</span><span class="se">\&quot;</span><span class="s1">Standard_Parallel_2</span><span class="se">\&quot;</span><span class="s1">,45.5], PARAMETER[</span><span class="se">\&quot;</span><span class="s1">Latitude_Of_Origin</span><span class="se">\&quot;</span><span class="s1">,23.0], UNIT[</span><span class="se">\&quot;</span><span class="s1">Meter</span><span class="se">\&quot;</span><span class="s1">,1]]&#39;</span>
+				<span class="p">}</span>
+
 
 	<span class="c1"># refer to http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3 and http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents for metadata entry descriptions.</span>
 
@@ -357,6 +400,9 @@
 		<span class="n">ncDataType</span> <span class="o">=</span> <span class="s1">&#39;f4&#39;</span>
 	<span class="k">elif</span> <span class="n">dataType</span> <span class="o">==</span> <span class="s1">&#39;int32&#39;</span><span class="p">:</span>
 		<span class="n">ncDataType</span> <span class="o">=</span> <span class="s1">&#39;i4&#39;</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: unsupported data type&quot;</span><span class="p">)</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
 	<span class="n">basedate</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1900</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="c1">#Set basedate to January 1, 1900</span>
 
@@ -424,31 +470,21 @@
 	<span class="n">xo</span><span class="p">[:]</span><span class="o">=</span><span class="n">x</span>
 	<span class="n">yo</span><span class="p">[:]</span><span class="o">=</span><span class="n">y</span>
 
-	<span class="c1">#Define coordinate system for Albers Equal Area Conic USGS version</span>
-	<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">	Should we make this a dictionary so / automatically create this from the input files?</span>
-<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c1">#Define coordinate system</span>
 	<span class="n">crso</span> <span class="o">=</span> <span class="n">nco</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;crs&#39;</span><span class="p">,</span><span class="s1">&#39;i4&#39;</span><span class="p">)</span> <span class="c1">#i4 = 32 bit signed int</span>
-	<span class="n">crso</span><span class="o">.</span><span class="n">grid_mapping_name</span><span class="o">=</span><span class="s1">&#39;albers_conical_equal_area&#39;</span>
+	<span class="n">crso</span><span class="o">.</span><span class="n">grid_mapping_name</span><span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s1">&#39;grid_mapping_name&#39;</span><span class="p">]</span>
 	<span class="c1">#crso.standard_parallel_1 = 29.5</span>
 	<span class="c1">#crso.standard_parallel_2 = 45.5</span>
-	<span class="n">crso</span><span class="o">.</span><span class="n">standard_parallel</span> <span class="o">=</span> <span class="p">[</span><span class="mf">45.5</span><span class="p">,</span> <span class="mf">29.5</span><span class="p">]</span>
-	<span class="n">crso</span><span class="o">.</span><span class="n">latitude_of_projection_origin</span> <span class="o">=</span> <span class="mf">23.0</span>
-	<span class="n">crso</span><span class="o">.</span><span class="n">longitude_of_central_meridian</span> <span class="o">=</span> <span class="o">-</span><span class="mf">96.0</span>
-	<span class="n">crso</span><span class="o">.</span><span class="n">false_easting</span> <span class="o">=</span> <span class="mi">0</span>
-	<span class="n">crso</span><span class="o">.</span><span class="n">false_northing</span> <span class="o">=</span> <span class="mi">0</span>
-	<span class="n">crso</span><span class="o">.</span><span class="n">semi_major_axis</span> <span class="o">=</span> <span class="mf">6378137.0</span>
-	<span class="n">crso</span><span class="o">.</span><span class="n">inverse_flattening</span> <span class="o">=</span> <span class="mf">298.257222101</span>
-	<span class="n">crso</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span>
-	<span class="n">wkt</span> <span class="o">=</span> <span class="s1">&#39;PROJCS[</span><span class="se">\&quot;</span><span class="s1">USA_Contiguous_Albers_Equal_Area_Conic_USGS_version</span><span class="se">\&quot;</span><span class="s1">,GEOGCS[</span><span class="se">\&quot;</span><span class="s1">GCS_North_American_1983</span><span class="se">\&quot;</span><span class="s1">,DATUM[</span><span class="se">\&quot;</span><span class="s1">D_North_American_1983</span><span class="se">\&quot;</span><span class="s1">,SPHEROID[</span><span class="se">\&quot;</span><span class="s1">GRS_1980</span><span class="se">\&quot;</span><span class="s1">,6378137.0,298.257222101]],PRIMEM[</span><span class="se">\&quot;</span><span class="s1">Greenwich</span><span class="se">\&quot;</span><span class="s1">,0.0],UNIT[</span><span class="se">\&quot;</span><span class="s1">Degree</span><span class="se">\&quot;</span><span class="s1">,0.0174532925199433]],PROJECTION[</span><span class="se">\&quot;</span><span class="s1">Albers</span><span class="se">\&quot;</span><span class="s1">],PARAMETER[</span><span class="se">\&quot;</span><span class="s1">False_Easting</span><span class="se">\&quot;</span><span class="s1">,0.0],PARAMETER[</span><span class="se">\&quot;</span><span class="s1">False_Northing</span><span class="se">\&quot;</span><span class="s1">,0.0],PARAMETER[</span><span class="se">\&quot;</span><span class="s1">Central_Meridian</span><span class="se">\&quot;</span><span class="s1">,-96.0],PARAMETER[</span><span class="se">\&quot;</span><span class="s1">Standard_Parallel_1</span><span class="se">\&quot;</span><span class="s1">,29.5],PARAMETER[</span><span class="se">\&quot;</span><span class="s1">Standard_Parallel_2</span><span class="se">\&quot;</span><span class="s1">,45.5], PARAMETER[</span><span class="se">\&quot;</span><span class="s1">Latitude_Of_Origin</span><span class="se">\&quot;</span><span class="s1">,23.0], UNIT[</span><span class="se">\&quot;</span><span class="s1">Meter</span><span class="se">\&quot;</span><span class="s1">,1]]&#39;</span>
-	<span class="n">crso</span><span class="o">.</span><span class="n">crs_wkt</span> <span class="o">=</span> <span class="n">wkt</span>
-	<span class="n">crso</span><span class="o">.</span><span class="n">spatial_ref</span> <span class="o">=</span> <span class="n">wkt</span>
-	<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">	We might need to implement the metadata here by passing the script a dictionary...</span>
-
-<span class="sd">	We should also look to see if we can make the netCDF ISO 19115 compliant so that we can put these bad boys on sciencebase.</span>
-<span class="sd">	&#39;&#39;&#39;</span>
-
+	<span class="n">crso</span><span class="o">.</span><span class="n">standard_parallel</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s1">&#39;standard_parallel&#39;</span><span class="p">]</span> 
+	<span class="n">crso</span><span class="o">.</span><span class="n">latitude_of_projection_origin</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s1">&#39;latitude_of_projection_origin&#39;</span><span class="p">]</span>
+	<span class="n">crso</span><span class="o">.</span><span class="n">longitude_of_central_meridian</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s1">&#39;longitude_of_central_meridian&#39;</span><span class="p">]</span>
+	<span class="n">crso</span><span class="o">.</span><span class="n">false_easting</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s1">&#39;false_easting&#39;</span><span class="p">]</span>
+	<span class="n">crso</span><span class="o">.</span><span class="n">false_northing</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s1">&#39;false_northing&#39;</span><span class="p">]</span>
+	<span class="n">crso</span><span class="o">.</span><span class="n">semi_major_axis</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s1">&#39;semi_major_axis&#39;</span><span class="p">]</span>
+	<span class="n">crso</span><span class="o">.</span><span class="n">inverse_flattening</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s1">&#39;inverse_flattening&#39;</span><span class="p">]</span>
+	<span class="n">crso</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s1">&#39;unit&#39;</span><span class="p">]</span>
+	<span class="n">crso</span><span class="o">.</span><span class="n">crs_wkt</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s1">&#39;wkt&#39;</span><span class="p">]</span>
+	<span class="n">crso</span><span class="o">.</span><span class="n">spatial_ref</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s1">&#39;wkt&#39;</span><span class="p">]</span>
 
 	<span class="c1"># create short integer variable for temperature data, with chunking</span>
 	<span class="n">tmno</span> <span class="o">=</span> <span class="n">nco</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">metaDict</span><span class="p">[</span><span class="s1">&#39;var_name&#39;</span><span class="p">],</span> <span class="n">ncDataType</span><span class="p">,</span>  <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">),</span> <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">NoData</span><span class="p">,</span> <span class="n">complevel</span><span class="o">=</span><span class="n">cl</span><span class="p">,</span> <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1">#Create variable, compress with gzip (zlib=True)</span>
@@ -468,8 +504,7 @@
 		<span class="n">source</span> <span class="o">=</span> <span class="n">baseName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 		<span class="n">param</span> <span class="o">=</span> <span class="n">baseName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
-		<span class="c1">#if source + &quot;_&quot; + param == netCDFparam: # test if netCDF file is correct.</span>
-		<span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
 		<span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">5</span><span class="p">])</span>
 		<span class="n">month</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span>
 		<span class="n">day</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span>
@@ -480,9 +515,6 @@
 
 		<span class="c1">#Try reading with rasterio</span>
 		<span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load accumulated data and no data rasters</span>
-		<span class="c1">#data = ds.read(1)</span>
-		<span class="c1">#print(np.shape(data))</span>
-		<span class="c1">#print(np.shape(tmno[itime,:,:]))</span>
 			<span class="n">tmno</span><span class="p">[</span><span class="n">itime</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 		<span class="n">itime</span><span class="o">=</span><span class="n">itime</span><span class="o">+</span><span class="mi">1</span>
@@ -503,7 +535,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Theodore Barnhart, Roy Sando, Seth Siefkin, Peter McCarthy, and Al Rea
+        &copy; Copyright Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea
 
     </p>
   </div>

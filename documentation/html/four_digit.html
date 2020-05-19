@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Cascade Four-Digit Hydrologic Regions &mdash; Flow-Conditioned Parameter Grid Tools 0.9.0 documentation</title>
+  <title>Cascade Four-Digit Hydrologic Regions &mdash; Flow-Conditioned Parameter Grid Tools 1.0.0 documentation</title>
   
 
   
@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.9.0
+                1.0.0
               </div>
             
           
@@ -88,20 +88,21 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="cookbook.html">Cookbook</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="batch_fcpgs_hpc.html">Batch FCPG Creation on an HPC</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="cascade_fcpg.html">Cascade FCPG results between geospatial tiles</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Cascade Four-Digit Hydrologic Regions</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#example-huc-4-cascading-work-flow">Example HUC-4 Cascading Work Flow</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cookbook.html#input-data">Input Data</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="make_TauDEM_files.html">Generate TauDEM Files From An ESRI Flow Direction Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="batch_fcpgs_hpc.html">Batch FCPG Creation on an HPC</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="cascade_fcpg.html">Cascade FCPG results between geospatial tiles</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Cascade Four-Digit Hydrologic Regions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="two_digit.html">Cascade Two-Digit Hydrologic Regions</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="two_digit.html">Cascade Two-Digit Hydrologic Regions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_missing.html">Detect Missing FCPGs</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="detect_missing.html">Detect Missing FCPGs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="make_TauDEM_files.html">Generate TauDEM Files From An ESRI Flow Direction Grid</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
 </ul>
 
             
@@ -212,8 +213,7 @@
 35
 36
 37
-38
-39</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FCPGtools</span> <span class="kn">as</span> <span class="nn">fcpg</span> <span class="c1"># Import the tools. </span>
+38</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FCPGtools</span> <span class="kn">as</span> <span class="nn">fcpg</span> <span class="c1"># Import the tools. </span>
 <span class="kn">import</span> <span class="nn">geopandas</span> <span class="kn">as</span> <span class="nn">gpd</span>
 
 <span class="c1"># Define the file input and output paths and the upstream region.</span>
@@ -221,12 +221,11 @@
 <span class="n">upstreamFDRfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Upstream flow direction grid in TauDEM format.</span>
 <span class="n">downstreamFACfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Downstream flow accumuation grid from TauDEM.</span>
 <span class="n">downstreamFDRfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Downstream flow direction grid in TauDEM format.</span>
-<span class="n">region</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Hydrologic region to make the update dictionary for.</span>
 <span class="n">updateDict</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to the update dictionary to create.</span>
 <span class="n">downstreamFACWeight</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to the downstream FAC weighting grid. This is where the upstream value will be inserted.</span>
 <span class="n">downstreamAdjFAC</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to output the adjusted FAC weighting grid.</span>
 <span class="n">wbdPth</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to the watershed boundary dataset for the HUC-2 region you are working in.</span>
-<span class="n">dstCRS</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Proj4 represenation of the projection that the FCPGs will be in.</span>
+<span class="n">cores</span> <span class="o">=</span> <span class="mi">6</span> <span class="c1">#Number of cores to use for fcpg.adjustFAC() function</span>
 
 <span class="c1"># Define upstream and downstream basins.</span>
 <span class="n">upstream</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
@@ -246,12 +245,12 @@
 <span class="c1"># Find pour points between the upstream and downstream basins.</span>
 <span class="n">pourPoints</span> <span class="o">=</span> <span class="n">fcpg</span><span class="o">.</span><span class="n">findPourPoints</span><span class="p">(</span><span class="n">pourBasins</span><span class="p">,</span> <span class="n">upstreamFACfltau</span><span class="p">,</span> <span class="n">upstreamFDRfltau</span><span class="p">,</span> <span class="n">plotBasins</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
 
-<span class="c1"># create update dictionary from the pour points.</span>
+<span class="c1"># Create update dictionary from the pour points.</span>
 <span class="n">newX</span><span class="p">,</span><span class="n">newY</span><span class="p">,</span><span class="n">maxFAC</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">pourPoints</span><span class="p">)</span>
 <span class="n">fcpg</span><span class="o">.</span><span class="n">createUpdateDict</span><span class="p">(</span><span class="n">newX</span><span class="p">,</span><span class="n">newY</span><span class="p">,</span><span class="n">maxFAC</span><span class="p">,</span><span class="n">upstream</span><span class="p">,</span><span class="n">updateDict</span><span class="p">)</span>
 
 <span class="c1"># Update the downstream basin using the update dictionary.</span>
-<span class="n">fcpg</span><span class="o">.</span><span class="n">adjustFAC</span><span class="p">(</span><span class="n">downstreamFACfltau</span><span class="p">,</span><span class="n">downstreamFACWeight</span><span class="p">,</span><span class="n">updateDict</span><span class="p">,</span><span class="n">downstreamFDRfltau</span><span class="p">,</span><span class="n">downstreamAdjFAC</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span> <span class="c1"># note that this tool will create downstreamFACWeight if it does not exist based on downstreamFACfltau, see function documentation.</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">adjustFAC</span><span class="p">(</span><span class="n">downstreamFACfltau</span><span class="p">,</span><span class="n">downstreamFACWeight</span><span class="p">,</span><span class="n">updateDict</span><span class="p">,</span><span class="n">downstreamFDRfltau</span><span class="p">,</span><span class="n">downstreamAdjFAC</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1"># note that this tool will create downstreamFACWeight if it does not exist based on downstreamFACfltau, see function documentation.</span>
 </pre></div>
 </td></tr></table></div>
 </div>
@@ -277,7 +276,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Theodore Barnhart, Roy Sando, Seth Siefkin, Peter McCarthy, and Al Rea
+        &copy; Copyright Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea
 
     </p>
   </div>

@@ -48,7 +48,7 @@ import sys
 import glob
 import time
 
-def buildNC(inDir, outFile, metaDict, cl=9):
+def buildNC(inDir, outFile, metaDict, cl=9, profile = None):
 	'''Build netCDF file from a stack of geotiffs.
 
 	Parameters
@@ -61,6 +61,8 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 		Metadata dictionary used to populate fields in the netCDF. See Notes below for a description of fields to include.
 	cl : int
 		Compression level, 1-9. A higher value will result in a smaller output file, but will take longer.
+	profile : dict (optional)
+		Projection parameters to make the NetCDF file CF compliant. Defaults to USGS Albers Equal Area if nothing is supplied.
 
 	Returns
 	-------
@@ -71,7 +73,7 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 	-----
 	*Metadata Dictionary*
 	
-	The metadata dictionary is expecting a particular set of keys to specify the metadata fields within the netCDF file being generated. These fields have been chosen to make the resulting netCDF file compliant with the Climate and Forecast and the Data Discovery metadata conventions. Fields are described below, many descriptions are the same as http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents or http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3. 
+	The metadata dictionary is expecting a particular set of keys to specify the metadata fields within the netCDF file being generated. These fields were chosen to make the resulting netCDF file compliant with the Climate and Forecast and the Data Discovery metadata conventions. Fields are described below, many descriptions are the same as http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents or http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3. 
 
 	title
 		A succinct description of what is in the dataset.
@@ -133,6 +135,31 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 		Numeric value the data are scaled by to save space, usually 1.0 if data are not scaled.
 	coverage_content_type
 		An ISO 19115-1 code to indicate the source of the data (image, thematicClassification, physicalMeasurement, auxiliaryInformation, qualityInformation, referenceInformation, modelResult, or coordinate).
+
+	*Profile*
+	
+	The projection parameters needed and values for USGS Albers Equal Area (AEA) are supplied below.
+
+	grid_mapping_name ('albers_conical_equal_area')
+		The name of the projection to use as a string.
+	standard_parallel ([45.5, 29.5])
+		Parallels for the projection as a list of floats. May differ for non-AEA projections; however, this work should be done with equal-area projections.
+	latitude_of_projection_origin (23.0)
+		Origin latitude as a float.
+	longitude_of_central_meridian (-96.0)
+		Central Meridian as a float.
+	false_easting (0)
+		Flase easting parameter as a float.
+	false_northing (0)
+		False northing parameter as a float.
+	semi_major_axis (6378137.0)
+		Ellipse parameter as a float.
+	inverse_flattening (298.257222101)
+		Ellipse parameter as a float.
+	unit ('m')
+		Map units to use for the projection as a string.
+	wkt
+		Well known text (WKT) representation of the above projection parameters, e.g. 'PROJCS[\"USA_Contiguous_Albers_Equal_Area_Conic_USGS_version\", GEOGCS[\"GCS_North_American_1983\", DATUM[\"D_North_American_1983\", SPHEROID[\"GRS_1980\",6378137.0,298.257222101]], PRIMEM[\"Greenwich\",0.0], UNIT[\"Degree\",0.0174532925199433]], PROJECTION[\"Albers\"], PARAMETER[\"False_Easting\",0.0], PARAMETER[\"False_Northing\",0.0], PARAMETER[\"Central_Meridian\",-96.0], PARAMETER[\"Standard_Parallel_1\",29.5], PARAMETER[\"Standard_Parallel_2\",45.5], PARAMETER[\"Latitude_Of_Origin\",23.0], UNIT[\"Meter\",1]]'
 	'''
 	strt = dt.datetime.now() # start timing
 
@@ -145,6 +172,21 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 	#netCDFparam = 'gridMET_minTempK'
 	#inDir = "data/cpgs_to_netCDF/*.tif"
 	#cl = 9
+
+	if profile is None: # set the profile to USGS AEA if nothing is supplied.
+		profile = {
+			'grid_mapping_name' : 'albers_conical_equal_area',
+			'standard_parallel' : [45.5, 29.5],
+			'latitude_of_projection_origin' : 23.0,
+			'longitude_of_central_meridian' : -96.0,
+			'false_easting' : 0,
+			'false_northing' : 0,
+			'semi_major_axis' : 6378137.0,
+			'inverse_flattening' : 298.257222101,
+			'unit' : 'm',
+			'wkt' : 'PROJCS[\"USA_Contiguous_Albers_Equal_Area_Conic_USGS_version\",GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Albers\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",-96.0],PARAMETER[\"Standard_Parallel_1\",29.5],PARAMETER[\"Standard_Parallel_2\",45.5], PARAMETER[\"Latitude_Of_Origin\",23.0], UNIT[\"Meter\",1]]'
+				}
+
 
 	# refer to http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3 and http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents for metadata entry descriptions.
 
@@ -205,9 +247,9 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 		ncDataType = 'f4'
 	elif dataType == 'int32':
 		ncDataType = 'i4'
-        else:
-                print("Error: unsupported data type")
-                return
+	else:
+		print("Error: unsupported data type")
+		sys.exit(0)
 
 	basedate = dt.datetime(1900,1,1,0,0,0) #Set basedate to January 1, 1900
 
@@ -275,31 +317,21 @@ def buildNC(inDir, outFile, metaDict, cl=9):
 	xo[:]=x
 	yo[:]=y
 
-	#Define coordinate system for Albers Equal Area Conic USGS version
-	'''
-	Should we make this a dictionary so / automatically create this from the input files?
-	'''
+	#Define coordinate system
 	crso = nco.createVariable('crs','i4') #i4 = 32 bit signed int
-	crso.grid_mapping_name='albers_conical_equal_area'
+	crso.grid_mapping_name= profile['grid_mapping_name']
 	#crso.standard_parallel_1 = 29.5
 	#crso.standard_parallel_2 = 45.5
-	crso.standard_parallel = [45.5, 29.5]
-	crso.latitude_of_projection_origin = 23.0
-	crso.longitude_of_central_meridian = -96.0
-	crso.false_easting = 0
-	crso.false_northing = 0
-	crso.semi_major_axis = 6378137.0
-	crso.inverse_flattening = 298.257222101
-	crso.unit = 'm'
-	wkt = 'PROJCS[\"USA_Contiguous_Albers_Equal_Area_Conic_USGS_version\",GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Albers\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",-96.0],PARAMETER[\"Standard_Parallel_1\",29.5],PARAMETER[\"Standard_Parallel_2\",45.5], PARAMETER[\"Latitude_Of_Origin\",23.0], UNIT[\"Meter\",1]]'
-	crso.crs_wkt = wkt
-	crso.spatial_ref = wkt
-	'''
-	We might need to implement the metadata here by passing the script a dictionary...
-
-	We should also look to see if we can make the netCDF ISO 19115 compliant so that we can put these bad boys on sciencebase.
-	'''
-
+	crso.standard_parallel = profile['standard_parallel'] 
+	crso.latitude_of_projection_origin = profile['latitude_of_projection_origin']
+	crso.longitude_of_central_meridian = profile['longitude_of_central_meridian']
+	crso.false_easting = profile['false_easting']
+	crso.false_northing = profile['false_northing']
+	crso.semi_major_axis = profile['semi_major_axis']
+	crso.inverse_flattening = profile['inverse_flattening']
+	crso.unit = profile['unit']
+	crso.crs_wkt = profile['wkt']
+	crso.spatial_ref = profile['wkt']
 
 	# create short integer variable for temperature data, with chunking
 	tmno = nco.createVariable(metaDict['var_name'], ncDataType,  ('time', 'y', 'x'), zlib=True, fill_value=NoData, complevel=cl, shuffle = True) #Create variable, compress with gzip (zlib=True)

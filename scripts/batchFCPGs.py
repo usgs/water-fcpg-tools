@@ -4,6 +4,8 @@ import os
 
 hpcAccount = 'your_hpc_account_here'
 
+## The following lines indicate the order of the command line arguments that need to be supplied to this script.
+
 # Check if system arguments were provided
 if len(sys.argv) > 1:
     inDir = sys.argv[1] # Input directory in which to search for parameter rasters
@@ -16,6 +18,7 @@ if len(sys.argv) > 1:
     accumThresh = sys.argv[8] # Number of cells in flow accumulation grid below which CPG will be set to no data
     overwrite = sys.argv[9] # Whether to overwrite existing CPGs
     deleteTemp = sys.argv[10] # Whether to delete temporary files
+    email = sys.argv[11] # Email address to send updates to
 else:
     print('No arguments provided.')
     sys.exit(1)
@@ -59,7 +62,7 @@ for cov in covList: #Iterate through the parameter grids
         f.writelines("#SBATCH --time=01:00:00\n") # Overestimated guess at time
         f.writelines("#SBATCH --mem=128000\n") #memory in MB
         f.writelines("#SBATCH --mail-type=ALL\n") # Send email only for all events
-        f.writelines("#SBATCH --mail-user={0}@usgs.gov\n".format(os.getlogin()))
+        f.writelines("#SBATCH --mail-user={0}\n".format(email))
         f.writelines("#SBATCH --exclusive\n") # Require exclusive use of nodes
 
         #Set up python environment for job

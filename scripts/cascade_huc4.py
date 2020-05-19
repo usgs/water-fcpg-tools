@@ -6,12 +6,10 @@ upstreamFACfltau = '' # Upstream flow accumulation grid from TauDEM.
 upstreamFDRfltau = '' # Upstream flow direction grid in TauDEM format.
 downstreamFACfltau = '' # Downstream flow accumuation grid from TauDEM.
 downstreamFDRfltau = '' # Downstream flow direction grid in TauDEM format.
-region = '' # Hydrologic region to make the update dictionary for.
 updateDict = '' # Path to the update dictionary to create.
 downstreamFACWeight = '' # Path to the downstream FAC weighting grid. This is where the upstream value will be inserted.
 downstreamAdjFAC = '' # Path to output the adjusted FAC weighting grid.
 wbdPth = '' # Path to the watershed boundary dataset for the HUC-2 region you are working in.
-dstCRS = '' # Proj4 represenation of the projection that the FCPGs will be in.
 cores = 6 #Number of cores to use for fcpg.adjustFAC() function
 
 # Define upstream and downstream basins.
@@ -32,7 +30,7 @@ pourBasins = fcpg.makePourBasins(wbd,upstream,downstream)
 # Find pour points between the upstream and downstream basins.
 pourPoints = fcpg.findPourPoints(pourBasins, upstreamFACfltau, upstreamFDRfltau, plotBasins = True)
 
-# create update dictionary from the pour points.
+# Create update dictionary from the pour points.
 newX,newY,maxFAC = zip(*pourPoints)
 fcpg.createUpdateDict(newX,newY,maxFAC,upstream,updateDict)
 

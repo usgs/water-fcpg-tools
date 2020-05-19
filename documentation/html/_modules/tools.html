@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tools &mdash; Flow-Conditioned Parameter Grid Tools 0.9.0 documentation</title>
+  <title>tools &mdash; Flow-Conditioned Parameter Grid Tools 1.0.0 documentation</title>
   
 
   
@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.9.0
+                1.0.0
               </div>
             
           
@@ -87,6 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cookbook.html">Cookbook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../functions.html">Function Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../z_references.html">References</a></li>
 </ul>
 
             
@@ -202,14 +203,14 @@
             <span class="s1">&#39;blockxsize&#39;</span><span class="p">:</span><span class="mi">256</span><span class="p">,</span>
             <span class="s1">&#39;driver&#39;</span> <span class="p">:</span> <span class="s2">&quot;GTiff&quot;</span><span class="p">,</span>
             <span class="s1">&#39;nodata&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">}):</span>
-    <span class="sd">&quot;&quot;&quot;Reclassifies ESRI drainage directions into tauDEM drainage directions.</span>
+    <span class="sd">&quot;&quot;&quot;Reclassifies ESRI flow directions into TauDEM flow directions.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    inRast : str</span>
 <span class="sd">        Path to a raster encoded with ESRI flow direction values.</span>
 <span class="sd">    outRast : str</span>
-<span class="sd">        Path to output a raster with flow directions encoded for TauDEM.</span>
+<span class="sd">        Path to output a raster with flow directions encoded for TauDEM. File will be overwritten if it already exists. </span>
 <span class="sd">    updateDict : dict (optional)</span>
 <span class="sd">        Dictionary of rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.</span>
 
@@ -242,7 +243,7 @@
     <span class="n">tauDir</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="n">inNoData</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># no data</span>
     <span class="n">tauDir</span> <span class="o">=</span> <span class="n">tauDir</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;uint8&#39;</span><span class="p">)</span><span class="c1">#8 bit integer is sufficient for flow directions</span>
 
-    <span class="c1"># edit the metadata, probably should make this an input to the script...</span>
+    <span class="c1"># edit the metadata</span>
     <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">updateDict</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">outRast</span><span class="p">):</span>
@@ -257,7 +258,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    paramRast : str </span>
-<span class="sd">        Raster of parameter values to acumulate, this file is modified by the function.</span>
+<span class="sd">        Raster of parameter values to accumulate; this file is modified by the function.</span>
 <span class="sd">    fdr : str</span>
 <span class="sd">        Flow direction raster in TauDEM format.</span>
 <span class="sd">    accumRast : str</span>
@@ -279,6 +280,13 @@
 <span class="sd">        Raster of no data values.</span>
 <span class="sd">    outNoDataRast : raster</span>
 <span class="sd">        Raster of accumulated no data values.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">	If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied it will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast. It will then save a raster with all no data values set to one and other values set to zero (outNoDataRast) and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the zeroNoDataRast, and a subsequent correction will be needed in the make_fcpg() function based on the values in the outNoDataAccum raster. </span>
+
+<span class="sd">	If some of the output file locations for handling no data values aren’t supplied or “no data” values aren’t present in the parameter grid, it will simply accumulate the parameter grid. If “no data” values are present, this will result in them being propagated downstream. </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">paramRast</span><span class="p">):</span>
@@ -297,7 +305,6 @@
         <span class="n">direction</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">directionNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span> <span class="c1"># pull the accumulated area no data value</span>
 
-    <span class="c1">#print(paramNoData)</span>
     <span class="k">if</span> <span class="n">paramNoData</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Parameter raster no data value not specified, results may be invalid&quot;</span><span class="p">)</span>
 
@@ -305,33 +312,34 @@
     <span class="c1">#Deal with no data values</span>
     <span class="n">basinNoDataCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[(</span><span class="n">data</span> <span class="o">==</span> <span class="n">paramNoData</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">direction</span> <span class="o">!=</span> <span class="n">directionNoData</span><span class="p">)])</span> <span class="c1"># Count number of cells with flow direction but no parameter value</span>
     
-    <span class="k">if</span> <span class="n">basinNoDataCount</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">zeroNoDataRast</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">basinNoDataCount</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning: No data parameter values exist in basin&#39;</span><span class="p">)</span>
 
 
-        <span class="c1">#Set no data values in the basin to zero so tauDEM accumulates them correctly</span>
-        <span class="n">noDataZero</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="c1">#noDataZero[(data == paramNoData) &amp; (direction != directionNoData)] = 0 #Set no data values in basin to 0</span>
-
-        <span class="c1"># Update profile for no data raster</span>
-        <span class="n">newProfile</span> <span class="o">=</span> <span class="n">profile</span> 
-        <span class="n">newProfile</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-            <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;profile&#39;</span><span class="p">:</span><span class="s1">&#39;GeoTIFF&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;sparse_ok&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">})</span>
-            
-        <span class="c1"># Save no data raster</span>
-        <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">zeroNoDataRast</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">newProfile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
-            <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter No Data raster written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">zeroNoDataRast</span><span class="p">))</span>
-            
-        <span class="n">tauDEMweight</span> <span class="o">=</span> <span class="n">zeroNoDataRast</span> <span class="c1">#Set file to use as weight in tauDEM accumulation</span>
-
         <span class="c1">#If a no data file path is given, accumulate no data values</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">outNoDataRast</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">outNoDataAccum</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">outNoDataRast</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">outNoDataAccum</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">zeroNoDataRast</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">):</span>
+
+            <span class="c1">#Set no data parameter values in the basin to zero so tauDEM accumulates them</span>
+            <span class="n">noDataZero</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">noDataZero</span><span class="p">[(</span><span class="n">data</span> <span class="o">==</span> <span class="n">paramNoData</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">direction</span> <span class="o">!=</span> <span class="n">directionNoData</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#Set no data values in basin to 0</span>
+
+            <span class="c1"># Update profile for no data raster</span>
+            <span class="n">newProfile</span> <span class="o">=</span> <span class="n">profile</span> 
+            <span class="n">newProfile</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;profile&#39;</span><span class="p">:</span><span class="s1">&#39;GeoTIFF&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;tiled&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;sparse_ok&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">})</span>
+            
+            <span class="c1"># Save no data raster</span>
+            <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">zeroNoDataRast</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">newProfile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+                <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">noDataZero</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter Zero No Data raster written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">zeroNoDataRast</span><span class="p">))</span>
+
+
+            
             <span class="n">noDataArray</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="n">noDataArray</span><span class="p">[(</span><span class="n">data</span> <span class="o">==</span> <span class="n">paramNoData</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">direction</span> <span class="o">!=</span> <span class="n">directionNoData</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#Set no data values in basin to 1</span>
             <span class="n">noDataArray</span><span class="p">[(</span><span class="n">data</span> <span class="o">!=</span> <span class="n">paramNoData</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#Set values with data to 0</span>
@@ -354,33 +362,45 @@
             <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outNoDataRast</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">newProfile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
                 <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">noDataArray</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter No Data raster written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outNoDataRast</span><span class="p">))</span>
-        
-        <span class="c1"># Use tauDEM to accumulate no data values</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accumulating No Data Values&#39;</span><span class="p">)</span>
-            
-            <span class="n">outFl</span> <span class="o">=</span> <span class="n">outNoDataRast</span>
-                
-            <span class="n">tauParams</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
-            <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
-            <span class="s1">&#39;outFl&#39;</span><span class="p">:</span><span class="n">outFl</span><span class="p">,</span>
-            <span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="n">outNoDataRast</span>
-            <span class="p">}</span>
-            
-            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -bind-to rr -n </span><span class="si">{cores}</span><span class="s1"> aread8 -p </span><span class="si">{fdr}</span><span class="s1"> -ad8 </span><span class="si">{outFl}</span><span class="s1"> -wg </span><span class="si">{weight}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter no data accumulation written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outNoDataRast</span><span class="p">))</span>
-            
-        <span class="k">except</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error Accumulating Data&#39;</span><span class="p">)</span>
-            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
 
+
+            <span class="c1"># Use tauDEM to accumulate no data values</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accumulating No Data Values&#39;</span><span class="p">)</span>
+                
+                    
+                <span class="n">tauParams</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
+                <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
+                <span class="s1">&#39;outFl&#39;</span><span class="p">:</span><span class="n">outNoDataAccum</span><span class="p">,</span>
+                <span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="n">outNoDataRast</span>
+                <span class="p">}</span>
+                
+                <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -bind-to rr -n </span><span class="si">{cores}</span><span class="s1"> aread8 -p </span><span class="si">{fdr}</span><span class="s1"> -ad8 </span><span class="si">{outFl}</span><span class="s1"> -wg </span><span class="si">{weight}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter no data accumulation written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outNoDataRast</span><span class="p">))</span>
+                
+            <span class="k">except</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error Accumulating Data&#39;</span><span class="p">)</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+
+            <span class="n">tauDEMweight</span> <span class="o">=</span> <span class="n">zeroNoDataRast</span> <span class="c1">#Set file to use as weight in tauDEM accumulation</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#If some of the no data handling files aren&#39;t provided, accumulate the parameter with no data values included</span>
+            <span class="c1">#This will result in no data values being propagated downstream</span>
+            <span class="n">tauDEMweight</span> <span class="o">=</span> <span class="n">paramRast</span> <span class="c1">#Set file to use as weight in tauDEM accumulation</span>
+        
+
+            
     <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1">#If there are zero no data values in the basin, simply accumulate the parameter raster</span>
         <span class="n">tauDEMweight</span> <span class="o">=</span> <span class="n">paramRast</span> <span class="c1">#Set file to use as weight in tauDEM accumulation</span>
 
+            
 
     <span class="c1">#Use tauDEM to accumulate the parameter</span>
     <span class="k">try</span><span class="p">:</span>
@@ -409,7 +429,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    accumParam : </span>
+<span class="sd">    accumParam : str</span>
 <span class="sd">        File location of the accumulated parameter data raster.</span>
 <span class="sd">    fac : str</span>
 <span class="sd">        File location of the flow accumulation raster.</span>
@@ -567,7 +587,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Unsupported data type </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">paramType</span><span class="p">))</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Defaulting to Float64&quot;</span><span class="p">)</span>
-        <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Float64&#39;</span> <span class="c1"># Try a 64 bit complex floating point if all else fails</span>
+        <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Float64&#39;</span> <span class="c1"># Try a 64 bit floating point if all else fails</span>
 
     <span class="c1">#Check if resampling or reprojection are required</span>
     <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">paramcrs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">fdrcrs</span><span class="p">)</span> <span class="ow">and</span> <span class="n">paramXsize</span> <span class="o">==</span> <span class="n">xsize</span> <span class="ow">and</span> <span class="n">paramYsize</span> <span class="o">==</span> <span class="n">ysize</span><span class="p">:</span>
@@ -607,21 +627,21 @@
 <span class="c1">#Tools for decayed accumulation CPGs</span>
 
 <div class="viewcode-block" id="makeDecayGrid"><a class="viewcode-back" href="../functions.html#tools.makeDecayGrid">[docs]</a><span class="k">def</span> <span class="nf">makeDecayGrid</span><span class="p">(</span><span class="n">d2strm</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">outRast</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{1}{n+k*dx}`, where n is the distance from the d2strm raster and    from each grid cell to the nearest stream, k is the constant applied to the stream distance values, and dx is the cell size of the raster.</span>
+    <span class="sd">&#39;&#39;&#39;Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{dx}{n+k*dx}`, where n is the distance from the d2strm raster and    from each grid cell to the nearest stream, k is the constant applied to the stream distance values, and dx is the cell size of the raster.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    d2strm : str</span>
 <span class="sd">        Path to raster of flow distances from each grid cell to the nearest stream.</span>
 <span class="sd">    k : float</span>
-<span class="sd">        Constant applied to decay factor denominator, this has units equal to the horizontal map units in the d2strm raster.</span>
+<span class="sd">        Constant applied to decay factor denominator; this has units equal to the horizontal map units in the d2strm raster.</span>
 <span class="sd">    outRast : str</span>
 <span class="sd">        Output file path for decay grid.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">        outRast : raster</span>
-<span class="sd">            Raster file with grid cells values representing weights decaying as they ove further from the stream.</span>
+<span class="sd">            Raster file with grid cells values representing weights decaying as a function of the distance to stream.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">d2strm</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error - Stream distance raster file is missing!&quot;</span><span class="p">)</span>
@@ -731,7 +751,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    ang : str</span>
-<span class="sd">        Path to flow angle raster from the TauDEM Dinfinity flow direction tool.</span>
+<span class="sd">        Path to flow angle raster from the TauDEM D-Infinity flow direction tool.</span>
 <span class="sd">    mult : str</span>
 <span class="sd">        Path to raster of multiplier values applied to upstream accumulations, 1 corresponds to no decay, 0 corresponds to complete decay.</span>
 <span class="sd">    outRast : str</span>
@@ -808,7 +828,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    outRast : raster </span>
-<span class="sd">        Raster with values of d8 flow distance from each cell to the nearest stream.</span>
+<span class="sd">        Raster with values of D-8 flow distance from each cell to the nearest stream.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -838,7 +858,7 @@
 <span class="sd">    inRast : str</span>
 <span class="sd">        Path to the input raster to mask.</span>
 <span class="sd">    streamRast : str</span>
-<span class="sd">        Path to the stream raster where all non-stream pixels set to no data.</span>
+<span class="sd">        Path to the stream raster where all non-stream cells are set to no data.</span>
 <span class="sd">    outRast : str</span>
 <span class="sd">        Path to output raster file.</span>
 
@@ -974,7 +994,7 @@
 <span class="sd">    fac : str</span>
 <span class="sd">        Path to the flow accumulation raster.</span>
 <span class="sd">    outWorkspace : str</span>
-<span class="sd">        Path to an oiutput directory for produced FCPGs.</span>
+<span class="sd">        Path to an output directory for produced FCPGs.</span>
 <span class="sd">    minAccum : int (optional)</span>
 <span class="sd">        Minimum accumulation value below which the output FCPG will be turned to no data values. Defaults to None.</span>
 <span class="sd">    appStr : str (optional)</span>
@@ -1001,7 +1021,7 @@
     <span class="k">return</span> <span class="n">fileList</span></div>
 
 <div class="viewcode-block" id="cat2bin"><a class="viewcode-back" href="../functions.html#tools.cat2bin">[docs]</a><span class="k">def</span> <span class="nf">cat2bin</span><span class="p">(</span><span class="n">inCat</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, and -1 for regions of no data in the supplied raster. Wrapper on :py:func:`binarizeCat`.</span>
+    <span class="sd">&#39;&#39;&#39;Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. Wrapper on :py:func:`binarizeCat`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1018,7 +1038,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating binaries for </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">inCat</span><span class="p">)</span>
     
     <span class="n">baseName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">inCat</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get name of input file without extention</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tif&quot;</span> <span class="c1">#File extension</span>
+    
 
     <span class="c1"># load input data</span>
     <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inCat</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
@@ -1040,6 +1060,8 @@
                 <span class="s1">&#39;num_threads&#39;</span><span class="p">:</span><span class="s1">&#39;ALL_CPUS&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;nodata&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="c1">#Use -1 as no data value</span>
                 <span class="s1">&#39;bigtiff&#39;</span><span class="p">:</span><span class="s1">&#39;IF_SAFER&#39;</span><span class="p">})</span>
+    
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tif&quot;</span> <span class="c1">#Output file extension</span>
 
     <span class="c1">#Create binary rasters for each category</span>
    
@@ -1056,12 +1078,12 @@
     <span class="k">return</span> <span class="n">fileList</span></div>
 
 <div class="viewcode-block" id="binarizeCat"><a class="viewcode-back" href="../functions.html#tools.binarizeCat">[docs]</a><span class="k">def</span> <span class="nf">binarizeCat</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">profile</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, and -1 for regions of no data in the supplied raster. See also :py:func:`cat2bin`.</span>
+    <span class="sd">&#39;&#39;&#39;Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. See also :py:func:`cat2bin`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    data : np.array</span>
-<span class="sd">        Numpy arrary of raster data to convert to binary.</span>
+<span class="sd">        Numpy array of raster data to convert to binary.</span>
 <span class="sd">    val : int</span>
 <span class="sd">        Raster value to extract binary for from data.</span>
 <span class="sd">    nodata : int or float</span>
@@ -1072,7 +1094,9 @@
 <span class="sd">        Base name for the output rasters.</span>
 <span class="sd">    ext : str</span>
 <span class="sd">        File extension for output rasters.</span>
-<span class="sd">        </span>
+<span class="sd">    profile : dict</span>
+<span class="sd">    	Rasterio metadata dictionary decribing the properties used to create the output raster.</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    catRaster : str</span>
@@ -1130,27 +1154,9 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error Accumulating Data&#39;</span><span class="p">)</span>
         <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span></div>
 
-<span class="c1"># def downloadNHDPlusRaster(HUC4, fileDir):</span>
-<span class="c1">#     &#39;&#39;&#39;</span>
-<span class="c1">#     Inputs:</span>
-        
-<span class="c1">#         HUC4 - 4 digit HUC to download NHDPlus raster data for</span>
-<span class="c1">#         fileDir - Directory in which to save NHDPlus data</span>
-
-<span class="c1">#     Outputs:</span>
-<span class="c1">#         NHDPlus raster files saved to directory</span>
-
-<span class="c1">#     &#39;&#39;&#39;</span>
-<span class="c1">#     compressedFile = os.path.join(fileDir, str(HUC4) + &quot;_RASTER.7z&quot;)</span>
-<span class="c1">#     print(&quot;Downloading File: &quot; + compressedFile)</span>
-<span class="c1">#     urllib.request.urlretrieve(&quot;https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHDPlus/HU4/HighResolution/GDB/NHDPLUS_H_%s_HU4_RASTER.7z&quot;%str(HUC4), compressedFile)</span>
-
-<span class="c1">#     print(&quot;Extracting File...&quot;)</span>
-<span class="c1">#     os.system(&quot;7za x {0} -o{1}&quot;.format(compressedFile,fileDir))</span>
-
 <div class="viewcode-block" id="ExtremeUpslopeValue"><a class="viewcode-back" href="../functions.html#tools.ExtremeUpslopeValue">[docs]</a><span class="k">def</span> <span class="nf">ExtremeUpslopeValue</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">accum_type</span> <span class="o">=</span> <span class="s2">&quot;MAX&quot;</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fac</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">thresh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Wrapper for the TauDEM extreme upslope value function.</span>
+<span class="sd">    Wrapper for the TauDEM D8 Extreme Upslope Value function :cite:`TauDEM`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1172,10 +1178,10 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    output : raster</span>
-<span class="sd">        Raster of either the maximum or minumum upslope value of the parameter supplied to the function.</span>
+<span class="sd">        Raster of either the maximum or minumum upslope value of the parameter grid supplied to the function.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
-    <span class="nb">print</span><span class="p">()</span>
+
     <span class="n">tauParams</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
         <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
@@ -1189,7 +1195,7 @@
     <span class="k">else</span><span class="p">:</span> <span class="c1"># no flag for max</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -bind-to rr -n </span><span class="si">{cores}</span><span class="s1"> d8flowpathextremeup -p </span><span class="si">{fdr}</span><span class="s1"> -sa </span><span class="si">{param}</span><span class="s1"> -ssa </span><span class="si">{outFl}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="c1"># print the command to be run to the output.</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
         
     <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
@@ -1244,7 +1250,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    HUC12 : str</span>
-<span class="sd">        Text representation of the 12-digit HUC12 code.</span>
+<span class="sd">        Text representation of the HUC12 identifier.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1293,7 +1299,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    finalPoints : list</span>
-<span class="sd">        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not FCPGed) upstream parameter grids for information to cascade down to </span>
+<span class="sd">        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not FCPGed) upstream parameter grids for information to cascade down to the next hydrologic region / geospatial tile downstream. </span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">pourPoints</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pourBasins</span><span class="p">)):</span>
@@ -1416,7 +1422,7 @@
         <span class="n">dat</span> <span class="o">=</span> <span class="n">loadRaster</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span> <span class="c1"># load the data file</span>
 
     <span class="n">cx</span><span class="p">,</span><span class="n">cy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">fac</span><span class="o">==</span><span class="n">fac</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="c1"># find the column, row cooridnates of the max fac.</span>
-    <span class="c1">#print(&quot;%s,%s&quot;%(cx,cy))</span>
+    
     <span class="n">d</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="n">cx</span><span class="p">,</span><span class="n">cy</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># query the parameter grid</span>
     
     <span class="n">src</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">facfl</span><span class="p">)</span> <span class="c1"># open the fac dataset</span>
@@ -1432,9 +1438,9 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    x : float or int</span>
-<span class="sd">        Horizontal coordinate in grd projection.</span>
+<span class="sd">        Horizontal coordinate in grid projection.</span>
 <span class="sd">    y : float or int</span>
-<span class="sd">        Vertical coordinate in grd projection.</span>
+<span class="sd">        Vertical coordinate in grid projection.</span>
 <span class="sd">    grd : str</span>
 <span class="sd">        Path to raster to query based on the supplied x and y coordinates.</span>
 <span class="sd">        </span>
@@ -1444,30 +1450,31 @@
 <span class="sd">        Value queried from the supplied raster.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
+    <span class="c1"># loop construct is to deal with src.sample returning an array, only the value is needed.</span>
     <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">grd</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">sample</span><span class="p">([(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)],</span><span class="mi">1</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="FindDownstreamCellTauDir"><a class="viewcode-back" href="../functions.html#tools.FindDownstreamCellTauDir">[docs]</a><span class="k">def</span> <span class="nf">FindDownstreamCellTauDir</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Find downstream cell given the flow direction of a cell using TauDEM flow directions.</span>
+    <span class="sd">&#39;&#39;&#39;Find downstream cell given the flow direction of a reference cell using TauDEM flow directions.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    d : int</span>
-<span class="sd">        Flow direction of cell to find downstream cell of.</span>
+<span class="sd">        Flow direction of the reference cell.</span>
 <span class="sd">    x : float</span>
 <span class="sd">        Horizontal coordinate (either projected or unprojected).</span>
 <span class="sd">    y : float</span>
 <span class="sd">        Vertical coordinate (either projected or unprojected).</span>
 <span class="sd">    w : float</span>
-<span class="sd">        Cell size in map units.</span>
+<span class="sd">        Cell size, in map units.</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    x : float</span>
 <span class="sd">        Horizontal coordinate of the downstream cell.</span>
 <span class="sd">    y : float</span>
-<span class="sd">        Verital coordinate of the downstream cell.</span>
+<span class="sd">        Vertical coordinate of the downstream cell.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
     <span class="c1"># figure out how to correct the point location</span>
@@ -1602,7 +1609,7 @@
     <span class="k">return</span> <span class="n">updateDict</span></div>
 
 <div class="viewcode-block" id="updateRaster"><a class="viewcode-back" href="../functions.html#tools.updateRaster">[docs]</a><span class="k">def</span> <span class="nf">updateRaster</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">val</span><span class="p">,</span><span class="n">grd</span><span class="p">,</span><span class="n">outgrd</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Insert val into grd at location specified by x,y, writes new raster to outgrd.</span>
+    <span class="sd">&#39;&#39;&#39;Insert value into grid at location specified by x,y; writes new raster to output grid.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1620,7 +1627,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    dat : raster</span>
-<span class="sd">        Writes raster dataset to supplied grdout destination.</span>
+<span class="sd">        Raster dataset written to grdout.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
@@ -1655,7 +1662,7 @@
     <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="makeFACweight"><a class="viewcode-back" href="../functions.html#tools.makeFACweight">[docs]</a><span class="k">def</span> <span class="nf">makeFACweight</span><span class="p">(</span><span class="n">ingrd</span><span class="p">,</span><span class="n">outWeight</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Make FAC weighting grid of ones based on the extents of the input grid. No data cells are persisted.</span>
+    <span class="sd">&#39;&#39;&#39;Make FAC weighting grid of ones based on the extents of the input grid. No-data cells are persisted.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1667,7 +1674,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    outWeight : raster</span>
-<span class="sd">        Raster of the same extent and resolution as the input grid, but filled with ones where data exist. No data cells are persisted.</span>
+<span class="sd">        Raster of the same extent and resolution as the input grid, but filled with ones where data exist. No-data cells are persisted.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">dat</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">loadRaster</span><span class="p">(</span><span class="n">ingrd</span><span class="p">,</span> <span class="n">returnMeta</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     
@@ -1812,6 +1819,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    inRast : str</span>
 <span class="sd">        Path to a TauDEM D-8 flow direction raster.</span>
+<span class="sd">    outRast : str</span>
+<span class="sd">        Path to output the TauDEM D-Infinity flow direction raster.</span>
 <span class="sd">    updateDict : dict (optional)</span>
 <span class="sd">        Dictionary of rasterio parameters used to write out the GeoTiff.</span>
 
@@ -1898,7 +1907,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Theodore Barnhart, Roy Sando, Seth Siefkin, Peter McCarthy, and Al Rea
+        &copy; Copyright Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea
 
     </p>
   </div>

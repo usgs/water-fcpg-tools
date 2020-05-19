@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Cookbook &mdash; Flow-Conditioned Parameter Grid Tools 0.9.0 documentation</title>
+  <title>Cookbook &mdash; Flow-Conditioned Parameter Grid Tools 1.0.0 documentation</title>
   
 
   
@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -36,8 +36,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Batch FCPG Creation on an HPC" href="batch_fcpgs_hpc.html" />
-    <link rel="prev" title="Welcome to Flow-Conditioned Parameter Grid Tools’s documentation!" href="index.html" /> 
+    <link rel="next" title="Generate TauDEM Files From An ESRI Flow Direction Grid" href="make_TauDEM_files.html" />
+    <link rel="prev" title="Welcome to Flow-Conditioned Parameter Grid Tools’ documentation!" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.9.0
+                1.0.0
               </div>
             
           
@@ -88,13 +88,17 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Cookbook</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="batch_fcpgs_hpc.html">Batch FCPG Creation on an HPC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cascade_fcpg.html">Cascade FCPG results between geospatial tiles</a></li>
-<li class="toctree-l2"><a class="reference internal" href="detect_missing.html">Detect Missing FCPGs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="make_TauDEM_files.html">Generate TauDEM Files From An ESRI Flow Direction Grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="make_TauDEM_files.html">Generate TauDEM Files From An ESRI Flow Direction Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="batch_fcpgs_hpc.html">Batch FCPG Creation on an HPC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cascade_fcpg.html">Cascade FCPG results between geospatial tiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_missing.html">Detect Missing FCPGs</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
 </ul>
 
             
@@ -161,10 +165,25 @@
             
   <div class="section" id="cookbook">
 <span id="cookbook-label"></span><h1>Cookbook<a class="headerlink" href="#cookbook" title="Permalink to this headline">¶</a></h1>
-<p>Example scripts and work flows for common FCPG tasks on local workstations and HPC environments. These scripts have not been turned into FCPGtools functions because of the the variability in HPC and local systems that the FCPGtools may be used with.</p>
+<p>Example scripts and work flows for common FCPG tasks on local workstations and HPC environments. These scripts have not been turned into FCPGtools functions because of the the variability in HPC, local systems, and input data sets that the FCPGtools may be used with.</p>
+<div class="section" id="input-data">
+<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>To produce a basic FCPG you will need the following data for the same geographic area:</dt><dd><ul class="simple">
+<li><p>Flow direction grid, ideally with TauDEM flow directions. Other flow direction formats (e.g. ESRI) can be reclassified to TauDEM flow directions.</p></li>
+<li><p>Parameter grid, a precipitation or air temperature grid is likely easiest, the resolution does not need to match your flow direction grid; however, the extent must be at least that of the flow direction grid.</p></li>
+</ul>
+</dd>
+<dt>To produce more complex FCPGs from categorical data or that cascade from one upstream hydrologic tile to a downstream tile you will need more data:</dt><dd><ul class="simple">
+<li><p>The Watershed Boundary Dataset for the area you are working in.</p></li>
+<li><p>A categorical parameter grid (e.g. land cover).</p></li>
+</ul>
+</dd>
+</dl>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="make_TauDEM_files.html">Generate TauDEM Files From An ESRI Flow Direction Grid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="batch_fcpgs_hpc.html">Batch FCPG Creation on an HPC</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="batch_fcpgs_hpc.html#parse-parameter-grids-and-submit-slurm-jobs">Parse parameter grids and submit SLURM jobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="batch_fcpgs_hpc.html#generate-a-fcpg-given-a-parameter-and-fdr-grid">Generate a FCPG given a parameter and FDR grid</a></li>
@@ -176,8 +195,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="detect_missing.html">Detect Missing FCPGs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="make_TauDEM_files.html">Generate TauDEM Files From An ESRI Flow Direction Grid</a></li>
 </ul>
+</div>
 </div>
 </div>
 
@@ -189,10 +208,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="batch_fcpgs_hpc.html" class="btn btn-neutral float-right" title="Batch FCPG Creation on an HPC" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="make_TauDEM_files.html" class="btn btn-neutral float-right" title="Generate TauDEM Files From An ESRI Flow Direction Grid" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Flow-Conditioned Parameter Grid Tools’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Flow-Conditioned Parameter Grid Tools’ documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -201,7 +220,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Theodore Barnhart, Roy Sando, Seth Siefkin, Peter McCarthy, and Al Rea
+        &copy; Copyright Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea
 
     </p>
   </div>

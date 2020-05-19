@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Batch FCPG Creation on an HPC &mdash; Flow-Conditioned Parameter Grid Tools 0.9.0 documentation</title>
+  <title>Batch FCPG Creation on an HPC &mdash; Flow-Conditioned Parameter Grid Tools 1.0.0 documentation</title>
   
 
   
@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -37,7 +37,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Cascade FCPG results between geospatial tiles" href="cascade_fcpg.html" />
-    <link rel="prev" title="Cookbook" href="cookbook.html" /> 
+    <link rel="prev" title="Generate TauDEM Files From An ESRI Flow Direction Grid" href="make_TauDEM_files.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.9.0
+                1.0.0
               </div>
             
           
@@ -88,17 +88,21 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="cookbook.html">Cookbook</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Batch FCPG Creation on an HPC</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#parse-parameter-grids-and-submit-slurm-jobs">Parse parameter grids and submit SLURM jobs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#generate-a-fcpg-given-a-parameter-and-fdr-grid">Generate a FCPG given a parameter and FDR grid</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cookbook.html#input-data">Input Data</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="make_TauDEM_files.html">Generate TauDEM Files From An ESRI Flow Direction Grid</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Batch FCPG Creation on an HPC</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#parse-parameter-grids-and-submit-slurm-jobs">Parse parameter grids and submit SLURM jobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generate-a-fcpg-given-a-parameter-and-fdr-grid">Generate a FCPG given a parameter and FDR grid</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="cascade_fcpg.html">Cascade FCPG results between geospatial tiles</a></li>
-<li class="toctree-l2"><a class="reference internal" href="detect_missing.html">Detect Missing FCPGs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="make_TauDEM_files.html">Generate TauDEM Files From An ESRI Flow Direction Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cascade_fcpg.html">Cascade FCPG results between geospatial tiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_missing.html">Detect Missing FCPGs</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
 </ul>
 
             
@@ -167,7 +171,7 @@
             
   <div class="section" id="batch-fcpg-creation-on-an-hpc">
 <h1>Batch FCPG Creation on an HPC<a class="headerlink" href="#batch-fcpg-creation-on-an-hpc" title="Permalink to this headline">¶</a></h1>
-<p>This is an example of batch creating FCPG grids from a folder of parameter (precipitation, air temperature, land cover, etc.) grids and a flow direction grid. This example uses two Python scripts. The first script sorts through the parameter grids and submits a SLURM job for each one and the second script, <code class="code docutils literal notranslate"><span class="pre">makeFCPG.py</span></code>, creates the FCPG within the SLURM job.</p>
+<p>This is an example of batch creating FCPG grids from a folder of parameter (precipitation, air temperature, land cover, etc.) grids and a flow direction grid. This example uses two Python scripts. The first script sorts through the parameter grids and submits a Slurm job for each one and the second script, <code class="code docutils literal notranslate"><span class="pre">makeFCPG.py</span></code>, creates the FCPG within the Slurm job. For more information on the Slurm workload manager, see <a class="reference external" href="https://slurm.schedmd.com/overview.html">https://slurm.schedmd.com/overview.html</a>.</p>
 <div class="section" id="parse-parameter-grids-and-submit-slurm-jobs">
 <h2>Parse parameter grids and submit SLURM jobs<a class="headerlink" href="#parse-parameter-grids-and-submit-slurm-jobs" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
@@ -247,11 +251,16 @@
 75
 76
 77
-78</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+78
+79
+80
+81</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="n">hpcAccount</span> <span class="o">=</span> <span class="s1">&#39;your_hpc_account_here&#39;</span>
+
+<span class="c1">## The following lines indicate the order of the command line arguments that need to be supplied to this script.</span>
 
 <span class="c1"># Check if system arguments were provided</span>
 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -265,6 +274,7 @@
     <span class="n">accumThresh</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="c1"># Number of cells in flow accumulation grid below which CPG will be set to no data</span>
     <span class="n">overwrite</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="c1"># Whether to overwrite existing CPGs</span>
     <span class="n">deleteTemp</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="c1"># Whether to delete temporary files</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="c1"># Email address to send updates to</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="k">print</span><span class="p">(</span><span class="s1">&#39;No arguments provided.&#39;</span><span class="p">)</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -285,7 +295,7 @@
     <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Invalid parameter grid directory&quot;</span><span class="p">)</span>
 
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;The following parameter grids were located:&quot;</span><span class="p">)</span>
-<span class="p">[</span><span class="k">print</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span> <span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">covList</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="o">*</span><span class="n">covList</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">covList</span><span class="p">:</span> <span class="c1">#Iterate through the parameter grids</span>
 
@@ -298,7 +308,7 @@
         
         <span class="c1">#Write slurm job details</span>
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#!/bin/bash</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --job-name=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">covname</span><span class="p">)</span> <span class="c1"># set the name of the job</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --job-name={0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">covname</span><span class="p">))</span> <span class="c1"># set the name of the job</span>
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -c 1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># cpus per task</span>
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH -n {0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cores</span><span class="p">))</span> <span class="c1"># number of tasks</span>
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --tasks-per-node=20</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Set number of tasks per node</span>
@@ -308,7 +318,7 @@
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --time=01:00:00</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Overestimated guess at time</span>
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mem=128000</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1">#memory in MB</span>
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mail-type=ALL</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Send email only for all events</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mail-user={0}@usgs.gov</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getlogin</span><span class="p">()))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mail-user={0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">email</span><span class="p">))</span>
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --exclusive</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Require exclusive use of nodes</span>
 
         <span class="c1">#Set up python environment for job</span>
@@ -401,7 +411,7 @@
 68
 69
 70
-71</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FCPGtools</span> <span class="kn">as</span> <span class="nn">fc</span>
+71</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FCPGtools</span> <span class="kn">as</span> <span class="nn">fcpg</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -416,8 +426,8 @@
 <span class="n">outDir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1"># Path to output directory for FCPG files</span>
 <span class="n">cores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="c1"># Number of cores to use </span>
 <span class="n">accumThresh</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span> <span class="c1"># Number of cells in flow accumulation grid below which FCPG will be set to no data</span>
-<span class="n">overwrite</span> <span class="o">=</span> <span class="n">fc</span><span class="o">.</span><span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span> <span class="c1"># Whether to overwrite CPGs or not </span>
-<span class="n">deleteTemp</span> <span class="o">=</span> <span class="n">fc</span><span class="o">.</span><span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span> <span class="c1"># Whether to delete temporary files</span>
+<span class="n">overwrite</span> <span class="o">=</span> <span class="n">fcpg</span><span class="o">.</span><span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span> <span class="c1"># Whether to overwrite CPGs or not </span>
+<span class="n">deleteTemp</span> <span class="o">=</span> <span class="n">fcpg</span><span class="o">.</span><span class="n">parsebool</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span> <span class="c1"># Whether to delete temporary files</span>
 
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting FCPG process for:&quot;</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Parameter Raster: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">paramRast</span><span class="p">))</span>
@@ -452,15 +462,15 @@
 <span class="k">else</span><span class="p">:</span>
         <span class="c1">#Run the FCPG tools</span>
         <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Calling resample function {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
-        <span class="n">fc</span><span class="o">.</span><span class="n">resampleParam</span><span class="p">(</span><span class="n">paramRast</span><span class="p">,</span> <span class="n">taufdr</span><span class="p">,</span> <span class="n">rprjFile</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1">#Resample and reprojected parameter raster</span>
+        <span class="n">fcpg</span><span class="o">.</span><span class="n">resampleParam</span><span class="p">(</span><span class="n">paramRast</span><span class="p">,</span> <span class="n">taufdr</span><span class="p">,</span> <span class="n">rprjFile</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1">#Resample and reprojected parameter raster</span>
         <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Calling flow accumulation function {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
-        <span class="n">fc</span><span class="o">.</span><span class="n">accumulateParam</span><span class="p">(</span><span class="n">rprjFile</span><span class="p">,</span> <span class="n">taufdr</span><span class="p">,</span> <span class="n">accumFile</span><span class="p">,</span> <span class="n">outNoDataRast</span><span class="o">=</span><span class="n">nodataFile</span><span class="p">,</span> <span class="n">outNoDataAccum</span><span class="o">=</span><span class="n">nodataaccumFile</span><span class="p">,</span> <span class="n">zeroNoDataRast</span><span class="o">=</span><span class="n">zeronodataFile</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1">#Accumulate parameter</span>
+        <span class="n">fcpg</span><span class="o">.</span><span class="n">accumulateParam</span><span class="p">(</span><span class="n">rprjFile</span><span class="p">,</span> <span class="n">taufdr</span><span class="p">,</span> <span class="n">accumFile</span><span class="p">,</span> <span class="n">outNoDataRast</span><span class="o">=</span><span class="n">nodataFile</span><span class="p">,</span> <span class="n">outNoDataAccum</span><span class="o">=</span><span class="n">nodataaccumFile</span><span class="p">,</span> <span class="n">zeroNoDataRast</span><span class="o">=</span><span class="n">zeronodataFile</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1">#Accumulate parameter</span>
         <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Calling make_cpg function {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">nodataaccumFile</span><span class="p">):</span>
                 <span class="c1">#If no data accumulation file was created, use it in call to create FCPG</span>
-                <span class="n">fc</span><span class="o">.</span><span class="n">make_cpg</span><span class="p">(</span><span class="n">accumFile</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">CPGFile</span><span class="p">,</span> <span class="n">noDataRast</span><span class="o">=</span><span class="n">nodataaccumFile</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="n">accumThresh</span><span class="p">)</span> <span class="c1">#Create parameter FCPG with no data raster.</span>
+                <span class="n">fcpg</span><span class="o">.</span><span class="n">make_cpg</span><span class="p">(</span><span class="n">accumFile</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">CPGFile</span><span class="p">,</span> <span class="n">noDataRast</span><span class="o">=</span><span class="n">nodataaccumFile</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="n">accumThresh</span><span class="p">)</span> <span class="c1">#Create parameter FCPG with no data raster.</span>
         <span class="k">else</span><span class="p">:</span>
-                <span class="n">fc</span><span class="o">.</span><span class="n">make_cpg</span><span class="p">(</span><span class="n">accumFile</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">CPGFile</span><span class="p">,</span>  <span class="n">minAccum</span><span class="o">=</span><span class="n">accumThresh</span><span class="p">)</span> <span class="c1">#Create parameter FCPG without no data raster.</span>
+                <span class="n">fcpg</span><span class="o">.</span><span class="n">make_cpg</span><span class="p">(</span><span class="n">accumFile</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">CPGFile</span><span class="p">,</span>  <span class="n">minAccum</span><span class="o">=</span><span class="n">accumThresh</span><span class="p">)</span> <span class="c1">#Create parameter FCPG without no data raster.</span>
         
         <span class="k">if</span> <span class="n">deleteTemp</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -488,7 +498,7 @@
         <a href="cascade_fcpg.html" class="btn btn-neutral float-right" title="Cascade FCPG results between geospatial tiles" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="cookbook.html" class="btn btn-neutral float-left" title="Cookbook" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="make_TauDEM_files.html" class="btn btn-neutral float-left" title="Generate TauDEM Files From An ESRI Flow Direction Grid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -497,7 +507,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Theodore Barnhart, Roy Sando, Seth Siefkin, Peter McCarthy, and Al Rea
+        &copy; Copyright Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea
 
     </p>
   </div>
