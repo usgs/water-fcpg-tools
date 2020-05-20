@@ -101,7 +101,8 @@ def tauDrainDir(inRast, outRast, updateDict = {
         print("TauDEM drainage direction written to: {0}".format(outRast))
 
 def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, zeroNoDataRast = None, cores = 1):
-    """
+    """Accumulate a parameter grid using TauDEM AreaD8 :cite:`TauDEM`.
+
     Parameters
     ----------
     paramRast : str 
@@ -966,7 +967,7 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
     return catRaster # Return the path to the raster created
 
 def tauFlowAccum(fdr, accumRast, cores = 1):
-    """Accumulate flow direction grid using TauDEM.
+    """Wrapper for TauDEM AreaD8 :cite:`TauDEM` to produce a flow acculation grid.
 
     Parameters
     ----------

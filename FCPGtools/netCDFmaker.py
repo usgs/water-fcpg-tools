@@ -49,7 +49,7 @@ import glob
 import time
 
 def buildNC(inDir, outFile, metaDict, cl=9, profile = None):
-	'''Build netCDF file from a stack of geotiffs.
+	'''Build netCDF file from a stack of GeoTiffs.
 
 	Parameters
 	----------

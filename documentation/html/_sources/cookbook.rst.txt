@@ -12,9 +12,8 @@ To produce a basic FCPG you will need the following data for the same geographic
 	- Parameter grid, a precipitation or air temperature grid is likely easiest, the resolution does not need to match your flow direction grid; however, the extent must be at least that of the flow direction grid.
 
 To produce more complex FCPGs from categorical data or that cascade from one upstream hydrologic tile to a downstream tile you will need more data:
-	- The Watershed Boundary Dataset for the area you are working in.
-	- A categorical parameter grid (e.g. land cover).
-
+   - A categorical parameter grid (e.g. land cover).
+	- The Watershed Boundary Dataset for the area you are working in. This helps the tools locate areas within geospatial tiles that flow out of the tile and into the next downstream tile.
 
 .. toctree::
    :maxdepth: 2

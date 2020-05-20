@@ -254,7 +254,8 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TauDEM drainage direction written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="accumulateParam"><a class="viewcode-back" href="../functions.html#tools.accumulateParam">[docs]</a><span class="k">def</span> <span class="nf">accumulateParam</span><span class="p">(</span><span class="n">paramRast</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">accumRast</span><span class="p">,</span> <span class="n">outNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outNoDataAccum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">zeroNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Accumulate a parameter grid using TauDEM AreaD8 :cite:`TauDEM`.</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    paramRast : str </span>
@@ -1119,7 +1120,7 @@
     <span class="k">return</span> <span class="n">catRaster</span> <span class="c1"># Return the path to the raster created</span></div>
 
 <div class="viewcode-block" id="tauFlowAccum"><a class="viewcode-back" href="../functions.html#tools.tauFlowAccum">[docs]</a><span class="k">def</span> <span class="nf">tauFlowAccum</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">accumRast</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Accumulate flow direction grid using TauDEM.</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper for TauDEM AreaD8 :cite:`TauDEM` to produce a flow acculation grid.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
