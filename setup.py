@@ -25,7 +25,7 @@ here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
 
-with open(path.join(here, 'README.md'), encoding = 'utf-8') as f:
+with open(path.join(here, 'README.rst'), encoding = 'utf-8') as f:
 	long_description = f.read()
 
 setup(
@@ -35,7 +35,7 @@ setup(
 	author_email = "tbarnhart@usgs.gov",
 	description = "Tools to make flow-conditioned parameter grids.",
 	long_description = long_description,
-	long_description_content_type = "text/markdown",
+	long_description_content_type = "text/x-rst",
 	url="https://code.usgs.gov/StreamStats/CPGtools",
 	packages = find_packages(),
 	classifiers = [
