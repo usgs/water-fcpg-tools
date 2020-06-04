@@ -7,4 +7,4 @@ scratch
 figures
 *.mxd
 *.csv
-*.ipynb
+test_output

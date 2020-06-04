@@ -864,7 +864,7 @@ def make_fcpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"):
         outPath = os.path.join(outWorkspace, baseName + appStr + ext)
         fileList.append(outPath)
 
-        make_cpg(param, fac, outPath, minAccum=minAccum) #Run the CPG function for the accumulated parameter raster
+        make_fcpg(param, fac, outPath, minAccum=minAccum) #Run the CPG function for the accumulated parameter raster
 
     return fileList
 
@@ -1171,13 +1171,15 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins = False):
         points = [(nx,ny) for nx,ny in zip(newx,newy)]
 
         # test if a point lands on a noData pixel.
+        #print(len(points))
         for point in points:
             x,y = point
             d = queryPoint(x,y,upfdrfl)
             newx,newy = FindDownstreamCellTauDir(d,x,y,out_transform[0])
 
-            if queryPoint(newx,newy,upfacfl) == data.meta['nodata']:
-                pourPoints.append((x,y,w)) # keep the point if it does. Original points retained
+            #if queryPoint(newx,newy,upfacfl) == data.meta['nodata']:
+            pourPoints.append((newx,newy,w)) # keep the point if it does. Original points retained
+            #print(pourPoints)
     
     if plotBasins:
         ax = pourBasins.plot('Name')
@@ -1251,7 +1253,7 @@ def findLastFACFD(facfl, fl = None):
         Horizontal coordinate of the greatest FAC cell.
     y : float
         Vertical coordinate of the greatest FAC cell.
-    d : int or float
+    d : float
         Value from the parameter grid queried.
     w : float
         Cell size of the grid.
@@ -1278,7 +1280,7 @@ def findLastFACFD(facfl, fl = None):
     
     w = meta['transform'][0] # get the cell size of the grid
     
-    return x[0],y[0],d,w
+    return float(x[0]),float(y[0]),float(d),float(w)
 
 def queryPoint(x,y,grd):
     '''Query grid based on a supplied point.
@@ -1355,7 +1357,7 @@ def FindDownstreamCellTauDir(d,x,y,w):
     newX = x+dx
     newY = y+dy
     
-    return newX,newY
+    return float(newX),float(newY)
 
 def saveJSON(dictionary, outfl):
     '''Save dictionary to JSON file.
@@ -1399,7 +1401,7 @@ def loadJSON(infl):
     
     return dictionary
 
-def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl):
+def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict = True):
     '''Create a dictionary for updating downstream FAC and parameter grids using values pulled from the next grid upstream.
     
     Parameters
@@ -1414,6 +1416,8 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl):
         The upstream HUC that the values are coming from.
     outfl : str (path)
         Path to where to save the json of this dictionary. The convention is to name this by the downstream HUC.
+    replaceDict : bool (optional)
+        Replace the update dictionary instead of updating with a new value. Defaults to True.
     
     Returns
     -------
@@ -1424,11 +1428,11 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl):
     # using lists instead of single values in case there are multiple pour points between basins
     
     if type(x) != list:
-    	x = list([x])
+    	x = list(x)
     if type(y) != list:
-    	y = list([y])
+    	y = list(y)
     if type(upstreamFACmax) != list:
-    	upstreamFACmax = list([upstreamFACmax])
+    	upstreamFACmax = list(upstreamFACmax)
 
     # convert lists to strings
     xs = [str(xx) for xx in x]
@@ -1442,11 +1446,16 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl):
         'vars':['maxUpstreamFAC'] # list of contained variables
                 }
     
-    if os.path.exists(outfl): # if the update dictionary exists, update it.
+    if os.path.exists(outfl) and replaceDict==False: # if the update dictionary exists, update it.
         print('Update dictionary found: %s'%outfl)
         updateDict = loadJSON(outfl)
         print('Updating dictionary...')
         updateDict[fromHUC] = subDict
+    elif os.path.exists(outfl) and replaceDict==True:
+        os.remove(outfl)
+        updateDict = {
+            fromHUC : subDict
+        }
     else:
         updateDict = {
             fromHUC : subDict
@@ -1614,12 +1623,13 @@ def updateDict(ud, upHUC, varName, val):
     upstream = UD[upHUC]
     variables = upstream['vars']
     variables.append(varName)
+    variables = list(np.unique(variables))
     upstream['vars'] = variables
     
     upstream[varName] = val
     
     UD[upHUC] = upstream # update dictionary with upstream sub-dictionary
-    saveJSON(ud) # write out file
+    saveJSON(UD, ud) # write out file
 
 def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl):
     '''Generate an updated parameter grid given an update dictionary from :py:func:`createUpdateDict`.

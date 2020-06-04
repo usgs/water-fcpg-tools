@@ -1017,7 +1017,7 @@
         <span class="n">outPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span> <span class="o">+</span> <span class="n">appStr</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span>
         <span class="n">fileList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outPath</span><span class="p">)</span>
 
-        <span class="n">make_cpg</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outPath</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="n">minAccum</span><span class="p">)</span> <span class="c1">#Run the CPG function for the accumulated parameter raster</span>
+        <span class="n">make_fcpg</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outPath</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="n">minAccum</span><span class="p">)</span> <span class="c1">#Run the CPG function for the accumulated parameter raster</span>
 
     <span class="k">return</span> <span class="n">fileList</span></div>
 
@@ -1324,13 +1324,15 @@
         <span class="n">points</span> <span class="o">=</span> <span class="p">[(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">)</span> <span class="k">for</span> <span class="n">nx</span><span class="p">,</span><span class="n">ny</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">newx</span><span class="p">,</span><span class="n">newy</span><span class="p">)]</span>
 
         <span class="c1"># test if a point lands on a noData pixel.</span>
+        <span class="c1">#print(len(points))</span>
         <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
             <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">point</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">queryPoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">upfdrfl</span><span class="p">)</span>
             <span class="n">newx</span><span class="p">,</span><span class="n">newy</span> <span class="o">=</span> <span class="n">FindDownstreamCellTauDir</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">out_transform</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-            <span class="k">if</span> <span class="n">queryPoint</span><span class="p">(</span><span class="n">newx</span><span class="p">,</span><span class="n">newy</span><span class="p">,</span><span class="n">upfacfl</span><span class="p">)</span> <span class="o">==</span> <span class="n">data</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;nodata&#39;</span><span class="p">]:</span>
-                <span class="n">pourPoints</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">))</span> <span class="c1"># keep the point if it does. Original points retained</span>
+            <span class="c1">#if queryPoint(newx,newy,upfacfl) == data.meta[&#39;nodata&#39;]:</span>
+            <span class="n">pourPoints</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">newx</span><span class="p">,</span><span class="n">newy</span><span class="p">,</span><span class="n">w</span><span class="p">))</span> <span class="c1"># keep the point if it does. Original points retained</span>
+            <span class="c1">#print(pourPoints)</span>
     
     <span class="k">if</span> <span class="n">plotBasins</span><span class="p">:</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">pourBasins</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">)</span>
@@ -1404,7 +1406,7 @@
 <span class="sd">        Horizontal coordinate of the greatest FAC cell.</span>
 <span class="sd">    y : float</span>
 <span class="sd">        Vertical coordinate of the greatest FAC cell.</span>
-<span class="sd">    d : int or float</span>
+<span class="sd">    d : float</span>
 <span class="sd">        Value from the parameter grid queried.</span>
 <span class="sd">    w : float</span>
 <span class="sd">        Cell size of the grid.</span>
@@ -1431,7 +1433,7 @@
     
     <span class="n">w</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;transform&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># get the cell size of the grid</span>
     
-    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">d</span><span class="p">,</span><span class="n">w</span></div>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">),</span><span class="nb">float</span><span class="p">(</span><span class="n">w</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="queryPoint"><a class="viewcode-back" href="../functions.html#tools.queryPoint">[docs]</a><span class="k">def</span> <span class="nf">queryPoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">grd</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Query grid based on a supplied point.</span>
@@ -1508,7 +1510,7 @@
     <span class="n">newX</span> <span class="o">=</span> <span class="n">x</span><span class="o">+</span><span class="n">dx</span>
     <span class="n">newY</span> <span class="o">=</span> <span class="n">y</span><span class="o">+</span><span class="n">dy</span>
     
-    <span class="k">return</span> <span class="n">newX</span><span class="p">,</span><span class="n">newY</span></div>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">newX</span><span class="p">),</span><span class="nb">float</span><span class="p">(</span><span class="n">newY</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="saveJSON"><a class="viewcode-back" href="../functions.html#tools.saveJSON">[docs]</a><span class="k">def</span> <span class="nf">saveJSON</span><span class="p">(</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">outfl</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Save dictionary to JSON file.</span>
@@ -1552,7 +1554,7 @@
     
     <span class="k">return</span> <span class="n">dictionary</span></div>
 
-<div class="viewcode-block" id="createUpdateDict"><a class="viewcode-back" href="../functions.html#tools.createUpdateDict">[docs]</a><span class="k">def</span> <span class="nf">createUpdateDict</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">upstreamFACmax</span><span class="p">,</span> <span class="n">fromHUC</span><span class="p">,</span> <span class="n">outfl</span><span class="p">):</span>
+<div class="viewcode-block" id="createUpdateDict"><a class="viewcode-back" href="../functions.html#tools.createUpdateDict">[docs]</a><span class="k">def</span> <span class="nf">createUpdateDict</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">upstreamFACmax</span><span class="p">,</span> <span class="n">fromHUC</span><span class="p">,</span> <span class="n">outfl</span><span class="p">,</span> <span class="n">replaceDict</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Create a dictionary for updating downstream FAC and parameter grids using values pulled from the next grid upstream.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -1567,6 +1569,8 @@
 <span class="sd">        The upstream HUC that the values are coming from.</span>
 <span class="sd">    outfl : str (path)</span>
 <span class="sd">        Path to where to save the json of this dictionary. The convention is to name this by the downstream HUC.</span>
+<span class="sd">    replaceDict : bool (optional)</span>
+<span class="sd">        Replace the update dictionary instead of updating with a new value. Defaults to True.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1577,11 +1581,11 @@
     <span class="c1"># using lists instead of single values in case there are multiple pour points between basins</span>
     
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
-    	<span class="n">x</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
+    	<span class="n">x</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
-    	<span class="n">y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">y</span><span class="p">])</span>
+    	<span class="n">y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">upstreamFACmax</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
-    	<span class="n">upstreamFACmax</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">upstreamFACmax</span><span class="p">])</span>
+    	<span class="n">upstreamFACmax</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">upstreamFACmax</span><span class="p">)</span>
 
     <span class="c1"># convert lists to strings</span>
     <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
@@ -1595,11 +1599,16 @@
         <span class="s1">&#39;vars&#39;</span><span class="p">:[</span><span class="s1">&#39;maxUpstreamFAC&#39;</span><span class="p">]</span> <span class="c1"># list of contained variables</span>
                 <span class="p">}</span>
     
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outfl</span><span class="p">):</span> <span class="c1"># if the update dictionary exists, update it.</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outfl</span><span class="p">)</span> <span class="ow">and</span> <span class="n">replaceDict</span><span class="o">==</span><span class="kc">False</span><span class="p">:</span> <span class="c1"># if the update dictionary exists, update it.</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Update dictionary found: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">outfl</span><span class="p">)</span>
         <span class="n">updateDict</span> <span class="o">=</span> <span class="n">loadJSON</span><span class="p">(</span><span class="n">outfl</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Updating dictionary...&#39;</span><span class="p">)</span>
         <span class="n">updateDict</span><span class="p">[</span><span class="n">fromHUC</span><span class="p">]</span> <span class="o">=</span> <span class="n">subDict</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outfl</span><span class="p">)</span> <span class="ow">and</span> <span class="n">replaceDict</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">outfl</span><span class="p">)</span>
+        <span class="n">updateDict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">fromHUC</span> <span class="p">:</span> <span class="n">subDict</span>
+        <span class="p">}</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">updateDict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">fromHUC</span> <span class="p">:</span> <span class="n">subDict</span>
@@ -1767,12 +1776,13 @@
     <span class="n">upstream</span> <span class="o">=</span> <span class="n">UD</span><span class="p">[</span><span class="n">upHUC</span><span class="p">]</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="n">upstream</span><span class="p">[</span><span class="s1">&#39;vars&#39;</span><span class="p">]</span>
     <span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">varName</span><span class="p">)</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">variables</span><span class="p">))</span>
     <span class="n">upstream</span><span class="p">[</span><span class="s1">&#39;vars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">variables</span>
     
     <span class="n">upstream</span><span class="p">[</span><span class="n">varName</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
     
     <span class="n">UD</span><span class="p">[</span><span class="n">upHUC</span><span class="p">]</span> <span class="o">=</span> <span class="n">upstream</span> <span class="c1"># update dictionary with upstream sub-dictionary</span>
-    <span class="n">saveJSON</span><span class="p">(</span><span class="n">ud</span><span class="p">)</span> <span class="c1"># write out file</span></div>
+    <span class="n">saveJSON</span><span class="p">(</span><span class="n">UD</span><span class="p">,</span> <span class="n">ud</span><span class="p">)</span> <span class="c1"># write out file</span></div>
 
 <div class="viewcode-block" id="adjustParam"><a class="viewcode-back" href="../functions.html#tools.adjustParam">[docs]</a><span class="k">def</span> <span class="nf">adjustParam</span><span class="p">(</span><span class="n">updatedParam</span><span class="p">,</span> <span class="n">downstreamParamFL</span><span class="p">,</span> <span class="n">updateDictFl</span><span class="p">,</span> <span class="n">adjParamFl</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Generate an updated parameter grid given an update dictionary from :py:func:`createUpdateDict`.</span>
