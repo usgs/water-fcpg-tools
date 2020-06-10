@@ -397,7 +397,7 @@
 
 <dl class="py function">
 <dt id="tools.cat2bin">
-<code class="sig-name descname">cat2bin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inCat</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#cat2bin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.cat2bin" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cat2bin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inCat</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">par</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#cat2bin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.cat2bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. Wrapper on <a class="reference internal" href="#tools.binarizeCat" title="tools.binarizeCat"><code class="xref py py-func docutils literal notranslate"><span class="pre">binarizeCat()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -405,6 +405,8 @@
 <dt><strong>inCat</strong><span class="classifier">str</span></dt><dd><p>Input catagorical parameter raster.</p>
 </dd>
 <dt><strong>outWorkspace</strong><span class="classifier">str</span></dt><dd><p>Workspace to save binary raster output files.</p>
+</dd>
+<dt><strong>par</strong><span class="classifier">bool</span></dt><dd><p>Use parallel processing to generate binary rasters.</p>
 </dd>
 </dl>
 </dd>

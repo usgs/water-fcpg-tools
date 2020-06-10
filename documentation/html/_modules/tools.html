@@ -1021,7 +1021,7 @@
 
     <span class="k">return</span> <span class="n">fileList</span></div>
 
-<div class="viewcode-block" id="cat2bin"><a class="viewcode-back" href="../functions.html#tools.cat2bin">[docs]</a><span class="k">def</span> <span class="nf">cat2bin</span><span class="p">(</span><span class="n">inCat</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">):</span>
+<div class="viewcode-block" id="cat2bin"><a class="viewcode-back" href="../functions.html#tools.cat2bin">[docs]</a><span class="k">def</span> <span class="nf">cat2bin</span><span class="p">(</span><span class="n">inCat</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. Wrapper on :py:func:`binarizeCat`.</span>
 
 <span class="sd">    Parameters</span>
@@ -1030,6 +1030,8 @@
 <span class="sd">        Input catagorical parameter raster.</span>
 <span class="sd">    outWorkspace : str</span>
 <span class="sd">        Workspace to save binary raster output files.</span>
+<span class="sd">    par : bool</span>
+<span class="sd">        Use parallel processing to generate binary rasters.</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1065,16 +1067,20 @@
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tif&quot;</span> <span class="c1">#Output file extension</span>
 
     <span class="c1">#Create binary rasters for each category</span>
-   
-    <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
-    <span class="n">pool</span> <span class="o">=</span> <span class="n">processPool</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">par</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">processPool</span><span class="p">()</span>
 
-    <span class="c1"># Use pool.map() to create binaries in parallel</span>
-    <span class="n">fileList</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">binarizeCat</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dat</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="n">nodata</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="o">=</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span><span class="o">=</span><span class="n">baseName</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="n">ext</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">),</span> <span class="n">cats</span><span class="p">)</span>
+        <span class="c1"># Use pool.map() to create binaries in parallel</span>
+        <span class="n">fileList</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">binarizeCat</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dat</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="n">nodata</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="o">=</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span><span class="o">=</span><span class="n">baseName</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="n">ext</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">),</span> <span class="n">cats</span><span class="p">)</span>
 
-    <span class="c1">#close the pool and wait for the work to finish</span>
-    <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+        <span class="c1">#close the pool and wait for the work to finish</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fileList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">cats</span><span class="p">:</span>
+            <span class="n">fileList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binarizeCat</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">dat</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">cat</span><span class="p">,</span> <span class="n">nodata</span> <span class="o">=</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">outWorkspace</span> <span class="o">=</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span> <span class="o">=</span> <span class="n">baseName</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">profile</span><span class="p">))</span>
     
     <span class="k">return</span> <span class="n">fileList</span></div>
 
