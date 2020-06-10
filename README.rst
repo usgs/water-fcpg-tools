@@ -37,7 +37,7 @@ Please refer to the :ref:`cookbook-label` and :ref:`function-label` for examples
 Citation
 ========
 
-Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., Rea, A.H. (2020). Flow-Conditioned Parameter Grid Tools. U.S. Geological Survey Software Release. DOI: https://doi.org/10.5066/P9FPZUI0
+Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H. (2020). Flow-Conditioned Parameter Grid Tools. U.S. Geological Survey Software Release. DOI: https://doi.org/10.5066/P9FPZUI0
 
 
 Disclaimers
