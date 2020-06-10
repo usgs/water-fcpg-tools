@@ -868,7 +868,7 @@ def make_fcpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"):
 
     return fileList
 
-def cat2bin(inCat, outWorkspace):
+def cat2bin(inCat, outWorkspace, par=True):
     '''Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. Wrapper on :py:func:`binarizeCat`.
 
     Parameters
@@ -877,6 +877,8 @@ def cat2bin(inCat, outWorkspace):
         Input catagorical parameter raster.
     outWorkspace : str
         Workspace to save binary raster output files.
+    par : bool
+        Use parallel processing to generate binary rasters.
         
     Returns
     -------
@@ -912,16 +914,20 @@ def cat2bin(inCat, outWorkspace):
     ext = ".tif" #Output file extension
 
     #Create binary rasters for each category
-   
-    from functools import partial
-    pool = processPool()
+    if par:
+        from functools import partial
+        pool = processPool()
 
-    # Use pool.map() to create binaries in parallel
-    fileList = pool.map(partial(binarizeCat, data=dat, nodata=nodata, outWorkspace=outWorkspace, baseName=baseName, ext=ext, profile=profile), cats)
+        # Use pool.map() to create binaries in parallel
+        fileList = pool.map(partial(binarizeCat, data=dat, nodata=nodata, outWorkspace=outWorkspace, baseName=baseName, ext=ext, profile=profile), cats)
 
-    #close the pool and wait for the work to finish
-    pool.close()
-    pool.join()
+        #close the pool and wait for the work to finish
+        pool.close()
+        pool.join()
+    else:
+        fileList = []
+        for cat in cats:
+            fileList.append(binarizeCat(data = dat, val = cat, nodata = nodata, outWorkspace = outWorkspace, baseName = baseName, ext = ext, profile = profile))
     
     return fileList
 
