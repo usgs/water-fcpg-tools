@@ -224,7 +224,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
                 'weight':outNoDataRast
                 }
                 
-                cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+                cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
                 print(cmd)
                 result = subprocess.run(cmd, shell = True) # Run shell command
                 result.stdout
@@ -260,7 +260,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         'weight':tauDEMweight
         }
         
-        cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         
@@ -626,7 +626,7 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
             'weight':paramRast
             }
                     
-            cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+            cmd = 'mpiexec -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
             print(cmd)
             result = subprocess.run(cmd, shell = True) # Run shell command
             result.stdout
@@ -645,7 +645,7 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
             'dsca': outRast,
             }
                     
-            cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -nc'.format(**tauParams) # Create string of tauDEM shell command
+            cmd = 'mpiexec -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -nc'.format(**tauParams) # Create string of tauDEM shell command
             print(cmd)
             result = subprocess.run(cmd, shell = True) # Run shell command
             result.stdout
@@ -688,7 +688,7 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1) :
         'thresh':thresh
         }
                 
-        cmd = 'mpiexec -bind-to rr -n {cores} d8hdisttostrm -p {fdr} -src {fac} -dist {outRast}, -thresh {thresh}'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = 'mpiexec -n {cores} d8hdisttostrm -p {fdr} -src {fac} -dist {outRast}, -thresh {thresh}'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         result.stdout
@@ -998,7 +998,7 @@ def tauFlowAccum(fdr, accumRast, cores = 1):
         'outFl':accumRast, 
         }
         
-        cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         
@@ -1045,9 +1045,9 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
         }
 
     if accum_type == "min": # insert flag for min 
-        cmd = 'mpiexec -bind-to rr -n {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -{accum_type} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = 'mpiexec -n {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -{accum_type} -nc'.format(**tauParams) # Create string of tauDEM shell command
     else: # no flag for max
-        cmd = 'mpiexec -bind-to rr -n {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = 'mpiexec -n {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
 
     print(cmd) # print the command to be run to the output.
     result = subprocess.run(cmd, shell = True) # Run shell command
