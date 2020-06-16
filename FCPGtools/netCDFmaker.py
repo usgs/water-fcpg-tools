@@ -1,10 +1,5 @@
 # Based on code from Rich Signell
-# Convert a bunch of GDAL readable grids to a NetCDF Time Series.
-# Here we read a bunch of files that have names like:
-# CPGs/gridMET_minTempK_1979_04_00_HUC1002_CPG.tif
-# CPGs/gridMET_minTempK_1979_05_00_HUC1002_CPG.tif
-# ...
-# CPGs/gridMET_minTempK_1980_04_00_HUC1002_CPG.tif
+# Convert a group of GDAL readable grids to a NetCDF Time Series.
 #
 # metaDict = {
 # 	'title':'',
@@ -287,7 +282,7 @@ def buildNC(inDir, outFile, metaDict, cl=9, profile = None):
 
 	nco.Conventions=metaDict['Conventions']
 
-	# chunking is optional, but can improve access a lot: 
+	# chunking is optional, but can improve access: 
 	# (see: http://www.unidata.ucar.edu/blogs/developer/entry/chunking_data_choosing_shapes)
 	#chunk_lon=16
 	#chunk_lat=16

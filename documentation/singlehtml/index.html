@@ -34,6 +34,7 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
@@ -173,7 +174,7 @@
 </div>
 <div class="section" id="citation">
 <h1>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h1>
-<p>Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., Rea, A.H. (2020). Flow-Conditioned Parameter Grid Tools. U.S. Geological Survey Software Release. DOI: <a class="reference external" href="https://doi.org/10.5066/P9FPZUI0">https://doi.org/10.5066/P9FPZUI0</a></p>
+<p>Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: <a class="reference external" href="https://doi.org/10.5066/P9FPZUI0">https://doi.org/10.5066/P9FPZUI0</a></p>
 </div>
 <div class="section" id="disclaimers">
 <h1>Disclaimers<a class="headerlink" href="#disclaimers" title="Permalink to this headline">¶</a></h1>
@@ -183,14 +184,14 @@
 <div class="section" id="license">
 <h1>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h1>
 <p>This work is published with the MIT Open Source License:</p>
-<p>Copyright 2020 Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea</p>
+<p>Copyright 2020 Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Alan Rea (U.S. Geological Survey)</p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
 <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
 <p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
 <div class="toctree-wrapper compound">
 <span id="document-cookbook"></span><div class="section" id="cookbook">
 <span id="cookbook-label"></span><h2>Cookbook<a class="headerlink" href="#cookbook" title="Permalink to this headline">¶</a></h2>
-<p>Example scripts and work flows for common FCPG tasks on local workstations and HPC environments. These scripts have not been turned into FCPGtools functions because of the the variability in HPC, local systems, and input data sets that the FCPGtools may be used with.</p>
+<p>Example scripts and work flows for common FCPG tasks on local workstations and HPC environments. These scripts have not been turned into FCPGtools functions because of the variability in HPC, local systems, and input data sets that the FCPGtools may be used with.</p>
 <div class="section" id="input-data">
 <h3>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline">¶</a></h3>
 <dl class="simple">
@@ -1056,7 +1057,7 @@
 
 <dl class="py function">
 <dt id="tools.cat2bin">
-<code class="sig-name descname">cat2bin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inCat</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.cat2bin" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cat2bin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inCat</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">par</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.cat2bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. Wrapper on <a class="reference internal" href="#tools.binarizeCat" title="tools.binarizeCat"><code class="xref py py-func docutils literal notranslate"><span class="pre">binarizeCat()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1064,6 +1065,8 @@
 <dt><strong>inCat</strong><span class="classifier">str</span></dt><dd><p>Input catagorical parameter raster.</p>
 </dd>
 <dt><strong>outWorkspace</strong><span class="classifier">str</span></dt><dd><p>Workspace to save binary raster output files.</p>
+</dd>
+<dt><strong>par</strong><span class="classifier">bool</span></dt><dd><p>Use parallel processing to generate binary rasters.</p>
 </dd>
 </dl>
 </dd>
@@ -1087,7 +1090,7 @@
 </dd>
 <dt><strong>newNoData</strong><span class="classifier">str</span></dt><dd><p>New no data value for the raster.</p>
 </dd>
-<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of rasterio parameters used to create the updated raster.</p>
+<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of Rasterio parameters used to create the updated raster.</p>
 </dd>
 </dl>
 </dd>
@@ -1101,7 +1104,7 @@
 
 <dl class="py function">
 <dt id="tools.createUpdateDict">
-<code class="sig-name descname">createUpdateDict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">upstreamFACmax</span></em>, <em class="sig-param"><span class="n">fromHUC</span></em>, <em class="sig-param"><span class="n">outfl</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.createUpdateDict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">createUpdateDict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">upstreamFACmax</span></em>, <em class="sig-param"><span class="n">fromHUC</span></em>, <em class="sig-param"><span class="n">outfl</span></em>, <em class="sig-param"><span class="n">replaceDict</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.createUpdateDict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a dictionary for updating downstream FAC and parameter grids using values pulled from the next grid upstream.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1115,6 +1118,8 @@
 <dt><strong>fromHUC</strong><span class="classifier">str</span></dt><dd><p>The upstream HUC that the values are coming from.</p>
 </dd>
 <dt><strong>outfl</strong><span class="classifier">str (path)</span></dt><dd><p>Path to where to save the json of this dictionary. The convention is to name this by the downstream HUC.</p>
+</dd>
+<dt><strong>replaceDict</strong><span class="classifier">bool (optional)</span></dt><dd><p>Replace the update dictionary instead of updating with a new value. Defaults to True.</p>
 </dd>
 </dl>
 </dd>
@@ -1138,7 +1143,7 @@
 </dd>
 <dt><strong>outRast</strong><span class="classifier">str</span></dt><dd><p>Path to output the TauDEM D-Infinity flow direction raster.</p>
 </dd>
-<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of rasterio parameters used to write out the GeoTiff.</p>
+<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of Rasterio parameters used to write out the GeoTiff.</p>
 </dd>
 </dl>
 </dd>
@@ -1226,7 +1231,7 @@
 </dd>
 <dt><strong>y</strong><span class="classifier">float</span></dt><dd><p>Vertical coordinate of the greatest FAC cell.</p>
 </dd>
-<dt><strong>d</strong><span class="classifier">int or float</span></dt><dd><p>Value from the parameter grid queried.</p>
+<dt><strong>d</strong><span class="classifier">float</span></dt><dd><p>Value from the parameter grid queried.</p>
 </dd>
 <dt><strong>w</strong><span class="classifier">float</span></dt><dd><p>Cell size of the grid.</p>
 </dd>
@@ -1637,7 +1642,7 @@
 </dd>
 <dt><strong>outRast</strong><span class="classifier">str</span></dt><dd><p>Path to output a raster with flow directions encoded for TauDEM. File will be overwritten if it already exists.</p>
 </dd>
-<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.</p>
+<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of Rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.</p>
 </dd>
 </dl>
 </dd>
@@ -1683,7 +1688,7 @@
 <dd class="field-odd"><dl class="simple">
 <dt><strong>ud</strong><span class="classifier">str</span></dt><dd><p>Path to the update dictionary to add a variable to.</p>
 </dd>
-<dt><strong>upHUC</strong><span class="classifier">str</span></dt><dd><p>Name of the upstream HUC that the variable cooresponds to.</p>
+<dt><strong>upHUC</strong><span class="classifier">str</span></dt><dd><p>Name of the upstream HUC that the variable corresponds to.</p>
 </dd>
 <dt><strong>varName</strong><span class="classifier">str</span></dt><dd><p>Name to use for the variable.</p>
 </dd>

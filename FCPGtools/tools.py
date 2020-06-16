@@ -59,7 +59,7 @@ def tauDrainDir(inRast, outRast, updateDict = {
     outRast : str
         Path to output a raster with flow directions encoded for TauDEM. File will be overwritten if it already exists. 
     updateDict : dict (optional)
-        Dictionary of rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.
+        Dictionary of Rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.
 
     Returns
     -------
@@ -1609,7 +1609,7 @@ def updateDict(ud, upHUC, varName, val):
     ud : str
         Path to the update dictionary to add a variable to.
     upHUC : str
-        Name of the upstream HUC that the variable cooresponds to.
+        Name of the upstream HUC that the variable corresponds to.
     varName : str
         Name to use for the variable.
     val : list, int or float
@@ -1686,7 +1686,7 @@ def d8todinfinity(inRast, outRast, updateDict = {
     outRast : str
         Path to output the TauDEM D-Infinity flow direction raster.
     updateDict : dict (optional)
-        Dictionary of rasterio parameters used to write out the GeoTiff.
+        Dictionary of Rasterio parameters used to write out the GeoTiff.
 
     Returns
     -------
@@ -1733,7 +1733,7 @@ def changeNoData(inRast, newNoData, updateDict = {
     newNoData : str
         New no data value for the raster.
     updateDict : dict (optional)
-        Dictionary of rasterio parameters used to create the updated raster.
+        Dictionary of Rasterio parameters used to create the updated raster.
 
     Returns
     -------
