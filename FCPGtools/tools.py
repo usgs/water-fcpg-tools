@@ -100,7 +100,7 @@ def tauDrainDir(inRast, outRast, updateDict = {
         dst.write(tauDir,1)
         print("TauDEM drainage direction written to: {0}".format(outRast))
 
-def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, zeroNoDataRast = None, cores = 1):
+def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, zeroNoDataRast = None, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n'):
     """Accumulate a parameter grid using TauDEM AreaD8 :cite:`TauDEM`.
 
     Parameters
@@ -119,6 +119,11 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         File location to store the no data raster filled with zeros.
     cores : int (optional)
         The number of cores to use for parameter accumulation. Defaults to 1.
+    mpiCall : str (optional)
+        The command to use for mpi, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument flag passed to mpiCall, which is followed by the cores parameter.
+
 
     Returns
     -------
@@ -221,10 +226,12 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
                 'fdr':fdr,
                 'cores':cores, 
                 'outFl':outNoDataAccum,
-                'weight':outNoDataRast
+                'weight':outNoDataRast,
+                'mpiCall':mpiCall,
+                'mpiArg':mpiArg
                 }
                 
-                cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+                cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
                 print(cmd)
                 result = subprocess.run(cmd, shell = True) # Run shell command
                 result.stdout
@@ -257,10 +264,12 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         'fdr':fdr,
         'cores':cores, 
         'outFl':accumRast, 
-        'weight':tauDEMweight
+        'weight':tauDEMweight,
+        'mpiCall':mpiCall,
+        'mpiArg':mpiArg
         }
         
-        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         
@@ -593,7 +602,7 @@ def applyMult(inRast, mult, outRast):
         print("Raster written to: {0}".format(outRast))
 
 
-def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
+def decayAccum(ang, mult, outRast, paramRast = None, cores=1, mpiCall = 'mpiexec', mpiArg = '-n') :
     '''Decay the accumulation of a parameter raster.
 
     Parameters
@@ -608,6 +617,10 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
         Raster of parameter values to accumulate. If not supplied area will be accumulated. Defaults to None.
     cores : int (optional)
         Number of cores to use. Defaults to 1.
+    mpiCall : str (optional)
+        The command to use for mpi, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument flag passed to mpiCall, which is followed by the cores parameter.
 
     Returns
     -------
@@ -623,10 +636,12 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
             'cores':cores, 
             'dm':mult,
             'dsca': outRast,
-            'weight':paramRast
+            'weight':paramRast,
+            'mpiCall':mpiCall,
+            'mpiArg':mpiArg
             }
                     
-            cmd = 'mpiexec -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+            cmd = '{mpiCall} {mpiArg} {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
             print(cmd)
             result = subprocess.run(cmd, shell = True) # Run shell command
             result.stdout
@@ -643,9 +658,11 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
             'cores':cores, 
             'dm':mult,
             'dsca': outRast,
+            'mpiCall':mpiCall,
+            'mpiArg':mpiArg
             }
                     
-            cmd = 'mpiexec -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -nc'.format(**tauParams) # Create string of tauDEM shell command
+            cmd = '{mpiCall} {mpiArg} {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -nc'.format(**tauParams) # Create string of tauDEM shell command
             print(cmd)
             result = subprocess.run(cmd, shell = True) # Run shell command
             result.stdout
@@ -657,7 +674,7 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
 
 
 
-def dist2stream(fdr, fac, thresh, outRast, cores=1) :
+def dist2stream(fdr, fac, thresh, outRast, cores=1, mpiCall = 'mpiexec', mpiArg = '-n') :
     '''Compute distance to streams.
     
     Parameters
@@ -672,6 +689,10 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1) :
         Path to output the distance raster.
     cores : int (optional)
         The number of cores to use. Defaults to 1.
+    mpiCall : str (optional)
+        The command to use for mpi, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument flag passed to mpiCall, which is followed by the cores parameter.
 
     Returns
     -------
@@ -685,10 +706,12 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1) :
         'cores':cores, 
         'fac':fac,
         'outRast': outRast,
-        'thresh':thresh
+        'thresh':thresh,
+        'mpiCall':mpiCall,
+        'mpiArg':mpiArg
         }
                 
-        cmd = 'mpiexec -n {cores} d8hdisttostrm -p {fdr} -src {fac} -dist {outRast}, -thresh {thresh}'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = '{mpiCall} {mpiArg} {cores} d8hdisttostrm -p {fdr} -src {fac} -dist {outRast}, -thresh {thresh}'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         result.stdout
@@ -972,7 +995,7 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
 
     return catRaster # Return the path to the raster created
 
-def tauFlowAccum(fdr, accumRast, cores = 1):
+def tauFlowAccum(fdr, accumRast, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n'):
     """Wrapper for TauDEM AreaD8 :cite:`TauDEM` to produce a flow acculation grid.
 
     Parameters
@@ -983,6 +1006,11 @@ def tauFlowAccum(fdr, accumRast, cores = 1):
         Path to output the flow accumulation raster.
     cores : int (optional)
         Number of cores to use. Defaults to 1.
+    mpiCall : str (optional)
+        The command to use for mpi, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument flag passed to mpiCall, which is followed by the cores parameter.
+
 
     Returns
     -------
@@ -995,10 +1023,12 @@ def tauFlowAccum(fdr, accumRast, cores = 1):
         tauParams = {
         'fdr':fdr,
         'cores':cores, 
-        'outFl':accumRast, 
+        'outFl':accumRast,
+        'mpiCall':mpiCall,
+        'mpiArg':mpiArg
         }
         
-        cmd = 'mpiexec -n {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         
@@ -1028,6 +1058,10 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
         Path to a flow accumulation raster. Defaults to None.
     thresh : int (optional)
         Threshold values, in the same units as fac to mask output to stream channels. Defaults to None.
+    mpiCall : str (optional)
+        The command to use for mpi, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument flag passed to mpiCall, which is followed by the cores parameter.
 
     Returns
     -------
@@ -1041,13 +1075,15 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
         'cores':cores, 
         'outFl':output,
         'param':param,
-        'accum_type':accum_type.lower()
+        'accum_type':accum_type.lower(),
+        'mpiCall':mpiCall,
+        'mpiArg':mpiArg
         }
 
     if accum_type == "min": # insert flag for min 
-        cmd = 'mpiexec -n {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -{accum_type} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -{accum_type} -nc'.format(**tauParams) # Create string of tauDEM shell command
     else: # no flag for max
-        cmd = 'mpiexec -n {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
 
     print(cmd) # print the command to be run to the output.
     result = subprocess.run(cmd, shell = True) # Run shell command
@@ -1449,7 +1485,7 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict = True):
         'x': xs,
         'y': ys,
         'maxUpstreamFAC':facs,
-        'vars':['maxUpstreamFAC'] # list of contained variables
+        'vars':['maxUpstreamFAC'] # list of contained parameters
                 }
     
     if os.path.exists(outfl) and replaceDict==False: # if the update dictionary exists, update it.
@@ -1607,11 +1643,11 @@ def updateDict(ud, upHUC, varName, val):
     Parameters
     ----------
     ud : str
-        Path to the update dictionary to add a variable to.
+        Path to the update dictionary to add a parameter to.
     upHUC : str
-        Name of the upstream HUC that the variable corresponds to.
+        Name of the upstream HUC that the parameter corresponds to.
     varName : str
-        Name to use for the variable.
+        Name to use for the parameter.
     val : list, int or float
         Value to add to the upstream dictonary.
     
