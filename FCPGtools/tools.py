@@ -816,7 +816,7 @@ def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores
 
     return fileList
 
-def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
+def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum", mpiCall = 'mpiexec', mpiArg = '-n'):
     '''Batch version of :py:func:`accumulateParam`.
 
     Parameters
@@ -831,6 +831,10 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
         Number of cores to use. Defaults to 1.
     appStr :str (optional)
         String of text to append to accumulated parameter filenames. Defaults to "accum."
+    mpiCall : str (optional)
+        MPI program to use to execute the program, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument to pass to mpiCall, defaults to -n.
 
     Returns
     -------
@@ -851,7 +855,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
         nodataPath = os.path.join(outWorkspace, baseName + "nodata" + ext) 
         nodataAccumPath = os.path.join(outWorkspace, baseName + "nodataaccum" + ext) 
 
-        accumulateParam(param, fdr, outPath, outNoDataRast=nodataPath, outNoDataAccum=nodataAccumPath, cores=cores) #Run the flow accumulation function for the parameter raster
+        accumulateParam(param, fdr, outPath, outNoDataRast=nodataPath, outNoDataAccum=nodataAccumPath, cores=cores, mpiCall = mpiCall, mpiArg = mpiArg) #Run the flow accumulation function for the parameter raster
 
     return fileList
 
@@ -1597,7 +1601,7 @@ def makeFACweight(ingrd,outWeight):
     
     return None
 
-def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstreamFDRFl, adjFACFl, cores=1):
+def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstreamFDRFl, adjFACFl, cores=1, mpiCall = 'mpiexec', mpiArg = '-n'):
     '''Generate an updated flow accumulation grid (FAC) given an update dictionary produced by :py:func:`createUpdateDict`.
     
     Parameters
@@ -1613,7 +1617,11 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
     adjFACFl : str
         Path to output the adjusted FAC raster.
     cores : int (Optional)
-        Number of cores to use. Defaults to 1. 
+        Number of cores to use. Defaults to 1.
+    mpiCall : str (optional)
+        MPI program to use to execute the program, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument to pass to mpiCall, defaults to -n.
     
     Returns
     -------

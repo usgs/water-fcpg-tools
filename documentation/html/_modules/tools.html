@@ -254,7 +254,7 @@
         <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tauDir</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TauDEM drainage direction written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="accumulateParam"><a class="viewcode-back" href="../functions.html#tools.accumulateParam">[docs]</a><span class="k">def</span> <span class="nf">accumulateParam</span><span class="p">(</span><span class="n">paramRast</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">accumRast</span><span class="p">,</span> <span class="n">outNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outNoDataAccum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">zeroNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="accumulateParam"><a class="viewcode-back" href="../functions.html#tools.accumulateParam">[docs]</a><span class="k">def</span> <span class="nf">accumulateParam</span><span class="p">(</span><span class="n">paramRast</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">accumRast</span><span class="p">,</span> <span class="n">outNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outNoDataAccum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">zeroNoDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mpiCall</span> <span class="o">=</span> <span class="s1">&#39;mpiexec&#39;</span><span class="p">,</span> <span class="n">mpiArg</span> <span class="o">=</span> <span class="s1">&#39;-n&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Accumulate a parameter grid using TauDEM AreaD8 :cite:`TauDEM`.</span>
 
 <span class="sd">    Parameters</span>
@@ -273,6 +273,11 @@
 <span class="sd">        File location to store the no data raster filled with zeros.</span>
 <span class="sd">    cores : int (optional)</span>
 <span class="sd">        The number of cores to use for parameter accumulation. Defaults to 1.</span>
+<span class="sd">    mpiCall : str (optional)</span>
+<span class="sd">        The command to use for mpi, defaults to mpiexec.</span>
+<span class="sd">    mpiArg : str (optional)</span>
+<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter.</span>
+
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -375,10 +380,12 @@
                 <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
                 <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
                 <span class="s1">&#39;outFl&#39;</span><span class="p">:</span><span class="n">outNoDataAccum</span><span class="p">,</span>
-                <span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="n">outNoDataRast</span>
+                <span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="n">outNoDataRast</span><span class="p">,</span>
+                <span class="s1">&#39;mpiCall&#39;</span><span class="p">:</span><span class="n">mpiCall</span><span class="p">,</span>
+                <span class="s1">&#39;mpiArg&#39;</span><span class="p">:</span><span class="n">mpiArg</span>
                 <span class="p">}</span>
                 
-                <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -n </span><span class="si">{cores}</span><span class="s1"> aread8 -p </span><span class="si">{fdr}</span><span class="s1"> -ad8 </span><span class="si">{outFl}</span><span class="s1"> -wg </span><span class="si">{weight}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{mpiCall}</span><span class="s1"> </span><span class="si">{mpiArg}</span><span class="s1"> </span><span class="si">{cores}</span><span class="s1"> aread8 -p </span><span class="si">{fdr}</span><span class="s1"> -ad8 </span><span class="si">{outFl}</span><span class="s1"> -wg </span><span class="si">{weight}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
@@ -411,10 +418,12 @@
         <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
         <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
         <span class="s1">&#39;outFl&#39;</span><span class="p">:</span><span class="n">accumRast</span><span class="p">,</span> 
-        <span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="n">tauDEMweight</span>
+        <span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="n">tauDEMweight</span><span class="p">,</span>
+        <span class="s1">&#39;mpiCall&#39;</span><span class="p">:</span><span class="n">mpiCall</span><span class="p">,</span>
+        <span class="s1">&#39;mpiArg&#39;</span><span class="p">:</span><span class="n">mpiArg</span>
         <span class="p">}</span>
         
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -n </span><span class="si">{cores}</span><span class="s1"> aread8 -p </span><span class="si">{fdr}</span><span class="s1"> -ad8 </span><span class="si">{outFl}</span><span class="s1"> -wg </span><span class="si">{weight}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{mpiCall}</span><span class="s1"> </span><span class="si">{mpiArg}</span><span class="s1"> </span><span class="si">{cores}</span><span class="s1"> aread8 -p </span><span class="si">{fdr}</span><span class="s1"> -ad8 </span><span class="si">{outFl}</span><span class="s1"> -wg </span><span class="si">{weight}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
         
@@ -747,7 +756,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Raster written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="decayAccum"><a class="viewcode-back" href="../functions.html#tools.decayAccum">[docs]</a><span class="k">def</span> <span class="nf">decayAccum</span><span class="p">(</span><span class="n">ang</span><span class="p">,</span> <span class="n">mult</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">paramRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+<div class="viewcode-block" id="decayAccum"><a class="viewcode-back" href="../functions.html#tools.decayAccum">[docs]</a><span class="k">def</span> <span class="nf">decayAccum</span><span class="p">(</span><span class="n">ang</span><span class="p">,</span> <span class="n">mult</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">paramRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mpiCall</span> <span class="o">=</span> <span class="s1">&#39;mpiexec&#39;</span><span class="p">,</span> <span class="n">mpiArg</span> <span class="o">=</span> <span class="s1">&#39;-n&#39;</span><span class="p">)</span> <span class="p">:</span>
     <span class="sd">&#39;&#39;&#39;Decay the accumulation of a parameter raster.</span>
 
 <span class="sd">    Parameters</span>
@@ -762,6 +771,10 @@
 <span class="sd">        Raster of parameter values to accumulate. If not supplied area will be accumulated. Defaults to None.</span>
 <span class="sd">    cores : int (optional)</span>
 <span class="sd">        Number of cores to use. Defaults to 1.</span>
+<span class="sd">    mpiCall : str (optional)</span>
+<span class="sd">        The command to use for mpi, defaults to mpiexec.</span>
+<span class="sd">    mpiArg : str (optional)</span>
+<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -777,10 +790,12 @@
             <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
             <span class="s1">&#39;dm&#39;</span><span class="p">:</span><span class="n">mult</span><span class="p">,</span>
             <span class="s1">&#39;dsca&#39;</span><span class="p">:</span> <span class="n">outRast</span><span class="p">,</span>
-            <span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="n">paramRast</span>
+            <span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="n">paramRast</span><span class="p">,</span>
+            <span class="s1">&#39;mpiCall&#39;</span><span class="p">:</span><span class="n">mpiCall</span><span class="p">,</span>
+            <span class="s1">&#39;mpiArg&#39;</span><span class="p">:</span><span class="n">mpiArg</span>
             <span class="p">}</span>
                     
-            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -n </span><span class="si">{cores}</span><span class="s1"> dinfdecayaccum -ang </span><span class="si">{ang}</span><span class="s1"> -dm </span><span class="si">{dm}</span><span class="s1"> -dsca </span><span class="si">{dsca}</span><span class="s1">, -wg </span><span class="si">{weight}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{mpiCall}</span><span class="s1"> </span><span class="si">{mpiArg}</span><span class="s1"> </span><span class="si">{cores}</span><span class="s1"> dinfdecayaccum -ang </span><span class="si">{ang}</span><span class="s1"> -dm </span><span class="si">{dm}</span><span class="s1"> -dsca </span><span class="si">{dsca}</span><span class="s1">, -wg </span><span class="si">{weight}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
             <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
@@ -797,9 +812,11 @@
             <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
             <span class="s1">&#39;dm&#39;</span><span class="p">:</span><span class="n">mult</span><span class="p">,</span>
             <span class="s1">&#39;dsca&#39;</span><span class="p">:</span> <span class="n">outRast</span><span class="p">,</span>
+            <span class="s1">&#39;mpiCall&#39;</span><span class="p">:</span><span class="n">mpiCall</span><span class="p">,</span>
+            <span class="s1">&#39;mpiArg&#39;</span><span class="p">:</span><span class="n">mpiArg</span>
             <span class="p">}</span>
                     
-            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -n </span><span class="si">{cores}</span><span class="s1"> dinfdecayaccum -ang </span><span class="si">{ang}</span><span class="s1"> -dm </span><span class="si">{dm}</span><span class="s1"> -dsca </span><span class="si">{dsca}</span><span class="s1">, -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{mpiCall}</span><span class="s1"> </span><span class="si">{mpiArg}</span><span class="s1"> </span><span class="si">{cores}</span><span class="s1"> dinfdecayaccum -ang </span><span class="si">{ang}</span><span class="s1"> -dm </span><span class="si">{dm}</span><span class="s1"> -dsca </span><span class="si">{dsca}</span><span class="s1">, -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
             <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
@@ -811,7 +828,7 @@
 
 
 
-<div class="viewcode-block" id="dist2stream"><a class="viewcode-back" href="../functions.html#tools.dist2stream">[docs]</a><span class="k">def</span> <span class="nf">dist2stream</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+<div class="viewcode-block" id="dist2stream"><a class="viewcode-back" href="../functions.html#tools.dist2stream">[docs]</a><span class="k">def</span> <span class="nf">dist2stream</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mpiCall</span> <span class="o">=</span> <span class="s1">&#39;mpiexec&#39;</span><span class="p">,</span> <span class="n">mpiArg</span> <span class="o">=</span> <span class="s1">&#39;-n&#39;</span><span class="p">)</span> <span class="p">:</span>
     <span class="sd">&#39;&#39;&#39;Compute distance to streams.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -826,6 +843,10 @@
 <span class="sd">        Path to output the distance raster.</span>
 <span class="sd">    cores : int (optional)</span>
 <span class="sd">        The number of cores to use. Defaults to 1.</span>
+<span class="sd">    mpiCall : str (optional)</span>
+<span class="sd">        The command to use for mpi, defaults to mpiexec.</span>
+<span class="sd">    mpiArg : str (optional)</span>
+<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -839,10 +860,12 @@
         <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
         <span class="s1">&#39;fac&#39;</span><span class="p">:</span><span class="n">fac</span><span class="p">,</span>
         <span class="s1">&#39;outRast&#39;</span><span class="p">:</span> <span class="n">outRast</span><span class="p">,</span>
-        <span class="s1">&#39;thresh&#39;</span><span class="p">:</span><span class="n">thresh</span>
+        <span class="s1">&#39;thresh&#39;</span><span class="p">:</span><span class="n">thresh</span><span class="p">,</span>
+        <span class="s1">&#39;mpiCall&#39;</span><span class="p">:</span><span class="n">mpiCall</span><span class="p">,</span>
+        <span class="s1">&#39;mpiArg&#39;</span><span class="p">:</span><span class="n">mpiArg</span>
         <span class="p">}</span>
                 
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -n </span><span class="si">{cores}</span><span class="s1"> d8hdisttostrm -p </span><span class="si">{fdr}</span><span class="s1"> -src </span><span class="si">{fac}</span><span class="s1"> -dist </span><span class="si">{outRast}</span><span class="s1">, -thresh </span><span class="si">{thresh}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{mpiCall}</span><span class="s1"> </span><span class="si">{mpiArg}</span><span class="s1"> </span><span class="si">{cores}</span><span class="s1"> d8hdisttostrm -p </span><span class="si">{fdr}</span><span class="s1"> -src </span><span class="si">{fac}</span><span class="s1"> -dist </span><span class="si">{outRast}</span><span class="s1">, -thresh </span><span class="si">{thresh}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
         <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
@@ -947,7 +970,7 @@
 
     <span class="k">return</span> <span class="n">fileList</span></div>
 
-<div class="viewcode-block" id="accumulateParams"><a class="viewcode-back" href="../functions.html#tools.accumulateParams">[docs]</a><span class="k">def</span> <span class="nf">accumulateParams</span><span class="p">(</span><span class="n">paramRasts</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;accum&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="accumulateParams"><a class="viewcode-back" href="../functions.html#tools.accumulateParams">[docs]</a><span class="k">def</span> <span class="nf">accumulateParams</span><span class="p">(</span><span class="n">paramRasts</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;accum&quot;</span><span class="p">,</span> <span class="n">mpiCall</span> <span class="o">=</span> <span class="s1">&#39;mpiexec&#39;</span><span class="p">,</span> <span class="n">mpiArg</span> <span class="o">=</span> <span class="s1">&#39;-n&#39;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Batch version of :py:func:`accumulateParam`.</span>
 
 <span class="sd">    Parameters</span>
@@ -962,6 +985,10 @@
 <span class="sd">        Number of cores to use. Defaults to 1.</span>
 <span class="sd">    appStr :str (optional)</span>
 <span class="sd">        String of text to append to accumulated parameter filenames. Defaults to &quot;accum.&quot;</span>
+<span class="sd">    mpiCall : str (optional)</span>
+<span class="sd">        MPI program to use to execute the program, defaults to mpiexec.</span>
+<span class="sd">    mpiArg : str (optional)</span>
+<span class="sd">        Argument to pass to mpiCall, defaults to -n.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -982,7 +1009,7 @@
         <span class="n">nodataPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span> <span class="o">+</span> <span class="s2">&quot;nodata&quot;</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span> 
         <span class="n">nodataAccumPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span> <span class="o">+</span> <span class="s2">&quot;nodataaccum&quot;</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span> 
 
-        <span class="n">accumulateParam</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outPath</span><span class="p">,</span> <span class="n">outNoDataRast</span><span class="o">=</span><span class="n">nodataPath</span><span class="p">,</span> <span class="n">outNoDataAccum</span><span class="o">=</span><span class="n">nodataAccumPath</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1">#Run the flow accumulation function for the parameter raster</span>
+        <span class="n">accumulateParam</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outPath</span><span class="p">,</span> <span class="n">outNoDataRast</span><span class="o">=</span><span class="n">nodataPath</span><span class="p">,</span> <span class="n">outNoDataAccum</span><span class="o">=</span><span class="n">nodataAccumPath</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">,</span> <span class="n">mpiCall</span> <span class="o">=</span> <span class="n">mpiCall</span><span class="p">,</span> <span class="n">mpiArg</span> <span class="o">=</span> <span class="n">mpiArg</span><span class="p">)</span> <span class="c1">#Run the flow accumulation function for the parameter raster</span>
 
     <span class="k">return</span> <span class="n">fileList</span></div>
 
@@ -1126,7 +1153,7 @@
 
     <span class="k">return</span> <span class="n">catRaster</span> <span class="c1"># Return the path to the raster created</span></div>
 
-<div class="viewcode-block" id="tauFlowAccum"><a class="viewcode-back" href="../functions.html#tools.tauFlowAccum">[docs]</a><span class="k">def</span> <span class="nf">tauFlowAccum</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">accumRast</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="tauFlowAccum"><a class="viewcode-back" href="../functions.html#tools.tauFlowAccum">[docs]</a><span class="k">def</span> <span class="nf">tauFlowAccum</span><span class="p">(</span><span class="n">fdr</span><span class="p">,</span> <span class="n">accumRast</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mpiCall</span> <span class="o">=</span> <span class="s1">&#39;mpiexec&#39;</span><span class="p">,</span> <span class="n">mpiArg</span> <span class="o">=</span> <span class="s1">&#39;-n&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Wrapper for TauDEM AreaD8 :cite:`TauDEM` to produce a flow acculation grid.</span>
 
 <span class="sd">    Parameters</span>
@@ -1137,6 +1164,11 @@
 <span class="sd">        Path to output the flow accumulation raster.</span>
 <span class="sd">    cores : int (optional)</span>
 <span class="sd">        Number of cores to use. Defaults to 1.</span>
+<span class="sd">    mpiCall : str (optional)</span>
+<span class="sd">        The command to use for mpi, defaults to mpiexec.</span>
+<span class="sd">    mpiArg : str (optional)</span>
+<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter.</span>
+
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1149,10 +1181,12 @@
         <span class="n">tauParams</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;fdr&#39;</span><span class="p">:</span><span class="n">fdr</span><span class="p">,</span>
         <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
-        <span class="s1">&#39;outFl&#39;</span><span class="p">:</span><span class="n">accumRast</span><span class="p">,</span> 
+        <span class="s1">&#39;outFl&#39;</span><span class="p">:</span><span class="n">accumRast</span><span class="p">,</span>
+        <span class="s1">&#39;mpiCall&#39;</span><span class="p">:</span><span class="n">mpiCall</span><span class="p">,</span>
+        <span class="s1">&#39;mpiArg&#39;</span><span class="p">:</span><span class="n">mpiArg</span>
         <span class="p">}</span>
         
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -n </span><span class="si">{cores}</span><span class="s1"> aread8 -p </span><span class="si">{fdr}</span><span class="s1"> -ad8 </span><span class="si">{outFl}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{mpiCall}</span><span class="s1"> </span><span class="si">{mpiArg}</span><span class="s1"> </span><span class="si">{cores}</span><span class="s1"> aread8 -p </span><span class="si">{fdr}</span><span class="s1"> -ad8 </span><span class="si">{outFl}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
         
@@ -1182,6 +1216,10 @@
 <span class="sd">        Path to a flow accumulation raster. Defaults to None.</span>
 <span class="sd">    thresh : int (optional)</span>
 <span class="sd">        Threshold values, in the same units as fac to mask output to stream channels. Defaults to None.</span>
+<span class="sd">    mpiCall : str (optional)</span>
+<span class="sd">        The command to use for mpi, defaults to mpiexec.</span>
+<span class="sd">    mpiArg : str (optional)</span>
+<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1195,13 +1233,15 @@
         <span class="s1">&#39;cores&#39;</span><span class="p">:</span><span class="n">cores</span><span class="p">,</span> 
         <span class="s1">&#39;outFl&#39;</span><span class="p">:</span><span class="n">output</span><span class="p">,</span>
         <span class="s1">&#39;param&#39;</span><span class="p">:</span><span class="n">param</span><span class="p">,</span>
-        <span class="s1">&#39;accum_type&#39;</span><span class="p">:</span><span class="n">accum_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="s1">&#39;accum_type&#39;</span><span class="p">:</span><span class="n">accum_type</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+        <span class="s1">&#39;mpiCall&#39;</span><span class="p">:</span><span class="n">mpiCall</span><span class="p">,</span>
+        <span class="s1">&#39;mpiArg&#39;</span><span class="p">:</span><span class="n">mpiArg</span>
         <span class="p">}</span>
 
     <span class="k">if</span> <span class="n">accum_type</span> <span class="o">==</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="c1"># insert flag for min </span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -n </span><span class="si">{cores}</span><span class="s1"> d8flowpathextremeup -p </span><span class="si">{fdr}</span><span class="s1"> -sa </span><span class="si">{param}</span><span class="s1"> -ssa </span><span class="si">{outFl}</span><span class="s1"> -</span><span class="si">{accum_type}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{mpiCall}</span><span class="s1"> </span><span class="si">{mpiArg}</span><span class="s1"> </span><span class="si">{cores}</span><span class="s1"> d8flowpathextremeup -p </span><span class="si">{fdr}</span><span class="s1"> -sa </span><span class="si">{param}</span><span class="s1"> -ssa </span><span class="si">{outFl}</span><span class="s1"> -</span><span class="si">{accum_type}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
     <span class="k">else</span><span class="p">:</span> <span class="c1"># no flag for max</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;mpiexec -n </span><span class="si">{cores}</span><span class="s1"> d8flowpathextremeup -p </span><span class="si">{fdr}</span><span class="s1"> -sa </span><span class="si">{param}</span><span class="s1"> -ssa </span><span class="si">{outFl}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{mpiCall}</span><span class="s1"> </span><span class="si">{mpiArg}</span><span class="s1"> </span><span class="si">{cores}</span><span class="s1"> d8flowpathextremeup -p </span><span class="si">{fdr}</span><span class="s1"> -sa </span><span class="si">{param}</span><span class="s1"> -ssa </span><span class="si">{outFl}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">tauParams</span><span class="p">)</span> <span class="c1"># Create string of tauDEM shell command</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="c1"># print the command to be run to the output.</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Run shell command</span>
@@ -1603,7 +1643,7 @@
         <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">xs</span><span class="p">,</span>
         <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">ys</span><span class="p">,</span>
         <span class="s1">&#39;maxUpstreamFAC&#39;</span><span class="p">:</span><span class="n">facs</span><span class="p">,</span>
-        <span class="s1">&#39;vars&#39;</span><span class="p">:[</span><span class="s1">&#39;maxUpstreamFAC&#39;</span><span class="p">]</span> <span class="c1"># list of contained variables</span>
+        <span class="s1">&#39;vars&#39;</span><span class="p">:[</span><span class="s1">&#39;maxUpstreamFAC&#39;</span><span class="p">]</span> <span class="c1"># list of contained parameters</span>
                 <span class="p">}</span>
     
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outfl</span><span class="p">)</span> <span class="ow">and</span> <span class="n">replaceDict</span><span class="o">==</span><span class="kc">False</span><span class="p">:</span> <span class="c1"># if the update dictionary exists, update it.</span>
@@ -1715,7 +1755,7 @@
     
     <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="adjustFAC"><a class="viewcode-back" href="../functions.html#tools.adjustFAC">[docs]</a><span class="k">def</span> <span class="nf">adjustFAC</span><span class="p">(</span><span class="n">facWeighttemplate</span><span class="p">,</span> <span class="n">downstreamFACweightFl</span><span class="p">,</span> <span class="n">updateDictFl</span><span class="p">,</span> <span class="n">downstreamFDRFl</span><span class="p">,</span> <span class="n">adjFACFl</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="adjustFAC"><a class="viewcode-back" href="../functions.html#tools.adjustFAC">[docs]</a><span class="k">def</span> <span class="nf">adjustFAC</span><span class="p">(</span><span class="n">facWeighttemplate</span><span class="p">,</span> <span class="n">downstreamFACweightFl</span><span class="p">,</span> <span class="n">updateDictFl</span><span class="p">,</span> <span class="n">downstreamFDRFl</span><span class="p">,</span> <span class="n">adjFACFl</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mpiCall</span> <span class="o">=</span> <span class="s1">&#39;mpiexec&#39;</span><span class="p">,</span> <span class="n">mpiArg</span> <span class="o">=</span> <span class="s1">&#39;-n&#39;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Generate an updated flow accumulation grid (FAC) given an update dictionary produced by :py:func:`createUpdateDict`.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -1731,7 +1771,11 @@
 <span class="sd">    adjFACFl : str</span>
 <span class="sd">        Path to output the adjusted FAC raster.</span>
 <span class="sd">    cores : int (Optional)</span>
-<span class="sd">        Number of cores to use. Defaults to 1. </span>
+<span class="sd">        Number of cores to use. Defaults to 1.</span>
+<span class="sd">    mpiCall : str (optional)</span>
+<span class="sd">        MPI program to use to execute the program, defaults to mpiexec.</span>
+<span class="sd">    mpiArg : str (optional)</span>
+<span class="sd">        Argument to pass to mpiCall, defaults to -n.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1761,11 +1805,11 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    ud : str</span>
-<span class="sd">        Path to the update dictionary to add a variable to.</span>
+<span class="sd">        Path to the update dictionary to add a parameter to.</span>
 <span class="sd">    upHUC : str</span>
-<span class="sd">        Name of the upstream HUC that the variable corresponds to.</span>
+<span class="sd">        Name of the upstream HUC that the parameter corresponds to.</span>
 <span class="sd">    varName : str</span>
-<span class="sd">        Name to use for the variable.</span>
+<span class="sd">        Name to use for the parameter.</span>
 <span class="sd">    val : list, int or float</span>
 <span class="sd">        Value to add to the upstream dictonary.</span>
 <span class="sd">    </span>

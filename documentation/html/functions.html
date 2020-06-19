@@ -178,6 +178,10 @@
 </dd>
 <dt><strong>thresh</strong><span class="classifier">int (optional)</span></dt><dd><p>Threshold values, in the same units as fac to mask output to stream channels. Defaults to None.</p>
 </dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>The command to use for mpi, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument flag passed to mpiCall, which is followed by the cores parameter.</p>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -219,7 +223,7 @@
 
 <dl class="py function">
 <dt id="tools.accumulateParam">
-<code class="sig-name descname">accumulateParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paramRast</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">accumRast</span></em>, <em class="sig-param"><span class="n">outNoDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outNoDataAccum</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zeroNoDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#accumulateParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.accumulateParam" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">accumulateParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paramRast</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">accumRast</span></em>, <em class="sig-param"><span class="n">outNoDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outNoDataAccum</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zeroNoDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#accumulateParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.accumulateParam" title="Permalink to this definition">¶</a></dt>
 <dd><p>Accumulate a parameter grid using TauDEM AreaD8 <a class="bibtex reference internal" href="z_references.html#taudem" id="id2">[1]</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -237,6 +241,10 @@
 <dt><strong>zeroNoDataRast</strong><span class="classifier">str (optional)</span></dt><dd><p>File location to store the no data raster filled with zeros.</p>
 </dd>
 <dt><strong>cores</strong><span class="classifier">int (optional)</span></dt><dd><p>The number of cores to use for parameter accumulation. Defaults to 1.</p>
+</dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>The command to use for mpi, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument flag passed to mpiCall, which is followed by the cores parameter.</p>
 </dd>
 </dl>
 </dd>
@@ -258,7 +266,7 @@
 
 <dl class="py function">
 <dt id="tools.accumulateParams">
-<code class="sig-name descname">accumulateParams</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paramRasts</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">appStr</span><span class="o">=</span><span class="default_value">'accum'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#accumulateParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.accumulateParams" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">accumulateParams</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paramRasts</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">appStr</span><span class="o">=</span><span class="default_value">'accum'</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#accumulateParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.accumulateParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Batch version of <a class="reference internal" href="#tools.accumulateParam" title="tools.accumulateParam"><code class="xref py py-func docutils literal notranslate"><span class="pre">accumulateParam()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -273,6 +281,10 @@
 </dd>
 <dt><strong>appStr :str (optional)</strong></dt><dd><p>String of text to append to accumulated parameter filenames. Defaults to “accum.”</p>
 </dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>MPI program to use to execute the program, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument to pass to mpiCall, defaults to -n.</p>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -286,7 +298,7 @@
 
 <dl class="py function">
 <dt id="tools.adjustFAC">
-<code class="sig-name descname">adjustFAC</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">facWeighttemplate</span></em>, <em class="sig-param"><span class="n">downstreamFACweightFl</span></em>, <em class="sig-param"><span class="n">updateDictFl</span></em>, <em class="sig-param"><span class="n">downstreamFDRFl</span></em>, <em class="sig-param"><span class="n">adjFACFl</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#adjustFAC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.adjustFAC" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">adjustFAC</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">facWeighttemplate</span></em>, <em class="sig-param"><span class="n">downstreamFACweightFl</span></em>, <em class="sig-param"><span class="n">updateDictFl</span></em>, <em class="sig-param"><span class="n">downstreamFDRFl</span></em>, <em class="sig-param"><span class="n">adjFACFl</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#adjustFAC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.adjustFAC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate an updated flow accumulation grid (FAC) given an update dictionary produced by <a class="reference internal" href="#tools.createUpdateDict" title="tools.createUpdateDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">createUpdateDict()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -302,6 +314,10 @@
 <dt><strong>adjFACFl</strong><span class="classifier">str</span></dt><dd><p>Path to output the adjusted FAC raster.</p>
 </dd>
 <dt><strong>cores</strong><span class="classifier">int (Optional)</span></dt><dd><p>Number of cores to use. Defaults to 1.</p>
+</dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>MPI program to use to execute the program, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument to pass to mpiCall, defaults to -n.</p>
 </dd>
 </dl>
 </dd>
@@ -499,7 +515,7 @@
 
 <dl class="py function">
 <dt id="tools.decayAccum">
-<code class="sig-name descname">decayAccum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ang</span></em>, <em class="sig-param"><span class="n">mult</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">paramRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#decayAccum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.decayAccum" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">decayAccum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ang</span></em>, <em class="sig-param"><span class="n">mult</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">paramRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#decayAccum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.decayAccum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decay the accumulation of a parameter raster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -514,6 +530,10 @@
 </dd>
 <dt><strong>cores</strong><span class="classifier">int (optional)</span></dt><dd><p>Number of cores to use. Defaults to 1.</p>
 </dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>The command to use for mpi, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument flag passed to mpiCall, which is followed by the cores parameter.</p>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -527,7 +547,7 @@
 
 <dl class="py function">
 <dt id="tools.dist2stream">
-<code class="sig-name descname">dist2stream</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">fac</span></em>, <em class="sig-param"><span class="n">thresh</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#dist2stream"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.dist2stream" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">dist2stream</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">fac</span></em>, <em class="sig-param"><span class="n">thresh</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#dist2stream"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.dist2stream" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute distance to streams.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -541,6 +561,10 @@
 <dt><strong>outRast</strong><span class="classifier">str</span></dt><dd><p>Path to output the distance raster.</p>
 </dd>
 <dt><strong>cores</strong><span class="classifier">int (optional)</span></dt><dd><p>The number of cores to use. Defaults to 1.</p>
+</dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>The command to use for mpi, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument flag passed to mpiCall, which is followed by the cores parameter.</p>
 </dd>
 </dl>
 </dd>
@@ -998,7 +1022,7 @@
 
 <dl class="py function">
 <dt id="tools.tauFlowAccum">
-<code class="sig-name descname">tauFlowAccum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">accumRast</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#tauFlowAccum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.tauFlowAccum" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">tauFlowAccum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">accumRast</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#tauFlowAccum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.tauFlowAccum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper for TauDEM AreaD8 <a class="bibtex reference internal" href="z_references.html#taudem" id="id3">[1]</a> to produce a flow acculation grid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1008,6 +1032,10 @@
 <dt><strong>accumRast</strong><span class="classifier">str</span></dt><dd><p>Path to output the flow accumulation raster.</p>
 </dd>
 <dt><strong>cores</strong><span class="classifier">int (optional)</span></dt><dd><p>Number of cores to use. Defaults to 1.</p>
+</dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>The command to use for mpi, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument flag passed to mpiCall, which is followed by the cores parameter.</p>
 </dd>
 </dl>
 </dd>
@@ -1027,11 +1055,11 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>ud</strong><span class="classifier">str</span></dt><dd><p>Path to the update dictionary to add a variable to.</p>
+<dt><strong>ud</strong><span class="classifier">str</span></dt><dd><p>Path to the update dictionary to add a parameter to.</p>
 </dd>
-<dt><strong>upHUC</strong><span class="classifier">str</span></dt><dd><p>Name of the upstream HUC that the variable corresponds to.</p>
+<dt><strong>upHUC</strong><span class="classifier">str</span></dt><dd><p>Name of the upstream HUC that the parameter corresponds to.</p>
 </dd>
-<dt><strong>varName</strong><span class="classifier">str</span></dt><dd><p>Name to use for the variable.</p>
+<dt><strong>varName</strong><span class="classifier">str</span></dt><dd><p>Name to use for the parameter.</p>
 </dd>
 <dt><strong>val</strong><span class="classifier">list, int or float</span></dt><dd><p>Value to add to the upstream dictonary.</p>
 </dd>
