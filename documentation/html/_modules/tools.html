@@ -930,7 +930,7 @@
         <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CPG file written to: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outRast</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="resampleParams"><a class="viewcode-back" href="../functions.html#tools.resampleParams">[docs]</a><span class="k">def</span> <span class="nf">resampleParams</span><span class="p">(</span><span class="n">inParams</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;rprj&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="resampleParams"><a class="viewcode-back" href="../functions.html#tools.resampleParams">[docs]</a><span class="k">def</span> <span class="nf">resampleParams</span><span class="p">(</span><span class="n">inParams</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;rprj&quot;</span><span class="p">,</span> <span class="n">forceProj</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">forceProj4</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Batch version of :py:func:`resampleParam`.</span>
 
 <span class="sd">    Parameters</span>
@@ -947,6 +947,10 @@
 <span class="sd">        Number of cores to use. Defaults to 1.</span>
 <span class="sd">    appStr : str (optional)</span>
 <span class="sd">        String of text to append to the input parameter filenames. Defaults to &quot;rprj.&quot;</span>
+<span class="sd">    forceProj : bool (optional)</span>
+<span class="sd">        Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.</span>
+<span class="sd">    forceProj4 : str (optional)</span>
+<span class="sd">        Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -966,7 +970,7 @@
         <span class="n">outPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span> <span class="o">+</span> <span class="n">appStr</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span>
         <span class="n">fileList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outPath</span><span class="p">)</span>
 
-        <span class="n">resampleParam</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outPath</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="p">,</span> <span class="n">cores</span><span class="p">)</span> <span class="c1">#Run the resample function for the parameter raster</span>
+        <span class="n">resampleParam</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">fdr</span><span class="p">,</span> <span class="n">outPath</span><span class="p">,</span> <span class="n">resampleMethod</span><span class="p">,</span> <span class="n">cores</span><span class="p">,</span> <span class="n">forceProj</span><span class="o">=</span><span class="n">forceProj</span><span class="p">,</span> <span class="n">forceProj4</span><span class="o">=</span><span class="n">forceProj4</span><span class="p">)</span> <span class="c1">#Run the resample function for the parameter raster</span>
 
     <span class="k">return</span> <span class="n">fileList</span></div>
 

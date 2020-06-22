@@ -776,7 +776,7 @@ def maskStreams(inRast, streamRast, outRast):
         dst.write(data,1)
         print("CPG file written to: {0}".format(outRast))
 
-def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj"):
+def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj", forceProj=False, forceProj4="\"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs\""):
     '''Batch version of :py:func:`resampleParam`.
 
     Parameters
@@ -793,6 +793,10 @@ def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores
         Number of cores to use. Defaults to 1.
     appStr : str (optional)
         String of text to append to the input parameter filenames. Defaults to "rprj."
+    forceProj : bool (optional)
+        Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.
+    forceProj4 : str (optional)
+        Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True.
 
     Returns
     -------
@@ -812,7 +816,7 @@ def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores
         outPath = os.path.join(outWorkspace, baseName + appStr + ext)
         fileList.append(outPath)
 
-        resampleParam(param, fdr, outPath, resampleMethod, cores) #Run the resample function for the parameter raster
+        resampleParam(param, fdr, outPath, resampleMethod, cores, forceProj=forceProj, forceProj4=forceProj4) #Run the resample function for the parameter raster
 
     return fileList
 

@@ -947,7 +947,7 @@
 
 <dl class="py function">
 <dt id="tools.resampleParams">
-<code class="sig-name descname">resampleParams</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inParams</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">resampleMethod</span><span class="o">=</span><span class="default_value">'bilinear'</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">appStr</span><span class="o">=</span><span class="default_value">'rprj'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#resampleParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.resampleParams" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resampleParams</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inParams</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">resampleMethod</span><span class="o">=</span><span class="default_value">'bilinear'</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">appStr</span><span class="o">=</span><span class="default_value">'rprj'</span></em>, <em class="sig-param"><span class="n">forceProj</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">forceProj4</span><span class="o">=</span><span class="default_value">'&quot;+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs&quot;'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#resampleParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.resampleParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Batch version of <a class="reference internal" href="#tools.resampleParam" title="tools.resampleParam"><code class="xref py py-func docutils literal notranslate"><span class="pre">resampleParam()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -963,6 +963,10 @@
 <dt><strong>cores :</strong></dt><dd><p>Number of cores to use. Defaults to 1.</p>
 </dd>
 <dt><strong>appStr</strong><span class="classifier">str (optional)</span></dt><dd><p>String of text to append to the input parameter filenames. Defaults to “rprj.”</p>
+</dd>
+<dt><strong>forceProj</strong><span class="classifier">bool (optional)</span></dt><dd><p>Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.</p>
+</dd>
+<dt><strong>forceProj4</strong><span class="classifier">str (optional)</span></dt><dd><p>Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True.</p>
 </dd>
 </dl>
 </dd>
