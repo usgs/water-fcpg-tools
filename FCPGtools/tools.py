@@ -484,14 +484,14 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
 #Tools for decayed accumulation CPGs
 
 def makeDecayGrid(d2strm, k, outRast):
-    '''Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{dx}{n+k*dx}`, where n is the distance from the d2strm raster and    from each grid cell to the nearest stream, k is the constant applied to the stream distance values, and dx is the cell size of the raster.
+    '''Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{dx}{n+k*dx}`, where n is the distance from the d2strm raster from each grid cell to the nearest stream, k is a constant applied to the cell size values, and dx is the cell size of the raster.
     
     Parameters
     ----------
     d2strm : str
         Path to raster of flow distances from each grid cell to the nearest stream.
     k : float
-        Constant applied to decay factor denominator; this has units equal to the horizontal map units in the d2strm raster.
+        Dimensionless constant applied to decay factor denominator. Must be less than 1 for decay to occur along streamlines. 
     outRast : str
         Output file path for decay grid.
 
