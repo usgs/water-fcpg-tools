@@ -1377,13 +1377,13 @@
 <dl class="py function">
 <dt id="tools.makeDecayGrid">
 <code class="sig-name descname">makeDecayGrid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d2strm</span></em>, <em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">outRast</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.makeDecayGrid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a decay raster where grid cell values are computed as the inverse number of grid cells, <span class="math notranslate nohighlight">\(\frac{dx}{n+k*dx}\)</span>, where n is the distance from the d2strm raster and    from each grid cell to the nearest stream, k is the constant applied to the stream distance values, and dx is the cell size of the raster.</p>
+<dd><p>Create a decay raster where grid cell values are computed as the inverse number of grid cells, <span class="math notranslate nohighlight">\(\frac{dx}{n+k*dx}\)</span>, where n is the distance from the d2strm raster from each grid cell to the nearest stream, k is a constant applied to the cell size values, and dx is the cell size of the raster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>d2strm</strong><span class="classifier">str</span></dt><dd><p>Path to raster of flow distances from each grid cell to the nearest stream.</p>
 </dd>
-<dt><strong>k</strong><span class="classifier">float</span></dt><dd><p>Constant applied to decay factor denominator; this has units equal to the horizontal map units in the d2strm raster.</p>
+<dt><strong>k</strong><span class="classifier">float</span></dt><dd><p>Dimensionless constant applied to decay factor denominator. Must be less than 1 for decay to occur along streamlines.</p>
 </dd>
 <dt><strong>outRast</strong><span class="classifier">str</span></dt><dd><p>Output file path for decay grid.</p>
 </dd>

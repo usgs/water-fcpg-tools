@@ -638,14 +638,14 @@
 <span class="c1">#Tools for decayed accumulation CPGs</span>
 
 <div class="viewcode-block" id="makeDecayGrid"><a class="viewcode-back" href="../functions.html#tools.makeDecayGrid">[docs]</a><span class="k">def</span> <span class="nf">makeDecayGrid</span><span class="p">(</span><span class="n">d2strm</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">outRast</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{dx}{n+k*dx}`, where n is the distance from the d2strm raster and    from each grid cell to the nearest stream, k is the constant applied to the stream distance values, and dx is the cell size of the raster.</span>
+    <span class="sd">&#39;&#39;&#39;Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{dx}{n+k*dx}`, where n is the distance from the d2strm raster from each grid cell to the nearest stream, k is a constant applied to the cell size values, and dx is the cell size of the raster.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    d2strm : str</span>
 <span class="sd">        Path to raster of flow distances from each grid cell to the nearest stream.</span>
 <span class="sd">    k : float</span>
-<span class="sd">        Constant applied to decay factor denominator; this has units equal to the horizontal map units in the d2strm raster.</span>
+<span class="sd">        Dimensionless constant applied to decay factor denominator. Must be less than 1 for decay to occur along streamlines. </span>
 <span class="sd">    outRast : str</span>
 <span class="sd">        Output file path for decay grid.</span>
 
