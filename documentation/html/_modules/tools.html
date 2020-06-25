@@ -1311,7 +1311,7 @@
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="n">HUC12</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="makePourBasins"><a class="viewcode-back" href="../functions.html#tools.makePourBasins">[docs]</a><span class="k">def</span> <span class="nf">makePourBasins</span><span class="p">(</span><span class="n">wbd</span><span class="p">,</span><span class="n">fromHUC4</span><span class="p">,</span><span class="n">toHUC4</span><span class="p">):</span>
+<div class="viewcode-block" id="makePourBasins"><a class="viewcode-back" href="../functions.html#tools.makePourBasins">[docs]</a><span class="k">def</span> <span class="nf">makePourBasins</span><span class="p">(</span><span class="n">wbd</span><span class="p">,</span><span class="n">fromHUC4</span><span class="p">,</span><span class="n">toHUC4</span><span class="p">,</span><span class="n">HUC12Key</span> <span class="o">=</span> <span class="s1">&#39;HUC12&#39;</span><span class="p">,</span> <span class="n">ToHUCKey</span> <span class="o">=</span> <span class="s1">&#39;TOHUC&#39;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Make geodataframe of HUC12 basis flowing from fromHUC4 to toHUC4.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -1322,6 +1322,10 @@
 <span class="sd">        HUC4 string for the upstream basin.</span>
 <span class="sd">    toHUC4 : str</span>
 <span class="sd">        HUC string for the downstream basin.</span>
+<span class="sd">    HUC12Key : str (optional)</span>
+<span class="sd">        Column name for HUC codes to process down to HUC4 codes, defaults to &#39;HUC12&#39;.</span>
+<span class="sd">    ToHUCKey : str (optional)</span>
+<span class="sd">        Column name for the column that indicates the downstream HUC for each row of the dataframe, defaults to &#39;TOHUC&#39;.</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1329,8 +1333,8 @@
 <span class="sd">        HUC12-level geodataframe of units that drain from fromHUC4 to toHUC4.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
-    <span class="n">wbd</span><span class="p">[</span><span class="s1">&#39;HUC4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wbd</span><span class="o">.</span><span class="n">HUC12</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">getHUC4</span><span class="p">)</span>
-    <span class="n">wbd</span><span class="p">[</span><span class="s1">&#39;ToHUC4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wbd</span><span class="o">.</span><span class="n">ToHUC</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">getHUC4</span><span class="p">)</span>
+    <span class="n">wbd</span><span class="p">[</span><span class="s1">&#39;HUC4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wbd</span><span class="p">[</span><span class="n">HUC12Key</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">getHUC4</span><span class="p">)</span>
+    <span class="n">wbd</span><span class="p">[</span><span class="s1">&#39;ToHUC4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wbd</span><span class="p">[</span><span class="n">ToHUCKey</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">getHUC4</span><span class="p">)</span>
     
     <span class="k">return</span> <span class="n">wbd</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">wbd</span><span class="o">.</span><span class="n">HUC4</span> <span class="o">==</span> <span class="n">fromHUC4</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">wbd</span><span class="o">.</span><span class="n">ToHUC4</span> <span class="o">==</span> <span class="n">toHUC4</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
 

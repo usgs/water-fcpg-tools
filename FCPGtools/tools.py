@@ -1157,7 +1157,7 @@ def getHUC4(HUC12):
     '''
     return HUC12[:4]
 
-def makePourBasins(wbd,fromHUC4,toHUC4):
+def makePourBasins(wbd,fromHUC4,toHUC4,HUC12Key = 'HUC12', ToHUCKey = 'TOHUC'):
     '''Make geodataframe of HUC12 basis flowing from fromHUC4 to toHUC4.
     
     Parameters
@@ -1168,6 +1168,10 @@ def makePourBasins(wbd,fromHUC4,toHUC4):
         HUC4 string for the upstream basin.
     toHUC4 : str
         HUC string for the downstream basin.
+    HUC12Key : str (optional)
+        Column name for HUC codes to process down to HUC4 codes, defaults to 'HUC12'.
+    ToHUCKey : str (optional)
+        Column name for the column that indicates the downstream HUC for each row of the dataframe, defaults to 'TOHUC'.
         
     Returns
     -------
@@ -1175,8 +1179,8 @@ def makePourBasins(wbd,fromHUC4,toHUC4):
         HUC12-level geodataframe of units that drain from fromHUC4 to toHUC4.
     '''
     
-    wbd['HUC4'] = wbd.HUC12.map(getHUC4)
-    wbd['ToHUC4'] = wbd.ToHUC.map(getHUC4)
+    wbd['HUC4'] = wbd[HUC12Key].map(getHUC4)
+    wbd['ToHUC4'] = wbd[ToHUCKey].map(getHUC4)
     
     return wbd.loc[(wbd.HUC4 == fromHUC4) & (wbd.ToHUC4 == toHUC4)].copy()
 

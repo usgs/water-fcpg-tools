@@ -66,10 +66,8 @@ for cov in covList: #Iterate through the parameter grids
         f.writelines("#SBATCH --exclusive\n") # Require exclusive use of nodes
 
         #Set up python environment for job
-        f.writelines("module load gis/TauDEM-5.3.8-gcc-mpich\n") # load TauDEM
-        f.writelines("module load gdal/2.2.2-gcc\n") # load gdal for use with TauDEM
-        f.writelines("module load python/anaconda3") # load Python 3
-        f.writelines("source activate FCPGtools\n") # activate the correct Python environment
+        f.writelines("module load taudem/5.3.8\n") # load TauDEM
+        f.writelines("source activate FCPGtools\n") # activate the correct Python environment, you will need to build this using Anaconda.
 
         #Run the Python script
         f.writelines("python -u ./makeFCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))
