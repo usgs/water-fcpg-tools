@@ -7,7 +7,6 @@ import subprocess
 import glob
 import shutil
 import traceback
-import urllib.request
 import datetime
 from multiprocessing import Pool as processPool
 
