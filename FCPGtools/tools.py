@@ -1617,7 +1617,7 @@ def updateRaster(x,y,val,grd,outgrd, scaleFactor = None):
             c,r = src.index(float(xx),float(yy)) # get column, row coordinates
             dat[c,r] += int(float(vv)) # update the dataset
             
-    meta.update({'dtype': dat.dtype # update data type
+    meta.update({'dtype': dat.dtype, # update data type
         'compress':'LZW',
         'zlevel':9,
         'interleave':'band',
