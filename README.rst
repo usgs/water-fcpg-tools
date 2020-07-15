@@ -13,7 +13,7 @@ Installation
 ============
 Clone the repository using :code:`git clone https://code.usgs.gov/StreamStats/FCPGtools.git`.
 
-Then change directories, using :code:`cd`, into the repository and create an Anaconda environment using the supplied :code:`FCPGtools_env.yml` file by calling :code:`conda env create -f FCPGtools_env.yml`. Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.
+Then change directories into the repository and create an `Anaconda <https://www.anaconda.com/products/individual>` environment using the supplied :code:`FCPGtools_env.yml` file by calling :code:`conda env create -f FCPGtools_env.yml`. Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.
 
 Then, install the repository using :code:`pip install git+file:<Full Path to the FCPGtools repository>`
 
