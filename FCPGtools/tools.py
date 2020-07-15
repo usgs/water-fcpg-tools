@@ -45,7 +45,7 @@ def parsebool(b):
 def tauDrainDir(inRast, outRast, band = 1, updateDict = {
             'compress':'LZW',
             'zlevel':9,
-            'interleave':'band'
+            'interleave':'band',
             'sparse':True,
             'tiled':True,
             'blockysize':256,
@@ -191,7 +191,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             newProfile.update({
                 'compress':'LZW',
                 'zlevel':9,
-                'interleave':'band'
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
@@ -217,7 +217,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
                     'dtype':'int8',
                     'compress':'LZW',
                     'zlevel':9,
-                    'interleave':'band'
+                    'interleave':'band',
                     'profile':'GeoTIFF',
                     'tiled':True,
                     'sparse_ok':True,
@@ -381,7 +381,7 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, verb
     profile.update({'dtype':dataCPG.dtype,
                 'compress':'LZW',
                 'zlevel':9,
-                'interleave':'band'
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
@@ -551,7 +551,7 @@ def makeDecayGrid(d2strm, k, outRast, verbose = False):
                 'dtype': decayGrid.dtype,
                 'compress':'LZW',
                 'zlevel':9,
-                'interleave':'band'
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
@@ -616,7 +616,7 @@ def applyMult(inRast, mult, outRast, verbose = False):
     profile.update({'dtype':outData.dtype,
                 'compress':'LZW',
                 'zlevel':9,
-                'interleave':'band'
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
@@ -799,7 +799,7 @@ def maskStreams(inRast, streamRast, outRast, verbose = False):
     profile.update({
                 'compress':'LZW',
                 'zlevel':9,
-                'interleave':'band'
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
@@ -980,7 +980,7 @@ def cat2bin(inCat, outWorkspace, par=True, verbose = False):
     profile.update({'dtype':'int8',
                 'compress':'LZW',
                 'zlevel':9,
-                'interleave':'band'
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
@@ -1620,7 +1620,7 @@ def updateRaster(x,y,val,grd,outgrd, scaleFactor = None):
     meta.update({'dtype': dat.dtype # update data type
         'compress':'LZW',
         'zlevel':9,
-        'interleave':'band'
+        'interleave':'band',
         'profile':'GeoTIFF',
         'tiled':True,
         'sparse_ok':True,
@@ -1658,7 +1658,7 @@ def makeFACweight(ingrd,outWeight):
     meta.update({
         'compress':'LZW',
         'zlevel':9,
-        'interleave':'band'
+        'interleave':'band',
         'profile':'GeoTIFF',
         'tiled':True,
         'sparse_ok':True,
@@ -1793,7 +1793,7 @@ def d8todinfinity(inRast, outRast, updateDict = {
                 'dtype':'float32',
                 'compress':'LZW',
                 'zlevel':9,
-                'interleave':'band'
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
@@ -1845,7 +1845,7 @@ def d8todinfinity(inRast, outRast, updateDict = {
 def changeNoData(inRast, newNoData, updateDict = {
                 'compress':'LZW',
                 'zlevel':9,
-                'interleave':'band'
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
