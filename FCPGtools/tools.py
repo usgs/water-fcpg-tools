@@ -59,7 +59,7 @@ def tauDrainDir(inRast, outRast, updateDict = {
     outRast : str
         Path to output a raster with flow directions encoded for TauDEM. File will be overwritten if it already exists. 
     updateDict : dict (optional)
-        Dictionary of rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.
+        Dictionary of Rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.
 
     Returns
     -------
@@ -100,7 +100,7 @@ def tauDrainDir(inRast, outRast, updateDict = {
         dst.write(tauDir,1)
         print("TauDEM drainage direction written to: {0}".format(outRast))
 
-def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, zeroNoDataRast = None, cores = 1):
+def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, zeroNoDataRast = None, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n'):
     """Accumulate a parameter grid using TauDEM AreaD8 :cite:`TauDEM`.
 
     Parameters
@@ -119,6 +119,11 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         File location to store the no data raster filled with zeros.
     cores : int (optional)
         The number of cores to use for parameter accumulation. Defaults to 1.
+    mpiCall : str (optional)
+        The command to use for mpi, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument flag passed to mpiCall, which is followed by the cores parameter.
+
 
     Returns
     -------
@@ -221,10 +226,12 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
                 'fdr':fdr,
                 'cores':cores, 
                 'outFl':outNoDataAccum,
-                'weight':outNoDataRast
+                'weight':outNoDataRast,
+                'mpiCall':mpiCall,
+                'mpiArg':mpiArg
                 }
                 
-                cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+                cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
                 print(cmd)
                 result = subprocess.run(cmd, shell = True) # Run shell command
                 result.stdout
@@ -257,10 +264,12 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         'fdr':fdr,
         'cores':cores, 
         'outFl':accumRast, 
-        'weight':tauDEMweight
+        'weight':tauDEMweight,
+        'mpiCall':mpiCall,
+        'mpiArg':mpiArg
         }
         
-        cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         
@@ -475,14 +484,14 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
 #Tools for decayed accumulation CPGs
 
 def makeDecayGrid(d2strm, k, outRast):
-    '''Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{dx}{n+k*dx}`, where n is the distance from the d2strm raster and    from each grid cell to the nearest stream, k is the constant applied to the stream distance values, and dx is the cell size of the raster.
+    '''Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{dx}{n+k*dx}`, where n is the distance from the d2strm raster from each grid cell to the nearest stream, k is a constant applied to the cell size values, and dx is the cell size of the raster.
     
     Parameters
     ----------
     d2strm : str
         Path to raster of flow distances from each grid cell to the nearest stream.
     k : float
-        Constant applied to decay factor denominator; this has units equal to the horizontal map units in the d2strm raster.
+        Dimensionless constant applied to decay factor denominator. Must be less than 1 for decay to occur along streamlines. 
     outRast : str
         Output file path for decay grid.
 
@@ -593,7 +602,7 @@ def applyMult(inRast, mult, outRast):
         print("Raster written to: {0}".format(outRast))
 
 
-def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
+def decayAccum(ang, mult, outRast, paramRast = None, cores=1, mpiCall = 'mpiexec', mpiArg = '-n') :
     '''Decay the accumulation of a parameter raster.
 
     Parameters
@@ -608,6 +617,10 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
         Raster of parameter values to accumulate. If not supplied area will be accumulated. Defaults to None.
     cores : int (optional)
         Number of cores to use. Defaults to 1.
+    mpiCall : str (optional)
+        The command to use for mpi, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument flag passed to mpiCall, which is followed by the cores parameter.
 
     Returns
     -------
@@ -623,10 +636,12 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
             'cores':cores, 
             'dm':mult,
             'dsca': outRast,
-            'weight':paramRast
+            'weight':paramRast,
+            'mpiCall':mpiCall,
+            'mpiArg':mpiArg
             }
                     
-            cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+            cmd = '{mpiCall} {mpiArg} {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
             print(cmd)
             result = subprocess.run(cmd, shell = True) # Run shell command
             result.stdout
@@ -643,9 +658,11 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
             'cores':cores, 
             'dm':mult,
             'dsca': outRast,
+            'mpiCall':mpiCall,
+            'mpiArg':mpiArg
             }
                     
-            cmd = 'mpiexec -bind-to rr -n {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -nc'.format(**tauParams) # Create string of tauDEM shell command
+            cmd = '{mpiCall} {mpiArg} {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -nc'.format(**tauParams) # Create string of tauDEM shell command
             print(cmd)
             result = subprocess.run(cmd, shell = True) # Run shell command
             result.stdout
@@ -657,7 +674,7 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1) :
 
 
 
-def dist2stream(fdr, fac, thresh, outRast, cores=1) :
+def dist2stream(fdr, fac, thresh, outRast, cores=1, mpiCall = 'mpiexec', mpiArg = '-n') :
     '''Compute distance to streams.
     
     Parameters
@@ -672,6 +689,10 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1) :
         Path to output the distance raster.
     cores : int (optional)
         The number of cores to use. Defaults to 1.
+    mpiCall : str (optional)
+        The command to use for mpi, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument flag passed to mpiCall, which is followed by the cores parameter.
 
     Returns
     -------
@@ -685,10 +706,12 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1) :
         'cores':cores, 
         'fac':fac,
         'outRast': outRast,
-        'thresh':thresh
+        'thresh':thresh,
+        'mpiCall':mpiCall,
+        'mpiArg':mpiArg
         }
                 
-        cmd = 'mpiexec -bind-to rr -n {cores} d8hdisttostrm -p {fdr} -src {fac} -dist {outRast}, -thresh {thresh}'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = '{mpiCall} {mpiArg} {cores} d8hdisttostrm -p {fdr} -src {fac} -dist {outRast}, -thresh {thresh}'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         result.stdout
@@ -753,7 +776,7 @@ def maskStreams(inRast, streamRast, outRast):
         dst.write(data,1)
         print("CPG file written to: {0}".format(outRast))
 
-def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj"):
+def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj", forceProj=False, forceProj4="\"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs\""):
     '''Batch version of :py:func:`resampleParam`.
 
     Parameters
@@ -770,6 +793,10 @@ def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores
         Number of cores to use. Defaults to 1.
     appStr : str (optional)
         String of text to append to the input parameter filenames. Defaults to "rprj."
+    forceProj : bool (optional)
+        Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.
+    forceProj4 : str (optional)
+        Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True.
 
     Returns
     -------
@@ -789,11 +816,11 @@ def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores
         outPath = os.path.join(outWorkspace, baseName + appStr + ext)
         fileList.append(outPath)
 
-        resampleParam(param, fdr, outPath, resampleMethod, cores) #Run the resample function for the parameter raster
+        resampleParam(param, fdr, outPath, resampleMethod, cores, forceProj=forceProj, forceProj4=forceProj4) #Run the resample function for the parameter raster
 
     return fileList
 
-def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
+def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum", mpiCall = 'mpiexec', mpiArg = '-n'):
     '''Batch version of :py:func:`accumulateParam`.
 
     Parameters
@@ -808,6 +835,10 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
         Number of cores to use. Defaults to 1.
     appStr :str (optional)
         String of text to append to accumulated parameter filenames. Defaults to "accum."
+    mpiCall : str (optional)
+        MPI program to use to execute the program, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument to pass to mpiCall, defaults to -n.
 
     Returns
     -------
@@ -828,7 +859,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum"):
         nodataPath = os.path.join(outWorkspace, baseName + "nodata" + ext) 
         nodataAccumPath = os.path.join(outWorkspace, baseName + "nodataaccum" + ext) 
 
-        accumulateParam(param, fdr, outPath, outNoDataRast=nodataPath, outNoDataAccum=nodataAccumPath, cores=cores) #Run the flow accumulation function for the parameter raster
+        accumulateParam(param, fdr, outPath, outNoDataRast=nodataPath, outNoDataAccum=nodataAccumPath, cores=cores, mpiCall = mpiCall, mpiArg = mpiArg) #Run the flow accumulation function for the parameter raster
 
     return fileList
 
@@ -972,7 +1003,7 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
 
     return catRaster # Return the path to the raster created
 
-def tauFlowAccum(fdr, accumRast, cores = 1):
+def tauFlowAccum(fdr, accumRast, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n'):
     """Wrapper for TauDEM AreaD8 :cite:`TauDEM` to produce a flow acculation grid.
 
     Parameters
@@ -983,6 +1014,11 @@ def tauFlowAccum(fdr, accumRast, cores = 1):
         Path to output the flow accumulation raster.
     cores : int (optional)
         Number of cores to use. Defaults to 1.
+    mpiCall : str (optional)
+        The command to use for mpi, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument flag passed to mpiCall, which is followed by the cores parameter.
+
 
     Returns
     -------
@@ -995,10 +1031,12 @@ def tauFlowAccum(fdr, accumRast, cores = 1):
         tauParams = {
         'fdr':fdr,
         'cores':cores, 
-        'outFl':accumRast, 
+        'outFl':accumRast,
+        'mpiCall':mpiCall,
+        'mpiArg':mpiArg
         }
         
-        cmd = 'mpiexec -bind-to rr -n {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
         print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         
@@ -1028,6 +1066,10 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
         Path to a flow accumulation raster. Defaults to None.
     thresh : int (optional)
         Threshold values, in the same units as fac to mask output to stream channels. Defaults to None.
+    mpiCall : str (optional)
+        The command to use for mpi, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument flag passed to mpiCall, which is followed by the cores parameter.
 
     Returns
     -------
@@ -1041,13 +1083,15 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
         'cores':cores, 
         'outFl':output,
         'param':param,
-        'accum_type':accum_type.lower()
+        'accum_type':accum_type.lower(),
+        'mpiCall':mpiCall,
+        'mpiArg':mpiArg
         }
 
     if accum_type == "min": # insert flag for min 
-        cmd = 'mpiexec -bind-to rr -n {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -{accum_type} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -{accum_type} -nc'.format(**tauParams) # Create string of tauDEM shell command
     else: # no flag for max
-        cmd = 'mpiexec -bind-to rr -n {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
+        cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
 
     print(cmd) # print the command to be run to the output.
     result = subprocess.run(cmd, shell = True) # Run shell command
@@ -1113,7 +1157,7 @@ def getHUC4(HUC12):
     '''
     return HUC12[:4]
 
-def makePourBasins(wbd,fromHUC4,toHUC4):
+def makePourBasins(wbd,fromHUC4,toHUC4,HUC12Key = 'HUC12', ToHUCKey = 'TOHUC'):
     '''Make geodataframe of HUC12 basis flowing from fromHUC4 to toHUC4.
     
     Parameters
@@ -1124,6 +1168,10 @@ def makePourBasins(wbd,fromHUC4,toHUC4):
         HUC4 string for the upstream basin.
     toHUC4 : str
         HUC string for the downstream basin.
+    HUC12Key : str (optional)
+        Column name for HUC codes to process down to HUC4 codes, defaults to 'HUC12'.
+    ToHUCKey : str (optional)
+        Column name for the column that indicates the downstream HUC for each row of the dataframe, defaults to 'TOHUC'.
         
     Returns
     -------
@@ -1131,8 +1179,8 @@ def makePourBasins(wbd,fromHUC4,toHUC4):
         HUC12-level geodataframe of units that drain from fromHUC4 to toHUC4.
     '''
     
-    wbd['HUC4'] = wbd.HUC12.map(getHUC4)
-    wbd['ToHUC4'] = wbd.ToHUC.map(getHUC4)
+    wbd['HUC4'] = wbd[HUC12Key].map(getHUC4)
+    wbd['ToHUC4'] = wbd[ToHUCKey].map(getHUC4)
     
     return wbd.loc[(wbd.HUC4 == fromHUC4) & (wbd.ToHUC4 == toHUC4)].copy()
 
@@ -1449,7 +1497,7 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict = True):
         'x': xs,
         'y': ys,
         'maxUpstreamFAC':facs,
-        'vars':['maxUpstreamFAC'] # list of contained variables
+        'vars':['maxUpstreamFAC'] # list of contained parameters
                 }
     
     if os.path.exists(outfl) and replaceDict==False: # if the update dictionary exists, update it.
@@ -1561,7 +1609,7 @@ def makeFACweight(ingrd,outWeight):
     
     return None
 
-def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstreamFDRFl, adjFACFl, cores=1):
+def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstreamFDRFl, adjFACFl, cores=1, mpiCall = 'mpiexec', mpiArg = '-n'):
     '''Generate an updated flow accumulation grid (FAC) given an update dictionary produced by :py:func:`createUpdateDict`.
     
     Parameters
@@ -1577,7 +1625,11 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
     adjFACFl : str
         Path to output the adjusted FAC raster.
     cores : int (Optional)
-        Number of cores to use. Defaults to 1. 
+        Number of cores to use. Defaults to 1.
+    mpiCall : str (optional)
+        MPI program to use to execute the program, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument to pass to mpiCall, defaults to -n.
     
     Returns
     -------
@@ -1607,11 +1659,11 @@ def updateDict(ud, upHUC, varName, val):
     Parameters
     ----------
     ud : str
-        Path to the update dictionary to add a variable to.
+        Path to the update dictionary to add a parameter to.
     upHUC : str
-        Name of the upstream HUC that the variable cooresponds to.
+        Name of the upstream HUC that the parameter corresponds to.
     varName : str
-        Name to use for the variable.
+        Name to use for the parameter.
     val : list, int or float
         Value to add to the upstream dictonary.
     
@@ -1686,7 +1738,7 @@ def d8todinfinity(inRast, outRast, updateDict = {
     outRast : str
         Path to output the TauDEM D-Infinity flow direction raster.
     updateDict : dict (optional)
-        Dictionary of rasterio parameters used to write out the GeoTiff.
+        Dictionary of Rasterio parameters used to write out the GeoTiff.
 
     Returns
     -------
@@ -1733,7 +1785,7 @@ def changeNoData(inRast, newNoData, updateDict = {
     newNoData : str
         New no data value for the raster.
     updateDict : dict (optional)
-        Dictionary of rasterio parameters used to create the updated raster.
+        Dictionary of Rasterio parameters used to create the updated raster.
 
     Returns
     -------

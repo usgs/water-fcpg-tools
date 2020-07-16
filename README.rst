@@ -37,8 +37,7 @@ Please refer to the :ref:`cookbook-label` and :ref:`function-label` for examples
 Citation
 ========
 
-Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H. (2020). Flow-Conditioned Parameter Grid Tools. U.S. Geological Survey Software Release. DOI: https://doi.org/10.5066/P9FPZUI0
-
+Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: https://doi.org/10.5066/P9FPZUI0
 
 Disclaimers
 ===========
@@ -52,7 +51,7 @@ License
 
 This work is published with the MIT Open Source License:
 
-Copyright 2020 Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea
+Copyright 2020 Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Alan Rea (U.S. Geological Survey)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

@@ -34,6 +34,7 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Cascade FCPG results between geospatial tiles" href="cascade_fcpg.html" />
@@ -252,9 +253,7 @@
 76
 77
 78
-79
-80
-81</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+79</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
@@ -322,10 +321,8 @@
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --exclusive</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Require exclusive use of nodes</span>
 
         <span class="c1">#Set up python environment for job</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load gis/TauDEM-5.3.8-gcc-mpich</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># load TauDEM</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load gdal/2.2.2-gcc</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># load gdal for use with TauDEM</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load python/anaconda3&quot;</span><span class="p">)</span> <span class="c1"># load Python 3</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;source activate FCPGtools</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># activate the correct Python environment</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load taudem/5.3.8</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># load TauDEM</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;source activate FCPGtools</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># activate the correct Python environment, you will need to build this using Anaconda.</span>
 
         <span class="c1">#Run the Python script</span>
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;python -u ./makeFCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">taufdr</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">workDir</span><span class="p">,</span> <span class="n">outDir</span><span class="p">,</span> <span class="n">cores</span><span class="p">,</span> <span class="n">accumThresh</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">deleteTemp</span><span class="p">))</span>

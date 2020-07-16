@@ -34,6 +34,7 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
@@ -173,7 +174,7 @@
 </div>
 <div class="section" id="citation">
 <h1>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h1>
-<p>Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., Rea, A.H. (2020). Flow-Conditioned Parameter Grid Tools. U.S. Geological Survey Software Release. DOI: <a class="reference external" href="https://doi.org/10.5066/P9FPZUI0">https://doi.org/10.5066/P9FPZUI0</a></p>
+<p>Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: <a class="reference external" href="https://doi.org/10.5066/P9FPZUI0">https://doi.org/10.5066/P9FPZUI0</a></p>
 </div>
 <div class="section" id="disclaimers">
 <h1>Disclaimers<a class="headerlink" href="#disclaimers" title="Permalink to this headline">¶</a></h1>
@@ -183,14 +184,14 @@
 <div class="section" id="license">
 <h1>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h1>
 <p>This work is published with the MIT Open Source License:</p>
-<p>Copyright 2020 Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea</p>
+<p>Copyright 2020 Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Alan Rea (U.S. Geological Survey)</p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
 <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
 <p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
 <div class="toctree-wrapper compound">
 <span id="document-cookbook"></span><div class="section" id="cookbook">
 <span id="cookbook-label"></span><h2>Cookbook<a class="headerlink" href="#cookbook" title="Permalink to this headline">¶</a></h2>
-<p>Example scripts and work flows for common FCPG tasks on local workstations and HPC environments. These scripts have not been turned into FCPGtools functions because of the the variability in HPC, local systems, and input data sets that the FCPGtools may be used with.</p>
+<p>Example scripts and work flows for common FCPG tasks on local workstations and HPC environments. These scripts have not been turned into FCPGtools functions because of the variability in HPC, local systems, and input data sets that the FCPGtools may be used with.</p>
 <div class="section" id="input-data">
 <h3>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline">¶</a></h3>
 <dl class="simple">
@@ -317,9 +318,7 @@
 76
 77
 78
-79
-80
-81</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+79</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
@@ -387,10 +386,8 @@
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;#SBATCH --exclusive</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Require exclusive use of nodes</span>
 
         <span class="c1">#Set up python environment for job</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load gis/TauDEM-5.3.8-gcc-mpich</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># load TauDEM</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load gdal/2.2.2-gcc</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># load gdal for use with TauDEM</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load python/anaconda3&quot;</span><span class="p">)</span> <span class="c1"># load Python 3</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;source activate FCPGtools</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># activate the correct Python environment</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;module load taudem/5.3.8</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># load TauDEM</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;source activate FCPGtools</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># activate the correct Python environment, you will need to build this using Anaconda.</span>
 
         <span class="c1">#Run the Python script</span>
         <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;python -u ./makeFCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">taufdr</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">workDir</span><span class="p">,</span> <span class="n">outDir</span><span class="p">,</span> <span class="n">cores</span><span class="p">,</span> <span class="n">accumThresh</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">deleteTemp</span><span class="p">))</span>
@@ -836,6 +833,10 @@
 </dd>
 <dt><strong>thresh</strong><span class="classifier">int (optional)</span></dt><dd><p>Threshold values, in the same units as fac to mask output to stream channels. Defaults to None.</p>
 </dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>The command to use for mpi, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument flag passed to mpiCall, which is followed by the cores parameter.</p>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -877,7 +878,7 @@
 
 <dl class="py function">
 <dt id="tools.accumulateParam">
-<code class="sig-name descname">accumulateParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paramRast</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">accumRast</span></em>, <em class="sig-param"><span class="n">outNoDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outNoDataAccum</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zeroNoDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.accumulateParam" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">accumulateParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paramRast</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">accumRast</span></em>, <em class="sig-param"><span class="n">outNoDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outNoDataAccum</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zeroNoDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.accumulateParam" title="Permalink to this definition">¶</a></dt>
 <dd><p>Accumulate a parameter grid using TauDEM AreaD8 <a class="bibtex reference internal" href="index.html#taudem" id="id2">[1]</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -895,6 +896,10 @@
 <dt><strong>zeroNoDataRast</strong><span class="classifier">str (optional)</span></dt><dd><p>File location to store the no data raster filled with zeros.</p>
 </dd>
 <dt><strong>cores</strong><span class="classifier">int (optional)</span></dt><dd><p>The number of cores to use for parameter accumulation. Defaults to 1.</p>
+</dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>The command to use for mpi, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument flag passed to mpiCall, which is followed by the cores parameter.</p>
 </dd>
 </dl>
 </dd>
@@ -916,7 +921,7 @@
 
 <dl class="py function">
 <dt id="tools.accumulateParams">
-<code class="sig-name descname">accumulateParams</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paramRasts</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">appStr</span><span class="o">=</span><span class="default_value">'accum'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.accumulateParams" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">accumulateParams</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paramRasts</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">appStr</span><span class="o">=</span><span class="default_value">'accum'</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.accumulateParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Batch version of <a class="reference internal" href="#tools.accumulateParam" title="tools.accumulateParam"><code class="xref py py-func docutils literal notranslate"><span class="pre">accumulateParam()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -931,6 +936,10 @@
 </dd>
 <dt><strong>appStr :str (optional)</strong></dt><dd><p>String of text to append to accumulated parameter filenames. Defaults to “accum.”</p>
 </dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>MPI program to use to execute the program, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument to pass to mpiCall, defaults to -n.</p>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -944,7 +953,7 @@
 
 <dl class="py function">
 <dt id="tools.adjustFAC">
-<code class="sig-name descname">adjustFAC</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">facWeighttemplate</span></em>, <em class="sig-param"><span class="n">downstreamFACweightFl</span></em>, <em class="sig-param"><span class="n">updateDictFl</span></em>, <em class="sig-param"><span class="n">downstreamFDRFl</span></em>, <em class="sig-param"><span class="n">adjFACFl</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.adjustFAC" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">adjustFAC</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">facWeighttemplate</span></em>, <em class="sig-param"><span class="n">downstreamFACweightFl</span></em>, <em class="sig-param"><span class="n">updateDictFl</span></em>, <em class="sig-param"><span class="n">downstreamFDRFl</span></em>, <em class="sig-param"><span class="n">adjFACFl</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.adjustFAC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate an updated flow accumulation grid (FAC) given an update dictionary produced by <a class="reference internal" href="#tools.createUpdateDict" title="tools.createUpdateDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">createUpdateDict()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -960,6 +969,10 @@
 <dt><strong>adjFACFl</strong><span class="classifier">str</span></dt><dd><p>Path to output the adjusted FAC raster.</p>
 </dd>
 <dt><strong>cores</strong><span class="classifier">int (Optional)</span></dt><dd><p>Number of cores to use. Defaults to 1.</p>
+</dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>MPI program to use to execute the program, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument to pass to mpiCall, defaults to -n.</p>
 </dd>
 </dl>
 </dd>
@@ -1056,7 +1069,7 @@
 
 <dl class="py function">
 <dt id="tools.cat2bin">
-<code class="sig-name descname">cat2bin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inCat</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.cat2bin" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cat2bin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inCat</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">par</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.cat2bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. Wrapper on <a class="reference internal" href="#tools.binarizeCat" title="tools.binarizeCat"><code class="xref py py-func docutils literal notranslate"><span class="pre">binarizeCat()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1064,6 +1077,8 @@
 <dt><strong>inCat</strong><span class="classifier">str</span></dt><dd><p>Input catagorical parameter raster.</p>
 </dd>
 <dt><strong>outWorkspace</strong><span class="classifier">str</span></dt><dd><p>Workspace to save binary raster output files.</p>
+</dd>
+<dt><strong>par</strong><span class="classifier">bool</span></dt><dd><p>Use parallel processing to generate binary rasters.</p>
 </dd>
 </dl>
 </dd>
@@ -1087,7 +1102,7 @@
 </dd>
 <dt><strong>newNoData</strong><span class="classifier">str</span></dt><dd><p>New no data value for the raster.</p>
 </dd>
-<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of rasterio parameters used to create the updated raster.</p>
+<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of Rasterio parameters used to create the updated raster.</p>
 </dd>
 </dl>
 </dd>
@@ -1101,7 +1116,7 @@
 
 <dl class="py function">
 <dt id="tools.createUpdateDict">
-<code class="sig-name descname">createUpdateDict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">upstreamFACmax</span></em>, <em class="sig-param"><span class="n">fromHUC</span></em>, <em class="sig-param"><span class="n">outfl</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.createUpdateDict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">createUpdateDict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">upstreamFACmax</span></em>, <em class="sig-param"><span class="n">fromHUC</span></em>, <em class="sig-param"><span class="n">outfl</span></em>, <em class="sig-param"><span class="n">replaceDict</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.createUpdateDict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a dictionary for updating downstream FAC and parameter grids using values pulled from the next grid upstream.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1115,6 +1130,8 @@
 <dt><strong>fromHUC</strong><span class="classifier">str</span></dt><dd><p>The upstream HUC that the values are coming from.</p>
 </dd>
 <dt><strong>outfl</strong><span class="classifier">str (path)</span></dt><dd><p>Path to where to save the json of this dictionary. The convention is to name this by the downstream HUC.</p>
+</dd>
+<dt><strong>replaceDict</strong><span class="classifier">bool (optional)</span></dt><dd><p>Replace the update dictionary instead of updating with a new value. Defaults to True.</p>
 </dd>
 </dl>
 </dd>
@@ -1138,7 +1155,7 @@
 </dd>
 <dt><strong>outRast</strong><span class="classifier">str</span></dt><dd><p>Path to output the TauDEM D-Infinity flow direction raster.</p>
 </dd>
-<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of rasterio parameters used to write out the GeoTiff.</p>
+<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of Rasterio parameters used to write out the GeoTiff.</p>
 </dd>
 </dl>
 </dd>
@@ -1153,7 +1170,7 @@
 
 <dl class="py function">
 <dt id="tools.decayAccum">
-<code class="sig-name descname">decayAccum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ang</span></em>, <em class="sig-param"><span class="n">mult</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">paramRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.decayAccum" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">decayAccum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ang</span></em>, <em class="sig-param"><span class="n">mult</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">paramRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.decayAccum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decay the accumulation of a parameter raster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1168,6 +1185,10 @@
 </dd>
 <dt><strong>cores</strong><span class="classifier">int (optional)</span></dt><dd><p>Number of cores to use. Defaults to 1.</p>
 </dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>The command to use for mpi, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument flag passed to mpiCall, which is followed by the cores parameter.</p>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1181,7 +1202,7 @@
 
 <dl class="py function">
 <dt id="tools.dist2stream">
-<code class="sig-name descname">dist2stream</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">fac</span></em>, <em class="sig-param"><span class="n">thresh</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.dist2stream" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">dist2stream</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">fac</span></em>, <em class="sig-param"><span class="n">thresh</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.dist2stream" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute distance to streams.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1195,6 +1216,10 @@
 <dt><strong>outRast</strong><span class="classifier">str</span></dt><dd><p>Path to output the distance raster.</p>
 </dd>
 <dt><strong>cores</strong><span class="classifier">int (optional)</span></dt><dd><p>The number of cores to use. Defaults to 1.</p>
+</dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>The command to use for mpi, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument flag passed to mpiCall, which is followed by the cores parameter.</p>
 </dd>
 </dl>
 </dd>
@@ -1226,7 +1251,7 @@
 </dd>
 <dt><strong>y</strong><span class="classifier">float</span></dt><dd><p>Vertical coordinate of the greatest FAC cell.</p>
 </dd>
-<dt><strong>d</strong><span class="classifier">int or float</span></dt><dd><p>Value from the parameter grid queried.</p>
+<dt><strong>d</strong><span class="classifier">float</span></dt><dd><p>Value from the parameter grid queried.</p>
 </dd>
 <dt><strong>w</strong><span class="classifier">float</span></dt><dd><p>Cell size of the grid.</p>
 </dd>
@@ -1352,13 +1377,13 @@
 <dl class="py function">
 <dt id="tools.makeDecayGrid">
 <code class="sig-name descname">makeDecayGrid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d2strm</span></em>, <em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">outRast</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.makeDecayGrid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a decay raster where grid cell values are computed as the inverse number of grid cells, <span class="math notranslate nohighlight">\(\frac{dx}{n+k*dx}\)</span>, where n is the distance from the d2strm raster and    from each grid cell to the nearest stream, k is the constant applied to the stream distance values, and dx is the cell size of the raster.</p>
+<dd><p>Create a decay raster where grid cell values are computed as the inverse number of grid cells, <span class="math notranslate nohighlight">\(\frac{dx}{n+k*dx}\)</span>, where n is the distance from the d2strm raster from each grid cell to the nearest stream, k is a constant applied to the cell size values, and dx is the cell size of the raster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>d2strm</strong><span class="classifier">str</span></dt><dd><p>Path to raster of flow distances from each grid cell to the nearest stream.</p>
 </dd>
-<dt><strong>k</strong><span class="classifier">float</span></dt><dd><p>Constant applied to decay factor denominator; this has units equal to the horizontal map units in the d2strm raster.</p>
+<dt><strong>k</strong><span class="classifier">float</span></dt><dd><p>Dimensionless constant applied to decay factor denominator. Must be less than 1 for decay to occur along streamlines.</p>
 </dd>
 <dt><strong>outRast</strong><span class="classifier">str</span></dt><dd><p>Output file path for decay grid.</p>
 </dd>
@@ -1397,7 +1422,7 @@
 
 <dl class="py function">
 <dt id="tools.makePourBasins">
-<code class="sig-name descname">makePourBasins</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wbd</span></em>, <em class="sig-param"><span class="n">fromHUC4</span></em>, <em class="sig-param"><span class="n">toHUC4</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.makePourBasins" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">makePourBasins</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wbd</span></em>, <em class="sig-param"><span class="n">fromHUC4</span></em>, <em class="sig-param"><span class="n">toHUC4</span></em>, <em class="sig-param"><span class="n">HUC12Key</span><span class="o">=</span><span class="default_value">'HUC12'</span></em>, <em class="sig-param"><span class="n">ToHUCKey</span><span class="o">=</span><span class="default_value">'TOHUC'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.makePourBasins" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make geodataframe of HUC12 basis flowing from fromHUC4 to toHUC4.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1407,6 +1432,10 @@
 <dt><strong>fromHUC4</strong><span class="classifier">str</span></dt><dd><p>HUC4 string for the upstream basin.</p>
 </dd>
 <dt><strong>toHUC4</strong><span class="classifier">str</span></dt><dd><p>HUC string for the downstream basin.</p>
+</dd>
+<dt><strong>HUC12Key</strong><span class="classifier">str (optional)</span></dt><dd><p>Column name for HUC codes to process down to HUC4 codes, defaults to ‘HUC12’.</p>
+</dd>
+<dt><strong>ToHUCKey</strong><span class="classifier">str (optional)</span></dt><dd><p>Column name for the column that indicates the downstream HUC for each row of the dataframe, defaults to ‘TOHUC’.</p>
 </dd>
 </dl>
 </dd>
@@ -1577,7 +1606,7 @@
 
 <dl class="py function">
 <dt id="tools.resampleParams">
-<code class="sig-name descname">resampleParams</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inParams</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">resampleMethod</span><span class="o">=</span><span class="default_value">'bilinear'</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">appStr</span><span class="o">=</span><span class="default_value">'rprj'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.resampleParams" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resampleParams</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inParams</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">resampleMethod</span><span class="o">=</span><span class="default_value">'bilinear'</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">appStr</span><span class="o">=</span><span class="default_value">'rprj'</span></em>, <em class="sig-param"><span class="n">forceProj</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">forceProj4</span><span class="o">=</span><span class="default_value">'&quot;+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs&quot;'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.resampleParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Batch version of <a class="reference internal" href="#tools.resampleParam" title="tools.resampleParam"><code class="xref py py-func docutils literal notranslate"><span class="pre">resampleParam()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1593,6 +1622,10 @@
 <dt><strong>cores :</strong></dt><dd><p>Number of cores to use. Defaults to 1.</p>
 </dd>
 <dt><strong>appStr</strong><span class="classifier">str (optional)</span></dt><dd><p>String of text to append to the input parameter filenames. Defaults to “rprj.”</p>
+</dd>
+<dt><strong>forceProj</strong><span class="classifier">bool (optional)</span></dt><dd><p>Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.</p>
+</dd>
+<dt><strong>forceProj4</strong><span class="classifier">str (optional)</span></dt><dd><p>Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True.</p>
 </dd>
 </dl>
 </dd>
@@ -1637,7 +1670,7 @@
 </dd>
 <dt><strong>outRast</strong><span class="classifier">str</span></dt><dd><p>Path to output a raster with flow directions encoded for TauDEM. File will be overwritten if it already exists.</p>
 </dd>
-<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.</p>
+<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of Rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.</p>
 </dd>
 </dl>
 </dd>
@@ -1652,7 +1685,7 @@
 
 <dl class="py function">
 <dt id="tools.tauFlowAccum">
-<code class="sig-name descname">tauFlowAccum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">accumRast</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.tauFlowAccum" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">tauFlowAccum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">accumRast</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.tauFlowAccum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper for TauDEM AreaD8 <a class="bibtex reference internal" href="index.html#taudem" id="id3">[1]</a> to produce a flow acculation grid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1662,6 +1695,10 @@
 <dt><strong>accumRast</strong><span class="classifier">str</span></dt><dd><p>Path to output the flow accumulation raster.</p>
 </dd>
 <dt><strong>cores</strong><span class="classifier">int (optional)</span></dt><dd><p>Number of cores to use. Defaults to 1.</p>
+</dd>
+<dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>The command to use for mpi, defaults to mpiexec.</p>
+</dd>
+<dt><strong>mpiArg</strong><span class="classifier">str (optional)</span></dt><dd><p>Argument flag passed to mpiCall, which is followed by the cores parameter.</p>
 </dd>
 </dl>
 </dd>
@@ -1681,11 +1718,11 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>ud</strong><span class="classifier">str</span></dt><dd><p>Path to the update dictionary to add a variable to.</p>
+<dt><strong>ud</strong><span class="classifier">str</span></dt><dd><p>Path to the update dictionary to add a parameter to.</p>
 </dd>
-<dt><strong>upHUC</strong><span class="classifier">str</span></dt><dd><p>Name of the upstream HUC that the variable cooresponds to.</p>
+<dt><strong>upHUC</strong><span class="classifier">str</span></dt><dd><p>Name of the upstream HUC that the parameter corresponds to.</p>
 </dd>
-<dt><strong>varName</strong><span class="classifier">str</span></dt><dd><p>Name to use for the variable.</p>
+<dt><strong>varName</strong><span class="classifier">str</span></dt><dd><p>Name to use for the parameter.</p>
 </dd>
 <dt><strong>val</strong><span class="classifier">list, int or float</span></dt><dd><p>Value to add to the upstream dictonary.</p>
 </dd>
