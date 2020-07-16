@@ -1281,7 +1281,8 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins = False):
             x,y = point
             d = queryPoint(x,y,upfdrfl)
             newx,newy = FindDownstreamCellTauDir(d,x,y,out_transform[0]) # move the pour point downstream
-            pourPoints.append((newx,newy,w)) # append the pour point to the output list.
+            if fc.queryPoint(newx,newy, upfacfl) == data.meta['nodata']:
+                pourPoints.append((x,y,w)) # append the pour point to the output list.
     
     if plotBasins:
         ax = pourBasins.plot('Name')
@@ -1887,3 +1888,52 @@ def changeNoData(inRast, newNoData, updateDict = {
     with rs.open(inRast,'w',**profile) as dst:
         dst.write(dat,1)
         if verbose: print("Raster written to: {0}".format(inRast))
+
+# def makeStreams(fac, strPath, thresh = 900, updateDict = {
+#                 'nodata':99,
+#                 'compress':'LZW',
+#                 'zlevel':9,
+#                 'interleave':'band',
+#                 'profile':'GeoTIFF',
+#                 'tiled':True,
+#                 'sparse_ok':True,
+#                 'num_threads':'ALL_CPUS',
+#                 'bigtiff':'IF_SAFER'}, verbose = False):
+#     """Create stream grid from a flow accumulation grid based on a threshold value.
+
+#     Parameters
+#     ----------
+#     fac : str
+#         Path to the flow accumulation grid that will be used to create the stream grid.
+#     strPath : str
+#         Path to output the stream grid where stream cells will be 1 and other cells will be the no-data value from the source fac grid.
+#     thresh : int (optional)
+#         Flow accumulation threshold above which streams are created, defaults to 900 cells.
+#     updateDict : dict (optional)
+#         Rasterio raster creation parameters.
+#     verbose : bool (optional)
+#         Print output, defaults to False.
+
+#     Returns
+#     -------
+#     None
+
+#     """
+
+#     assert os.path.isfile(fac), "fac not found."
+#     if verbose: print('Loading fac')
+#     with rs.open(fac) as ds:
+#         dat = ds.read(1)
+#         profile = ds.profile.copy()
+
+#     strRast = np.zeros_like(dat, dtype = np.int8)
+#     strRast[:] = updateDict['nodata'] # fill with no-data values
+#     strRast[dat>=thresh] = 1 # make cells at or above the threshold 1
+
+#     profile.update(updateDict) # update the raster profile
+#     profile['dtype'] = str(strRast.dtype)
+
+#     if verbose: print(profile)
+
+#     with rs.open(strPath,'w',**profile) as dst:
+#         dst.write(strRast,1) # write out the geotiff
