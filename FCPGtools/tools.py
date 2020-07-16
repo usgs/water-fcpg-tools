@@ -7,7 +7,6 @@ import subprocess
 import glob
 import shutil
 import traceback
-import urllib.request
 import datetime
 from multiprocessing import Pool as processPool
 
@@ -42,14 +41,17 @@ def parsebool(b):
 
     return b == "True"
 
-def tauDrainDir(inRast, outRast, updateDict = {
+def tauDrainDir(inRast, outRast, band = 1, updateDict = {
             'compress':'LZW',
+            'zlevel':9,
+            'interleave':'band',
             'sparse':True,
             'tiled':True,
             'blockysize':256,
             'blockxsize':256,
             'driver' : "GTiff",
-            'nodata':0}):
+            'nodata':0,
+            'bigtiff':'IF_SAFER'}, verbose = False):
     """Reclassifies ESRI flow directions into TauDEM flow directions.
 
     Parameters
@@ -57,9 +59,13 @@ def tauDrainDir(inRast, outRast, updateDict = {
     inRast : str
         Path to a raster encoded with ESRI flow direction values.
     outRast : str
-        Path to output a raster with flow directions encoded for TauDEM. File will be overwritten if it already exists. 
+        Path to output a raster with flow directions encoded for TauDEM. File will be overwritten if it already exists.
+    band : int (optional)
+        Band to read the flow direction grid from if inRast is multiband, defaults to 1.
     updateDict : dict (optional)
         Dictionary of Rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
     Returns
     -------
@@ -68,11 +74,12 @@ def tauDrainDir(inRast, outRast, updateDict = {
     """
     assert os.path.isfile(inRast)==True, 'inRast not found'
 
-    print('Reclassifying Flow Directions...')
+    if verbose: print('Reclassifying Flow Directions...')
 
     # load input data
     with rs.open(inRast) as ds:
-        dat = ds.read(1)
+        assert ds.meta['count'] <= band, 'inRast missing specified band'
+        dat = ds.read(band)
         inNoData = ds.nodata
         profile = ds.profile.copy() # save the metadata for output later
 
@@ -98,9 +105,9 @@ def tauDrainDir(inRast, outRast, updateDict = {
 
     with rs.open(outRast,'w',**profile) as dst:
         dst.write(tauDir,1)
-        print("TauDEM drainage direction written to: {0}".format(outRast))
+        if verbose: print("TauDEM drainage direction written to: {0}".format(outRast))
 
-def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, zeroNoDataRast = None, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n'):
+def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, zeroNoDataRast = None, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n', verbose = False):
     """Accumulate a parameter grid using TauDEM AreaD8 :cite:`TauDEM`.
 
     Parameters
@@ -123,6 +130,8 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         The command to use for mpi, defaults to mpiexec.
     mpiArg : str (optional)
         Argument flag passed to mpiCall, which is followed by the cores parameter.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
 
     Returns
@@ -180,6 +189,8 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             newProfile = profile 
             newProfile.update({
                 'compress':'LZW',
+                'zlevel':9,
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
@@ -189,7 +200,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             # Save no data raster
             with rs.open(zeroNoDataRast, 'w', **newProfile) as dst:
                 dst.write(noDataZero,1)
-                print("Parameter Zero No Data raster written to: {0}".format(zeroNoDataRast))
+                if verbose: print("Parameter Zero No Data raster written to: {0}".format(zeroNoDataRast))
 
 
             
@@ -204,6 +215,8 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             newProfile.update({
                     'dtype':'int8',
                     'compress':'LZW',
+                    'zlevel':9,
+                    'interleave':'band',
                     'profile':'GeoTIFF',
                     'tiled':True,
                     'sparse_ok':True,
@@ -214,12 +227,12 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             # Save no data raster
             with rs.open(outNoDataRast, 'w', **newProfile) as dst:
                 dst.write(noDataArray,1)
-                print("Parameter No Data raster written to: {0}".format(outNoDataRast))
+                if verbose: print("Parameter No Data raster written to: {0}".format(outNoDataRast))
 
 
             # Use tauDEM to accumulate no data values
             try:
-                print('Accumulating No Data Values')
+                if verbose: print('Accumulating No Data Values')
                 
                     
                 tauParams = {
@@ -232,10 +245,10 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
                 }
                 
                 cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
-                print(cmd)
+                if verbose: print(cmd)
                 result = subprocess.run(cmd, shell = True) # Run shell command
                 result.stdout
-                print("Parameter no data accumulation written to: {0}".format(outNoDataRast))
+                if verbose: print("Parameter no data accumulation written to: {0}".format(outNoDataRast))
                 
             except:
                 print('Error Accumulating Data')
@@ -259,7 +272,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
 
     #Use tauDEM to accumulate the parameter
     try:
-        print('Accumulating Data...')
+        if verbose: print('Accumulating Data...')
         tauParams = {
         'fdr':fdr,
         'cores':cores, 
@@ -270,7 +283,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         }
         
         cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
-        print(cmd)
+        if verbose: print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         
         result.stdout
@@ -281,7 +294,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         traceback.print_exc()
 
     
-def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
+def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, verbose = False):
     '''Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also :py:func:`make_fcpgs`.
 
     Parameters
@@ -295,7 +308,9 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     noDataRast : str
         File location of the accumulated parameter no data raster.
     minAccum : float
-        Value of flow accumulation below which the CPG values will be set to no data
+        Value of flow accumulation below which the CPG values will be set to no data.
+    verbose : bool (optional)
+        Print output, defaults to False.
         
     Returns
     -------
@@ -313,7 +328,7 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
         return #Function will fail, so end it now
 
 
-    print("Reading accumulated parameter file {0}".format(datetime.datetime.now()))
+    if verbose: print("Reading accumulated parameter file {0}".format(datetime.datetime.now()))
     with rs.open(accumParam) as ds: # load accumulated data and no data rasters
         data = ds.read(1)
         profile = ds.profile
@@ -322,14 +337,14 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
     data = data.astype(np.float32) #Convert to 32 bit float
     data[data == inNoData] = np.NaN # fill with no data values where appropriate
 
-    print("Reading basin flow accumulation file {0}".format(datetime.datetime.now()))
+    if verbose: print("Reading basin flow accumulation file {0}".format(datetime.datetime.now()))
     with rs.open(fac) as ds: # flow accumulation raster
         accum = ds.read(1)
         facNoData = ds.nodata # pull the accumulated area no data value
 
 
     if noDataRast != None:
-        print("Correcting CPG for no data values")
+        if verbose: print("Correcting CPG for no data values")
         with rs.open(noDataRast) as ds: # accumulated no data raster
             accumNoData = ds.read(1)
             noDataNoData = ds.nodata # pull the accumulated no data no data value
@@ -350,20 +365,22 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
         print("Warning: Negative accumulation value")
         print("Minimum value:{0}".format(np.nanmin(corrAccum)))
  
-    print("Computing CPG values {0}".format(datetime.datetime.now()))
+    if verbose: print("Computing CPG values {0}".format(datetime.datetime.now()))
     dataCPG = data / (corrAccum + 1) # make data CPG
 
-    print("Replacing numpy nan values {0}".format(datetime.datetime.now()))
+    if verbose: print("Replacing numpy nan values {0}".format(datetime.datetime.now()))
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
 
     # Replace values in cells with small flow accumulation with no data
     if minAccum != None:
-        print("Replacing small flow accumulations {0}".format(datetime.datetime.now()))
+        if verbose: print("Replacing small flow accumulations {0}".format(datetime.datetime.now()))
         dataCPG[corrAccum < minAccum] = outNoData #Set values smaller than threshold to no data
 
     # Update raster profile
     profile.update({'dtype':dataCPG.dtype,
                 'compress':'LZW',
+                'zlevel':9,
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
@@ -371,12 +388,12 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None):
                 'nodata':outNoData,
                 'bigtiff':'IF_SAFER'})
 
-    print("Saving CPG raster {0}".format(datetime.datetime.now()))
+    if verbose: print("Saving CPG raster {0}".format(datetime.datetime.now()))
     with rs.open(outRast, 'w', **profile) as dst:
         dst.write(dataCPG,1)
-        print("CPG file written to: {0}".format(outRast))
+        if verbose: print("CPG file written to: {0}".format(outRast))
     
-def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, forceProj=False, forceProj4="\"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs\""):
+def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, forceProj=False, forceProj4="\"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs\"", verbose = False):
     '''Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the of the flow direction raster supplied. See also :py:func:`resampleParams`.
 
     Parameters
@@ -392,9 +409,11 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     cores : int (optional)
         The number of cores to use. Defaults to 1.
     forceProj : bool (optional)
-        Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.
+        Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False. This parameter defaults to False; however, if set to True, forceProj4 must also be specified or the default proj4 string for USGS Albers will be used, see below.
     forceProj4 : str (optional)
-        Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True. 
+        Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
     Returns
     -------
@@ -421,16 +440,16 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     if forceProj:
         fdrcrs = forceProj4
 
-    print("Flow Direction Proj4: " + str(fdrcrs))
-    print("Parameter Proj4:" + str(paramcrs))
+    if verbose: print("Flow Direction Proj4: " + str(fdrcrs))
+    if verbose: print("Parameter Proj4:" + str(paramcrs))
 
-    print("Flow Direction Xsize:" + str(xsize))
-    print("Parameter Xsize:" + str(paramXsize))
+    if verbose: print("Flow Direction Xsize:" + str(xsize))
+    if verbose: print("Parameter Xsize:" + str(paramXsize))
     
     # Choose an appropriate gdal data type for the parameter
     if paramType == 'int8':
-        outType = 'Int16' # Convert 8 bit integers to 16 bit in gdal
-        print("Warning: 8 bit inputs are unsupported and may not be reprojected correctly") #Print warning that gdal may cause problems with 8 bit rasters
+        outType = 'Byte' # Use Gdal convention #old# Convert 8 bit integers to 16 bit in gdal
+        #print("Warning: 8 bit inputs are unsupported and may not be reprojected correctly") #Print warning that gdal may cause problems with 8 bit rasters
     elif paramType == 'int16':
         outType = 'Int16' 
     elif paramType == 'int32':
@@ -448,13 +467,13 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
 
     #Check if resampling or reprojection are required
     if str(paramcrs) == str(fdrcrs) and paramXsize == xsize and paramYsize == ysize:
-        print("Parameter does not require reprojection or resampling")
+        if verbose: print("Parameter does not require reprojection or resampling")
     
     else:
 
         # Resample, reproject, and clip the parameter raster with GDAL
         try:
-            print('Resampling and Reprojecting Parameter Raster...')
+            if verbose: print('Resampling and Reprojecting Parameter Raster...')
             warpParams = {
             'inParam': inParam,
             'outParam': outParam,
@@ -472,8 +491,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
             'datatype': outType
             }
             
-            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
-            print(cmd)
+            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "ZLEVEL=9" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
+            if verbose: print(cmd)
             result = subprocess.run(cmd, shell = True)
             result.stdout
             
@@ -483,7 +502,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
 
 #Tools for decayed accumulation CPGs
 
-def makeDecayGrid(d2strm, k, outRast):
+def makeDecayGrid(d2strm, k, outRast, verbose = False):
     '''Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{dx}{n+k*dx}`, where n is the distance from the d2strm raster from each grid cell to the nearest stream, k is a constant applied to the cell size values, and dx is the cell size of the raster.
     
     Parameters
@@ -494,6 +513,8 @@ def makeDecayGrid(d2strm, k, outRast):
         Dimensionless constant applied to decay factor denominator. Must be less than 1 for decay to occur along streamlines. 
     outRast : str
         Output file path for decay grid.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
     Returns
     -------
@@ -517,7 +538,7 @@ def makeDecayGrid(d2strm, k, outRast):
 
     outNoData = 0 #Set no data value for output raster
 
-    print("Building decay grid {0}".format(datetime.datetime.now()))
+    if verbose: print("Building decay grid {0}".format(datetime.datetime.now()))
     decayGrid = data.astype(np.float32) #Convert to float
     decayGrid[data == inNoData] = np.NaN # fill with no data values where appropriate
     decayGrid = xsize/(decayGrid + k*xsize) #Compute decay function
@@ -528,6 +549,8 @@ def makeDecayGrid(d2strm, k, outRast):
     profile.update({
                 'dtype': decayGrid.dtype,
                 'compress':'LZW',
+                'zlevel':9,
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
@@ -535,13 +558,13 @@ def makeDecayGrid(d2strm, k, outRast):
                 'nodata':inNoData,
                 'bigtiff':'IF_SAFER'})
 
-    print("Saving decay raster {0}".format(datetime.datetime.now()))
+    if verbose: print("Saving decay raster {0}".format(datetime.datetime.now()))
     
     with rs.open(outRast, 'w', **profile) as dst:
         dst.write(decayGrid,1)
-        print("Decay raster written to: {0}".format(outRast))
+        if verbose: print("Decay raster written to: {0}".format(outRast))
 
-def applyMult(inRast, mult, outRast):
+def applyMult(inRast, mult, outRast, verbose = False):
     '''Multiply input raster by mult.
 
     Parameters
@@ -552,6 +575,8 @@ def applyMult(inRast, mult, outRast):
         Path to multiplier raster.
     outRast : str
         Path to output raster.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
     Returns
     -------
@@ -568,7 +593,7 @@ def applyMult(inRast, mult, outRast):
         return #Function will fail, so end it now
 
 
-    print("Reading input rasters {0}".format(datetime.datetime.now()))
+    if verbose: print("Reading input rasters {0}".format(datetime.datetime.now()))
     with rs.open(inRast) as ds: # load input rasters
         data = ds.read(1)
         profile = ds.profile
@@ -581,7 +606,7 @@ def applyMult(inRast, mult, outRast):
     data = data.astype(np.float32) #Convert to 32 bit float
     data[data == inNoData] = np.NaN # fill with no data values where appropriate
     m[m == mNoData] = np.NaN # fill with no data values where appropriate
-    outData = data * multiplier #Multiply the parameter values by the multiplier
+    outData = data * mult #Multiply the parameter values by the multiplier
 
     outNoData = -9999
     outData[np.isnan(outData)] = outNoData # Replace numpy NaNs with no data value
@@ -589,6 +614,8 @@ def applyMult(inRast, mult, outRast):
     # Update raster profile
     profile.update({'dtype':outData.dtype,
                 'compress':'LZW',
+                'zlevel':9,
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
@@ -596,13 +623,13 @@ def applyMult(inRast, mult, outRast):
                 'nodata':outNoData,
                 'bigtiff':'IF_SAFER'})
 
-    print("Saving raster {0}".format(datetime.datetime.now()))
+    if verbose: print("Saving raster {0}".format(datetime.datetime.now()))
     with rs.open(outRast, 'w', **profile) as dst:
         dst.write(outData,1)
-        print("Raster written to: {0}".format(outRast))
+        if verbose: print("Raster written to: {0}".format(outRast))
 
 
-def decayAccum(ang, mult, outRast, paramRast = None, cores=1, mpiCall = 'mpiexec', mpiArg = '-n') :
+def decayAccum(ang, mult, outRast, paramRast = None, cores=1, mpiCall = 'mpiexec', mpiArg = '-n', verbose = False) :
     '''Decay the accumulation of a parameter raster.
 
     Parameters
@@ -621,6 +648,8 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1, mpiCall = 'mpiexec
         The command to use for mpi, defaults to mpiexec.
     mpiArg : str (optional)
         Argument flag passed to mpiCall, which is followed by the cores parameter.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
     Returns
     -------
@@ -630,7 +659,7 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1, mpiCall = 'mpiexec
 
     if paramRast != None:
         try:
-            print('Accumulating parameter')
+            if verbose: print('Accumulating parameter')
             tauParams = {
             'ang':ang,
             'cores':cores, 
@@ -642,17 +671,17 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1, mpiCall = 'mpiexec
             }
                     
             cmd = '{mpiCall} {mpiArg} {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
-            print(cmd)
+            if verbose: print(cmd)
             result = subprocess.run(cmd, shell = True) # Run shell command
             result.stdout
-            print("Parameter accumulation written to: {0}".format(outRast))
+            if verbose: print("Parameter accumulation written to: {0}".format(outRast))
                     
         except:
             print('Error Accumulating Data')
             traceback.print_exc()
     else:
         try:
-            print('Accumulating parameter')
+            if verbose: print('Accumulating parameter')
             tauParams = {
             'ang':ang,
             'cores':cores, 
@@ -663,10 +692,10 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1, mpiCall = 'mpiexec
             }
                     
             cmd = '{mpiCall} {mpiArg} {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -nc'.format(**tauParams) # Create string of tauDEM shell command
-            print(cmd)
+            if verbose: print(cmd)
             result = subprocess.run(cmd, shell = True) # Run shell command
             result.stdout
-            print("Parameter accumulation written to: {0}".format(outRast))
+            if verbose: print("Parameter accumulation written to: {0}".format(outRast))
                 
         except:
             print('Error Accumulating Data')
@@ -674,7 +703,7 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1, mpiCall = 'mpiexec
 
 
 
-def dist2stream(fdr, fac, thresh, outRast, cores=1, mpiCall = 'mpiexec', mpiArg = '-n') :
+def dist2stream(fdr, fac, thresh, outRast, cores=1, mpiCall = 'mpiexec', mpiArg = '-n', verbose = False) :
     '''Compute distance to streams.
     
     Parameters
@@ -693,6 +722,8 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1, mpiCall = 'mpiexec', mpiArg 
         The command to use for mpi, defaults to mpiexec.
     mpiArg : str (optional)
         Argument flag passed to mpiCall, which is followed by the cores parameter.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
     Returns
     -------
@@ -712,16 +743,16 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1, mpiCall = 'mpiexec', mpiArg 
         }
                 
         cmd = '{mpiCall} {mpiArg} {cores} d8hdisttostrm -p {fdr} -src {fac} -dist {outRast}, -thresh {thresh}'.format(**tauParams) # Create string of tauDEM shell command
-        print(cmd)
+        if verbose: print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         result.stdout
-        print("Distance raster written to: {0}".format(outRast))
+        if verbose: print("Distance raster written to: {0}".format(outRast))
                 
     except:
         print('Error computing distances')
         traceback.print_exc()
 
-def maskStreams(inRast, streamRast, outRast):
+def maskStreams(inRast, streamRast, outRast, verbose = False):
     '''Mask areas not on the stream network.
 
     Parameters
@@ -732,6 +763,8 @@ def maskStreams(inRast, streamRast, outRast):
         Path to the stream raster where all non-stream cells are set to no data.
     outRast : str
         Path to output raster file.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
     Returns
     -------
@@ -764,6 +797,8 @@ def maskStreams(inRast, streamRast, outRast):
     # Update raster profile
     profile.update({
                 'compress':'LZW',
+                'zlevel':9,
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
@@ -771,12 +806,12 @@ def maskStreams(inRast, streamRast, outRast):
                 'nodata':inNoData,
                 'bigtiff':'IF_SAFER'})
 
-    print("Saving raster {0}".format(datetime.datetime.now()))
+    if verbose: print("Saving raster {0}".format(datetime.datetime.now()))
     with rs.open(outRast, 'w', **profile) as dst:
         dst.write(data,1)
-        print("CPG file written to: {0}".format(outRast))
+        if verbose: print("CPG file written to: {0}".format(outRast))
 
-def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj", forceProj=False, forceProj4="\"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs\""):
+def resampleParam_batch(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj", forceProj=False, forceProj4="\"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs\"", verbose = False):
     '''Batch version of :py:func:`resampleParam`.
 
     Parameters
@@ -797,6 +832,8 @@ def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores
         Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False.
     forceProj4 : str (optional)
         Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
     Returns
     -------
@@ -816,11 +853,11 @@ def resampleParams(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores
         outPath = os.path.join(outWorkspace, baseName + appStr + ext)
         fileList.append(outPath)
 
-        resampleParam(param, fdr, outPath, resampleMethod, cores, forceProj=forceProj, forceProj4=forceProj4) #Run the resample function for the parameter raster
+        resampleParam(param, fdr, outPath, resampleMethod, cores, forceProj=forceProj, forceProj4=forceProj4, verbose = verbose) #Run the resample function for the parameter raster
 
     return fileList
 
-def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum", mpiCall = 'mpiexec', mpiArg = '-n'):
+def accumulateParam_batch(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum", mpiCall = 'mpiexec', mpiArg = '-n', verbose = False):
     '''Batch version of :py:func:`accumulateParam`.
 
     Parameters
@@ -839,6 +876,8 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum", m
         MPI program to use to execute the program, defaults to mpiexec.
     mpiArg : str (optional)
         Argument to pass to mpiCall, defaults to -n.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
     Returns
     -------
@@ -863,7 +902,7 @@ def accumulateParams(paramRasts, fdr, outWorkspace, cores = 1, appStr="accum", m
 
     return fileList
 
-def make_fcpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"):
+def make_fcpg_batch(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG", verbose = False):
     '''Batch version of :py:func:`make_fcpg`.
 
     Parameters
@@ -878,6 +917,8 @@ def make_fcpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"):
         Minimum accumulation value below which the output FCPG will be turned to no data values. Defaults to None.
     appStr : str (optional)
         String of text to append to filenames of the produced FCPG grids.
+    verbose : bool (optional)
+        Print output, defaults to False.
     
     Returns
     -------
@@ -895,11 +936,11 @@ def make_fcpgs(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"):
         outPath = os.path.join(outWorkspace, baseName + appStr + ext)
         fileList.append(outPath)
 
-        make_fcpg(param, fac, outPath, minAccum=minAccum) #Run the CPG function for the accumulated parameter raster
+        make_fcpg(param, fac, outPath, minAccum=minAccum, verbose = verbose) #Run the CPG function for the accumulated parameter raster
 
     return fileList
 
-def cat2bin(inCat, outWorkspace, par=True):
+def cat2bin(inCat, outWorkspace, par=True, verbose = False):
     '''Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. Wrapper on :py:func:`binarizeCat`.
 
     Parameters
@@ -908,15 +949,17 @@ def cat2bin(inCat, outWorkspace, par=True):
         Input catagorical parameter raster.
     outWorkspace : str
         Workspace to save binary raster output files.
-    par : bool
-        Use parallel processing to generate binary rasters.
+    par : bool (optional)
+        Use parallel processing to generate binary rasters, defaults to True.
+    verbose : bool (optional)
+        Print output, defaults to False.
         
     Returns
     -------
     fileList : list
         List of filepaths to output files.
     '''
-    print("Creating binaries for %s"%inCat)
+    if verbose: print("Creating binaries for %s"%inCat)
     
     baseName = os.path.splitext(os.path.basename(inCat))[0] #Get name of input file without extention
     
@@ -935,6 +978,8 @@ def cat2bin(inCat, outWorkspace, par=True):
     # edit the metadata
     profile.update({'dtype':'int8',
                 'compress':'LZW',
+                'zlevel':9,
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
@@ -962,7 +1007,7 @@ def cat2bin(inCat, outWorkspace, par=True):
     
     return fileList
 
-def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
+def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile, verbose = False):
     '''Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. See also :py:func:`cat2bin`.
 
     Parameters
@@ -981,6 +1026,8 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
         File extension for output rasters.
     profile : dict
     	Rasterio metadata dictionary decribing the properties used to create the output raster.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
     Returns
     -------
@@ -997,13 +1044,13 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile):
     catRasterName = baseName + str(val) + ext
     catRaster = os.path.join(outWorkspace, catRasterName)
 
-    print("Saving %s"%catRaster)
+    if verbose: print("Saving %s"%catRaster)
     with rs.open(catRaster,'w',**profile) as dst:
         dst.write(catData,1)
 
     return catRaster # Return the path to the raster created
 
-def tauFlowAccum(fdr, accumRast, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n'):
+def tauFlowAccum(fdr, accumRast, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n', verbose = False):
     """Wrapper for TauDEM AreaD8 :cite:`TauDEM` to produce a flow acculation grid.
 
     Parameters
@@ -1018,6 +1065,8 @@ def tauFlowAccum(fdr, accumRast, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n'):
         The command to use for mpi, defaults to mpiexec.
     mpiArg : str (optional)
         Argument flag passed to mpiCall, which is followed by the cores parameter.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
 
     Returns
@@ -1027,7 +1076,7 @@ def tauFlowAccum(fdr, accumRast, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n'):
     """
     #Use tauDEM to accumulate the parameter
     try:
-        print('Accumulating Data...')
+        if verbose: print('Accumulating Data...')
         tauParams = {
         'fdr':fdr,
         'cores':cores, 
@@ -1037,7 +1086,7 @@ def tauFlowAccum(fdr, accumRast, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n'):
         }
         
         cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
-        print(cmd)
+        if verbose: print(cmd)
         result = subprocess.run(cmd, shell = True) # Run shell command
         
         result.stdout
@@ -1046,7 +1095,7 @@ def tauFlowAccum(fdr, accumRast, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n'):
         print('Error Accumulating Data')
         traceback.print_exc()
 
-def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac = None, thresh = None):
+def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac = None, thresh = None, mpiCall = 'mpiexec', mpiArg = '-n', verbose = False):
     '''
     Wrapper for the TauDEM D8 Extreme Upslope Value function :cite:`TauDEM`.
 
@@ -1069,7 +1118,9 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
     mpiCall : str (optional)
         The command to use for mpi, defaults to mpiexec.
     mpiArg : str (optional)
-        Argument flag passed to mpiCall, which is followed by the cores parameter.
+        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to '-n'
+    verbose : bool (optional)
+        Print output, defaults to False.
 
     Returns
     -------
@@ -1093,7 +1144,7 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
     else: # no flag for max
         cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
 
-    print(cmd) # print the command to be run to the output.
+    if verbose: print(cmd) # print the command to be run to the output.
     result = subprocess.run(cmd, shell = True) # Run shell command
         
     result.stdout
@@ -1157,7 +1208,7 @@ def getHUC4(HUC12):
     '''
     return HUC12[:4]
 
-def makePourBasins(wbd,fromHUC4,toHUC4,HUC12Key = 'HUC12', ToHUCKey = 'TOHUC'):
+def makePourBasins(wbd,fromHUC4,toHUC4,HUC12Key = 'HUC12', ToHUCKey = 'ToHUC'):
     '''Make geodataframe of HUC12 basis flowing from fromHUC4 to toHUC4.
     
     Parameters
@@ -1229,11 +1280,9 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins = False):
         for point in points:
             x,y = point
             d = queryPoint(x,y,upfdrfl)
-            newx,newy = FindDownstreamCellTauDir(d,x,y,out_transform[0])
-
-            #if queryPoint(newx,newy,upfacfl) == data.meta['nodata']:
-            pourPoints.append((newx,newy,w)) # keep the point if it does. Original points retained
-            #print(pourPoints)
+            newx,newy = FindDownstreamCellTauDir(d,x,y,out_transform[0]) # move the pour point downstream
+            if fc.queryPoint(newx,newy, upfacfl) == data.meta['nodata']:
+                pourPoints.append((x,y,w)) # append the pour point to the output list.
     
     if plotBasins:
         ax = pourBasins.plot('Name')
@@ -1289,7 +1338,7 @@ def loadRaster(fl, returnMeta = False, band = 1):
         else:
             return dat
     except:
-        print("Unable to open %s"%(fl))
+        print("Error - Unable to open %s"%(fl))
 
 def findLastFACFD(facfl, fl = None):
     '''Find the coordinate of the greatest cell in facfl, return the value from fl at that point.
@@ -1455,7 +1504,7 @@ def loadJSON(infl):
     
     return dictionary
 
-def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict = True):
+def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict = True, verbose = False):
     '''Create a dictionary for updating downstream FAC and parameter grids using values pulled from the next grid upstream.
     
     Parameters
@@ -1472,6 +1521,8 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict = True):
         Path to where to save the json of this dictionary. The convention is to name this by the downstream HUC.
     replaceDict : bool (optional)
         Replace the update dictionary instead of updating with a new value. Defaults to True.
+    verbose : bool (optional)
+        Print output, defaults to False.
     
     Returns
     -------
@@ -1501,9 +1552,9 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict = True):
                 }
     
     if os.path.exists(outfl) and replaceDict==False: # if the update dictionary exists, update it.
-        print('Update dictionary found: %s'%outfl)
+        if verbose: print('Update dictionary found: %s'%outfl)
         updateDict = loadJSON(outfl)
-        print('Updating dictionary...')
+        if verbose: print('Updating dictionary...')
         updateDict[fromHUC] = subDict
     elif os.path.exists(outfl) and replaceDict==True:
         os.remove(outfl)
@@ -1519,7 +1570,7 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict = True):
     
     return updateDict
 
-def updateRaster(x,y,val,grd,outgrd):
+def updateRaster(x,y,val,grd,outgrd, scaleFactor = None):
     '''Insert value into grid at location specified by x,y; writes new raster to output grid.
     
     Parameters
@@ -1534,6 +1585,8 @@ def updateRaster(x,y,val,grd,outgrd):
         Path to raster to be updated.
     outgrd : str (path)
         Path to write updated raster to.
+    scaleFactor : int (optional)
+        Integer value to divide the output raster by when working with very large flow accumulation areas and associated parameter grids, defaults to None.
     
     Returns
     -------
@@ -1551,14 +1604,23 @@ def updateRaster(x,y,val,grd,outgrd):
         val = list(val)
     
     dat,meta = loadRaster(grd, returnMeta=True)
+
+    if scaleFactor:
+        dat /= scaleFactor # scale the input grid
     
     with rs.open(grd) as src: # iterate over the supplied points 
         for xx,yy,vv in zip(x,y,val):
-            c,r = src.index(float(xx),float(yy)) # get column, row coordinates
-            dat[c,r] = int(float(vv)) # update the dataset
             
-    meta.update({
+            if scaleFactor:
+                vv = vv / scaleFactor # correct the value being inserted
+
+            c,r = src.index(float(xx),float(yy)) # get column, row coordinates
+            dat[c,r] += int(float(vv)) # update the dataset
+            
+    meta.update({'dtype': dat.dtype, # update data type
         'compress':'LZW',
+        'zlevel':9,
+        'interleave':'band',
         'profile':'GeoTIFF',
         'tiled':True,
         'sparse_ok':True,
@@ -1589,13 +1651,14 @@ def makeFACweight(ingrd,outWeight):
     '''
     dat, meta = loadRaster(ingrd, returnMeta=True)
     
-    ones = np.ones_like(dat, dtype=np.int32) # make a grid of ones shaped like the original FAC grid. These will be used
-    # as a weighting grid that can be corrected.
+    ones = np.ones_like(dat, dtype=np.int32) # make a grid of ones shaped like the original FAC grid. These will be used as a weighting grid that can be corrected.
     
     ones[dat == meta['nodata']] = meta['nodata'] # persist the noData value into the grid
     meta['dtype'] = ones.dtype # update the datatype
     meta.update({
         'compress':'LZW',
+        'zlevel':9,
+        'interleave':'band',
         'profile':'GeoTIFF',
         'tiled':True,
         'sparse_ok':True,
@@ -1609,7 +1672,7 @@ def makeFACweight(ingrd,outWeight):
     
     return None
 
-def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstreamFDRFl, adjFACFl, cores=1, mpiCall = 'mpiexec', mpiArg = '-n'):
+def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstreamFDRFl, adjFACFl, cores=1, mpiCall = 'mpiexec', mpiArg = '-n', verbose = False, scaleFactor = None):
     '''Generate an updated flow accumulation grid (FAC) given an update dictionary produced by :py:func:`createUpdateDict`.
     
     Parameters
@@ -1630,6 +1693,10 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
         MPI program to use to execute the program, defaults to mpiexec.
     mpiArg : str (optional)
         Argument to pass to mpiCall, defaults to -n.
+    verbose : bool (optional)
+        Print output, defaults to False.
+    scaleFactor : int (optional)
+        Value to divide weighting grid by for working with very large flow accumulation values and associated parameter value, defaults to None.
     
     Returns
     -------
@@ -1642,14 +1709,14 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
         upstreamDict = updateDict[key] # subset out the upstream HUC of interest
         if 'maxUpstreamFAC' in upstreamDict['vars']:
             if not os.path.isfile(downstreamFACweightFl): # If weighting file not present, create one at the supplied path.
-                print("Generating FAC weighting grid.")
+                if verbose: print("Generating FAC weighting grid.")
                 makeFACweight(facWeighttemplate,downstreamFACweightFl) 
             if os.path.isfile(downstreamFACweightFl): # if the weighting grid is present, update it with the upstream value.
-                print("Updating FAC weighting grid with value from %s FAC"%(key))
+                if verbose: print("Updating FAC weighting grid with value from %s FAC"%(key))
                 updateRaster(upstreamDict['x'],
                              upstreamDict['y'],
                              upstreamDict['maxUpstreamFAC'],
-                             downstreamFACweightFl,downstreamFACweightFl) # update with lists
+                             downstreamFACweightFl,downstreamFACweightFl, scaleFactor = scaleFactor) # update with lists
             
     accumulateParam(downstreamFACweightFl, downstreamFDRFl, adjFACFl, cores = cores) # run a parameter accumulation on the weighting grid.
 
@@ -1689,7 +1756,7 @@ def updateDict(ud, upHUC, varName, val):
     UD[upHUC] = upstream # update dictionary with upstream sub-dictionary
     saveJSON(UD, ud) # write out file
 
-def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl):
+def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbose = False, scaleFactor = None):
     '''Generate an updated parameter grid given an update dictionary from :py:func:`createUpdateDict`.
     
     Parameters
@@ -1702,6 +1769,8 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl):
         Path to update dictionary to use.
     adjParamFl : str
         Path to output adjusted parameter file.
+    verbose : bool (optional)
+        Print output, defaults to False.
     
     Returns
     -------
@@ -1714,21 +1783,23 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl):
         upstreamDict = updateDict[key] # subset out the upstream HUC of interest
         if updatedParam in upstreamDict['vars']: 
             if os.path.isfile(downstreamParamFL): # if the weighting grid is present, update it with the upstream value.
-                print("Updating parameter grid with value from %s FAC"%(key))
+                if verbose: print("Updating parameter grid with value from %s FAC"%(key))
                 updateRaster(upstreamDict['x'],
                              upstreamDict['y'],
                              upstreamDict[updatedParam],
-                             downstreamParamFL,adjParamFl) # update with lists
+                             downstreamParamFL,adjParamFl, scaleFactor = scaleFactor) # update with lists
 
 def d8todinfinity(inRast, outRast, updateDict = {
                 'dtype':'float32',
                 'compress':'LZW',
+                'zlevel':9,
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
                 'nodata':-1,
-                'bigtiff':'IF_SAFER'}):
+                'bigtiff':'IF_SAFER'}, verbose = False):
     """Convert TauDEM D-8 flow directions to D-Infinity flow directions.
 
     Parameters
@@ -1739,6 +1810,8 @@ def d8todinfinity(inRast, outRast, updateDict = {
         Path to output the TauDEM D-Infinity flow direction raster.
     updateDict : dict (optional)
         Dictionary of Rasterio parameters used to write out the GeoTiff.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
     Returns
     -------
@@ -1746,7 +1819,7 @@ def d8todinfinity(inRast, outRast, updateDict = {
         Path to output the TauDEM D-Infinity flow direction raster.
     """
 
-    print('Reclassifying Flow Directions...')
+    if verbose: print('Reclassifying Flow Directions...')
 
     # load input data
     with rs.open(inRast) as ds:
@@ -1767,15 +1840,17 @@ def d8todinfinity(inRast, outRast, updateDict = {
 
     with rs.open(outRast,'w',**profile) as dst:
         dst.write(tauDir,1)
-        print("TauDEM drainage direction written to: {0}".format(outRast))
+        if verbose: print("TauDEM drainage direction written to: {0}".format(outRast))
 
 def changeNoData(inRast, newNoData, updateDict = {
                 'compress':'LZW',
+                'zlevel':9,
+                'interleave':'band',
                 'profile':'GeoTIFF',
                 'tiled':True,
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
-                'bigtiff':'IF_SAFER'}):
+                'bigtiff':'IF_SAFER'}, verbose = False):
     """Update raster no data value to a new value.
 
     Parameters
@@ -1786,13 +1861,15 @@ def changeNoData(inRast, newNoData, updateDict = {
         New no data value for the raster.
     updateDict : dict (optional)
         Dictionary of Rasterio parameters used to create the updated raster.
+    verbose : bool (optional)
+        Print output, defaults to False.
 
     Returns
     -------
     None
     """
     
-    print('Opening raster...')
+    if verbose: print('Opening raster...')
 
     #load input data
     with rs.open(inRast) as ds:
@@ -1800,7 +1877,7 @@ def changeNoData(inRast, newNoData, updateDict = {
         inNoData = ds.nodata
         profile = ds.profile.copy() # save the metadata for output later
 
-    print('Changing no data values...')
+    if verbose: print('Changing no data values...')
     dat[dat == inNoData] = newNoData #Change no data value
 
     updateDict['nodata'] = newNoData # add new noData value to the update dictionary.
@@ -1810,4 +1887,53 @@ def changeNoData(inRast, newNoData, updateDict = {
 
     with rs.open(inRast,'w',**profile) as dst:
         dst.write(dat,1)
-        print("Raster written to: {0}".format(inRast))
+        if verbose: print("Raster written to: {0}".format(inRast))
+
+# def makeStreams(fac, strPath, thresh = 900, updateDict = {
+#                 'nodata':99,
+#                 'compress':'LZW',
+#                 'zlevel':9,
+#                 'interleave':'band',
+#                 'profile':'GeoTIFF',
+#                 'tiled':True,
+#                 'sparse_ok':True,
+#                 'num_threads':'ALL_CPUS',
+#                 'bigtiff':'IF_SAFER'}, verbose = False):
+#     """Create stream grid from a flow accumulation grid based on a threshold value.
+
+#     Parameters
+#     ----------
+#     fac : str
+#         Path to the flow accumulation grid that will be used to create the stream grid.
+#     strPath : str
+#         Path to output the stream grid where stream cells will be 1 and other cells will be the no-data value from the source fac grid.
+#     thresh : int (optional)
+#         Flow accumulation threshold above which streams are created, defaults to 900 cells.
+#     updateDict : dict (optional)
+#         Rasterio raster creation parameters.
+#     verbose : bool (optional)
+#         Print output, defaults to False.
+
+#     Returns
+#     -------
+#     None
+
+#     """
+
+#     assert os.path.isfile(fac), "fac not found."
+#     if verbose: print('Loading fac')
+#     with rs.open(fac) as ds:
+#         dat = ds.read(1)
+#         profile = ds.profile.copy()
+
+#     strRast = np.zeros_like(dat, dtype = np.int8)
+#     strRast[:] = updateDict['nodata'] # fill with no-data values
+#     strRast[dat>=thresh] = 1 # make cells at or above the threshold 1
+
+#     profile.update(updateDict) # update the raster profile
+#     profile['dtype'] = str(strRast.dtype)
+
+#     if verbose: print(profile)
+
+#     with rs.open(strPath,'w',**profile) as dst:
+#         dst.write(strRast,1) # write out the geotiff

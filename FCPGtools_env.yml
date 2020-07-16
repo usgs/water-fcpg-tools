@@ -1,4 +1,6 @@
-name: fcpgtools
+name: fcpgtools_test
+channels:
+  - conda-forge
 dependencies:
   - python>=3.6
   - anaconda
@@ -9,6 +11,5 @@ dependencies:
   - pandas
   - matplotlib
   - netCDF4
-  - json-c
-  - jsonschema
   - pip
+  - descartes
