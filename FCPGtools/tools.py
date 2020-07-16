@@ -1281,7 +1281,7 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins = False):
             x,y = point
             d = queryPoint(x,y,upfdrfl)
             newx,newy = FindDownstreamCellTauDir(d,x,y,out_transform[0]) # move the pour point downstream
-            if fc.queryPoint(newx,newy, upfacfl) == data.meta['nodata']:
+            if queryPoint(newx,newy, upfacfl) == data.meta['nodata']:
                 pourPoints.append((x,y,w)) # append the pour point to the output list.
     
     if plotBasins:
