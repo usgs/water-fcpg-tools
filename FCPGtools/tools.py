@@ -1405,7 +1405,7 @@ def queryPoint(x,y,grd):
     
     # loop construct is to deal with src.sample returning an array, only the value is needed.
     with rs.open(grd) as src:
-        for i in src.sample([(x,y)],1):
+        for i in src.sample([(float(x),float(y))],1):
             return i[0]
 
 def FindDownstreamCellTauDir(d,x,y,w):
