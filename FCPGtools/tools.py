@@ -1672,7 +1672,7 @@ def makeFACweight(ingrd,outWeight):
     
     return None
 
-def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstreamFDRFl, adjFACFl, cores=1, mpiCall = 'mpiexec', mpiArg = '-n', verbose = False, scaleFactor = None):
+def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstreamFDRFl, adjFACFl, cores=1, mpiCall = 'mpiexec', mpiArg = '-n', verbose = False, scaleFactor = None, moveDownstream = False):
     '''Generate an updated flow accumulation grid (FAC) given an update dictionary produced by :py:func:`createUpdateDict`.
     
     Parameters
@@ -1697,6 +1697,8 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
         Print output, defaults to False.
     scaleFactor : int (optional)
         Value to divide weighting grid by for working with very large flow accumulation values and associated parameter value, defaults to None.
+    moveDownstream : bool (optional)
+        Move the pour point downstream to account for pour points that do not overlap downstream geospatial tiles, defaults to False.
     
     Returns
     -------
@@ -1707,14 +1709,27 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
     for key in updateDict.keys(): # for each upstream HUC.
 
         upstreamDict = updateDict[key] # subset out the upstream HUC of interest
+        if moveDownstream:
+            assert 'FDR' in upstreamDict['vars'], 'FDR not in upstream variables.'
+
         if 'maxUpstreamFAC' in upstreamDict['vars']:
             if not os.path.isfile(downstreamFACweightFl): # If weighting file not present, create one at the supplied path.
                 if verbose: print("Generating FAC weighting grid.")
                 makeFACweight(facWeighttemplate,downstreamFACweightFl) 
             if os.path.isfile(downstreamFACweightFl): # if the weighting grid is present, update it with the upstream value.
                 if verbose: print("Updating FAC weighting grid with value from %s FAC"%(key))
-                updateRaster(upstreamDict['x'],
-                             upstreamDict['y'],
+
+                x = float(upstreamDict['x'])
+                y = float(upstreamDict['y'])
+
+                if moveDownstream:
+                    fd = int(upstreamDict['FDR']) # get flow direction
+                    src = rs.open(facWeighttemplate) # get resolution
+                    d,zzzz =  src.res
+                    x,y = FindDownstreamCellTauDir(fd,x,y,d) # increment the pour point downstream
+
+                updateRaster(x,
+                             y,
                              upstreamDict['maxUpstreamFAC'],
                              downstreamFACweightFl,downstreamFACweightFl, scaleFactor = scaleFactor) # update with lists
             
@@ -1756,7 +1771,7 @@ def updateDict(ud, upHUC, varName, val):
     UD[upHUC] = upstream # update dictionary with upstream sub-dictionary
     saveJSON(UD, ud) # write out file
 
-def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbose = False, scaleFactor = None):
+def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbose = False, scaleFactor = None, moveDownstream = False):
     '''Generate an updated parameter grid given an update dictionary from :py:func:`createUpdateDict`.
     
     Parameters
@@ -1771,6 +1786,10 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbo
         Path to output adjusted parameter file.
     verbose : bool (optional)
         Print output, defaults to False.
+    scaleFactor : int (optional)
+        Value to divide weighting grid by for working with very large flow accumulation values and associated parameter value, defaults to None.
+    moveDownstream : bool (optional)
+        Move the pour point downstream to account for pour points that do not overlap downstream geospatial tiles, defaults to False.
     
     Returns
     -------
@@ -1781,11 +1800,25 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbo
     for key in updateDict.keys(): # for each upstream HUC.
 
         upstreamDict = updateDict[key] # subset out the upstream HUC of interest
+
+        if moveDownstream:
+            assert 'FDR' in upstreamDict['vars'], 'FDR not in upstream variables.'
+
         if updatedParam in upstreamDict['vars']: 
             if os.path.isfile(downstreamParamFL): # if the weighting grid is present, update it with the upstream value.
                 if verbose: print("Updating parameter grid with value from %s FAC"%(key))
-                updateRaster(upstreamDict['x'],
-                             upstreamDict['y'],
+
+                x = float(upstreamDict['x'])
+                y = float(upstreamDict['y'])
+
+                if moveDownstream:
+                    fd = int(upstreamDict['FDR']) # get flow direction
+                    src = rs.open(downstreamParamFL) # get resolution
+                    d,zzzz =  src.res
+                    x,y = FindDownstreamCellTauDir(fd,x,y,d) # increment the pour point downstream
+
+                updateRaster(x,
+                             y,
                              upstreamDict[updatedParam],
                              downstreamParamFL,adjParamFl, scaleFactor = scaleFactor) # update with lists
 
