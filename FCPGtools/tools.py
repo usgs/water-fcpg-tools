@@ -1757,14 +1757,16 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
 
                     xnews = []
                     ynews = []
+                    i = 0
                     for x,y in zip(upstreamDict['x'],upstreamDict['y']): # iterate through pour points...
 
-                        fd = int(upstreamDict['FDR']) # get flow direction
+                        fd = int(upstreamDict['FDR'][i]) # get flow direction
                         src = rs.open(facWeighttemplate) # get resolution
                         d,zzzz =  src.res
                         xx,yy = FindDownstreamCellTauDir(fd,x,y,d) # increment the pour point downstream
                         xnews.append(xx)
                         ynews.append(yy)
+                        i += 1
                 else:
                     xnews = upstreamDict['x']
                     ynews = upstreamDict['y']
@@ -1866,14 +1868,16 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbo
 
                     xnews = []
                     ynews = []
+                    i = 0
                     for x,y in zip(upstreamDict['x'],upstreamDict['y']): # iterate through pour points...
 
-                        fd = int(upstreamDict['FDR']) # get flow direction
+                        fd = int(upstreamDict['FDR'][i]) # get flow direction
                         src = rs.open(facWeighttemplate) # get resolution
                         d,zzzz =  src.res
                         xx,yy = FindDownstreamCellTauDir(fd,x,y,d) # increment the pour point downstream
                         xnews.append(xx)
                         ynews.append(yy)
+                        i += 1
                 else:
                     xnews = upstreamDict['x']
                     ynews = upstreamDict['y']
