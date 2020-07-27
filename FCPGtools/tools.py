@@ -1504,7 +1504,7 @@ def loadJSON(infl):
     
     return dictionary
 
-def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict = True, verbose = False):
+def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict = True, verbose = False, outletX = None, outletY = None):
     '''Create a dictionary for updating downstream FAC and parameter grids using values pulled from the next grid upstream.
     
     Parameters
@@ -1523,6 +1523,10 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict = True, v
         Replace the update dictionary instead of updating with a new value. Defaults to True.
     verbose : bool (optional)
         Print output, defaults to False.
+    outletX : list (optional)
+        Outlet horizontal coordinate(s) if different from x above, defaults to None.
+    outletY : list (optional)
+        Outlet vertical coordinate(s) if different from y above, defaults to None.
     
     Returns
     -------
@@ -1531,6 +1535,21 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict = True, v
     '''
     
     # using lists instead of single values in case there are multiple pour points between basins
+
+    if outletX:
+        assert outletY, "Please supply outletY list."
+        if type(outletX) != list:
+            outletX = list(outletX)
+
+        outletX = [str(x) for x in outletX] # convert to strings
+        
+
+    if outletY:
+        assert outletX, "Please suppy outletX list."
+        if type(outletY) != list:
+            outletY = list(outletY)
+
+        outletY = [str(y) for y in outletY] # convert to strings
     
     if type(x) != list:
     	x = list(x)
@@ -1550,6 +1569,12 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict = True, v
         'maxUpstreamFAC':facs,
         'vars':['maxUpstreamFAC'] # list of contained parameters
                 }
+
+    # add outlet points to the dictionary
+    if outletX:
+        subDict['outletX'] = outletX
+    if outletY:
+        subDict['outletY'] = outletY
     
     if os.path.exists(outfl) and replaceDict==False: # if the update dictionary exists, update it.
         if verbose: print('Update dictionary found: %s'%outfl)
@@ -1712,6 +1737,15 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
         if moveDownstream:
             assert 'FDR' in upstreamDict['vars'], 'FDR not in upstream variables.'
 
+        if 'outletX' in list(upstreamDict.keys()):
+            assert 'outletY' in list(upstreamDict.keys())
+
+        if 'outletY' in list(upstreamDict.keys):
+            assert 'outletX' in list(upstreamDict.keys())
+
+        if 'outletX' in list(upstreamDict.keys()):
+            if verbose: print('Outlet point supplied.')
+
         if 'maxUpstreamFAC' in upstreamDict['vars']:
             if not os.path.isfile(downstreamFACweightFl): # If weighting file not present, create one at the supplied path.
                 if verbose: print("Generating FAC weighting grid.")
@@ -1734,6 +1768,10 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
                 else:
                     xnews = upstreamDict['x']
                     ynews = upstreamDict['y']
+
+                    if 'outletX' in list(upstreamDict.keys()):
+                        xnews = upstreamDict['outletX']
+                        ynews = upstreamDict['outletY']
 
                 updateRaster(xnews,
                              ynews,
@@ -1808,6 +1846,15 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbo
 
         upstreamDict = updateDict[key] # subset out the upstream HUC of interest
 
+        if 'outletX' in list(upstreamDict.keys()):
+            assert 'outletY' in list(upstreamDict.keys())
+
+        if 'outletY' in list(upstreamDict.keys):
+            assert 'outletX' in list(upstreamDict.keys())
+
+        if 'outletX' in list(upstreamDict.keys()):
+            if verbose: print('Outlet point supplied.')
+
         if moveDownstream:
             assert 'FDR' in upstreamDict['vars'], 'FDR not in upstream variables.'
 
@@ -1830,6 +1877,10 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbo
                 else:
                     xnews = upstreamDict['x']
                     ynews = upstreamDict['y']
+
+                    if 'outletX' in list(upstreamDict.keys()):
+                        xnews = upstreamDict['outletX']
+                        ynews = upstreamDict['outletY']
 
                 updateRaster(xnews,
                              ynews,
