@@ -1740,7 +1740,7 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
         if 'outletX' in list(upstreamDict.keys()):
             assert 'outletY' in list(upstreamDict.keys())
 
-        if 'outletY' in list(upstreamDict.keys):
+        if 'outletY' in list(upstreamDict.keys()):
             assert 'outletX' in list(upstreamDict.keys())
 
         if 'outletX' in list(upstreamDict.keys()):
@@ -1849,7 +1849,7 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbo
         if 'outletX' in list(upstreamDict.keys()):
             assert 'outletY' in list(upstreamDict.keys())
 
-        if 'outletY' in list(upstreamDict.keys):
+        if 'outletY' in list(upstreamDict.keys()):
             assert 'outletX' in list(upstreamDict.keys())
 
         if 'outletX' in list(upstreamDict.keys()):
