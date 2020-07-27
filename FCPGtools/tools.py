@@ -1815,9 +1815,6 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbo
             if os.path.isfile(downstreamParamFL): # if the weighting grid is present, update it with the upstream value.
                 if verbose: print("Updating parameter grid with value from %s FAC"%(key))
 
-                x = float(upstreamDict['x'])
-                y = float(upstreamDict['y'])
-
                 if moveDownstream:
 
                     xnews = []
