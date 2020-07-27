@@ -1719,17 +1719,24 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
             if os.path.isfile(downstreamFACweightFl): # if the weighting grid is present, update it with the upstream value.
                 if verbose: print("Updating FAC weighting grid with value from %s FAC"%(key))
 
-                x = float(upstreamDict['x'])
-                y = float(upstreamDict['y'])
-
                 if moveDownstream:
-                    fd = int(upstreamDict['FDR']) # get flow direction
-                    src = rs.open(facWeighttemplate) # get resolution
-                    d,zzzz =  src.res
-                    x,y = FindDownstreamCellTauDir(fd,x,y,d) # increment the pour point downstream
 
-                updateRaster(x,
-                             y,
+                    xnews = []
+                    ynews = []
+                    for x,y in zip(upstreamDict['x'],upstreamDict['y']): # iterate through pour points...
+
+                        fd = int(upstreamDict['FDR']) # get flow direction
+                        src = rs.open(facWeighttemplate) # get resolution
+                        d,zzzz =  src.res
+                        xx,yy = FindDownstreamCellTauDir(fd,x,y,d) # increment the pour point downstream
+                        xnews.append(xx)
+                        ynews.append(yy)
+                else:
+                    xnews = upstreamDict['x']
+                    ynews = upstreamDict['y']
+
+                updateRaster(xnews,
+                             ynews,
                              upstreamDict['maxUpstreamFAC'],
                              downstreamFACweightFl,downstreamFACweightFl, scaleFactor = scaleFactor) # update with lists
             
@@ -1812,13 +1819,23 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbo
                 y = float(upstreamDict['y'])
 
                 if moveDownstream:
-                    fd = int(upstreamDict['FDR']) # get flow direction
-                    src = rs.open(downstreamParamFL) # get resolution
-                    d,zzzz =  src.res
-                    x,y = FindDownstreamCellTauDir(fd,x,y,d) # increment the pour point downstream
 
-                updateRaster(x,
-                             y,
+                    xnews = []
+                    ynews = []
+                    for x,y in zip(upstreamDict['x'],upstreamDict['y']): # iterate through pour points...
+
+                        fd = int(upstreamDict['FDR']) # get flow direction
+                        src = rs.open(facWeighttemplate) # get resolution
+                        d,zzzz =  src.res
+                        xx,yy = FindDownstreamCellTauDir(fd,x,y,d) # increment the pour point downstream
+                        xnews.append(xx)
+                        ynews.append(yy)
+                else:
+                    xnews = upstreamDict['x']
+                    ynews = upstreamDict['y']
+
+                updateRaster(xnews,
+                             ynews,
                              upstreamDict[updatedParam],
                              downstreamParamFL,adjParamFl, scaleFactor = scaleFactor) # update with lists
 
