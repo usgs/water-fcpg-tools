@@ -1872,7 +1872,7 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbo
                     for x,y in zip(upstreamDict['x'],upstreamDict['y']): # iterate through pour points...
 
                         fd = int(upstreamDict['FDR'][i]) # get flow direction
-                        src = rs.open(facWeighttemplate) # get resolution
+                        src = rs.open(downstreamParamFL) # get resolution
                         d,zzzz =  src.res
                         xx,yy = FindDownstreamCellTauDir(fd,x,y,d) # increment the pour point downstream
                         xnews.append(xx)
