@@ -1429,6 +1429,8 @@ def FindDownstreamCellTauDir(d,x,y,w):
     y : float
         Vertical coordinate of the downstream cell.
     '''
+    x = float(x)
+    y = float(y)
     
     # figure out how to correct the point location
     if d == 1: # east
