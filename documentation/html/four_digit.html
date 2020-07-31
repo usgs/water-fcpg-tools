@@ -214,8 +214,8 @@
 35
 36
 37
-38</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FCPGtools</span> <span class="kn">as</span> <span class="nn">fcpg</span> <span class="c1"># Import the tools. </span>
-<span class="kn">import</span> <span class="nn">geopandas</span> <span class="kn">as</span> <span class="nn">gpd</span>
+38</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FCPGtools</span> <span class="k">as</span> <span class="nn">fcpg</span> <span class="c1"># Import the tools. </span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
 
 <span class="c1"># Define the file input and output paths and the upstream region.</span>
 <span class="n">upstreamFACfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Upstream flow accumulation grid from TauDEM.</span>
@@ -244,7 +244,7 @@
 <span class="n">pourBasins</span> <span class="o">=</span> <span class="n">fcpg</span><span class="o">.</span><span class="n">makePourBasins</span><span class="p">(</span><span class="n">wbd</span><span class="p">,</span><span class="n">upstream</span><span class="p">,</span><span class="n">downstream</span><span class="p">)</span>
 
 <span class="c1"># Find pour points between the upstream and downstream basins.</span>
-<span class="n">pourPoints</span> <span class="o">=</span> <span class="n">fcpg</span><span class="o">.</span><span class="n">findPourPoints</span><span class="p">(</span><span class="n">pourBasins</span><span class="p">,</span> <span class="n">upstreamFACfltau</span><span class="p">,</span> <span class="n">upstreamFDRfltau</span><span class="p">,</span> <span class="n">plotBasins</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">pourPoints</span> <span class="o">=</span> <span class="n">fcpg</span><span class="o">.</span><span class="n">findPourPoints</span><span class="p">(</span><span class="n">pourBasins</span><span class="p">,</span> <span class="n">upstreamFACfltau</span><span class="p">,</span> <span class="n">upstreamFDRfltau</span><span class="p">,</span> <span class="n">plotBasins</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Create update dictionary from the pour points.</span>
 <span class="n">newX</span><span class="p">,</span><span class="n">newY</span><span class="p">,</span><span class="n">maxFAC</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">pourPoints</span><span class="p">)</span>

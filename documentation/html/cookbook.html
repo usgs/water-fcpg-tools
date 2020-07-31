@@ -178,7 +178,7 @@
 <dt>To produce more complex FCPGs from categorical data or that cascade from one upstream hydrologic tile to a downstream tile you will need more data:</dt><dd><ul class="simple">
 <li><dl class="simple">
 <dt>A categorical parameter grid (e.g. land cover).</dt><dd><ul>
-<li><p>The Watershed Boundary Dataset for the area you are working in. This helps the tools locate areas within geospatial tiles that flow out of the tile and into the next downstream tile.</p></li>
+<li><p>The Watershed Boundary Dataset for the area you are working in. This helps the tools locate areas within geospatial tiles that flow out of the tile and into the next downstream tile. Specifically, this dataset contains a feature class of twelve digit hydrologic unit codes (HUCs) that have attributes for the HUC12 identifier and the downstream HUC12 identifier. <code class="xref py py-func docutils literal notranslate"><span class="pre">makePourBasins()</span></code> contains two arguments to set names for these attributes.</p></li>
 </ul>
 </dd>
 </dl>

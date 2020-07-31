@@ -7,8 +7,3 @@ Function Documentation
     :members:
     :undoc-members:
     :show-inheritance:
-
-.. automodule:: netCDFmaker
-    :members:
-    :undoc-members:
-    :show-inheritance:
