@@ -283,7 +283,7 @@
 <span class="sd">    mpiCall : str (optional)</span>
 <span class="sd">        The command to use for mpi, defaults to mpiexec.</span>
 <span class="sd">    mpiArg : str (optional)</span>
-<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter.</span>
+<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to &#39;-n&#39;.</span>
 <span class="sd">    verbose : bool (optional)</span>
 <span class="sd">        Print output, defaults to False.</span>
 
@@ -801,7 +801,7 @@
 <span class="sd">    mpiCall : str (optional)</span>
 <span class="sd">        The command to use for mpi, defaults to mpiexec.</span>
 <span class="sd">    mpiArg : str (optional)</span>
-<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter.</span>
+<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to &#39;-n&#39;.</span>
 <span class="sd">    verbose : bool (optional)</span>
 <span class="sd">        Print output, defaults to False.</span>
 
@@ -875,7 +875,7 @@
 <span class="sd">    mpiCall : str (optional)</span>
 <span class="sd">        The command to use for mpi, defaults to mpiexec.</span>
 <span class="sd">    mpiArg : str (optional)</span>
-<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter.</span>
+<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to &#39;-n&#39;.</span>
 <span class="sd">    verbose : bool (optional)</span>
 <span class="sd">        Print output, defaults to False.</span>
 
@@ -1029,7 +1029,7 @@
 <span class="sd">    mpiCall : str (optional)</span>
 <span class="sd">        MPI program to use to execute the program, defaults to mpiexec.</span>
 <span class="sd">    mpiArg : str (optional)</span>
-<span class="sd">        Argument to pass to mpiCall, defaults to -n.</span>
+<span class="sd">        Argument to pass to mpiCall, defaults to &#39;-n&#39;.</span>
 <span class="sd">    verbose : bool (optional)</span>
 <span class="sd">        Print output, defaults to False.</span>
 
@@ -1218,7 +1218,7 @@
 <span class="sd">    mpiCall : str (optional)</span>
 <span class="sd">        The command to use for mpi, defaults to mpiexec.</span>
 <span class="sd">    mpiArg : str (optional)</span>
-<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter.</span>
+<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to &#39;-n&#39;.</span>
 <span class="sd">    verbose : bool (optional)</span>
 <span class="sd">        Print output, defaults to False.</span>
 
@@ -1272,7 +1272,7 @@
 <span class="sd">    mpiCall : str (optional)</span>
 <span class="sd">        The command to use for mpi, defaults to mpiexec.</span>
 <span class="sd">    mpiArg : str (optional)</span>
-<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to &#39;-n&#39;</span>
+<span class="sd">        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to &#39;-n&#39;.</span>
 <span class="sd">    verbose : bool (optional)</span>
 <span class="sd">        Print output, defaults to False.</span>
 
@@ -1893,7 +1893,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    adjFACFl : raster</span>
-<span class="sd">        Adjusted flow accumulation raster at adjFACFl</span>
+<span class="sd">        Adjusted flow accumulation raster at adjFACFl.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">updateDict</span> <span class="o">=</span> <span class="n">loadJSON</span><span class="p">(</span><span class="n">updateDictFl</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">updateDict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c1"># for each upstream HUC.</span>

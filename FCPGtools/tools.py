@@ -129,7 +129,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
     mpiCall : str (optional)
         The command to use for mpi, defaults to mpiexec.
     mpiArg : str (optional)
-        Argument flag passed to mpiCall, which is followed by the cores parameter.
+        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to '-n'.
     verbose : bool (optional)
         Print output, defaults to False.
 
@@ -647,7 +647,7 @@ def decayAccum(ang, mult, outRast, paramRast = None, cores=1, mpiCall = 'mpiexec
     mpiCall : str (optional)
         The command to use for mpi, defaults to mpiexec.
     mpiArg : str (optional)
-        Argument flag passed to mpiCall, which is followed by the cores parameter.
+        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to '-n'.
     verbose : bool (optional)
         Print output, defaults to False.
 
@@ -721,7 +721,7 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1, mpiCall = 'mpiexec', mpiArg 
     mpiCall : str (optional)
         The command to use for mpi, defaults to mpiexec.
     mpiArg : str (optional)
-        Argument flag passed to mpiCall, which is followed by the cores parameter.
+        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to '-n'.
     verbose : bool (optional)
         Print output, defaults to False.
 
@@ -875,7 +875,7 @@ def accumulateParam_batch(paramRasts, fdr, outWorkspace, cores = 1, appStr="accu
     mpiCall : str (optional)
         MPI program to use to execute the program, defaults to mpiexec.
     mpiArg : str (optional)
-        Argument to pass to mpiCall, defaults to -n.
+        Argument to pass to mpiCall, defaults to '-n'.
     verbose : bool (optional)
         Print output, defaults to False.
 
@@ -1064,7 +1064,7 @@ def tauFlowAccum(fdr, accumRast, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n', 
     mpiCall : str (optional)
         The command to use for mpi, defaults to mpiexec.
     mpiArg : str (optional)
-        Argument flag passed to mpiCall, which is followed by the cores parameter.
+        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to '-n'.
     verbose : bool (optional)
         Print output, defaults to False.
 
@@ -1118,7 +1118,7 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
     mpiCall : str (optional)
         The command to use for mpi, defaults to mpiexec.
     mpiArg : str (optional)
-        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to '-n'
+        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to '-n'.
     verbose : bool (optional)
         Print output, defaults to False.
 
@@ -1739,7 +1739,7 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
     Returns
     -------
     adjFACFl : raster
-        Adjusted flow accumulation raster at adjFACFl
+        Adjusted flow accumulation raster at adjFACFl.
     '''
     updateDict = loadJSON(updateDictFl)
     for key in updateDict.keys(): # for each upstream HUC.

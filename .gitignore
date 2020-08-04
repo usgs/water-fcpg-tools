@@ -8,3 +8,4 @@ figures
 *.mxd
 *.csv
 test_output
+*.md

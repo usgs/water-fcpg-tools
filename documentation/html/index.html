@@ -157,23 +157,23 @@
   <div class="section" id="welcome-to-flow-conditioned-parameter-grid-tools-documentation">
 <h1>Welcome to Flow-Conditioned Parameter Grid Tools’ documentation!<a class="headerlink" href="#welcome-to-flow-conditioned-parameter-grid-tools-documentation" title="Permalink to this headline">¶</a></h1>
 <p>The Flow-Conditioned Parameter Grid (FCPG) Tools are a Python 3 library to make FCPGs for either two-digit Hydrologic Unit Code (HUC2) regions, four-digit Hydrologic Unit Code (HUC4) regions, or other geospatial tiling schemes. These tools can be used in a Linux-based high performance computing (HPC) environment or locally on your system.</p>
-<div class="figure align-default" id="id2">
+<div class="figure align-default" id="id3">
 <a class="reference internal image-reference" href="_images/CPG_tool_structure.png"><img alt="Conceptual FCPG process flowchart." src="_images/CPG_tool_structure.png" style="width: 640.0px; height: 360.0px;" /></a>
-<p class="caption"><span class="caption-text">Flowchart of FCPG processing work flow.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-text">Flowchart of FCPG processing work flow.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
 </div>
+</div>
+<div class="section" id="dependencies">
+<h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h1>
+<p>Dependencies for this work are largely taken care of via the <a class="reference external" href="https://www.anaconda.com/products/individual">Anaconda</a>  environment specified by the yml file; however, the tools do rely on <a class="reference external" href="https://github.com/dtarb/TauDEM/tree/v5.3.8">TauDEM</a> <a class="bibtex reference internal" href="z_references.html#taudem" id="id1">[1]</a>, which needs to be installed and visible to your conda environment. Please install Anaconda Python 3 and TauDEM version 5.3.7 or greater prior to installing the Flow-Conditioned Parameter Grid Tools.</p>
+<p>This library works best with GeoTiff files; however, other GDAL-compatible geospatial raster format could also potentially be used.</p>
 </div>
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p>Clone the repository using <code class="code docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://code.usgs.gov/StreamStats/FCPGtools.git</span></code>.</p>
-<p>Then change directories into the repository and create an <cite>Anaconda &lt;https://www.anaconda.com/products/individual&gt;</cite> environment using the supplied <code class="code docutils literal notranslate"><span class="pre">FCPGtools_env.yml</span></code> file by calling <code class="code docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span> <span class="pre">-f</span> <span class="pre">FCPGtools_env.yml</span></code>. Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.</p>
+<p>Then change directories into the repository and create an <a class="reference external" href="https://www.anaconda.com/products/individual">Anaconda</a> environment using the supplied <code class="code docutils literal notranslate"><span class="pre">FCPGtools_env.yml</span></code> file by calling <code class="code docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span> <span class="pre">-f</span> <span class="pre">FCPGtools_env.yml</span></code>. Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.</p>
 <p>Then, install the repository using <code class="code docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+file:&lt;Full</span> <span class="pre">Path</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">FCPGtools</span> <span class="pre">repository&gt;</span></code></p>
 <p>For example, <code class="code docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+file:/home/&lt;username&gt;/projects/FCPGtools</span></code></p>
 <p>On a HPC system you may need to load the correct Python module before building the Anaconda environment. This might be done with <code class="code docutils literal notranslate"><span class="pre">module</span> <span class="pre">load</span> <span class="pre">python/anaconda3</span></code>.</p>
-</div>
-<div class="section" id="dependencies">
-<h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h1>
-<p>Dependencies for this work are largely taken care of via the Anaconda environment specified by the yml file; however, the tools do rely on <a class="reference external" href="https://github.com/dtarb/TauDEM/tree/v5.3.8">TauDEM 5.3.8</a> <a class="bibtex reference internal" href="z_references.html#taudem" id="id1">[1]</a>, which needs to be installed and visible to your conda environment.</p>
-<p>This library works best with GeoTiff files; however, other GDAL-compatible geospatial raster format could also potentially be used.</p>
 </div>
 <div class="section" id="quick-start">
 <h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
