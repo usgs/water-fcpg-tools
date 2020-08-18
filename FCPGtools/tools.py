@@ -305,9 +305,9 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, verb
         File location of the flow accumulation raster.
     outRast : str
         File location of the output flow-conditioned parameter grid.
-    noDataRast : str
+    noDataRast : str (optional)
         File location of the accumulated parameter no data raster.
-    minAccum : float
+    minAccum : float (optional)
         Value of flow accumulation below which the CPG values will be set to no data.
     verbose : bool (optional)
         Print output, defaults to False.
@@ -405,7 +405,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     outParam : str
         Path to the output file for the resampled parameter raster.
     resampleMethod : str (optional)
-        resampling method, either 'bilinear' or 'nearest neighbor'. Bilinear should generally be used for continuous data sets such as precipitation while nearest neighbor should generally be used for categorical datasets such as land cover type. Defaults to bilinear.
+        resampling method, either 'bilinear' or 'near' for nearest neighbor. Bilinear should generally be used for continuous data sets such as precipitation while nearest neighbor should generally be used for categorical datasets such as land cover type. Defaults to bilinear.
     cores : int (optional)
         The number of cores to use. Defaults to 1.
     forceProj : bool (optional)
@@ -435,6 +435,10 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
         paramType = ds.dtypes[0] #Get datatype of first band
         paramcrs = ds.crs #Get parameter coordinate reference system
         paramXsize, paramYsize = ds.res #Get parameter cell size
+        paramXmin = ds.transform[2] # get upper left
+        paramYmax = ds.transform[5] # get upper left
+        paramXmax = paramXmin + paramXsize * ds.width # compute lower right
+        paramYmin = paramYmax - paramYsize * ds.height # compute lower right
 
     # override the FDR projection if specified.
     if forceProj:
@@ -447,7 +451,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     if verbose: print("Parameter Xsize:" + str(paramXsize))
     
     # Choose an appropriate gdal data type for the parameter
-    if paramType == 'int8':
+    if paramType == 'int8' or paramType == 'uint8':
         outType = 'Byte' # Use Gdal convention #old# Convert 8 bit integers to 16 bit in gdal
         #print("Warning: 8 bit inputs are unsupported and may not be reprojected correctly") #Print warning that gdal may cause problems with 8 bit rasters
     elif paramType == 'int16':
@@ -466,7 +470,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
         outType = 'Float64' # Try a 64 bit floating point if all else fails
 
     #Check if resampling or reprojection are required
-    if str(paramcrs) == str(fdrcrs) and paramXsize == xsize and paramYsize == ysize:
+    if str(paramcrs) == str(fdrcrs) and paramXsize == xsize and paramYsize == ysize and fdrXmin == paramXmin and fdrYmin == paramYmin and fdrXmax == paramXmax and fdrYmax == paramYmax:
         if verbose: print("Parameter does not require reprojection or resampling")
     
     else:
