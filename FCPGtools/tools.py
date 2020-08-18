@@ -295,7 +295,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
 
     
 def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, verbose = False):
-    '''Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also :py:func:`make_fcpgs`.
+    '''Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also :py:func:`make_fcpg_batch`.
 
     Parameters
     ----------
