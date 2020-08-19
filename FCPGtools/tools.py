@@ -449,6 +449,11 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
 
     if verbose: print("Flow Direction Xsize:" + str(xsize))
     if verbose: print("Parameter Xsize:" + str(paramXsize))
+
+    if verbose: print(f"FDR Lower Right Corner: {fdrXmax}, {fdrYmin}")
+    if verbose: print(f"FDR Upper Left Corner: {fdrXmin}, {fdrYmax}")
+    if verbose: print(f"Param Lower Right Corner: {paramXmax}, {paramYmin}")
+    if verbose: print(f"Param Upper Left: {paramXmin}, {paramYmax}")
     
     # Choose an appropriate gdal data type for the parameter
     if paramType == 'int8' or paramType == 'uint8':
