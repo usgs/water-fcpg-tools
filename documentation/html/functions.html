@@ -863,7 +863,7 @@
 <dl class="py function">
 <dt id="tools.make_fcpg">
 <code class="sig-name descname">make_fcpg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">accumParam</span></em>, <em class="sig-param"><span class="n">fac</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">noDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">minAccum</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#make_fcpg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.make_fcpg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also <code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpgs()</span></code>.</p>
+<dd><p>Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also <a class="reference internal" href="#tools.make_fcpg_batch" title="tools.make_fcpg_batch"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpg_batch()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -873,9 +873,9 @@
 </dd>
 <dt><strong>outRast</strong><span class="classifier">str</span></dt><dd><p>File location of the output flow-conditioned parameter grid.</p>
 </dd>
-<dt><strong>noDataRast</strong><span class="classifier">str</span></dt><dd><p>File location of the accumulated parameter no data raster.</p>
+<dt><strong>noDataRast</strong><span class="classifier">str (optional)</span></dt><dd><p>File location of the accumulated parameter no data raster.</p>
 </dd>
-<dt><strong>minAccum</strong><span class="classifier">float</span></dt><dd><p>Value of flow accumulation below which the CPG values will be set to no data.</p>
+<dt><strong>minAccum</strong><span class="classifier">float (optional)</span></dt><dd><p>Value of flow accumulation below which the CPG values will be set to no data.</p>
 </dd>
 <dt><strong>verbose</strong><span class="classifier">bool (optional)</span></dt><dd><p>Print output, defaults to False.</p>
 </dd>
@@ -1003,7 +1003,7 @@
 </dd>
 <dt><strong>outParam</strong><span class="classifier">str</span></dt><dd><p>Path to the output file for the resampled parameter raster.</p>
 </dd>
-<dt><strong>resampleMethod</strong><span class="classifier">str (optional)</span></dt><dd><p>resampling method, either ‘bilinear’ or ‘nearest neighbor’. Bilinear should generally be used for continuous data sets such as precipitation while nearest neighbor should generally be used for categorical datasets such as land cover type. Defaults to bilinear.</p>
+<dt><strong>resampleMethod</strong><span class="classifier">str (optional)</span></dt><dd><p>resampling method, either ‘bilinear’ or ‘near’ for nearest neighbor. Bilinear should generally be used for continuous data sets such as precipitation while nearest neighbor should generally be used for categorical datasets such as land cover type. Defaults to bilinear.</p>
 </dd>
 <dt><strong>cores</strong><span class="classifier">int (optional)</span></dt><dd><p>The number of cores to use. Defaults to 1.</p>
 </dd>

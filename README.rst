@@ -27,6 +27,10 @@ For example, :code:`pip install git+file:/home/<username>/projects/FCPGtools`
 
 On a HPC system you may need to load the correct Python module before building the Anaconda environment. This might be done with :code:`module load python/anaconda3`.
 
+Upgrading
+---------
+Periodically, updates and bug fixes will be made to this library. To update your installation run :code:`git pull` from the repository folder on your machine and then run :code:`pip install git+file:<Full Path to the FCPGtools repository>`. If you have changed any files in your local copy of the repository, you will need to stash them using git before pulling the updates.
+
 Quick Start
 ===========
 Load the FCPGtools using :code:`import FCPGtools as fcpg`.

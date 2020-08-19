@@ -449,7 +449,7 @@
 
     
 <div class="viewcode-block" id="make_fcpg"><a class="viewcode-back" href="../functions.html#tools.make_fcpg">[docs]</a><span class="k">def</span> <span class="nf">make_fcpg</span><span class="p">(</span><span class="n">accumParam</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">noDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">minAccum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also :py:func:`make_fcpgs`.</span>
+    <span class="sd">&#39;&#39;&#39;Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also :py:func:`make_fcpg_batch`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -459,9 +459,9 @@
 <span class="sd">        File location of the flow accumulation raster.</span>
 <span class="sd">    outRast : str</span>
 <span class="sd">        File location of the output flow-conditioned parameter grid.</span>
-<span class="sd">    noDataRast : str</span>
+<span class="sd">    noDataRast : str (optional)</span>
 <span class="sd">        File location of the accumulated parameter no data raster.</span>
-<span class="sd">    minAccum : float</span>
+<span class="sd">    minAccum : float (optional)</span>
 <span class="sd">        Value of flow accumulation below which the CPG values will be set to no data.</span>
 <span class="sd">    verbose : bool (optional)</span>
 <span class="sd">        Print output, defaults to False.</span>
@@ -559,7 +559,7 @@
 <span class="sd">    outParam : str</span>
 <span class="sd">        Path to the output file for the resampled parameter raster.</span>
 <span class="sd">    resampleMethod : str (optional)</span>
-<span class="sd">        resampling method, either &#39;bilinear&#39; or &#39;nearest neighbor&#39;. Bilinear should generally be used for continuous data sets such as precipitation while nearest neighbor should generally be used for categorical datasets such as land cover type. Defaults to bilinear.</span>
+<span class="sd">        resampling method, either &#39;bilinear&#39; or &#39;near&#39; for nearest neighbor. Bilinear should generally be used for continuous data sets such as precipitation while nearest neighbor should generally be used for categorical datasets such as land cover type. Defaults to bilinear.</span>
 <span class="sd">    cores : int (optional)</span>
 <span class="sd">        The number of cores to use. Defaults to 1.</span>
 <span class="sd">    forceProj : bool (optional)</span>
@@ -589,6 +589,10 @@
         <span class="n">paramType</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get datatype of first band</span>
         <span class="n">paramcrs</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">crs</span> <span class="c1">#Get parameter coordinate reference system</span>
         <span class="n">paramXsize</span><span class="p">,</span> <span class="n">paramYsize</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">res</span> <span class="c1">#Get parameter cell size</span>
+        <span class="n">paramXmin</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">transform</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># get upper left</span>
+        <span class="n">paramYmax</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">transform</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1"># get upper left</span>
+        <span class="n">paramXmax</span> <span class="o">=</span> <span class="n">paramXmin</span> <span class="o">+</span> <span class="n">paramXsize</span> <span class="o">*</span> <span class="n">ds</span><span class="o">.</span><span class="n">width</span> <span class="c1"># compute lower right</span>
+        <span class="n">paramYmin</span> <span class="o">=</span> <span class="n">paramYmax</span> <span class="o">-</span> <span class="n">paramYsize</span> <span class="o">*</span> <span class="n">ds</span><span class="o">.</span><span class="n">height</span> <span class="c1"># compute lower right</span>
 
     <span class="c1"># override the FDR projection if specified.</span>
     <span class="k">if</span> <span class="n">forceProj</span><span class="p">:</span>
@@ -599,9 +603,14 @@
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Flow Direction Xsize:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">xsize</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter Xsize:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">paramXsize</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FDR Lower Right Corner: </span><span class="si">{</span><span class="n">fdrXmax</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">fdrYmin</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FDR Upper Left Corner: </span><span class="si">{</span><span class="n">fdrXmin</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">fdrYmax</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Param Lower Right Corner: </span><span class="si">{</span><span class="n">paramXmax</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">paramYmin</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Param Upper Left: </span><span class="si">{</span><span class="n">paramXmin</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">paramYmax</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     
     <span class="c1"># Choose an appropriate gdal data type for the parameter</span>
-    <span class="k">if</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int8&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int8&#39;</span> <span class="ow">or</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;uint8&#39;</span><span class="p">:</span>
         <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Byte&#39;</span> <span class="c1"># Use Gdal convention #old# Convert 8 bit integers to 16 bit in gdal</span>
         <span class="c1">#print(&quot;Warning: 8 bit inputs are unsupported and may not be reprojected correctly&quot;) #Print warning that gdal may cause problems with 8 bit rasters</span>
     <span class="k">elif</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int16&#39;</span><span class="p">:</span>
@@ -620,7 +629,7 @@
         <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Float64&#39;</span> <span class="c1"># Try a 64 bit floating point if all else fails</span>
 
     <span class="c1">#Check if resampling or reprojection are required</span>
-    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">paramcrs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">fdrcrs</span><span class="p">)</span> <span class="ow">and</span> <span class="n">paramXsize</span> <span class="o">==</span> <span class="n">xsize</span> <span class="ow">and</span> <span class="n">paramYsize</span> <span class="o">==</span> <span class="n">ysize</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">paramcrs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">fdrcrs</span><span class="p">)</span> <span class="ow">and</span> <span class="n">paramXsize</span> <span class="o">==</span> <span class="n">xsize</span> <span class="ow">and</span> <span class="n">paramYsize</span> <span class="o">==</span> <span class="n">ysize</span> <span class="ow">and</span> <span class="n">fdrXmin</span> <span class="o">==</span> <span class="n">paramXmin</span> <span class="ow">and</span> <span class="n">fdrYmin</span> <span class="o">==</span> <span class="n">paramYmin</span> <span class="ow">and</span> <span class="n">fdrXmax</span> <span class="o">==</span> <span class="n">paramXmax</span> <span class="ow">and</span> <span class="n">fdrYmax</span> <span class="o">==</span> <span class="n">paramYmax</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter does not require reprojection or resampling&quot;</span><span class="p">)</span>
     
     <span class="k">else</span><span class="p">:</span>
