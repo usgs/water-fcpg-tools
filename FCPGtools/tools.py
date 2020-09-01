@@ -459,11 +459,11 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     if paramType == 'int8' or paramType == 'uint8':
         outType = 'Byte' # Use Gdal convention #old# Convert 8 bit integers to 16 bit in gdal
         #print("Warning: 8 bit inputs are unsupported and may not be reprojected correctly") #Print warning that gdal may cause problems with 8 bit rasters
-    elif paramType == 'int16':
+    elif paramType == 'int16' or paramType == 'uint16':
         outType = 'Int16' 
-    elif paramType == 'int32':
+    elif paramType == 'int32' or paramType == 'uint32':
         outType = 'Int32'
-    elif paramType == 'int64':
+    elif paramType == 'int64' or paramType == 'uint64':
         outType = 'Int64'
     elif paramType == 'float32':
         outType = 'Float32'
@@ -477,7 +477,13 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     #Check if resampling or reprojection are required
     if str(paramcrs) == str(fdrcrs) and paramXsize == xsize and paramYsize == ysize and fdrXmin == paramXmin and fdrYmin == paramYmin and fdrXmax == paramXmax and fdrYmax == paramYmax:
         if verbose: print("Parameter does not require reprojection or resampling")
-    
+
+        with rs.open(inParam) as src:
+        	meta = src.meta.copy()
+
+        	with rs.open(outParam,'w',**meta) as dst:
+        		dst.write(src.read(1),1)
+        		if verbose: print(f"Parameter raster copied to {outParam}")
     else:
 
         # Resample, reproject, and clip the parameter raster with GDAL
