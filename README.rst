@@ -8,6 +8,8 @@ The Flow-Conditioned Parameter Grid (FCPG) Tools are a Python 3 library to make 
 
 	Flowchart of FCPG processing work flow.
 
+Please log any issues with the repository here: https://code.usgs.gov/StreamStats/FCPGtools/-/issues
+
 Dependencies
 ============
 
