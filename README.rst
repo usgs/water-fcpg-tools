@@ -42,7 +42,7 @@ Citation
 
 Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: https://doi.org/10.5066/P9W8UZ47
 
-Version 1.0 (IPDS-112996) was approved on September 3, 2020.
+Version 1.0 (IP-112996) was approved on September 3, 2020.
 
 Disclaimers
 ===========
