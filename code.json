@@ -1,0 +1,49 @@
+[
+  {
+    "name": "FCPGtools",
+    "organization": "U.S. Geological Survey",
+    "description": "Tools to generate flow-conditioned parameter grids",
+    "version": "1.0",
+    "status": "APPROVED",
+
+    "permissions": {
+      "usageType": "openSource",
+      "licenses": [
+        {
+          "name": "Public Domain, CC0-1.0",
+          "URL": "https://code.usgs.gov/StreamStats/FCPGtools/raw/master/LICENSE.md"
+        }
+      ]
+    },
+
+    "homepageURL": "https://code.usgs.gov/StreamStats/FCPGtools",
+    "downloadURL": "https://code.usgs.gov/StreamStats/FCPGtools/-/archive/master/FCPGtools.zip",
+    "disclaimerURL": "https://code.usgs.gov/StreamStats/FCPGtools/raw/master/DISCLAIMER.md",
+    "repositoryURL": "https://code.usgs.gov/StreamStats/FCPGtools.git",
+    "vcs": "git",
+
+    "laborHours": 1044,
+
+    "tags": [
+      "hydrology",
+      "raster",
+      "flow statistics",
+      "hydrologic modeling",
+      "machine learning"
+    ],
+
+    "languages": [
+      "Python",
+      "BASH"
+    ],
+
+    "contact": {
+      "name": "Theodore Barnhart",
+      "email": "tbarnhart@usgs.gov"
+    },
+
+    "date": {
+      "metadataLastUpdated": "2020-09-04"
+    }
+  }
+]

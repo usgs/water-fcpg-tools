@@ -613,11 +613,11 @@
     <span class="k">if</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int8&#39;</span> <span class="ow">or</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;uint8&#39;</span><span class="p">:</span>
         <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Byte&#39;</span> <span class="c1"># Use Gdal convention #old# Convert 8 bit integers to 16 bit in gdal</span>
         <span class="c1">#print(&quot;Warning: 8 bit inputs are unsupported and may not be reprojected correctly&quot;) #Print warning that gdal may cause problems with 8 bit rasters</span>
-    <span class="k">elif</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int16&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int16&#39;</span> <span class="ow">or</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;uint16&#39;</span><span class="p">:</span>
         <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Int16&#39;</span> 
-    <span class="k">elif</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int32&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int32&#39;</span> <span class="ow">or</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;uint32&#39;</span><span class="p">:</span>
         <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Int32&#39;</span>
-    <span class="k">elif</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int64&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;int64&#39;</span> <span class="ow">or</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;uint64&#39;</span><span class="p">:</span>
         <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Int64&#39;</span>
     <span class="k">elif</span> <span class="n">paramType</span> <span class="o">==</span> <span class="s1">&#39;float32&#39;</span><span class="p">:</span>
         <span class="n">outType</span> <span class="o">=</span> <span class="s1">&#39;Float32&#39;</span>
@@ -631,7 +631,13 @@
     <span class="c1">#Check if resampling or reprojection are required</span>
     <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">paramcrs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">fdrcrs</span><span class="p">)</span> <span class="ow">and</span> <span class="n">paramXsize</span> <span class="o">==</span> <span class="n">xsize</span> <span class="ow">and</span> <span class="n">paramYsize</span> <span class="o">==</span> <span class="n">ysize</span> <span class="ow">and</span> <span class="n">fdrXmin</span> <span class="o">==</span> <span class="n">paramXmin</span> <span class="ow">and</span> <span class="n">fdrYmin</span> <span class="o">==</span> <span class="n">paramYmin</span> <span class="ow">and</span> <span class="n">fdrXmax</span> <span class="o">==</span> <span class="n">paramXmax</span> <span class="ow">and</span> <span class="n">fdrYmax</span> <span class="o">==</span> <span class="n">paramYmax</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter does not require reprojection or resampling&quot;</span><span class="p">)</span>
-    
+
+        <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inParam</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        	<span class="n">meta</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        	<span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outParam</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">meta</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        		<span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+        		<span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter raster copied to </span><span class="si">{</span><span class="n">outParam</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
 
         <span class="c1"># Resample, reproject, and clip the parameter raster with GDAL</span>
