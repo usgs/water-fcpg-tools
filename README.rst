@@ -15,17 +15,15 @@ Dependencies
 
 Dependencies for this work are largely taken care of via the `Anaconda <https://www.anaconda.com/products/individual>`_  environment specified by the yml file; however, the tools do rely on `TauDEM <https://github.com/dtarb/TauDEM/tree/v5.3.8>`_ :cite:`TauDEM`, which needs to be installed and visible to your conda environment. Please install Anaconda Python 3 and TauDEM version 5.3.7 or greater prior to installing the Flow-Conditioned Parameter Grid Tools.
 
-This library works best with GeoTiff files; however, other GDAL-compatible geospatial raster format could also potentially be used. 
+This library works best with GeoTIFF files; however, other GDAL-compatible geospatial raster format could also potentially be used. 
 
 Installation
 ============
-Clone the repository using :code:`git clone https://code.usgs.gov/StreamStats/FCPGtools.git`.
+Clone the repository using :code:`git clone https://github.com/usgs/water-fcpg-tools.git`.
 
-Then change directories into the repository and create an `Anaconda <https://www.anaconda.com/products/individual>`_ environment using the supplied :code:`FCPGtools_env.yml` file by calling :code:`conda env create -f FCPGtools_env.yml`. Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.
+Then change directories into the repository and create an `Anaconda <https://www.anaconda.com/products/individual>`_ environment using the supplied :code:`FCPGtools_env.yml` file by calling :code:`conda env create -f FCPGtools_env.yml`. **Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.**
 
-Then, install the repository using :code:`pip install git+file:<Full Path to the FCPGtools repository>`
-
-For example, :code:`pip install git+file:/home/<username>/projects/FCPGtools`
+Then, install the repository using :code:`pip install https://github.com/usgs/water-fcpg-tools`
 
 On a HPC system you may need to load the correct Python module before building the Anaconda environment. This might be done with :code:`module load python/anaconda3`.
 
