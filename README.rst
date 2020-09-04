@@ -29,7 +29,7 @@ On a HPC system you may need to load the correct Python module before building t
 
 Upgrading
 ---------
-Periodically, updates and bug fixes will be made to this library. To update your installation run :code:`git pull` from the repository folder on your machine and then run :code:`pip install git+file:<Full Path to the FCPGtools repository>`. If you have changed any files in your local copy of the repository, you will need to stash them using git before pulling the updates.
+Periodically, updates and bug fixes will be made to this library. To update your installation re-run :code:`pip install https://github.com/usgs/water-fcpg-tools`.
 
 Quick Start
 ===========
