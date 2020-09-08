@@ -17,7 +17,7 @@
     },
 
     "homepageURL": "https://code.usgs.gov/StreamStats/FCPGtools",
-    "downloadURL": "https://code.usgs.gov/StreamStats/FCPGtools/-/archive/master/FCPGtools.zip",
+    "downloadURL": "https://code.usgs.gov/StreamStats/FCPGtools/-/archive/master/FCPGtools-master.zip",
     "disclaimerURL": "https://code.usgs.gov/StreamStats/FCPGtools/raw/master/DISCLAIMER.md",
     "repositoryURL": "https://code.usgs.gov/StreamStats/FCPGtools.git",
     "vcs": "git",
