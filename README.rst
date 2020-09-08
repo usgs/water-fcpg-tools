@@ -10,6 +10,11 @@ The Flow-Conditioned Parameter Grid (FCPG) Tools are a Python 3 library to make 
 
 Please log any issues with the repository here: https://code.usgs.gov/StreamStats/FCPGtools/-/issues
 
+Documentation
+=============
+
+The documentation for this library is available at https://usgs.github.io/water-fcpg-tools/.
+
 Dependencies
 ============
 
