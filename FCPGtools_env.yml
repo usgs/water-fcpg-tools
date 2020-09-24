@@ -1,4 +1,4 @@
-name: fcpgtools_test
+name: fcpgtools
 channels:
   - conda-forge
 dependencies:
