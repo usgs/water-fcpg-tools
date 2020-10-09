@@ -1702,7 +1702,7 @@ def makeFACweight(ingrd,outWeight):
     '''
     dat, meta = loadRaster(ingrd, returnMeta=True)
     
-    ones = np.ones_like(dat, dtype=np.int32) # make a grid of ones shaped like the original FAC grid. These will be used as a weighting grid that can be corrected.
+    ones = np.ones_like(dat, dtype=np.float32) # make a grid of ones shaped like the original FAC grid. These will be used as a weighting grid that can be corrected.
     
     ones[dat == meta['nodata']] = meta['nodata'] # persist the noData value into the grid
     meta['dtype'] = ones.dtype # update the datatype

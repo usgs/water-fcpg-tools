@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tools &mdash; Flow-Conditioned Parameter Grid Tools 1.0.1 documentation</title>
+  <title>tools &mdash; Flow-Conditioned Parameter Grid Tools 1.0.2 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.0.1
+                1.0.2
               </div>
             
           
@@ -1856,7 +1856,7 @@
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">dat</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">loadRaster</span><span class="p">(</span><span class="n">ingrd</span><span class="p">,</span> <span class="n">returnMeta</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     
-    <span class="n">ones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> <span class="c1"># make a grid of ones shaped like the original FAC grid. These will be used as a weighting grid that can be corrected.</span>
+    <span class="n">ones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1"># make a grid of ones shaped like the original FAC grid. These will be used as a weighting grid that can be corrected.</span>
     
     <span class="n">ones</span><span class="p">[</span><span class="n">dat</span> <span class="o">==</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;nodata&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;nodata&#39;</span><span class="p">]</span> <span class="c1"># persist the noData value into the grid</span>
     <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ones</span><span class="o">.</span><span class="n">dtype</span> <span class="c1"># update the datatype</span>
