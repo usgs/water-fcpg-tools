@@ -1663,10 +1663,10 @@ def updateRaster(x,y,val,grd,outgrd, scaleFactor = None):
         for xx,yy,vv in zip(x,y,val):
             
             if scaleFactor:
-                vv = vv / scaleFactor # correct the value being inserted
+                vv = float(vv) / scaleFactor # correct the value being inserted
 
             c,r = src.index(float(xx),float(yy)) # get column, row coordinates
-            dat[c,r] += int(float(vv)) # update the dataset
+            dat[c,r] += float(vv) # update the dataset
             
     meta.update({'dtype': dat.dtype, # update data type
         'compress':'LZW',

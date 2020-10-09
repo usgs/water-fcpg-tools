@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tools &mdash; Flow-Conditioned Parameter Grid Tools 1.0.0 documentation</title>
+  <title>tools &mdash; Flow-Conditioned Parameter Grid Tools 1.0.1 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.0.1
               </div>
             
           
@@ -1817,10 +1817,10 @@
         <span class="k">for</span> <span class="n">xx</span><span class="p">,</span><span class="n">yy</span><span class="p">,</span><span class="n">vv</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">val</span><span class="p">):</span>
             
             <span class="k">if</span> <span class="n">scaleFactor</span><span class="p">:</span>
-                <span class="n">vv</span> <span class="o">=</span> <span class="n">vv</span> <span class="o">/</span> <span class="n">scaleFactor</span> <span class="c1"># correct the value being inserted</span>
+                <span class="n">vv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">vv</span><span class="p">)</span> <span class="o">/</span> <span class="n">scaleFactor</span> <span class="c1"># correct the value being inserted</span>
 
             <span class="n">c</span><span class="p">,</span><span class="n">r</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">xx</span><span class="p">),</span><span class="nb">float</span><span class="p">(</span><span class="n">yy</span><span class="p">))</span> <span class="c1"># get column, row coordinates</span>
-            <span class="n">dat</span><span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="n">r</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">vv</span><span class="p">))</span> <span class="c1"># update the dataset</span>
+            <span class="n">dat</span><span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="n">r</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">float</span><span class="p">(</span><span class="n">vv</span><span class="p">)</span> <span class="c1"># update the dataset</span>
             
     <span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="n">dat</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="c1"># update data type</span>
         <span class="s1">&#39;compress&#39;</span><span class="p">:</span><span class="s1">&#39;LZW&#39;</span><span class="p">,</span>
