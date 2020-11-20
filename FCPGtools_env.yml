@@ -2,14 +2,13 @@ name: fcpgtools
 channels:
   - conda-forge
 dependencies:
-  - python>=3.6
-  - anaconda
+  - python=3.7
   - ipython
   - jupyter
   - rasterio
   - geopandas
   - pandas
   - matplotlib
-  - netCDF4
-  - pip
   - descartes
+  - pip:
+    - git+https://github.com/usgs/water-fcpg-tools

@@ -24,17 +24,14 @@ This library works best with GeoTIFF files; however, other GDAL-compatible geosp
 
 Installation
 ============
-Clone the repository using :code:`git clone https://github.com/usgs/water-fcpg-tools.git`.
 
-Then change directories into the repository and create an `Anaconda <https://www.anaconda.com/products/individual>`_ environment using the supplied :code:`FCPGtools_env.yml` file by calling :code:`conda env create -f FCPGtools_env.yml`. **Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.**
-
-Then, install the repository using :code:`pip install https://github.com/usgs/water-fcpg-tools`
+Download the FCPGtools environment file from `here <https://code.usgs.gov/StreamStats/FCPGtools/-/raw/master/FCPGtools_env.yml>`_. Then create an `Anaconda <https://www.anaconda.com/products/individual>`_ environment using the supplied :code:`FCPGtools_env.yml` file by calling :code:`conda env create -f FCPGtools_env.yml`. **Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.**
 
 On a HPC system you may need to load the correct Python module before building the Anaconda environment. This might be done with :code:`module load python/anaconda3`.
 
 Upgrading
 ---------
-Periodically, updates and bug fixes will be made to this library. To update your installation re-run :code:`pip install https://github.com/usgs/water-fcpg-tools`.
+Periodically, updates and bug fixes will be made to this library. To update your installation re-run :code:`pip install git+https://github.com/usgs/water-fcpg-tools`.
 
 Quick Start
 ===========
