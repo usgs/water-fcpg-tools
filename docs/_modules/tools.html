@@ -1378,7 +1378,7 @@
     <span class="k">return</span> <span class="n">HUC12</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="makePourBasins"><a class="viewcode-back" href="../functions.html#tools.makePourBasins">[docs]</a><span class="k">def</span> <span class="nf">makePourBasins</span><span class="p">(</span><span class="n">wbd</span><span class="p">,</span><span class="n">fromHUC4</span><span class="p">,</span><span class="n">toHUC4</span><span class="p">,</span><span class="n">HUC12Key</span> <span class="o">=</span> <span class="s1">&#39;HUC12&#39;</span><span class="p">,</span> <span class="n">ToHUCKey</span> <span class="o">=</span> <span class="s1">&#39;ToHUC&#39;</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Make geodataframe of HUC12 basis flowing from fromHUC4 to toHUC4.</span>
+    <span class="sd">&#39;&#39;&#39;Make geodataframe of HUC12 basins flowing from fromHUC4 to toHUC4.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1809,6 +1809,7 @@
         <span class="n">val</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
     
     <span class="n">dat</span><span class="p">,</span><span class="n">meta</span> <span class="o">=</span> <span class="n">loadRaster</span><span class="p">(</span><span class="n">grd</span><span class="p">,</span> <span class="n">returnMeta</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">scaleFactor</span><span class="p">:</span>
         <span class="n">dat</span> <span class="o">/=</span> <span class="n">scaleFactor</span> <span class="c1"># scale the input grid</span>

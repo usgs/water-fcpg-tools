@@ -1224,7 +1224,7 @@ def getHUC4(HUC12):
     return HUC12[:4]
 
 def makePourBasins(wbd,fromHUC4,toHUC4,HUC12Key = 'HUC12', ToHUCKey = 'ToHUC'):
-    '''Make geodataframe of HUC12 basis flowing from fromHUC4 to toHUC4.
+    '''Make geodataframe of HUC12 basins flowing from fromHUC4 to toHUC4.
     
     Parameters
     ----------
@@ -1655,6 +1655,7 @@ def updateRaster(x,y,val,grd,outgrd, scaleFactor = None):
         val = list(val)
     
     dat,meta = loadRaster(grd, returnMeta=True)
+    dat = dat.astype(np.float32)
 
     if scaleFactor:
         dat /= scaleFactor # scale the input grid
