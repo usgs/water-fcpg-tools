@@ -370,9 +370,9 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, ESRI
         print("Warning: Negative accumulation value")
         print("Minimum value:{0}".format(np.nanmin(corrAccum)))
 
-    if np.where(corrAccum == 0) > 0:
+    if len(np.where(corrAccum == 0)) > 0:
         print("Warning: Zero accumulation value")
-        print("Number of zero values:{0}".format(np.where(corrAccum==0)))
+        print("Number of zero values:{0}".format(len(np.where(corrAccum==0))))
 
     if verbose: print("Computing CPG values {0}".format(datetime.datetime.now()))
     dataCPG = data / corrAccum # make data CPG
