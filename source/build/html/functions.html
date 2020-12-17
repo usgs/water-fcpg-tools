@@ -862,7 +862,7 @@
 
 <dl class="py function">
 <dt id="tools.make_fcpg">
-<code class="sig-name descname">make_fcpg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">accumParam</span></em>, <em class="sig-param"><span class="n">fac</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">noDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">minAccum</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#make_fcpg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.make_fcpg" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">make_fcpg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">accumParam</span></em>, <em class="sig-param"><span class="n">fac</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">noDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">minAccum</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ESRIFAC</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#make_fcpg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.make_fcpg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also <a class="reference internal" href="#tools.make_fcpg_batch" title="tools.make_fcpg_batch"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpg_batch()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -876,6 +876,8 @@
 <dt><strong>noDataRast</strong><span class="classifier">str (optional)</span></dt><dd><p>File location of the accumulated parameter no data raster.</p>
 </dd>
 <dt><strong>minAccum</strong><span class="classifier">float (optional)</span></dt><dd><p>Value of flow accumulation below which the CPG values will be set to no data.</p>
+</dd>
+<dt><strong>ESRIFAC</strong><span class="classifier">bool (optional)</span></dt><dd><p>Use an ESRI FAC grid, defaults to False. ESRI-derived FAC grids have zeros for the first cell in a flowpath, as such, a 1 is added to the grid.</p>
 </dd>
 <dt><strong>verbose</strong><span class="classifier">bool (optional)</span></dt><dd><p>Print output, defaults to False.</p>
 </dd>
@@ -892,7 +894,7 @@
 
 <dl class="py function">
 <dt id="tools.make_fcpg_batch">
-<code class="sig-name descname">make_fcpg_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">accumParams</span></em>, <em class="sig-param"><span class="n">fac</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">minAccum</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">appStr</span><span class="o">=</span><span class="default_value">'FCPG'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#make_fcpg_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.make_fcpg_batch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">make_fcpg_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">accumParams</span></em>, <em class="sig-param"><span class="n">fac</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">minAccum</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">appStr</span><span class="o">=</span><span class="default_value">'FCPG'</span></em>, <em class="sig-param"><span class="n">ESRIFAC</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#make_fcpg_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.make_fcpg_batch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Batch version of <a class="reference internal" href="#tools.make_fcpg" title="tools.make_fcpg"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpg()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -906,6 +908,8 @@
 <dt><strong>minAccum</strong><span class="classifier">int (optional)</span></dt><dd><p>Minimum accumulation value below which the output FCPG will be turned to no data values. Defaults to None.</p>
 </dd>
 <dt><strong>appStr</strong><span class="classifier">str (optional)</span></dt><dd><p>String of text to append to filenames of the produced FCPG grids.</p>
+</dd>
+<dt><strong>ESRIFAC</strong><span class="classifier">bool (optional)</span></dt><dd><p>Use an ESRI FAC grid, defaults to False. ESRI-derived FAC grids have zeros for the first cell in a flowpath, as such, a 1 is added to the grid.</p>
 </dd>
 <dt><strong>verbose</strong><span class="classifier">bool (optional)</span></dt><dd><p>Print output, defaults to False.</p>
 </dd>

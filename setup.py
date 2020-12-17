@@ -41,7 +41,7 @@ setup(
 	classifiers = [
 		"Programming Language :: Python :: 3",
 		"Operating System :: Linux",
-		"Development Status :: 4 - Beta",
+		"Development Status :: 5 - Production/Stable",
 		"License :: OSI Approved :: MIT License",
 	],
 	python_requires = '>=3.6',

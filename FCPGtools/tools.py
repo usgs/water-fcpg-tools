@@ -294,7 +294,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         traceback.print_exc()
 
     
-def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, verbose = False):
+def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, ESRIFAC=False, verbose = False):
     '''Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also :py:func:`make_fcpg_batch`.
 
     Parameters
@@ -309,6 +309,8 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, verb
         File location of the accumulated parameter no data raster.
     minAccum : float (optional)
         Value of flow accumulation below which the CPG values will be set to no data.
+    ESRIFAC : bool (optional)
+    	Use an ESRI FAC grid, defaults to False. ESRI-derived FAC grids have zeros for the first cell in a flowpath, as such, a 1 is added to the grid. 
     verbose : bool (optional)
         Print output, defaults to False.
         
@@ -342,6 +344,8 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, verb
         accum = ds.read(1)
         facNoData = ds.nodata # pull the accumulated area no data value
 
+    if ESRIFAC:
+    	accum += 1. # add 1 for ESRI FAC grid.
 
     if noDataRast != None:
         if verbose: print("Correcting CPG for no data values")
@@ -354,6 +358,7 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, verb
         corrAccum = accum - accumNoData # Compute corrected accumulation
         corrAccum = corrAccum.astype(np.float32) # Convert to 32 bit float
         corrAccum[accum == facNoData] = np.NaN # fill with no data values where appropriate
+        corrAccum[corrAccum == 0] = np.NaN # if corrected values are zero, they should be made into nodata so that a FCPG value is not computed for that location.
         
     else:
         accum2 = accum.astype(np.float32)
@@ -364,9 +369,13 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, verb
     if np.nanmin(corrAccum) < 0:
         print("Warning: Negative accumulation value")
         print("Minimum value:{0}".format(np.nanmin(corrAccum)))
- 
+
+    if np.where(corrAccum == 0) > 0:
+        print("Warning: Zero accumulation value")
+        print("Number of zero values:{0}".format(np.where(corrAccum==0)))
+
     if verbose: print("Computing CPG values {0}".format(datetime.datetime.now()))
-    dataCPG = data / (corrAccum + 1) # make data CPG
+    dataCPG = data / corrAccum # make data CPG
 
     if verbose: print("Replacing numpy nan values {0}".format(datetime.datetime.now()))
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
@@ -917,7 +926,7 @@ def accumulateParam_batch(paramRasts, fdr, outWorkspace, cores = 1, appStr="accu
 
     return fileList
 
-def make_fcpg_batch(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG", verbose = False):
+def make_fcpg_batch(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG", ESRIFAC = False, verbose = False):
     '''Batch version of :py:func:`make_fcpg`.
 
     Parameters
@@ -932,6 +941,8 @@ def make_fcpg_batch(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"
         Minimum accumulation value below which the output FCPG will be turned to no data values. Defaults to None.
     appStr : str (optional)
         String of text to append to filenames of the produced FCPG grids.
+    ESRIFAC : bool (optional)
+    	Use an ESRI FAC grid, defaults to False. ESRI-derived FAC grids have zeros for the first cell in a flowpath, as such, a 1 is added to the grid.
     verbose : bool (optional)
         Print output, defaults to False.
     
@@ -951,7 +962,7 @@ def make_fcpg_batch(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"
         outPath = os.path.join(outWorkspace, baseName + appStr + ext)
         fileList.append(outPath)
 
-        make_fcpg(param, fac, outPath, minAccum=minAccum, verbose = verbose) #Run the CPG function for the accumulated parameter raster
+        make_fcpg(param, fac, outPath, minAccum=minAccum, ESRIFAC=ESRIFAC, verbose = verbose) #Run the CPG function for the accumulated parameter raster
 
     return fileList
 

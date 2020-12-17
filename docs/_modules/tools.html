@@ -448,7 +448,7 @@
         <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span></div>
 
     
-<div class="viewcode-block" id="make_fcpg"><a class="viewcode-back" href="../functions.html#tools.make_fcpg">[docs]</a><span class="k">def</span> <span class="nf">make_fcpg</span><span class="p">(</span><span class="n">accumParam</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">noDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">minAccum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="make_fcpg"><a class="viewcode-back" href="../functions.html#tools.make_fcpg">[docs]</a><span class="k">def</span> <span class="nf">make_fcpg</span><span class="p">(</span><span class="n">accumParam</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">noDataRast</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">minAccum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ESRIFAC</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also :py:func:`make_fcpg_batch`.</span>
 
 <span class="sd">    Parameters</span>
@@ -463,6 +463,8 @@
 <span class="sd">        File location of the accumulated parameter no data raster.</span>
 <span class="sd">    minAccum : float (optional)</span>
 <span class="sd">        Value of flow accumulation below which the CPG values will be set to no data.</span>
+<span class="sd">    ESRIFAC : bool (optional)</span>
+<span class="sd">    	Use an ESRI FAC grid, defaults to False. ESRI-derived FAC grids have zeros for the first cell in a flowpath, as such, a 1 is added to the grid. </span>
 <span class="sd">    verbose : bool (optional)</span>
 <span class="sd">        Print output, defaults to False.</span>
 <span class="sd">        </span>
@@ -496,6 +498,8 @@
         <span class="n">accum</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">facNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span> <span class="c1"># pull the accumulated area no data value</span>
 
+    <span class="k">if</span> <span class="n">ESRIFAC</span><span class="p">:</span>
+    	<span class="n">accum</span> <span class="o">+=</span> <span class="mf">1.</span> <span class="c1"># add 1 for ESRI FAC grid.</span>
 
     <span class="k">if</span> <span class="n">noDataRast</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Correcting CPG for no data values&quot;</span><span class="p">)</span>
@@ -508,6 +512,7 @@
         <span class="n">corrAccum</span> <span class="o">=</span> <span class="n">accum</span> <span class="o">-</span> <span class="n">accumNoData</span> <span class="c1"># Compute corrected accumulation</span>
         <span class="n">corrAccum</span> <span class="o">=</span> <span class="n">corrAccum</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1"># Convert to 32 bit float</span>
         <span class="n">corrAccum</span><span class="p">[</span><span class="n">accum</span> <span class="o">==</span> <span class="n">facNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="c1"># fill with no data values where appropriate</span>
+        <span class="n">corrAccum</span><span class="p">[</span><span class="n">corrAccum</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="c1"># if corrected values are zero, they should be made into nodata so that a FCPG value is not computed for that location.</span>
         
     <span class="k">else</span><span class="p">:</span>
         <span class="n">accum2</span> <span class="o">=</span> <span class="n">accum</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
@@ -518,9 +523,13 @@
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">corrAccum</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Negative accumulation value&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Minimum value:</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">corrAccum</span><span class="p">)))</span>
- 
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">corrAccum</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Zero accumulation value&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of zero values:</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">corrAccum</span><span class="o">==</span><span class="mi">0</span><span class="p">)))</span>
+
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Computing CPG values </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
-    <span class="n">dataCPG</span> <span class="o">=</span> <span class="n">data</span> <span class="o">/</span> <span class="p">(</span><span class="n">corrAccum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># make data CPG</span>
+    <span class="n">dataCPG</span> <span class="o">=</span> <span class="n">data</span> <span class="o">/</span> <span class="n">corrAccum</span> <span class="c1"># make data CPG</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Replacing numpy nan values </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
     <span class="n">dataCPG</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">dataCPG</span><span class="p">)]</span> <span class="o">=</span> <span class="n">outNoData</span> <span class="c1"># Replace numpy NaNs with no data value</span>
@@ -1071,7 +1080,7 @@
 
     <span class="k">return</span> <span class="n">fileList</span></div>
 
-<div class="viewcode-block" id="make_fcpg_batch"><a class="viewcode-back" href="../functions.html#tools.make_fcpg_batch">[docs]</a><span class="k">def</span> <span class="nf">make_fcpg_batch</span><span class="p">(</span><span class="n">accumParams</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;FCPG&quot;</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="make_fcpg_batch"><a class="viewcode-back" href="../functions.html#tools.make_fcpg_batch">[docs]</a><span class="k">def</span> <span class="nf">make_fcpg_batch</span><span class="p">(</span><span class="n">accumParams</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outWorkspace</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">appStr</span><span class="o">=</span><span class="s2">&quot;FCPG&quot;</span><span class="p">,</span> <span class="n">ESRIFAC</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Batch version of :py:func:`make_fcpg`.</span>
 
 <span class="sd">    Parameters</span>
@@ -1086,6 +1095,8 @@
 <span class="sd">        Minimum accumulation value below which the output FCPG will be turned to no data values. Defaults to None.</span>
 <span class="sd">    appStr : str (optional)</span>
 <span class="sd">        String of text to append to filenames of the produced FCPG grids.</span>
+<span class="sd">    ESRIFAC : bool (optional)</span>
+<span class="sd">    	Use an ESRI FAC grid, defaults to False. ESRI-derived FAC grids have zeros for the first cell in a flowpath, as such, a 1 is added to the grid.</span>
 <span class="sd">    verbose : bool (optional)</span>
 <span class="sd">        Print output, defaults to False.</span>
 <span class="sd">    </span>
@@ -1105,7 +1116,7 @@
         <span class="n">outPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outWorkspace</span><span class="p">,</span> <span class="n">baseName</span> <span class="o">+</span> <span class="n">appStr</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span>
         <span class="n">fileList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outPath</span><span class="p">)</span>
 
-        <span class="n">make_fcpg</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outPath</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="n">minAccum</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span><span class="p">)</span> <span class="c1">#Run the CPG function for the accumulated parameter raster</span>
+        <span class="n">make_fcpg</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">fac</span><span class="p">,</span> <span class="n">outPath</span><span class="p">,</span> <span class="n">minAccum</span><span class="o">=</span><span class="n">minAccum</span><span class="p">,</span> <span class="n">ESRIFAC</span><span class="o">=</span><span class="n">ESRIFAC</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span><span class="p">)</span> <span class="c1">#Run the CPG function for the accumulated parameter raster</span>
 
     <span class="k">return</span> <span class="n">fileList</span></div>
 
