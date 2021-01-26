@@ -813,10 +813,7 @@ def maskStreams(inRast, streamRast, outRast, verbose = False):
         strmVals = ds.read(1)
         strmNoData = ds.nodata 
 
-    data[data == inNoData] = np.NaN #Set no data values to NaN
-    data[strmVals == strmNoData] = np.NaN #Set values off streams to NaN
-
-    data[data == np.NaN] = inNoData #Set NaNs to input no data value
+    data[strmVals == strmNoData] = inNoData #Set values off streams to no data
 
     # Update raster profile
     profile.update({
