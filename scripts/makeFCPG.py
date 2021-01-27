@@ -55,9 +55,9 @@ else:
         print("Calling make_cpg function {0}".format(datetime.datetime.now()))
         if os.path.isfile(nodataaccumFile):
                 #If no data accumulation file was created, use it in call to create FCPG
-                fcpg.make_cpg(accumFile, taufac, CPGFile, noDataRast=nodataaccumFile, minAccum=accumThresh) #Create parameter FCPG with no data raster.
+                fcpg.make_fcpg(accumFile, taufac, CPGFile, noDataRast=nodataaccumFile, minAccum=accumThresh) #Create parameter FCPG with no data raster.
         else:
-                fcpg.make_cpg(accumFile, taufac, CPGFile,  minAccum=accumThresh) #Create parameter FCPG without no data raster.
+                fcpg.make_fcpg(accumFile, taufac, CPGFile,  minAccum=accumThresh) #Create parameter FCPG without no data raster.
         
         if deleteTemp:
                 try:

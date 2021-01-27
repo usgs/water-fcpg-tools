@@ -67,7 +67,7 @@ for cov in covList: #Iterate through the parameter grids
 
         #Set up python environment for job
         f.writelines("module load taudem/5.3.8\n") # load TauDEM
-        f.writelines("source activate FCPGtools\n") # activate the correct Python environment, you will need to build this using Anaconda.
+        f.writelines("source activate fcpgtools\n") # activate the correct Python environment, you will need to build this using Anaconda.
 
         #Run the Python script
         f.writelines("python -u ./makeFCPG.py {0} {1} {2} {3} {4} {5} {6} {7} {8}\n".format(cov, taufdr, taufac, workDir, outDir, cores, accumThresh, overwrite, deleteTemp))

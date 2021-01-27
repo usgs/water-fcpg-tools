@@ -1,4 +1,4 @@
-import fcpgtools as fcpg
+import FCPGtools as fcpg
 
 cores = 6 # Computer cores to use.
 fdr = '' # Input ESRI flow direction grid.
