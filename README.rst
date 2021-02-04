@@ -15,7 +15,7 @@ The FCPG Tools are part of the public domain because they are produced by employ
 
 Please cite the latest release of the code in any work that uses these tools (see the Citation Section below). If you receive support from me on your project or publication using the tools I ask that you acknowledge that support via a note in the acknowledgments or co-authorship.
 
-Please use this `Issues Form <https://code.usgs.gov/StreamStats/FCPGtools/-/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=>`_ to alert me of new project or publications using the tools. 
+Please use this `Issues Form <https://code.usgs.gov/StreamStats/FCPGtools/-/issues/new?issuable_template=new_project>`_ to alert me of new project or publications using the tools. 
 
 Citation
 ========
@@ -27,7 +27,7 @@ Version 1.0 (IP-112996) was approved on September 3, 2020.
 Issues
 ======
 
-Please log any issues with the repository here: https://code.usgs.gov/StreamStats/FCPGtools/-/issues
+Please log any issues with the repository here using `This Form <https://code.usgs.gov/StreamStats/FCPGtools/-/issues/new?issuable_template=bug>`_.
 
 Documentation
 =============
