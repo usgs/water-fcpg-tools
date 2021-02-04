@@ -11,11 +11,11 @@ The Flow-Conditioned Parameter Grid (FCPG) Tools are a Python 3 library to make 
 Use
 ===
 
-The FCPG Tools are part of the public domain because they are produced by employees of the U.S. Government. However, if you use these tools I ask that you please let me know of any project or publications that arise from their use. This allows me to justify the upkeep of this package and add citations to :ref:`pubs-label`.
+The FCPG Tools are part of the public domain because they are produced by employees of the U.S. Government. However, if you use these tools I ask that you please let me know of any projects or publications that arise from their use. This allows me to justify the upkeep of this package and add citations to :ref:`pubs-label`.
 
 Please cite the latest release of the code in any work that uses these tools (see the Citation Section below). If you receive support from me on your project or publication using the tools I ask that you acknowledge that support via a note in the acknowledgments or co-authorship.
 
-Please use this `Issues Form <https://code.usgs.gov/StreamStats/FCPGtools/-/issues/new?issuable_template=new_project>`_ to alert me of new project or publications using the tools. 
+Please use this `Issues Form <https://code.usgs.gov/StreamStats/FCPGtools/-/issues/new?issuable_template=new_project>`_ to alert me of new projects or publications using the tools. 
 
 Citation
 ========
