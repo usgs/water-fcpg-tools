@@ -8,6 +8,25 @@ The Flow-Conditioned Parameter Grid (FCPG) Tools are a Python 3 library to make 
 
 	Flowchart of FCPG processing work flow.
 
+Use
+===
+
+The FCPG Tools are part of the public domain because they are produced by employees of the U.S. Government. However, if you use these tools I ask that you please let me know of any project or publications that arise from their use. This allows me to justify the upkeep of this package and add citations to :ref:`pubs-label`.
+
+Please cite the latest release of the code in any work that uses these tools (see the Citation Section below). If you receive support from me on your project or publication using the tools I ask that you acknowledge that support via a note in the acknowledgments or co-authorship.
+
+Please use this `Issues Form <https://code.usgs.gov/StreamStats/FCPGtools/-/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=>`_ to alert me of new project or publications using the tools. 
+
+Citation
+========
+
+Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: https://doi.org/10.5066/P9W8UZ47.
+
+Version 1.0 (IP-112996) was approved on September 3, 2020.
+
+Issues
+======
+
 Please log any issues with the repository here: https://code.usgs.gov/StreamStats/FCPGtools/-/issues
 
 Documentation
@@ -38,13 +57,6 @@ Quick Start
 Load the FCPGtools using :code:`import FCPGtools as fcpg`.
 
 Please refer to the :ref:`cookbook-label` and :ref:`function-label` for examples and usage.
-
-Citation
-========
-
-Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: https://doi.org/10.5066/P9W8UZ47.
-
-Version 1.0 (IP-112996) was approved on September 3, 2020.
 
 Disclaimers
 ===========

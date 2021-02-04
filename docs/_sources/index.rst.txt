@@ -6,6 +6,7 @@
 
    cookbook
    functions
+   publications
    z_references
 
 
