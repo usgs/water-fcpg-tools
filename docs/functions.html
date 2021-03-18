@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Function Documentation &mdash; Flow-Conditioned Parameter Grid Tools 1.0.2 documentation</title>
+  <title>Function Documentation &mdash; Flow-Conditioned Parameter Grid Tools 1.0.3 documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.0.2
+                1.0.3
               </div>
             
           
@@ -767,7 +767,7 @@
 <dd class="field-odd"><dl class="simple">
 <dt><strong>d2strm</strong><span class="classifier">str</span></dt><dd><p>Path to raster of flow distances from each grid cell to the nearest stream.</p>
 </dd>
-<dt><strong>k</strong><span class="classifier">float</span></dt><dd><p>Dimensionless constant applied to decay factor denominator. Must be less than 1 for decay to occur along streamlines.</p>
+<dt><strong>k</strong><span class="classifier">float</span></dt><dd><p>Dimensionless constant applied to decay factor denominator. Set k to 2 for “moderate” decay; greater than 2 for slower decay; or less than 2 for faster decay.</p>
 </dd>
 <dt><strong>outRast</strong><span class="classifier">str</span></dt><dd><p>Output file path for decay grid.</p>
 </dd>
@@ -782,6 +782,8 @@
 </dl>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The decay equation in this tool has changed between version 1.0.2 and version 1.0.3. The new equation is <code class="code docutils literal notranslate"><span class="pre">np.exp((-1</span> <span class="pre">*</span> <span class="pre">decayGrid</span> <span class="pre">*</span> <span class="pre">xsize)</span> <span class="pre">/</span> <span class="pre">(xsize</span> <span class="pre">**</span> <span class="pre">k))</span></code>. The original equation was <code class="code docutils literal notranslate"><span class="pre">decayGrid</span> <span class="pre">=</span> <span class="pre">xsize/(decayGrid</span> <span class="pre">+</span> <span class="pre">k*xsize)</span></code>.</p>
 </dd></dl>
 
 <dl class="py function">

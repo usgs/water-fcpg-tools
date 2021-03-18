@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tools &mdash; Flow-Conditioned Parameter Grid Tools 1.0.2 documentation</title>
+  <title>tools &mdash; Flow-Conditioned Parameter Grid Tools 1.0.3 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.0.2
+                1.0.3
               </div>
             
           
@@ -689,7 +689,7 @@
 <span class="sd">    d2strm : str</span>
 <span class="sd">        Path to raster of flow distances from each grid cell to the nearest stream.</span>
 <span class="sd">    k : float</span>
-<span class="sd">        Dimensionless constant applied to decay factor denominator. Must be less than 1 for decay to occur along streamlines. </span>
+<span class="sd">        Dimensionless constant applied to decay factor denominator. Set k to 2 for &quot;moderate&quot; decay; greater than 2 for slower decay; or less than 2 for faster decay. </span>
 <span class="sd">    outRast : str</span>
 <span class="sd">        Output file path for decay grid.</span>
 <span class="sd">    verbose : bool (optional)</span>
@@ -699,6 +699,10 @@
 <span class="sd">    -------</span>
 <span class="sd">        outRast : raster</span>
 <span class="sd">            Raster file with grid cells values representing weights decaying as a function of the distance to stream.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The decay equation in this tool has changed between version 1.0.2 and version 1.0.3. The new equation is :code:`np.exp((-1 * decayGrid * xsize) / (xsize ** k))`. The original equation was :code:`decayGrid = xsize/(decayGrid + k*xsize)`.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">d2strm</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error - Stream distance raster file is missing!&quot;</span><span class="p">)</span>
@@ -720,7 +724,9 @@
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Building decay grid </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
     <span class="n">decayGrid</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1">#Convert to float</span>
     <span class="n">decayGrid</span><span class="p">[</span><span class="n">data</span> <span class="o">==</span> <span class="n">inNoData</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="c1"># fill with no data values where appropriate</span>
-    <span class="n">decayGrid</span> <span class="o">=</span> <span class="n">xsize</span><span class="o">/</span><span class="p">(</span><span class="n">decayGrid</span> <span class="o">+</span> <span class="n">k</span><span class="o">*</span><span class="n">xsize</span><span class="p">)</span> <span class="c1">#Compute decay function</span>
+    <span class="n">decayGrid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">decayGrid</span> <span class="o">*</span> <span class="n">xsize</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">xsize</span> <span class="o">**</span> <span class="n">k</span><span class="p">))</span> <span class="c1"># Set k to 2 for &quot;moderate&quot; decay; greater than 2 for slower decay; or less than 2 for faster decay - from Ryan, the senator, McShane.</span>
+    <span class="c1">#ORIGINAL DECAY FUNCTION COMMENTED OUT</span>
+    <span class="c1"># decayGrid = xsize/(decayGrid + k*xsize) #Compute decay function</span>
 
     <span class="n">decayGrid</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">decayGrid</span><span class="p">)]</span> <span class="o">=</span> <span class="n">outNoData</span> <span class="c1"># Replace numpy NaNs with no data value</span>
 

@@ -534,7 +534,7 @@ def makeDecayGrid(d2strm, k, outRast, verbose = False):
     d2strm : str
         Path to raster of flow distances from each grid cell to the nearest stream.
     k : float
-        Dimensionless constant applied to decay factor denominator. Must be less than 1 for decay to occur along streamlines. 
+        Dimensionless constant applied to decay factor denominator. Set k to 2 for "moderate" decay; greater than 2 for slower decay; or less than 2 for faster decay. 
     outRast : str
         Output file path for decay grid.
     verbose : bool (optional)
@@ -544,6 +544,10 @@ def makeDecayGrid(d2strm, k, outRast, verbose = False):
     -------
         outRast : raster
             Raster file with grid cells values representing weights decaying as a function of the distance to stream.
+
+    Notes
+    -----
+    The decay equation in this tool has changed between version 1.0.2 and version 1.0.3. The new equation is :code:`np.exp((-1 * decayGrid * xsize) / (xsize ** k))`. The original equation was :code:`decayGrid = xsize/(decayGrid + k*xsize)`.
     '''
     if not os.path.isfile(d2strm):
         print("Error - Stream distance raster file is missing!")
@@ -565,7 +569,9 @@ def makeDecayGrid(d2strm, k, outRast, verbose = False):
     if verbose: print("Building decay grid {0}".format(datetime.datetime.now()))
     decayGrid = data.astype(np.float32) #Convert to float
     decayGrid[data == inNoData] = np.NaN # fill with no data values where appropriate
-    decayGrid = xsize/(decayGrid + k*xsize) #Compute decay function
+    decayGrid = np.exp((-1 * decayGrid * xsize) / (xsize ** k)) # Set k to 2 for "moderate" decay; greater than 2 for slower decay; or less than 2 for faster decay - from Ryan, the senator, McShane.
+    #ORIGINAL DECAY FUNCTION COMMENTED OUT
+    # decayGrid = xsize/(decayGrid + k*xsize) #Compute decay function
 
     decayGrid[np.isnan(decayGrid)] = outNoData # Replace numpy NaNs with no data value
 
