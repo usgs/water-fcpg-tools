@@ -25,7 +25,6 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/language_data.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -682,7 +681,7 @@
 <span class="c1">#Tools for decayed accumulation CPGs</span>
 
 <div class="viewcode-block" id="makeDecayGrid"><a class="viewcode-back" href="../functions.html#tools.makeDecayGrid">[docs]</a><span class="k">def</span> <span class="nf">makeDecayGrid</span><span class="p">(</span><span class="n">d2strm</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">outRast</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Create a decay raster where grid cell values are computed as the inverse number of grid cells, :math:`\\frac{dx}{n+k*dx}`, where n is the distance from the d2strm raster from each grid cell to the nearest stream, k is a constant applied to the cell size values, and dx is the cell size of the raster.</span>
+    <span class="sd">&#39;&#39;&#39;Create a decay raster where grid cell values are computed as the inverse number of grid cells, :code:`np.exp((-1 * decayGrid * xsize) / (xsize ** k))`, where decayGrid is the distance from the d2strm raster from each grid cell to the nearest stream, k is a constant applied to the cell size values, and dx is the cell size of the raster, pulled from the d2strm raster directly.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
