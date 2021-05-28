@@ -5,7 +5,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Welcome to Flow-Conditioned Parameter Grid Tools’ documentation! &mdash; Flow-Conditioned Parameter Grid Tools 1.0.3 documentation</title>
@@ -84,7 +85,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
@@ -154,62 +155,64 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="welcome-to-flow-conditioned-parameter-grid-tools-documentation">
+  <section id="welcome-to-flow-conditioned-parameter-grid-tools-documentation">
 <h1>Welcome to Flow-Conditioned Parameter Grid Tools’ documentation!<a class="headerlink" href="#welcome-to-flow-conditioned-parameter-grid-tools-documentation" title="Permalink to this headline">¶</a></h1>
 <p>The Flow-Conditioned Parameter Grid (FCPG) Tools are a Python 3 library to make FCPGs for either two-digit Hydrologic Unit Code (HUC2) regions, four-digit Hydrologic Unit Code (HUC4) regions, or other geospatial tiling schemes. These tools can be used in a Linux-based high performance computing (HPC) environment or locally on your system.</p>
-<div class="figure align-default" id="id3">
+<figure class="align-default" id="id3">
 <a class="reference internal image-reference" href="_images/CPG_tool_structure.png"><img alt="Conceptual FCPG process flowchart." src="_images/CPG_tool_structure.png" style="width: 640.0px; height: 360.0px;" /></a>
-<p class="caption"><span class="caption-text">Flowchart of FCPG processing work flow.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
-</div>
-</div>
-<div class="section" id="use">
+<figcaption>
+<p><span class="caption-text">Flowchart of FCPG processing work flow.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="use">
 <h1>Use<a class="headerlink" href="#use" title="Permalink to this headline">¶</a></h1>
 <p>The FCPG Tools are part of the public domain because they are produced by employees of the U.S. Government. However, if you use these tools I ask that you please let me know of any projects or publications that arise from their use. This allows me to justify the upkeep of this package and add citations to <a class="reference internal" href="publications.html#pubs-label"><span class="std std-ref">Publications and Projects</span></a>.</p>
 <p>Please cite the latest release of the code in any work that uses these tools (see the Citation Section below). If you receive support from me on your project or publication using the tools I ask that you acknowledge that support via a note in the acknowledgments or co-authorship.</p>
 <p>Please use this <a class="reference external" href="https://code.usgs.gov/StreamStats/FCPGtools/-/issues/new?issuable_template=new_project">Issues Form</a> to alert me of new projects or publications using the tools.</p>
-</div>
-<div class="section" id="citation">
+</section>
+<section id="citation">
 <h1>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h1>
 <p>Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: <a class="reference external" href="https://doi.org/10.5066/P9W8UZ47">https://doi.org/10.5066/P9W8UZ47</a>.</p>
 <p>Version 1.0 (IP-112996) was approved on September 3, 2020.</p>
-</div>
-<div class="section" id="issues">
+</section>
+<section id="issues">
 <h1>Issues<a class="headerlink" href="#issues" title="Permalink to this headline">¶</a></h1>
 <p>Please log any issues with the repository here using <a class="reference external" href="https://code.usgs.gov/StreamStats/FCPGtools/-/issues/new?issuable_template=bug">This Form</a>.</p>
-</div>
-<div class="section" id="documentation">
+</section>
+<section id="documentation">
 <h1>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h1>
 <p>The documentation for this library is available at <a class="reference external" href="https://usgs.github.io/water-fcpg-tools/">https://usgs.github.io/water-fcpg-tools/</a>.</p>
-</div>
-<div class="section" id="dependencies">
+</section>
+<section id="dependencies">
 <h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h1>
 <p>Dependencies for this work are largely taken care of via the <a class="reference external" href="https://www.anaconda.com/products/individual">Anaconda</a> environment specified by the yml file; however, the tools do rely on <a class="reference external" href="https://github.com/dtarb/TauDEM/tree/v5.3.8">TauDEM</a> <a class="bibtex reference internal" href="z_references.html#taudem" id="id1">[1]</a>, which needs to be installed and visible to your conda environment. Please install Anaconda Python 3 and TauDEM version 5.3.7 or greater prior to installing the Flow-Conditioned Parameter Grid Tools. You may also need to install Git.</p>
 <p>This library works best with GeoTIFF files; however, other GDAL-compatible geospatial raster format could also potentially be used.</p>
-</div>
-<div class="section" id="installation">
+</section>
+<section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p>Download the FCPGtools environment file from <a class="reference external" href="https://code.usgs.gov/StreamStats/FCPGtools/-/raw/master/FCPGtools_env.yml">here</a>. Then create an <a class="reference external" href="https://www.anaconda.com/products/individual">Anaconda</a> environment using the supplied <code class="code docutils literal notranslate"><span class="pre">FCPGtools_env.yml</span></code> file by calling <code class="code docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span> <span class="pre">-f</span> <span class="pre">FCPGtools_env.yml</span></code>. <strong>Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.</strong></p>
 <p>On a HPC system you may need to load the correct Python module before building the Anaconda environment. This might be done with <code class="code docutils literal notranslate"><span class="pre">module</span> <span class="pre">load</span> <span class="pre">python/anaconda3</span></code>.</p>
-<div class="section" id="upgrading">
+<section id="upgrading">
 <h2>Upgrading<a class="headerlink" href="#upgrading" title="Permalink to this headline">¶</a></h2>
 <p>Periodically, updates and bug fixes will be made to this library. To update your installation re-run <code class="code docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/usgs/water-fcpg-tools</span></code>.</p>
-</div>
-</div>
-<div class="section" id="quick-start">
+</section>
+</section>
+<section id="quick-start">
 <h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
 <p>Load the FCPGtools using <code class="code docutils literal notranslate"><span class="pre">import</span> <span class="pre">FCPGtools</span> <span class="pre">as</span> <span class="pre">fcpg</span></code>.</p>
 <p>Please refer to the <a class="reference internal" href="cookbook.html#cookbook-label"><span class="std std-ref">Cookbook</span></a> and <a class="reference internal" href="functions.html#function-label"><span class="std std-ref">Function Documentation</span></a> for examples and usage.</p>
-</div>
-<div class="section" id="disclaimers">
+</section>
+<section id="disclaimers">
 <h1>Disclaimers<a class="headerlink" href="#disclaimers" title="Permalink to this headline">¶</a></h1>
 <p>Any use of trade, firm, or product names is for descriptive purposes only and does not imply endorsement by the U.S. Government.</p>
 <p>Please see DISCLAIMER.md in the project repository.</p>
-</div>
-<div class="section" id="license">
+</section>
+<section id="license">
 <h1>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h1>
 <p>Please see LICENSE.md in the project repository.</p>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="cookbook.html#input-data">Input Data</a></li>
@@ -220,15 +223,15 @@
 <li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
 </ul>
 </div>
-</div>
-<div class="section" id="indices-and-tables">
+</section>
+<section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-</div>
+</section>
 
 
            </div>

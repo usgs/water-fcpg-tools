@@ -5,7 +5,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Function Documentation &mdash; Flow-Conditioned Parameter Grid Tools 1.0.3 documentation</title>
@@ -85,7 +86,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Function Documentation</a></li>
@@ -155,7 +156,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-tools">
+  <section id="module-tools">
 <span id="function-documentation"></span><span id="function-label"></span><h1>Function Documentation<a class="headerlink" href="#module-tools" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="tools.ExtremeUpslopeValue">
@@ -264,7 +265,7 @@
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied it will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast. It will then save a raster with all no data values set to one and other values set to zero (outNoDataRast) and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the zeroNoDataRast, and a subsequent correction will be needed in the make_fcpg() function based on the values in the outNoDataAccum raster.</p>
+<p>If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied and there are “no data” values in the basin this function will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast. This function will then save a raster with all no data values set to one and other values set to zero (outNoDataRast) and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the zeroNoDataRast, and a subsequent correction will be needed in the make_fcpg() function based on the values in the outNoDataAccum raster.</p>
 <p>If some of the output file locations for handling no data values aren’t supplied or “no data” values aren’t present in the parameter grid, it will simply accumulate the parameter grid. If “no data” values are present, this will result in them being propagated downstream.</p>
 </dd></dl>
 
@@ -1201,7 +1202,7 @@
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>
