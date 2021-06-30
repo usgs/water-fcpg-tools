@@ -345,7 +345,7 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, ESRI
         facNoData = ds.nodata # pull the accumulated area no data value
 
     if ESRIFAC:
-    	accum += 1. # add 1 for ESRI FAC grid.
+    	accum += 1 # add 1 for ESRI FAC grid.
 
     if noDataRast != None:
         if verbose: print("Correcting CPG for no data values")
