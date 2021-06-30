@@ -5,7 +5,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Generate TauDEM Files From An ESRI Flow Direction Grid &mdash; Flow-Conditioned Parameter Grid Tools 1.0.3 documentation</title>
@@ -85,7 +86,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="cookbook.html">Cookbook</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="cookbook.html#input-data">Input Data</a><ul class="current">
@@ -166,18 +167,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="generate-taudem-files-from-an-esri-flow-direction-grid">
+  <section id="generate-taudem-files-from-an-esri-flow-direction-grid">
 <h1>Generate TauDEM Files From An ESRI Flow Direction Grid<a class="headerlink" href="#generate-taudem-files-from-an-esri-flow-direction-grid" title="Permalink to this headline">¶</a></h1>
 <p>Helper script to reclassify an ESRI flow direction grid to TauDEM flow directions and generate a TauDEM flow accumulation grid.</p>
-<div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FCPGtools</span> <span class="k">as</span> <span class="nn">fcpg</span>
+<div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FCPGtools</span> <span class="k">as</span> <span class="nn">fcpg</span>
 
 <span class="n">cores</span> <span class="o">=</span> <span class="mi">6</span> <span class="c1"># Computer cores to use.</span>
 <span class="n">fdr</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Input ESRI flow direction grid.</span>
@@ -188,7 +189,7 @@
 <span class="n">fcpg</span><span class="o">.</span><span class="n">tauFlowAccum</span><span class="p">(</span><span class="n">taufdr</span><span class="p">,</span> <span class="n">taufac</span><span class="p">,</span> <span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span> <span class="c1"># Compute flow accumulation.</span>
 </pre></div>
 </td></tr></table></div>
-</div>
+</section>
 
 
            </div>

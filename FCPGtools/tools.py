@@ -145,7 +145,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
 
     Notes
     -----
-	If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied it will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast. It will then save a raster with all no data values set to one and other values set to zero (outNoDataRast) and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the zeroNoDataRast, and a subsequent correction will be needed in the make_fcpg() function based on the values in the outNoDataAccum raster. 
+	If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied and there are "no data" values in the basin this function will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast. This function will then save a raster with all no data values set to one and other values set to zero (outNoDataRast) and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the zeroNoDataRast, and a subsequent correction will be needed in the make_fcpg() function based on the values in the outNoDataAccum raster. 
 
 	If some of the output file locations for handling no data values aren’t supplied or “no data” values aren’t present in the parameter grid, it will simply accumulate the parameter grid. If “no data” values are present, this will result in them being propagated downstream. 
 
@@ -431,7 +431,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     '''
 
     with rs.open(fdr) as ds: # load flow direction raster in Rasterio
-        fdrcrs = ds.crs #Get flow direction coordinate system
+        fdrcrs = ds.crs.to_proj4() #Get flow direction coordinate system
         xsize, ysize = ds.res #Get flow direction cell size
         #Get bounding coordinates of the flow direction raster
         fdrXmin = ds.transform[2]
@@ -442,7 +442,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     with rs.open(inParam) as ds: # load parameter raster in Rasterio
         paramNoData = ds.nodata
         paramType = ds.dtypes[0] #Get datatype of first band
-        paramcrs = ds.crs #Get parameter coordinate reference system
+        paramcrs = ds.crs.to_proj4() #Get parameter coordinate reference system
         paramXsize, paramYsize = ds.res #Get parameter cell size
         paramXmin = ds.transform[2] # get upper left
         paramYmax = ds.transform[5] # get upper left

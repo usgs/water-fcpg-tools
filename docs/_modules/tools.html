@@ -83,7 +83,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cookbook.html">Cookbook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../functions.html">Function Documentation</a></li>
@@ -299,7 +299,7 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">	If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied it will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast. It will then save a raster with all no data values set to one and other values set to zero (outNoDataRast) and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the zeroNoDataRast, and a subsequent correction will be needed in the make_fcpg() function based on the values in the outNoDataAccum raster. </span>
+<span class="sd">	If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied and there are &quot;no data&quot; values in the basin this function will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast. This function will then save a raster with all no data values set to one and other values set to zero (outNoDataRast) and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the zeroNoDataRast, and a subsequent correction will be needed in the make_fcpg() function based on the values in the outNoDataAccum raster. </span>
 
 <span class="sd">	If some of the output file locations for handling no data values aren’t supplied or “no data” values aren’t present in the parameter grid, it will simply accumulate the parameter grid. If “no data” values are present, this will result in them being propagated downstream. </span>
 
@@ -585,7 +585,7 @@
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fdr</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load flow direction raster in Rasterio</span>
-        <span class="n">fdrcrs</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">crs</span> <span class="c1">#Get flow direction coordinate system</span>
+        <span class="n">fdrcrs</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_proj4</span><span class="p">()</span> <span class="c1">#Get flow direction coordinate system</span>
         <span class="n">xsize</span><span class="p">,</span> <span class="n">ysize</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">res</span> <span class="c1">#Get flow direction cell size</span>
         <span class="c1">#Get bounding coordinates of the flow direction raster</span>
         <span class="n">fdrXmin</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">transform</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
@@ -596,7 +596,7 @@
     <span class="k">with</span> <span class="n">rs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inParam</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span> <span class="c1"># load parameter raster in Rasterio</span>
         <span class="n">paramNoData</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">nodata</span>
         <span class="n">paramType</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Get datatype of first band</span>
-        <span class="n">paramcrs</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">crs</span> <span class="c1">#Get parameter coordinate reference system</span>
+        <span class="n">paramcrs</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_proj4</span><span class="p">()</span> <span class="c1">#Get parameter coordinate reference system</span>
         <span class="n">paramXsize</span><span class="p">,</span> <span class="n">paramYsize</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">res</span> <span class="c1">#Get parameter cell size</span>
         <span class="n">paramXmin</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">transform</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># get upper left</span>
         <span class="n">paramYmax</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">transform</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1"># get upper left</span>
