@@ -431,7 +431,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     '''
 
     with rs.open(fdr) as ds: # load flow direction raster in Rasterio
-        fdrcrs = ds.crs #Get flow direction coordinate system
+        fdrcrs = ds.crs.to_proj4() #Get flow direction coordinate system
         xsize, ysize = ds.res #Get flow direction cell size
         #Get bounding coordinates of the flow direction raster
         fdrXmin = ds.transform[2]
@@ -442,7 +442,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     with rs.open(inParam) as ds: # load parameter raster in Rasterio
         paramNoData = ds.nodata
         paramType = ds.dtypes[0] #Get datatype of first band
-        paramcrs = ds.crs #Get parameter coordinate reference system
+        paramcrs = ds.crs.to_proj4() #Get parameter coordinate reference system
         paramXsize, paramYsize = ds.res #Get parameter cell size
         paramXmin = ds.transform[2] # get upper left
         paramYmax = ds.transform[5] # get upper left
@@ -465,8 +465,11 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     if verbose: print(f"Param Upper Left: {paramXmin}, {paramYmax}")
     
     # Choose an appropriate gdal data type for the parameter
+    pixeltype = None
     if paramType == 'int8' or paramType == 'uint8':
-        outType = 'Byte' # Use Gdal convention #old# Convert 8 bit integers to 16 bit in gdal
+        outType = 'Byte'
+        pixeltype = '-co PIXELTYPE=SIGNEDBYTE'
+        # Use Gdal convention #old# Convert 8 bit integers to 16 bit in gdal
         #print("Warning: 8 bit inputs are unsupported and may not be reprojected correctly") #Print warning that gdal may cause problems with 8 bit rasters
     elif paramType == 'int16' or paramType == 'uint16':
         outType = 'Int16' 
@@ -486,10 +489,10 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     #Check if resampling or reprojection are required
     if str(paramcrs) == str(fdrcrs) and paramXsize == xsize and paramYsize == ysize and fdrXmin == paramXmin and fdrYmin == paramYmin and fdrXmax == paramXmax and fdrYmax == paramYmax:
         if verbose: print("Parameter does not require reprojection or resampling")
-
+        
         with rs.open(inParam) as src:
         	meta = src.meta.copy()
-
+            
         	with rs.open(outParam,'w',**meta) as dst:
         		dst.write(src.read(1),1)
         		if verbose: print(f"Parameter raster copied to {outParam}")
@@ -512,10 +515,11 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
             'fdrYmax': fdrYmax,
             'fdrcrs': fdrcrs, 
             'nodata': paramNoData,
-            'datatype': outType
+            'datatype': outType,
+            'pixeltype': pixeltype
             }
             
-            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "ZLEVEL=9" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
+            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "ZLEVEL=9" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {pixeltype} {inParam} {outParam}'.format(**warpParams)
             if verbose: print(cmd)
             result = subprocess.run(cmd, shell = True)
             result.stdout
