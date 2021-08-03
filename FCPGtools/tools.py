@@ -265,12 +265,9 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
 
             
     else:
-
         #If there are zero no data values in the basin, simply accumulate the parameter raster
         tauDEMweight = paramRast #Set file to use as weight in tauDEM accumulation
-
-            
-
+    
     #Use tauDEM to accumulate the parameter
     try:
         if verbose: print('Accumulating Data...')
@@ -288,8 +285,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         result = subprocess.run(cmd, shell = True) # Run shell command
         
         result.stdout
-        
-
+    
     except:
         print('Error Accumulating Data')
         traceback.print_exc()
@@ -455,18 +451,22 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
         fdrcrs = forceProj4
 
     if verbose: print("Flow Direction Proj4: " + str(fdrcrs))
+    
     if verbose: print("Parameter Proj4:" + str(paramcrs))
-
+    
     if verbose: print("Flow Direction Xsize:" + str(xsize))
+    
     if verbose: print("Parameter Xsize:" + str(paramXsize))
-
+    
     if verbose: print(f"FDR Lower Right Corner: {fdrXmax}, {fdrYmin}")
+    
     if verbose: print(f"FDR Upper Left Corner: {fdrXmin}, {fdrYmax}")
+    
     if verbose: print(f"Param Lower Right Corner: {paramXmax}, {paramYmin}")
+    
     if verbose: print(f"Param Upper Left: {paramXmin}, {paramYmax}")
     
     # Choose an appropriate gdal data type for the parameter
-    pixeltype = None
     if paramType == 'int8' or paramType == 'uint8':
         outType = 'Int16'
         # Use Gdal convention #old# Convert 8 bit integers to 16 bit in gdal
@@ -514,11 +514,12 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
             'fdrYmin': fdrYmin,
             'fdrYmax': fdrYmax,
             'fdrcrs': fdrcrs, 
+            'paramcrs': paramcrs,
             'nodata': paramNoData,
-            'datatype': outType,
+            'datatype': outType
             }
             
-            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "ZLEVEL=9" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
+            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -s_srs {paramcrs} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "ZLEVEL=9" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
             if verbose: print(cmd)
             result = subprocess.run(cmd, shell = True)
             result.stdout
