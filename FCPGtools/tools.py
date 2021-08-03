@@ -468,8 +468,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     # Choose an appropriate gdal data type for the parameter
     pixeltype = None
     if paramType == 'int8' or paramType == 'uint8':
-        outType = 'Byte'
-        pixeltype = '-co PIXELTYPE=SIGNEDBYTE'
+        outType = 'Int16'
         # Use Gdal convention #old# Convert 8 bit integers to 16 bit in gdal
         #print("Warning: 8 bit inputs are unsupported and may not be reprojected correctly") #Print warning that gdal may cause problems with 8 bit rasters
     elif paramType == 'int16' or paramType == 'uint16':
@@ -517,10 +516,9 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
             'fdrcrs': fdrcrs, 
             'nodata': paramNoData,
             'datatype': outType,
-            'pixeltype': pixeltype
             }
             
-            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "ZLEVEL=9" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {pixeltype} {inParam} {outParam}'.format(**warpParams)
+            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "ZLEVEL=9" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
             if verbose: print(cmd)
             result = subprocess.run(cmd, shell = True)
             result.stdout
