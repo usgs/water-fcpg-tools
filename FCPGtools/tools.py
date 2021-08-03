@@ -94,6 +94,7 @@ def tauDrainDir(inRast, outRast, band = 1, updateDict = {
     tauDir[dat == 32] = 4 # northwest
     tauDir[dat == 64] = 3 # north
     tauDir[dat == 128] = 2 # northeast
+    tauDir[dat == 255] = 0
     tauDir[dat == inNoData] = 0 # no data
     tauDir = tauDir.astype('uint8')#8 bit integer is sufficient for flow directions
 
