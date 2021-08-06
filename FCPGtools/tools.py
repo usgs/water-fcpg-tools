@@ -2,6 +2,7 @@ import rasterio as rs
 import numpy as np
 import sys
 import os
+import gc
 import pandas as pd
 import subprocess
 import glob
@@ -175,27 +176,6 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
     basinNoDataCount = len(data[(data == paramNoData) & (direction != directionNoData)]) # Count number of cells with flow direction but no parameter value
     
     if (outNoDataRast != None) & (outNoDataAccum != None) & (zeroNoDataRast != None):
-        #Set no data parameter values in the basin to zero so tauDEM accumulates them
-        noDataZero = data.copy()
-        noDataZero[(data == paramNoData) & (direction != directionNoData)] = 0 #Set no data values in basin to 0
-        # Update profile for no data raster
-        newProfile = profile 
-        newProfile.update({
-            'compress':'LZW',
-            'zlevel':9,
-            'interleave':'band',
-            'profile':'GeoTIFF',
-            'tiled':True,
-            'sparse_ok':True,
-            'num_threads':'ALL_CPUS',
-            'bigtiff':'IF_SAFER'})
-        
-        # Save no data raster
-        with rs.open(zeroNoDataRast, 'w', **newProfile) as dst:
-            dst.write(noDataZero,1)
-            if verbose: 
-                print("Parameter Zero No Data raster written to: {0}".format(zeroNoDataRast))
-        
         noDataArray = data.copy()
         noDataArray[(data == paramNoData) & (direction != directionNoData)] = 1 #Set no data values in basin to 1
         noDataArray[(data != paramNoData)] = 0 #Set values with data to 0
@@ -218,6 +198,35 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
             dst.write(noDataArray,1)
             if verbose:
                 print("Parameter No Data raster written to: {0}".format(outNoDataRast))
+        
+        del noDataArray
+        gc.collect()
+        
+        #Set no data parameter values in the basin to zero so tauDEM accumulates them
+        noDataZero = data.copy()
+        noDataZero[(data == paramNoData) & (direction != directionNoData)] = 0 #Set no data values in basin to 0
+        # Update profile for no data raster
+        newProfile = profile 
+        newProfile.update({
+            'compress':'LZW',
+            'zlevel':9,
+            'interleave':'band',
+            'profile':'GeoTIFF',
+            'tiled':True,
+            'sparse_ok':True,
+            'num_threads':'ALL_CPUS',
+            'bigtiff':'IF_SAFER'})
+        
+        # Save zeroNoData raster
+        with rs.open(zeroNoDataRast, 'w', **newProfile) as dst:
+            dst.write(noDataZero,1)
+            if verbose: 
+                print("Parameter Zero No Data raster written to: {0}".format(zeroNoDataRast))
+        
+        del noDataZero
+        del data
+        del direction
+        gc.collect()
         
         # Use tauDEM to accumulate no data values
         try:
