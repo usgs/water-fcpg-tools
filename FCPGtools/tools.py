@@ -421,12 +421,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     '''
 
     with rs.open(fdr) as ds: # load flow direction raster in Rasterio
-<<<<<<< HEAD
         fdrcrs = f"'{ds.crs.wkt}'" #Get flow direction coordinate system
         #fdrcrs = f'"{rs.crs.CRS.from_wkt(str(ds.crs)).to_proj4()ds.crs.wkt}"'
-=======
-        fdrcrs = f'"{rs.crs.CRS.from_wkt(str(ds.crs)).to_proj4()}"' #Get flow direction coordinate system
->>>>>>> 0121435c1f310d3682e7e2f48a0adcacc2230283
         xsize, ysize = ds.res #Get flow direction cell size
         #Get bounding coordinates of the flow direction raster
         fdrXmin = ds.transform[2]
@@ -437,12 +433,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     with rs.open(inParam) as ds: # load parameter raster in Rasterio
         paramNoData = ds.nodata
         paramType = ds.dtypes[0] #Get datatype of first band
-<<<<<<< HEAD
         paramcrs = f"'{ds.crs.wkt}'" #Get parameter coordinate reference system
         #paramcrs = f'"{rs.crs.CRS.from_wkt(str(ds.crs)).to_proj4()}"'
-=======
-        paramcrs = f'"{rs.crs.CRS.from_wkt(str(ds.crs)).to_proj4()}"' #Get parameter coordinate reference system
->>>>>>> 0121435c1f310d3682e7e2f48a0adcacc2230283
         paramXsize, paramYsize = ds.res #Get parameter cell size
         paramXmin = ds.transform[2] # get upper left
         paramYmax = ds.transform[5] # get upper left
@@ -1173,12 +1165,12 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
         'cores':cores, 
         'outFl':output,
         'param':param,
-        'accum_type':accum_type.upper(),
+        'accum_type':accum_type.lower(),
         'mpiCall':mpiCall,
         'mpiArg':mpiArg
         }
 
-    if accum_type == "MIN": # insert flag for min 
+    if accum_type == "min": # insert flag for min 
         cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -{accum_type} -nc'.format(**tauParams) # Create string of tauDEM shell command
     else: # no flag for max
         cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
@@ -2091,8 +2083,4 @@ def makeStreams(fac, strPath, thresh = 900, updateDict = {
     with rs.open(strPath,'w',**profile) as dst:
         dst.write(strRast,1) # write out the geotiff
 
-<<<<<<< HEAD
                                                                                               
-=======
-                                                                                              
->>>>>>> 0121435c1f310d3682e7e2f48a0adcacc2230283
