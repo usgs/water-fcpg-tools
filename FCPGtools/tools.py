@@ -2,6 +2,7 @@ import rasterio as rs
 import numpy as np
 import sys
 import os
+import gc
 import pandas as pd
 import subprocess
 import glob
@@ -94,6 +95,7 @@ def tauDrainDir(inRast, outRast, band = 1, updateDict = {
     tauDir[dat == 32] = 4 # northwest
     tauDir[dat == 64] = 3 # north
     tauDir[dat == 128] = 2 # northeast
+    tauDir[dat == 255] = 0
     tauDir[dat == inNoData] = 0 # no data
     tauDir = tauDir.astype('uint8')#8 bit integer is sufficient for flow directions
 
@@ -145,49 +147,42 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
 
     Notes
     -----
-	If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied and there are "no data" values in the basin this function will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast. This function will then save a raster with all no data values set to one and other values set to zero (outNoDataRast) and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the zeroNoDataRast, and a subsequent correction will be needed in the make_fcpg() function based on the values in the outNoDataAccum raster. 
+	If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied it will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast. It will then save a raster with all no data values set to one and other values set to zero (outNoDataRast) and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the zeroNoDataRast, and a subsequent correction will be needed in the make_fcpg() function based on the values in the outNoDataAccum raster. 
 
 	If some of the output file locations for handling no data values aren’t supplied or “no data” values aren’t present in the parameter grid, it will simply accumulate the parameter grid. If “no data” values are present, this will result in them being propagated downstream. 
 
     """
-
     if not os.path.isfile(paramRast):
         print("Error - Parameter raster file is missing!")
         return #Function will fail, so end it now
     if not os.path.isfile(fdr):
         print("Error - Flow direction file is missing!")
         return #Function will fail, so end it now
-
+    
     with rs.open(paramRast) as ds: # load parameter raster
         data = ds.read(1)
         profile = ds.profile
         paramNoData = ds.nodata
-
+    
     with rs.open(fdr) as ds: # load flow direction raster
         direction = ds.read(1)
         directionNoData = ds.nodata # pull the accumulated area no data value
-
+    
     if paramNoData == None:
         print("Warning: Parameter raster no data value not specified, results may be invalid")
-
-
+    
+    
     #Deal with no data values
     basinNoDataCount = len(data[(data == paramNoData) & (direction != directionNoData)]) # Count number of cells with flow direction but no parameter value
     
-    if basinNoDataCount > 0:
-        print('Warning: No data parameter values exist in basin')
-
-
-        #If a no data file path is given, accumulate no data values
-        if (outNoDataRast != None) & (outNoDataAccum != None) & (zeroNoDataRast != None):
-
-            #Set no data parameter values in the basin to zero so tauDEM accumulates them
-            noDataZero = data.copy()
-            noDataZero[(data == paramNoData) & (direction != directionNoData)] = 0 #Set no data values in basin to 0
-
-            # Update profile for no data raster
-            newProfile = profile 
-            newProfile.update({
+    if (outNoDataRast != None) & (outNoDataAccum != None) & (zeroNoDataRast != None):
+        noDataArray = data.copy()
+        noDataArray[(data == paramNoData) & (direction != directionNoData)] = 1 #Set no data values in basin to 1
+        noDataArray[(data != paramNoData)] = 0 #Set values with data to 0
+        noDataArray[(direction == directionNoData)] = -1 #Set all values outside of basin to -1
+        # Update profile for no data raster
+        newProfile = profile 
+        newProfile.update({
                 'compress':'LZW',
                 'zlevel':9,
                 'interleave':'band',
@@ -195,81 +190,77 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
                 'tiled':True,
                 'sparse_ok':True,
                 'num_threads':'ALL_CPUS',
+                'nodata':-1,
                 'bigtiff':'IF_SAFER'})
-            
-            # Save no data raster
-            with rs.open(zeroNoDataRast, 'w', **newProfile) as dst:
-                dst.write(noDataZero,1)
-                if verbose: print("Parameter Zero No Data raster written to: {0}".format(zeroNoDataRast))
-
-
-            
-            noDataArray = data.copy()
-            noDataArray[(data == paramNoData) & (direction != directionNoData)] = 1 #Set no data values in basin to 1
-            noDataArray[(data != paramNoData)] = 0 #Set values with data to 0
-            noDataArray[(direction == directionNoData)] = -1 #Set all values outside of basin to -1
-            noDataArray = noDataArray.astype(np.int8)
-
-            # Update profile for no data raster
-            newProfile = profile 
-            newProfile.update({
-                    'dtype':'int8',
-                    'compress':'LZW',
-                    'zlevel':9,
-                    'interleave':'band',
-                    'profile':'GeoTIFF',
-                    'tiled':True,
-                    'sparse_ok':True,
-                    'num_threads':'ALL_CPUS',
-                    'nodata':-1,
-                    'bigtiff':'IF_SAFER'})
-            
-            # Save no data raster
-            with rs.open(outNoDataRast, 'w', **newProfile) as dst:
-                dst.write(noDataArray,1)
-                if verbose: print("Parameter No Data raster written to: {0}".format(outNoDataRast))
-
-
-            # Use tauDEM to accumulate no data values
-            try:
-                if verbose: print('Accumulating No Data Values')
-                
-                    
-                tauParams = {
-                'fdr':fdr,
-                'cores':cores, 
-                'outFl':outNoDataAccum,
-                'weight':outNoDataRast,
-                'mpiCall':mpiCall,
-                'mpiArg':mpiArg
-                }
-                
-                cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
-                if verbose: print(cmd)
-                result = subprocess.run(cmd, shell = True) # Run shell command
-                result.stdout
-                if verbose: print("Parameter no data accumulation written to: {0}".format(outNoDataRast))
-                
-            except:
-                print('Error Accumulating Data')
-                traceback.print_exc()
-
-            tauDEMweight = zeroNoDataRast #Set file to use as weight in tauDEM accumulation
-
-        else:
-            #If some of the no data handling files aren't provided, accumulate the parameter with no data values included
-            #This will result in no data values being propagated downstream
-            tauDEMweight = paramRast #Set file to use as weight in tauDEM accumulation
         
-
+        # Save no data raster
+        with rs.open(outNoDataRast, 'w', **newProfile) as dst:
+            dst.write(noDataArray,1)
+            if verbose:
+                print("Parameter No Data raster written to: {0}".format(outNoDataRast))
+        
+        del noDataArray
+        gc.collect()
+        
+        #Set no data parameter values in the basin to zero so tauDEM accumulates them
+        noDataZero = data.copy()
+        noDataZero[(data == paramNoData) & (direction != directionNoData)] = 0 #Set no data values in basin to 0
+        # Update profile for no data raster
+        newProfile = profile 
+        newProfile.update({
+            'compress':'LZW',
+            'zlevel':9,
+            'interleave':'band',
+            'profile':'GeoTIFF',
+            'tiled':True,
+            'sparse_ok':True,
+            'num_threads':'ALL_CPUS',
+            'bigtiff':'IF_SAFER'})
+        
+        # Save zeroNoData raster
+        with rs.open(zeroNoDataRast, 'w', **newProfile) as dst:
+            dst.write(noDataZero,1)
+            if verbose: 
+                print("Parameter Zero No Data raster written to: {0}".format(zeroNoDataRast))
+        
+        del noDataZero
+        del data
+        del direction
+        gc.collect()
+        
+        # Use tauDEM to accumulate no data values
+        try:
+            if verbose:
+                print('Accumulating No Data Values')
             
+            tauParams = {
+            'fdr':fdr,
+            'cores':cores, 
+            'outFl':outNoDataAccum,
+            'weight':outNoDataRast,
+            'mpiCall':mpiCall,
+            'mpiArg':mpiArg
+            }
+            
+            cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} -wg {weight} -nc'.format(**tauParams) # Create string of tauDEM shell command
+            if verbose: print(cmd)
+            result = subprocess.run(cmd, shell = True) # Run shell command
+            result.stdout
+            if verbose:
+                print("Parameter no data accumulation written to: {0}".format(outNoDataRast))
+            
+        except:
+            print('Error Accumulating Data')
+            traceback.print_exc()
+    
+    if basinNoDataCount > 0:
+        print('Warning: No data parameter values exist in basin')
+        tauDEMweight = zeroNoDataRast #Set file to use as weight in tauDEM accumulation
+        
     else:
-
         #If there are zero no data values in the basin, simply accumulate the parameter raster
         tauDEMweight = paramRast #Set file to use as weight in tauDEM accumulation
-
-            
-
+    
     #Use tauDEM to accumulate the parameter
     try:
         if verbose: print('Accumulating Data...')
@@ -287,8 +278,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         result = subprocess.run(cmd, shell = True) # Run shell command
         
         result.stdout
-        
-
+    
     except:
         print('Error Accumulating Data')
         traceback.print_exc()
@@ -345,7 +335,7 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, ESRI
         facNoData = ds.nodata # pull the accumulated area no data value
 
     if ESRIFAC:
-    	accum += 1. # add 1 for ESRI FAC grid.
+    	accum += 1 # add 1 for ESRI FAC grid.
 
     if noDataRast != None:
         if verbose: print("Correcting CPG for no data values")
@@ -431,7 +421,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     '''
 
     with rs.open(fdr) as ds: # load flow direction raster in Rasterio
-        fdrcrs = ds.crs.to_proj4() #Get flow direction coordinate system
+        fdrcrs = f"'{ds.crs.wkt}'" #Get flow direction coordinate system
+        #fdrcrs = f'"{rs.crs.CRS.from_wkt(str(ds.crs)).to_proj4()ds.crs.wkt}"'
         xsize, ysize = ds.res #Get flow direction cell size
         #Get bounding coordinates of the flow direction raster
         fdrXmin = ds.transform[2]
@@ -442,7 +433,8 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     with rs.open(inParam) as ds: # load parameter raster in Rasterio
         paramNoData = ds.nodata
         paramType = ds.dtypes[0] #Get datatype of first band
-        paramcrs = ds.crs.to_proj4() #Get parameter coordinate reference system
+        paramcrs = f"'{ds.crs.wkt}'" #Get parameter coordinate reference system
+        #paramcrs = f'"{rs.crs.CRS.from_wkt(str(ds.crs)).to_proj4()}"'
         paramXsize, paramYsize = ds.res #Get parameter cell size
         paramXmin = ds.transform[2] # get upper left
         paramYmax = ds.transform[5] # get upper left
@@ -454,19 +446,26 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
         fdrcrs = forceProj4
 
     if verbose: print("Flow Direction Proj4: " + str(fdrcrs))
+    
     if verbose: print("Parameter Proj4:" + str(paramcrs))
-
+    
     if verbose: print("Flow Direction Xsize:" + str(xsize))
+    
     if verbose: print("Parameter Xsize:" + str(paramXsize))
-
+    
     if verbose: print(f"FDR Lower Right Corner: {fdrXmax}, {fdrYmin}")
+    
     if verbose: print(f"FDR Upper Left Corner: {fdrXmin}, {fdrYmax}")
+    
     if verbose: print(f"Param Lower Right Corner: {paramXmax}, {paramYmin}")
+    
     if verbose: print(f"Param Upper Left: {paramXmin}, {paramYmax}")
     
     # Choose an appropriate gdal data type for the parameter
+                                                                                              
     if paramType == 'int8' or paramType == 'uint8':
-        outType = 'Byte' # Use Gdal convention #old# Convert 8 bit integers to 16 bit in gdal
+        outType = 'Int16'
+        # Use Gdal convention #old# Convert 8 bit integers to 16 bit in gdal
         #print("Warning: 8 bit inputs are unsupported and may not be reprojected correctly") #Print warning that gdal may cause problems with 8 bit rasters
     elif paramType == 'int16' or paramType == 'uint16':
         outType = 'Int16' 
@@ -486,15 +485,14 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     #Check if resampling or reprojection are required
     if str(paramcrs) == str(fdrcrs) and paramXsize == xsize and paramYsize == ysize and fdrXmin == paramXmin and fdrYmin == paramYmin and fdrXmax == paramXmax and fdrYmax == paramYmax:
         if verbose: print("Parameter does not require reprojection or resampling")
-
+        
         with rs.open(inParam) as src:
         	meta = src.meta.copy()
-
+            
         	with rs.open(outParam,'w',**meta) as dst:
         		dst.write(src.read(1),1)
         		if verbose: print(f"Parameter raster copied to {outParam}")
     else:
-
         # Resample, reproject, and clip the parameter raster with GDAL
         try:
             if verbose: print('Resampling and Reprojecting Parameter Raster...')
@@ -511,11 +509,12 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
             'fdrYmin': fdrYmin,
             'fdrYmax': fdrYmax,
             'fdrcrs': fdrcrs, 
+            'paramcrs': paramcrs,
             'nodata': paramNoData,
             'datatype': outType
             }
             
-            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "ZLEVEL=9" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
+            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -s_srs {paramcrs} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "ZLEVEL=9" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
             if verbose: print(cmd)
             result = subprocess.run(cmd, shell = True)
             result.stdout
@@ -1166,12 +1165,12 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type = "MAX", cores = 1, fac =
         'cores':cores, 
         'outFl':output,
         'param':param,
-        'accum_type':accum_type.lower(),
+        'accum_type':accum_type.upper(),
         'mpiCall':mpiCall,
         'mpiArg':mpiArg
         }
 
-    if accum_type == "min": # insert flag for min 
+    if accum_type == "MIN": # insert flag for min 
         cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -{accum_type} -nc'.format(**tauParams) # Create string of tauDEM shell command
     else: # no flag for max
         cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -nc'.format(**tauParams) # Create string of tauDEM shell command
@@ -2083,3 +2082,5 @@ def makeStreams(fac, strPath, thresh = 900, updateDict = {
 
     with rs.open(strPath,'w',**profile) as dst:
         dst.write(strRast,1) # write out the geotiff
+
+                                                                                              

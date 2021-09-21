@@ -1,0 +1,8 @@
+README.rst
+setup.py
+FCPGtools/__init__.py
+FCPGtools/tools.py
+FCPGtools.egg-info/PKG-INFO
+FCPGtools.egg-info/SOURCES.txt
+FCPGtools.egg-info/dependency_links.txt
+FCPGtools.egg-info/top_level.txt
