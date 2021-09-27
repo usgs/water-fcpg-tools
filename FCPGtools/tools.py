@@ -176,7 +176,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
     basinNoDataCount = len(data[(data == paramNoData) & (direction != directionNoData)]) # Count number of cells with flow direction but no parameter value
     
     if (outNoDataRast != None) & (outNoDataAccum != None) & (zeroNoDataRast != None):
-        noDataArray = data.copy()
+        noDataArray = data.copy().astype(np.int16)
         noDataArray[(data == paramNoData) & (direction != directionNoData)] = 1 #Set no data values in basin to 1
         noDataArray[(data != paramNoData)] = 0 #Set values with data to 0
         noDataArray[(direction == directionNoData)] = -1 #Set all values outside of basin to -1
@@ -184,6 +184,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         newProfile = profile 
         newProfile.update({
                 'compress':'LZW',
+                'dtype': 'int16',
                 'zlevel':9,
                 'interleave':'band',
                 'profile':'GeoTIFF',
@@ -203,12 +204,13 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         gc.collect()
         
         #Set no data parameter values in the basin to zero so tauDEM accumulates them
-        noDataZero = data.copy()
+        noDataZero = data.copy().astype(np.int16)
         noDataZero[(data == paramNoData) & (direction != directionNoData)] = 0 #Set no data values in basin to 0
         # Update profile for no data raster
         newProfile = profile 
         newProfile.update({
             'compress':'LZW',
+            'dtype': 'int16',
             'zlevel':9,
             'interleave':'band',
             'profile':'GeoTIFF',
