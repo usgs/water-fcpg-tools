@@ -109,6 +109,73 @@ def tauDrainDir(inRast, outRast, band = 1, updateDict = {
         dst.write(tauDir,1)
         if verbose: print("TauDEM drainage direction written to: {0}".format(outRast))
 
+def ESRIDrainDir(inRast, outRast, band = 1, updateDict = {
+            'compress':'LZW',
+            'zlevel':9,
+            'interleave':'band',
+            'sparse':True,
+            'tiled':True,
+            'blockysize':256,
+            'blockxsize':256,
+            'driver' : "GTiff",
+            'nodata':0,
+            'bigtiff':'IF_SAFER'}, verbose = False):
+    """Reclassifies TauDEM flow directions into ESRI flow directions.
+
+    Parameters
+    ----------
+    inRast : str
+        Path to a raster encoded with TauDEM flow direction values.
+    outRast : str
+        Path to output a raster with flow directions encoded for ESRI. File will be overwritten if it already exists.
+    band : int (optional)
+        Band to read the flow direction grid from if inRast is multiband, defaults to 1.
+    updateDict : dict (optional)
+        Dictionary of Rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.
+    verbose : bool (optional)
+        Print output, defaults to False.
+
+    Returns
+    -------
+    outRast : raster
+        Reclassified flow direction raster at the path specified above.
+    """
+    assert os.path.isfile(inRast)==True, 'inRast not found'
+
+    if verbose: print('Reclassifying Flow Directions...')
+
+    # load input data
+    with rs.open(inRast) as ds:
+        assert ds.meta['count'] <= band, 'inRast missing specified band'
+        dat = ds.read(band)
+        inNoData = ds.nodata
+        profile = ds.profile.copy() # save the metadata for output later
+
+    ESRIdir = dat.copy()
+    # remap TauDEM flow direction to ESRI flow Direction
+    # east is ok
+    
+    ESRIdir[dat == 8] = 2# southeast
+    ESRIdir[dat == 7] = 4# south
+    ESRIdir[dat == 6] = 8# southwest
+    ESRIdir[dat == 5] = 16# west
+    ESRIdir[dat == 4] = 32# northwest
+    ESRIdir[dat == 3] = 64# north
+    ESRIdir[dat == 2] = 128# northeast
+    ESRIdir[dat == 0] = 255
+    ESRIdir[dat == inNoData] = 255 # no data
+    ESRIdir = ESRIdir.astype('uint8')#8 bit integer is sufficient for flow directions
+
+    # edit the metadata
+    profile.update(updateDict)
+    
+    if os.path.isfile(outRast):
+    	os.remove(outRast)
+
+    with rs.open(outRast,'w',**profile) as dst:
+        dst.write(ESRIdir,1)
+        if verbose: print("ESRI drainage direction written to: {0}".format(outRast))
+
 def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAccum = None, zeroNoDataRast = None, cores = 1, mpiCall = 'mpiexec', mpiArg = '-n', verbose = False):
     """Accumulate a parameter grid using TauDEM AreaD8 :cite:`TauDEM`.
 
@@ -176,7 +243,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
     basinNoDataCount = len(data[(data == paramNoData) & (direction != directionNoData)]) # Count number of cells with flow direction but no parameter value
     
     if (outNoDataRast != None) & (outNoDataAccum != None) & (zeroNoDataRast != None):
-        noDataArray = data.copy().astype(np.int16)
+        noDataArray = data.copy().astype(np.float32)
         noDataArray[(data == paramNoData) & (direction != directionNoData)] = 1 #Set no data values in basin to 1
         noDataArray[(data != paramNoData)] = 0 #Set values with data to 0
         noDataArray[(direction == directionNoData)] = -1 #Set all values outside of basin to -1
@@ -184,7 +251,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         newProfile = profile 
         newProfile.update({
                 'compress':'LZW',
-                'dtype': 'int16',
+                'dtype': 'float32',
                 'zlevel':9,
                 'interleave':'band',
                 'profile':'GeoTIFF',
@@ -204,19 +271,26 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
         gc.collect()
         
         #Set no data parameter values in the basin to zero so tauDEM accumulates them
-        noDataZero = data.copy().astype(np.int16)
+        noDataZero = data.copy().astype(np.float32)
         noDataZero[(data == paramNoData) & (direction != directionNoData)] = 0 #Set no data values in basin to 0
+        
+        
+        del data
+        del direction
+        gc.collect()
+        
         # Update profile for no data raster
         newProfile = profile 
         newProfile.update({
             'compress':'LZW',
-            'dtype': 'int16',
+            'dtype': 'float32',
             'zlevel':9,
             'interleave':'band',
             'profile':'GeoTIFF',
             'tiled':True,
             'sparse_ok':True,
             'num_threads':'ALL_CPUS',
+            #'nodata':paramNoData,
             'bigtiff':'IF_SAFER'})
         
         # Save zeroNoData raster
@@ -226,8 +300,6 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast = None, outNoDataAc
                 print("Parameter Zero No Data raster written to: {0}".format(zeroNoDataRast))
         
         del noDataZero
-        del data
-        del direction
         gc.collect()
         
         # Use tauDEM to accumulate no data values
@@ -313,70 +385,90 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, ESRI
     '''
     outNoData = -9999
     
-
     if not os.path.isfile(accumParam):
         print("Error - Accumulated parameter raster file is missing!")
-        return #Function will fail, so end it now
+    
     if not os.path.isfile(fac):
         print("Error - Flow accumulation file is missing!")
-        return #Function will fail, so end it now
-
-
-    if verbose: print("Reading accumulated parameter file {0}".format(datetime.datetime.now()))
+    
+    if verbose:
+        print("Reading accumulated parameter file {0}".format(datetime.datetime.now()))
+    
     with rs.open(accumParam) as ds: # load accumulated data and no data rasters
         data = ds.read(1)
         profile = ds.profile
         inNoData = ds.nodata
-
+    
     data = data.astype(np.float32) #Convert to 32 bit float
     data[data == inNoData] = np.NaN # fill with no data values where appropriate
-
-    if verbose: print("Reading basin flow accumulation file {0}".format(datetime.datetime.now()))
+    
+    if verbose:
+        print("Reading basin flow accumulation file {0}".format(datetime.datetime.now()))
+    
     with rs.open(fac) as ds: # flow accumulation raster
         accum = ds.read(1)
         facNoData = ds.nodata # pull the accumulated area no data value
-
+    
     if ESRIFAC:
-    	accum += 1 # add 1 for ESRI FAC grid.
-
+        accum += 1 # add 1 for ESRI FAC grid.
+    
     if noDataRast != None:
         if verbose: print("Correcting CPG for no data values")
         with rs.open(noDataRast) as ds: # accumulated no data raster
             accumNoData = ds.read(1)
             noDataNoData = ds.nodata # pull the accumulated no data no data value
-            
+        
         accumNoData[accumNoData == noDataNoData] = 0 #Set no data values to zero
-
         corrAccum = accum - accumNoData # Compute corrected accumulation
         corrAccum = corrAccum.astype(np.float32) # Convert to 32 bit float
         corrAccum[accum == facNoData] = np.NaN # fill with no data values where appropriate
         corrAccum[corrAccum == 0] = np.NaN # if corrected values are zero, they should be made into nodata so that a FCPG value is not computed for that location.
         
+        del accum
+        gc.collect()
     else:
         accum2 = accum.astype(np.float32)
         accum2[accum == facNoData] = np.NaN # fill this with no data values where appropriate
+        
+        del accum
+        gc.collect()
+        
         corrAccum = accum2 # No correction required
         
+        del accum2
+        gc.collect()
+    
     # Throw warning if there is a negative accumulation
     if np.nanmin(corrAccum) < 0:
         print("Warning: Negative accumulation value")
         print("Minimum value:{0}".format(np.nanmin(corrAccum)))
-
+    
     if len(np.where(corrAccum == 0)) > 0:
         print("Warning: Zero accumulation value")
         print("Number of zero values:{0}".format(len(np.where(corrAccum==0))))
-
-    if verbose: print("Computing CPG values {0}".format(datetime.datetime.now()))
+    
+    if verbose:
+        print("Computing CPG values {0}".format(datetime.datetime.now()))
+    
     dataCPG = data / corrAccum # make data CPG
-
-    if verbose: print("Replacing numpy nan values {0}".format(datetime.datetime.now()))
+    
+    del data
+    
+    if verbose:
+        print("Replacing numpy nan values {0}".format(datetime.datetime.now()))
+    
     dataCPG[np.isnan(dataCPG)] = outNoData # Replace numpy NaNs with no data value
-
+    
     # Replace values in cells with small flow accumulation with no data
     if minAccum != None:
-        if verbose: print("Replacing small flow accumulations {0}".format(datetime.datetime.now()))
+        if verbose:
+            print("Replacing small flow accumulations {0}".format(datetime.datetime.now()))
+        
         dataCPG[corrAccum < minAccum] = outNoData #Set values smaller than threshold to no data
-
+    
+    del corrAccum
+    gc.collect()
+    
     # Update raster profile
     profile.update({'dtype':dataCPG.dtype,
                 'compress':'LZW',
@@ -388,15 +480,19 @@ def make_fcpg(accumParam, fac, outRast, noDataRast = None, minAccum = None, ESRI
                 'num_threads':'ALL_CPUS',
                 'nodata':outNoData,
                 'bigtiff':'IF_SAFER'})
-
-    if verbose: print("Saving CPG raster {0}".format(datetime.datetime.now()))
+    
+    if verbose:
+        print("Saving CPG raster {0}".format(datetime.datetime.now()))
+    
     with rs.open(outRast, 'w', **profile) as dst:
         dst.write(dataCPG,1)
-        if verbose: print("CPG file written to: {0}".format(outRast))
+        if verbose:
+            print("CPG file written to: {0}".format(outRast))
     
+
 def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, forceProj=False, forceProj4="\"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs\"", verbose = False):
     '''Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the of the flow direction raster supplied. See also :py:func:`resampleParams`.
-
+    
     Parameters
     ----------
     inParam : str
@@ -415,15 +511,15 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
         Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True.
     verbose : bool (optional)
         Print output, defaults to False.
-
+    
     Returns
     -------
     outParam : raster
         Resampled, reprojected, and clipped parameter raster.
     '''
-
+    
     with rs.open(fdr) as ds: # load flow direction raster in Rasterio
-        fdrcrs = f"'{ds.crs.wkt}'" #Get flow direction coordinate system
+        #Get flow direction coordinate system
         #fdrcrs = f'"{rs.crs.CRS.from_wkt(str(ds.crs)).to_proj4()ds.crs.wkt}"'
         xsize, ysize = ds.res #Get flow direction cell size
         #Get bounding coordinates of the flow direction raster
@@ -431,7 +527,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
         fdrYmax = ds.transform[5]
         fdrXmax = fdrXmin + xsize*ds.width
         fdrYmin = fdrYmax - ysize*ds.height
-
+    
     with rs.open(inParam) as ds: # load parameter raster in Rasterio
         paramNoData = ds.nodata
         paramType = ds.dtypes[0] #Get datatype of first band
@@ -442,11 +538,11 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
         paramYmax = ds.transform[5] # get upper left
         paramXmax = paramXmin + paramXsize * ds.width # compute lower right
         paramYmin = paramYmax - paramYsize * ds.height # compute lower right
-
+    
     # override the FDR projection if specified.
     if forceProj:
         fdrcrs = forceProj4
-
+    
     if verbose: print("Flow Direction Proj4: " + str(fdrcrs))
     
     if verbose: print("Parameter Proj4:" + str(paramcrs))
@@ -464,7 +560,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     if verbose: print(f"Param Upper Left: {paramXmin}, {paramYmax}")
     
     # Choose an appropriate gdal data type for the parameter
-                                                                                              
+    
     if paramType == 'int8' or paramType == 'uint8':
         outType = 'Int16'
         # Use Gdal convention #old# Convert 8 bit integers to 16 bit in gdal
@@ -483,22 +579,23 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
         print("Warning: Unsupported data type {0}".format(paramType))
         print("Defaulting to Float64")
         outType = 'Float64' # Try a 64 bit floating point if all else fails
-
+    
     #Check if resampling or reprojection are required
-    if str(paramcrs) == str(fdrcrs) and paramXsize == xsize and paramYsize == ysize and fdrXmin == paramXmin and fdrYmin == paramYmin and fdrXmax == paramXmax and fdrYmax == paramYmax:
-        if verbose: print("Parameter does not require reprojection or resampling")
+    # if str(paramcrs) == str(fdrcrs) and paramXsize == xsize and paramYsize == ysize and fdrXmin == paramXmin and fdrYmin == paramYmin and fdrXmax == paramXmax and fdrYmax == paramYmax:
+        # if verbose: print("Parameter does not require reprojection or resampling")
         
-        with rs.open(inParam) as src:
-        	meta = src.meta.copy()
+        # with rs.open(inParam) as src:
+        	# meta = src.meta.copy()
             
-        	with rs.open(outParam,'w',**meta) as dst:
-        		dst.write(src.read(1),1)
-        		if verbose: print(f"Parameter raster copied to {outParam}")
-    else:
+        	# with rs.open(outParam,'w',**meta) as dst:
+        		# dst.write(src.read(1),1)
+        		# if verbose: print(f"Parameter raster copied to {outParam}")
+                
+    # else:
         # Resample, reproject, and clip the parameter raster with GDAL
-        try:
-            if verbose: print('Resampling and Reprojecting Parameter Raster...')
-            warpParams = {
+    try:
+        if verbose: print('Resampling and Reprojecting Parameter Raster...')
+        warpParams = {
             'inParam': inParam,
             'outParam': outParam,
             'fdr':fdr,
@@ -514,16 +611,17 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
             'paramcrs': paramcrs,
             'nodata': paramNoData,
             'datatype': outType
-            }
-            
-            cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -s_srs {paramcrs} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "ZLEVEL=9" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
-            if verbose: print(cmd)
-            result = subprocess.run(cmd, shell = True)
-            result.stdout
-            
-        except:
-            print('Error Reprojecting Parameter Raster')
-            traceback.print_exc()
+        }
+        
+        cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -s_srs {paramcrs} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "ZLEVEL=9" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
+        if verbose: print(cmd)
+        
+        result = subprocess.run(cmd, shell = True)
+        result.stdout
+        
+    except:
+        print('Error Reprojecting Parameter Raster')
+        traceback.print_exc()
 
 #Tools for decayed accumulation CPGs
 
