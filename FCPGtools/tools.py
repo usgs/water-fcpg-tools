@@ -588,24 +588,24 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     else:
 
         # Resample, reproject, and clip the parameter raster with GDAL
-    try:
-        if verbose: print('Resampling and Reprojecting Parameter Raster...')
-        warpParams = {
-            'inParam': inParam,
-            'outParam': outParam,
-            'fdr':fdr,
-            'cores':str(cores), 
-            'resampleMethod': resampleMethod,
-            'xsize': xsize, 
-            'ysize': ysize, 
-            'fdrXmin': fdrXmin,
-            'fdrXmax': fdrXmax,
-            'fdrYmin': fdrYmin,
-            'fdrYmax': fdrYmax,
-            'fdrcrs': fdrcrs, 
-            'nodata': paramNoData,
-            'datatype': outType
-            }
+        try:
+            if verbose: print('Resampling and Reprojecting Parameter Raster...')
+            warpParams = {
+                'inParam': inParam,
+                'outParam': outParam,
+                'fdr':fdr,
+                'cores':str(cores), 
+                'resampleMethod': resampleMethod,
+                'xsize': xsize, 
+                'ysize': ysize, 
+                'fdrXmin': fdrXmin,
+                'fdrXmax': fdrXmax,
+                'fdrYmin': fdrYmin,
+                'fdrYmax': fdrYmax,
+                'fdrcrs': fdrcrs, 
+                'nodata': paramNoData,
+                'datatype': outType
+                }
             
             cmd = 'gdalwarp -overwrite -tr {xsize} {ysize} -t_srs {fdrcrs} -te {fdrXmin} {fdrYmin} {fdrXmax} {fdrYmax} -co "PROFILE=GeoTIFF" -co "TILED=YES" -co "SPARSE_OK=TRUE" -co "COMPRESS=LZW" -co "ZLEVEL=9" -co "NUM_THREADS={cores}" -co "BIGTIFF=IF_SAFER" -r {resampleMethod} -dstnodata {nodata} -ot {datatype} {inParam} {outParam}'.format(**warpParams)
             if verbose: print(cmd)
