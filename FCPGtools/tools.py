@@ -1404,7 +1404,7 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins = False):
         newx,newy = rs.transform.xy(out_transform,cx,cy) # convert the row, column locations to coordinates given the new affine
 
         # zip the coordinates to points, when moved downstream, only one of these should land on a no data pixel
-        points = [(nx,ny) for nx,ny in zip(newx,newy)]
+        points = [(nx,ny) for nx,ny in zip([newx],[newy])]
 
         # test if a point lands on a noData pixel.
         #print(len(points))
@@ -1523,7 +1523,7 @@ def findLastFACFD(facfl, fl = None):
     
     w = meta['transform'][0] # get the cell size of the grid
     
-    return float(x[0]),float(y[0]),float(d),float(w)
+    return float(x),float(y),float(d),float(w)
 
 def queryPoint(x,y,grd):
     '''Query grid based on a supplied point.
