@@ -2,6 +2,7 @@ import rasterio as rs
 import numpy as np
 import sys
 import os
+import gc
 import pandas as pd
 import subprocess
 import glob
