@@ -7,15 +7,15 @@ dependencies:
   - python =3.10*
 
   # geospatial processing
-  - rasterio=1.3
-  - geopandas=0.11
-  - descartes=1.1
+  - rasterio
+  - geopandas
+  - descartes
 
   # terrain analysis engines
-  # - taudem  # not available for osx-64; https://anaconda.org/conda-forge/taudem
+  - taudem  # not available for osx-64; https://anaconda.org/conda-forge/taudem
 
   # Interactivity & Visualization (optional, but required for examples)
-  - jupyterlab>=3.4  # also installs ipython & jupyter nbclassic
+  - jupyterlab  # also installs ipython & jupyter nbclassic
   - ipympl  # jupyter-matplotlib, also installs matplotlib
   # - nodejs    # required for many JupyterLab extensions
 
@@ -27,6 +27,7 @@ dependencies:
   # package management
   - conda
   - conda-build
+  - conda-libmamba-solver
   - pip
    # PIP install requirements only if it is not  possible with conda
    # https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment
