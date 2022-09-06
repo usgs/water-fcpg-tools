@@ -1,19 +1,15 @@
-import rasterio as rs
-import numpy as np
-import sys
-import os
-import gc
-import pandas as pd
-import subprocess
-import glob
-import shutil
-import traceback
 import datetime
-from multiprocessing import Pool as processPool
-
+import gc
+import io
 # Imports for reading and writing json files
 import json
-import io
+import os
+import subprocess
+import traceback
+from multiprocessing import Pool as processPool
+
+import numpy as np
+import rasterio as rs
 
 try:
     to_unicode = unicode
@@ -22,8 +18,6 @@ except NameError:
 
 # Imports for cascade tools
 from rasterio.mask import mask
-import matplotlib.pyplot as plt
-import geopandas as gpd
 
 
 def parsebool(b):
@@ -1347,7 +1341,7 @@ def getFeatures(gdf):
 
 
 def getHUC4(HUC12):
-    '''Helper function to return HUC4 representation from a HUC12 identifier.
+    """Helper function to return HUC4 representation from a HUC12 identifier.
 
     Parameters
     ----------
@@ -1358,13 +1352,13 @@ def getHUC4(HUC12):
     -------
     HUC4 : str
         HUC4 identifier.
-    '''
+    """
     return HUC12[:4]
 
 
 def makePourBasins(wbd, fromHUC4, toHUC4, HUC12Key='HUC12', ToHUCKey='ToHUC'):
-    '''Make geodataframe of HUC12 basins flowing from fromHUC4 to toHUC4.
-    
+    """Make geodataframe of HUC12 basins flowing from fromHUC4 to toHUC4.
+
     Parameters
     ----------
     wbd : GeoDataframe
@@ -1377,12 +1371,12 @@ def makePourBasins(wbd, fromHUC4, toHUC4, HUC12Key='HUC12', ToHUCKey='ToHUC'):
         Column name for HUC codes to process down to HUC4 codes, defaults to 'HUC12'.
     ToHUCKey : str (optional)
         Column name for the column that indicates the downstream HUC for each row of the dataframe, defaults to 'TOHUC'.
-        
+
     Returns
     -------
     pourBasins : GeoDataframe
         HUC12-level geodataframe of units that drain from fromHUC4 to toHUC4.
-    '''
+    """
 
     wbd['HUC4'] = wbd[HUC12Key].map(getHUC4)
     wbd['ToHUC4'] = wbd[ToHUCKey].map(getHUC4)
@@ -1391,8 +1385,8 @@ def makePourBasins(wbd, fromHUC4, toHUC4, HUC12Key='HUC12', ToHUCKey='ToHUC'):
 
 
 def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins=False):
-    '''Finds unique pour points between two HUC4s.
-    
+    """Finds unique pour points between two HUC4s.
+
     Parameters
     ----------
     pourBasins : GeoDataframe
@@ -1403,12 +1397,12 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins=False):
         Path to the upstream tauDEM flow direction grid.
     plotBasins : bool (Optional)
         Boolean to make plots of upstream HUC12s and identified pour points. Defaults to False.
-        
+
     Returns
     -------
     finalPoints : list
-        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not FCPGed) upstream parameter grids for information to cascade down to the next hydrologic region / geospatial tile downstream. 
-    '''
+        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not FCPGed) upstream parameter grids for information to cascade down to the next hydrologic region / geospatial tile downstream.
+    """
     pourPoints = []
     for i in range(len(pourBasins)):
         data = rs.open(upfacfl)  # open the FAC grid
@@ -1476,8 +1470,8 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins=False):
 
 
 def loadRaster(fl, returnMeta=False, band=1):
-    '''Helper function to load raster data and metadata.
-    
+    """Helper function to load raster data and metadata.
+
     Parameters
     ----------
     fl : str
@@ -1493,7 +1487,7 @@ def loadRaster(fl, returnMeta=False, band=1):
         Numpy array of the data in the selected raster band.
     meta : dict
         Dictionary of raster metadata.
-    '''
+    """
     try:
         with rs.open(fl) as src:
             dat = src.read(band)
@@ -1508,15 +1502,15 @@ def loadRaster(fl, returnMeta=False, band=1):
 
 
 def findLastFACFD(facfl, fl=None):
-    '''Find the coordinate of the greatest cell in facfl, return the value from fl at that point.
-    
+    """Find the coordinate of the greatest cell in facfl, return the value from fl at that point.
+
     Parameters
     ----------
     facfl : str
         Path to a flow accumulation grid.
     fl : str (optional)
         Path to an accumulated parameter file. Defaults to None. If None, the facfl is queried.
-    
+
     Returns
     -------
     x : float
@@ -1532,7 +1526,7 @@ def findLastFACFD(facfl, fl=None):
     Notes
     -----
     This can be used to find the flow direction of the FAC cell with the greatest accumulation value or the parameter value of the cell with the greatest accumulation value.
-    '''
+    """
 
     fac, meta = loadRaster(facfl, returnMeta=True)  # load the fac file
 
@@ -1554,8 +1548,8 @@ def findLastFACFD(facfl, fl=None):
 
 
 def queryPoint(x, y, grd):
-    '''Query grid based on a supplied point.
-    
+    """Query grid based on a supplied point.
+
     Parameters
     ----------
     x : float or int
@@ -1564,12 +1558,12 @@ def queryPoint(x, y, grd):
         Vertical coordinate in grid projection.
     grd : str
         Path to raster to query based on the supplied x and y coordinates.
-        
+
     Returns
     -------
     value : float or int
         Value queried from the supplied raster.
-    '''
+    """
 
     # loop construct is to deal with src.sample returning an array, only the value is needed.
     with rs.open(grd) as src:
