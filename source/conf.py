@@ -26,9 +26,9 @@ copyright = 'Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al 
 author = 'Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea'
 
 # The short X.Y version
-version = '1.0.9'
+version = '1.0.3'
 # The full version, including alpha/beta/rc tags
-release = '1.0.9'
+release = '1.0.3'
 
 
 # -- General configuration ---------------------------------------------------
