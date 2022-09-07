@@ -5,7 +5,7 @@ channels:
   # - nodefaults
 
 dependencies:
-  - python =3.9
+  - python =3.9 # 3.10 caused conflicts with taudem
 
   # geospatial processing
   - rasterio =1.2
@@ -13,8 +13,7 @@ dependencies:
   - descartes =1.1
 
   # terrain analysis engines
-  # taudem not available for osx-64; https://anaconda.org/conda-forge/taudem
-  - taudem =5.3.8  #
+  - taudem =5.3.8  # taudem not available for osx-64; https://anaconda.org/conda-forge/taudem
 
   # Interactivity & Visualization (optional, but required for examples)
   - jupyterlab  # also installs ipython & jupyter nbclassic

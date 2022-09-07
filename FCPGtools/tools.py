@@ -1148,7 +1148,10 @@ def cat2bin(inCat, outWorkspace, par=True, verbose=False):
 
 
 def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile, verbose=False):
-    '''Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. See also :py:func:`cat2bin`.
+    '''Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the
+    upplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for
+    regions of no data in the supplied raster. See also :py:func:`cat2bin`.
+
 
     Parameters
     ----------
@@ -1192,7 +1195,7 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile, verbose
 
 
 def tauFlowAccum(fdr, accumRast, cores=1, mpiCall='mpiexec', mpiArg='-n', verbose=False):
-    """Wrapper for TauDEM AreaD8 :cite:`TauDEM` to produce a flow acculation grid.
+    """Wrapper for TauDEM AreaD8 :cite:`TauDEM` to produce a flow accumulation grid.
 
     Parameters
     ----------
@@ -1357,12 +1360,13 @@ def getHUC4(HUC12):
 
 
 def makePourBasins(wbd, fromHUC4, toHUC4, HUC12Key='HUC12', ToHUCKey='ToHUC'):
-    """Make geodataframe of HUC12 basins flowing from fromHUC4 to toHUC4.
+    """Make geodataframe of HUC12 basins flowing from HUC4 to toHUC4.
 
     Parameters
     ----------
     wbd : GeoDataframe
-        HUC12-level geodataframe projected to the same coordinate reference system (CRS) as the flow accumulation (FAC) and flow direction (FDR) grids being used.
+        HUC12-level geodataframe projected to the same coordinate reference system (CRS) as the flow accumulation (FAC)
+         and flow direction (FDR) grids being used.
     fromHUC4 : str
         HUC4 string for the upstream basin.
     toHUC4 : str
@@ -1390,7 +1394,8 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins=False):
     Parameters
     ----------
     pourBasins : GeoDataframe
-        GeoDataframe of the HUC12 basins that flow into the downstream HUC4. Used to clip the upstream FAC grid to identify pour points.
+        GeoDataframe of the HUC12 basins that flow into the downstream HUC4. Used to clip the upstream FAC grid to
+         identify pour points.
     upfacfl : str
         Path to the upstream flow accumulation grid.
     upfdrfl : str
@@ -1401,7 +1406,9 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins=False):
     Returns
     -------
     finalPoints : list
-        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not FCPGed) upstream parameter grids for information to cascade down to the next hydrologic region / geospatial tile downstream.
+        List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to
+         query accumulated (but not FCPGed) upstream parameter grids for information to cascade down to the next
+          hydrologic region / geospatial tile downstream.
     """
     pourPoints = []
     for i in range(len(pourBasins)):
@@ -1415,9 +1422,9 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins=False):
 
         out_img, out_transform = mask(data, shapes=coords, crop=True)  # get the raster for the HUC
 
-        cx, cy = np.where(out_img[0] == out_img[0].max())  # find the location of max values
-
         w = out_img[0].max()  # get the value to propagate to the downstream grid.
+
+        cx, cy = np.where(out_img[0] == w)  # find the location of max values
 
         newx, newy = rs.transform.xy(out_transform, cx,
                                      cy)  # convert the row, column locations to coordinates given the new affine
