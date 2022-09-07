@@ -1,18 +1,20 @@
 name: fcpgtools
 channels:
   - conda-forge
+  - default
   # - nodefaults
 
 dependencies:
-  - python =3.10*
+  - python =3.9
 
   # geospatial processing
-  - rasterio
-  - geopandas
-  - descartes
+  - rasterio =1.2
+  - geopandas =0.11
+  - descartes =1.1
 
   # terrain analysis engines
-  - taudem  # not available for osx-64; https://anaconda.org/conda-forge/taudem
+  # taudem not available for osx-64; https://anaconda.org/conda-forge/taudem
+  - taudem =5.3.8  #
 
   # Interactivity & Visualization (optional, but required for examples)
   - jupyterlab  # also installs ipython & jupyter nbclassic
