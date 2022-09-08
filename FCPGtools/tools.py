@@ -212,10 +212,16 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast=None, outNoDataAccu
 
     Notes
     -----
-    If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied and there are "no data" values in the basin this function will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast. This function will then save a raster with all no data values set to one and other values set to zero (outNoDataRast) and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the zeroNoDataRast, and a subsequent correction will be needed in the make_fcpg() function based on the values in the outNoDataAccum raster.
+    If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied and there are "no data" values in the
+    basin this function will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast.
+    This function will then save a raster with all no data values set to one and other values set to zero
+    (outNoDataRast) and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the
+    zeroNoDataRast, and a subsequent correction will be needed in the make_fcpg() function based on the values
+    in the outNoDataAccum raster.
 
-    If some of the output file locations for handling no data values aren’t supplied or “no data” values aren’t present in the parameter grid, it will simply accumulate the parameter grid. If “no data” values are present, this will result in them being propagated downstream.
-
+    If some of the output file locations for handling no data values aren’t supplied or “no data” values aren’t present
+    in the parameter grid, it will simply accumulate the parameter grid. If “no data” values are present, this will
+    result in them being propagated downstream.
     """
 
     if not os.path.isfile(paramRast):
@@ -994,7 +1000,7 @@ def accumulateParam_batch(paramRasts, fdr, outWorkspace, cores=1, appStr="accum"
     ----------
     paramRasts : list
         List of input parameter raster paths to accumulate along the supplied fdr.
-    fdr : str
+    fdr : strN
         Path to the flow direction raster.
     outWorkspace : str
         Path to the output directory for accumulation rasters.
