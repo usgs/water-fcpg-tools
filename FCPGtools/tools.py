@@ -510,7 +510,9 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
     outParam : str
         Path to the output file for the resampled parameter raster.
     resampleMethod : str (optional)
-        resampling method, either 'bilinear' or 'near' for nearest neighbor. Bilinear should generally be used for continuous data sets such as precipitation while nearest neighbor should generally be used for categorical datasets such as land cover type. Defaults to bilinear.
+        resampling method, either 'bilinear' or 'near' for nearest neighbor. Bilinear should generally be used for
+        continuous data sets such as precipitation while nearest neighbor should generally be used for categorical
+         datasets such as land cover type. Defaults to bilinear.
     cores : int (optional)
         The number of cores to use. Defaults to 1.
     forceProj : bool (optional)
