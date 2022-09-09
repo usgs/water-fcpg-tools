@@ -1,15 +1,10 @@
-
 """A setuptools based setup module.
 See:
 https://packaging.python.org/en/latest/distributing.html
 https://github.com/pypa/sampleproject
 """
+
 import sys
-# test the python version
-major, minor = sys.version_info[0:2]
-if (major, minor) < (3,6):
-	sys.stderr.write('\nPython 3.6 or later is required for this package.\n')
-	sys.exit(1)
 
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
@@ -17,6 +12,13 @@ from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
 from os import path
+
+# test the python version
+major, minor = sys.version_info[0:2]
+if (major, minor) < (3,7):
+	sys.stderr.write('\nPython 3.7 or later is required for this package.\n')
+	sys.exit(1)
+
 
 # Get version from __init__.py
 from FCPGtools import __version__
@@ -44,5 +46,5 @@ setup(
 		"Development Status :: 5 - Production/Stable",
 		"License :: OSI Approved :: MIT License",
 	],
-	python_requires = '>=3.6',
+	python_requires = '>=3.7',
 	)
