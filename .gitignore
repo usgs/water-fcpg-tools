@@ -8,3 +8,5 @@ figures
 *.mxd
 *.csv
 test_output
+.vscode
+.idea
