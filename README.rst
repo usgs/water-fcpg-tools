@@ -22,7 +22,7 @@ Citation
 
 Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: https://doi.org/10.5066/P9W8UZ47.
 
-Version 1.0 (IP-112996) was approved on September 3, 2020.
+Version 1.1 was released in September, 2022.
 
 Issues
 ======
@@ -37,20 +37,47 @@ The documentation for this library is available at https://usgs.github.io/water-
 Dependencies
 ============
 
-Dependencies for this work are largely taken care of via the `Anaconda <https://www.anaconda.com/products/individual>`_ environment specified by the yml file; however, the tools do rely on `TauDEM <https://github.com/dtarb/TauDEM/tree/v5.3.8>`_ :cite:`TauDEM`, which needs to be installed and visible to your conda environment. Please install Anaconda Python 3 and TauDEM version 5.3.7 or greater prior to installing the Flow-Conditioned Parameter Grid Tools. You may also need to install Git.
+Dependencies for this work are best managed by the `conda <https://docs.conda.io/en/latest/>`_ package manager, with primary dependencies listed in the `FCPGtools_env.yml <https://code.usgs.gov/StreamStats/FCPGtools/-/raw/master/FCPGtools_env.yml>`_ environment file. 
+
+FCPGtools relies on `TauDEM <https://github.com/dtarb/TauDEM/tree/v5.3.8>`_ :cite:`TauDEM` as the terrain analysis engine. The `FCPGtools_env.yml` will install TauDEM v5.3.8 for Windows and Linux.  For Mac, TauDEM 5.3.7 or greater will need to be installed separately and be visible to your conda environment. 
 
 This library works best with GeoTIFF files; however, other GDAL-compatible geospatial raster format could also potentially be used. 
 
 Installation
 ============
 
-Download the FCPGtools environment file from `here <https://code.usgs.gov/StreamStats/FCPGtools/-/raw/master/FCPGtools_env.yml>`_. Then create an `Anaconda <https://www.anaconda.com/products/individual>`_ environment using the supplied :code:`FCPGtools_env.yml` file by calling :code:`conda env create -f FCPGtools_env.yml`. **Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.**
+FCPGtools is designed to work with Python 3.7, 3.8, and 3.9.
+
+To install, follow these three steps:
+
+1. Install the Anaconda Python Distribution or Miniconda
+---------
+We recommend installing the `latest release <https://docs.anaconda.com/anaconda/reference/release-notes/>`_ of `**Anaconda Individual Edition** <https://www.anaconda.com/distribution>`_, which includes conda, a complete Python (and R) data science stack, and the helpful Anaconda Navigator GUI.
+- Follow `Anaconda Installation <https://docs.anaconda.com/anaconda/install/>`_ documentation.
+
+A lighter-weight alternative is to install `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_.
+
+2. Clone or Download this FCPGtools repository
+---------
+Download the FCPGtools environment file from `here <https://code.usgs.gov/StreamStats/FCPGtools/-/raw/master/FCPGtools_env.yml>`_. 
+
+3. Create a Conda Environment
+---------
+Create an `conda <https://docs.conda.io/en/latest/>`_ environment using the supplied :code:`FCPGtools_env.yml` file by calling :code:`conda env create -f FCPGtools_env.yml`. **Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.**
 
 On a HPC system you may need to load the correct Python module before building the Anaconda environment. This might be done with :code:`module load python/anaconda3`.
 
-Upgrading
+4. Add your HSPsquared Path to Anaconda sites-packages
 ---------
-Periodically, updates and bug fixes will be made to this library. To update your installation re-run :code:`pip install git+https://github.com/usgs/water-fcpg-tools`.
+
+To have access to the FCPGtools modules in your Python environment, it is necessary to have a path to your copy of FCPGtools in Anaconda's :code:`sites-packages` directory (i.e. something like :code:`$HOME/path/to/anaconda/lib/pythonX.X/site-packages` or :code:`$HOME/path/to/anaconda/lib/site-packages` similar).
+
+- The easiest way to do this is to use the `conda develop`<https://docs.conda.io/projects/conda-build/en/latest/resources/commands/conda-develop.html`_ command in the console or terminal like this, replacing :code:`/path/to/module/` with the full file pathway to the local cloned HSPsquared repository:
+
+:code:`conda-develop /path/to/module/`
+
+You should now be able to run the Tutorials and create your own Jupyter Notebooks!
+
 
 Quick Start
 ===========
