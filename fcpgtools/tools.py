@@ -428,7 +428,8 @@ def make_fcpg(accumParam, fac, outRast, noDataRast=None, minAccum=None, ESRIFAC=
         corrAccum = corrAccum.astype(np.float32)  # Convert to 32 bit float
         corrAccum[accum == facNoData] = np.NaN  # fill with no data values where appropriate
         corrAccum[
-            corrAccum == 0] = np.NaN  # if corrected values are zero, they should be made into nodata so that a FCPG value is not computed for that location.
+            corrAccum == 0] = np.NaN  # if corrected values are zero, they should be made into nodata so that a
+        # FCPG value is not computed for that location.
 
         del accum
         gc.collect()
