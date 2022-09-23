@@ -48,7 +48,7 @@ Installation
 
 FCPGtools is designed to work with Python 3.7, 3.8, and 3.9.
 
-To install, follow these three steps:
+To install, follow these three steps to create a `conda <https://docs.conda.io/`_ environment and run as a developer:
 
 1. Install the Anaconda Python Distribution or Miniconda
 ---------
@@ -59,24 +59,26 @@ A lighter-weight alternative is to install `Miniconda <https://docs.conda.io/en/
 
 2. Clone or Download this FCPGtools repository
 ---------
-Download the FCPGtools environment file from `here <https://code.usgs.gov/StreamStats/FCPGtools/-/raw/master/FCPGtools_env.yml>`_. 
+From the `FCPGtools <https://code.usgs.gov/StreamStats/FCPGtools/>`_ GitLab page, download or clone this repository  using the  button on the near the upper right of the repo's landing page.
 
-3. Create a Conda Environment
+To most easily receive updates, we recommend cloning the repo using a git client, such as GitHub Desktop (which works on GitLab repos via the "Clone with HTTPS" function). 
+
+3. Create the FCPGtools Conda Environment
 ---------
-Create an `conda <https://docs.conda.io/en/latest/>`_ environment using the supplied :code:`FCPGtools_env.yml` file by calling :code:`conda env create -f FCPGtools_env.yml`. **Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.**
+Create an `conda <https://docs.conda.io/en/latest/>`_ environment using the supplied :code:`FCPGtools_env.yml` file by calling :code:`conda env create -f FCPGtools_env.yml`. 
+**Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.**
 
-On a HPC system you may need to load the correct Python module before building the Anaconda environment. This might be done with :code:`module load python/anaconda3`.
-
-4. Add your HSPsquared Path to Anaconda sites-packages
+4. Add your FCPGtools Path to Anaconda sites-packages
 ---------
-
-To have access to the FCPGtools modules in your Python environment, it is necessary to have a path to your copy of FCPGtools in Anaconda's :code:`sites-packages` directory (i.e. something like :code:`$HOME/path/to/anaconda/lib/pythonX.X/site-packages` or :code:`$HOME/path/to/anaconda/lib/site-packages` similar).
+To have access to the FCPGtools modules in your Python environment, it is necessary to have a path to your copy of FCPGtools in the :code:`sites-packages` directory of your conda environment (i.e. something like :code:`$HOME/path/to/anaconda/lib/pythonX.X/site-packages` or :code:`$HOME/path/to/anaconda/lib/site-packages` similar).
 
 - The easiest way to do this is to use the `conda develop`<https://docs.conda.io/projects/conda-build/en/latest/resources/commands/conda-develop.html`_ command in the console or terminal like this, replacing :code:`/path/to/module/` with the full file pathway to the local cloned HSPsquared repository:
 
 :code:`conda-develop /path/to/module/`
 
 You should now be able to run the Tutorials and create your own Jupyter Notebooks!
+
+If you cloned the repo, you will be able to switch branches to run different versions.
 
 
 Quick Start
