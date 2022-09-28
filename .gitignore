@@ -1,10 +1,42 @@
-data
-*.err
-*.log
-.ipynb_checkpoints
+# *** OS stuff ***
+## Windows
+.~*
+~$*
+
+## MacOS
+.DS_Store
+*alias
+*.webloc
+
+# Editors & IDEs
+.vscode
+.vs
+.idea
+.spyderproject
+.spyproject
+
+# Distribution / packaging
+.Python
+build/
+
+
+# Byte-compiled / optimized / DLL files
 *.pyc
-scratch
-figures
-*.mxd
-*.csv
-test_output
+
+# Unit test / coverage reports
+
+
+# Sphinx documentation
+docs/_build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+.virtual_documents/
+
+
+# Temporary files
+examples/temp/
+
+# Test output data files
+test_output/
+
