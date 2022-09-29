@@ -1031,7 +1031,8 @@ def resampleParam_batch(inParams: str, fdr: str, outWorkspace: str,
 
 
 def accumulateParam_batch(paramRasts: str, fdr: str, outWorkspace: str,
-                          cores: int = 1, appStr: str = "accum", mpiCall: str = 'mpiexec', mpiArg: str = '-n') -> list:
+                          cores: int = 1, appStr: str = "accum", mpiCall: str = 'mpiexec',
+                          mpiArg: str = '-n', verbose: bool = False) -> list:
     """
     Batch version of :py:func:`accumulateParam`.
 
@@ -1073,7 +1074,7 @@ def accumulateParam_batch(paramRasts: str, fdr: str, outWorkspace: str,
         nodataAccumPath = os.path.join(outWorkspace, baseName + "nodataaccum" + ext)
 
         accumulateParam(param, fdr, outPath, outNoDataRast=nodataPath, outNoDataAccum=nodataAccumPath, cores=cores,
-                        mpiCall=mpiCall, mpiArg=mpiArg)  # Run the flow accumulation function for the parameter raster
+                        mpiCall=mpiCall, mpiArg=mpiArg, verbose=verbose)  # Run the flow accumulation function for the parameter raster
 
     return fileList
 
