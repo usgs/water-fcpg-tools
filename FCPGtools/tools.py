@@ -237,6 +237,7 @@ def accumulateParam(paramRast: str, fdr: str, accumRast: str,
     If some of the output file locations for handling no data values aren’t supplied or “no data” values aren’t present
     in the parameter grid, it will simply accumulate the parameter grid. If “no data” values are present, this will
     result in them being propagated downstream.
+    Version 5.3.8 of TauDEM uses the integer -1 as the no data value. This is hard coded into TauDEM and can cause issues when accumulating integer-type parameter grid where -1 is a valid value.
     """
 
     if not os.path.isfile(paramRast):
