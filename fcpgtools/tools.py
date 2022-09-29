@@ -631,14 +631,18 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
 # Tools for decayed accumulation CPGs
 
 def makeDecayGrid(d2strm, k, outRast, verbose=False):
-    """Create a decay raster where grid cell values are computed as the inverse number of grid cells, :code:`np.exp((-1 * decayGrid * xsize) / (xsize ** k))`, where decayGrid is the distance from the d2strm raster from each grid cell to the nearest stream, k is a constant applied to the cell size values, and dx is the cell size of the raster, pulled from the d2strm raster directly.
+    """Create a decay raster where grid cell values are computed as the inverse number of grid cells,
+    :code:`np.exp((-1 * decayGrid * xsize) / (xsize ** k))`, where decayGrid is the distance from the d2strm
+    raster from each grid cell to the nearest stream, k is a constant applied to the cell size values,
+    and dx is the cell size of the raster, pulled from the d2strm raster directly.
 
     Parameters
     ----------
     d2strm : str
         Path to raster of flow distances from each grid cell to the nearest stream.
     k : float
-        Dimensionless constant applied to decay factor denominator. Set k to 2 for "moderate" decay; greater than 2 for slower decay; or less than 2 for faster decay.
+        Dimensionless constant applied to decay factor denominator.
+        Set k to 2 for "moderate" decay; greater than 2 for slower decay; or less than 2 for faster decay.
     outRast : str
         Output file path for decay grid.
     verbose : bool (optional)
@@ -651,7 +655,9 @@ def makeDecayGrid(d2strm, k, outRast, verbose=False):
 
     Notes
     -----
-    The decay equation in this tool has changed between version 1.0.2 and version 1.0.3. The new equation is :code:`np.exp((-1 * decayGrid * xsize) / (xsize ** k))`. The original equation was :code:`decayGrid = xsize/(decayGrid + k*xsize)`.
+    The decay equation in this tool has changed between version 1.0.2 and version 1.0.3.
+    The new equation is :code:`np.exp((-1 * decayGrid * xsize) / (xsize ** k))`.
+    The original equation was :code:`decayGrid = xsize/(decayGrid + k*xsize)`.
     """
     if not os.path.isfile(d2strm):
         print("Error - Stream distance raster file is missing!")
@@ -770,7 +776,8 @@ def decayAccum(ang, mult, outRast, paramRast=None, cores=1, mpiCall='mpiexec', m
     ang : str
         Path to flow angle raster from the TauDEM D-Infinity flow direction tool.
     mult : str
-        Path to raster of multiplier values applied to upstream accumulations, 1 corresponds to no decay, 0 corresponds to complete decay.
+        Path to raster of multiplier values applied to upstream accumulations,
+        1 corresponds to no decay, 0 corresponds to complete decay.
     outRast : str
         Path to output raster for decayed accumulation raster.
     paramRast : str (optional)
