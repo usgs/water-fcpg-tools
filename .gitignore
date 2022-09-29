@@ -40,3 +40,4 @@ examples/temp/
 # Test output data files
 test_output/
 
+test_data/validation_upstream_fdr.tif
