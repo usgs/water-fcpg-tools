@@ -2,8 +2,8 @@
   {
     "name": "FCPGtools",
     "organization": "U.S. Geological Survey",
-    "description": "Tools to generate flow-conditioned parameter grids",
-    "version": "1.0.9",
+    "description": "Tools to make Flow-Conditioned Parameter Grids (FCPG)",
+    "version": "1.1.0",
     "status": "Production",
 
     "permissions": {
@@ -27,6 +27,7 @@
     "tags": [
       "hydrology",
       "raster",
+      "watershed",
       "flow statistics",
       "hydrologic modeling",
       "machine learning"
@@ -43,7 +44,7 @@
     },
 
     "date": {
-      "metadataLastUpdated": "2020-09-04"
+      "metadataLastUpdated": "2022-09-23"
     }
   }
 ]

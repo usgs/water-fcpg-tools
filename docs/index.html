@@ -1,40 +1,48 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Welcome to Flow-Conditioned Parameter Grid Tools’ documentation! &mdash; Flow-Conditioned Parameter Grid Tools 1.0.3 documentation</title>
+  <title>Welcome to Flow-Conditioned Parameter Grid Tools’ documentation! &mdash; Flow-Conditioned Parameter Grid Tools 1.1 documentation</title>
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Cookbook" href="cookbook.html" /> 
@@ -61,7 +69,7 @@
             
             
               <div class="version">
-                1.0.3
+                1.1
               </div>
             
           
@@ -78,6 +86,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -85,7 +94,7 @@
               
             
             
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
@@ -96,6 +105,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -130,18 +140,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
       <li>Welcome to Flow-Conditioned Parameter Grid Tools’ documentation!</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -156,76 +168,139 @@
            <div itemprop="articleBody">
             
   <section id="welcome-to-flow-conditioned-parameter-grid-tools-documentation">
-<h1>Welcome to Flow-Conditioned Parameter Grid Tools’ documentation!<a class="headerlink" href="#welcome-to-flow-conditioned-parameter-grid-tools-documentation" title="Permalink to this headline">¶</a></h1>
+<h1>Welcome to Flow-Conditioned Parameter Grid Tools’ documentation!<a class="headerlink" href="#welcome-to-flow-conditioned-parameter-grid-tools-documentation" title="Permalink to this heading">¶</a></h1>
 <p>The Flow-Conditioned Parameter Grid (FCPG) Tools are a Python 3 library to make FCPGs for either two-digit Hydrologic Unit Code (HUC2) regions, four-digit Hydrologic Unit Code (HUC4) regions, or other geospatial tiling schemes. These tools can be used in a Linux-based high performance computing (HPC) environment or locally on your system.</p>
-<figure class="align-default" id="id3">
+<figure class="align-default" id="id4">
 <a class="reference internal image-reference" href="_images/CPG_tool_structure.png"><img alt="Conceptual FCPG process flowchart." src="_images/CPG_tool_structure.png" style="width: 640.0px; height: 360.0px;" /></a>
 <figcaption>
-<p><span class="caption-text">Flowchart of FCPG processing work flow.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">Flowchart of FCPG processing work flow.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
 </figcaption>
 </figure>
 </section>
 <section id="use">
-<h1>Use<a class="headerlink" href="#use" title="Permalink to this headline">¶</a></h1>
+<h1>Use<a class="headerlink" href="#use" title="Permalink to this heading">¶</a></h1>
 <p>The FCPG Tools are part of the public domain because they are produced by employees of the U.S. Government. However, if you use these tools I ask that you please let me know of any projects or publications that arise from their use. This allows me to justify the upkeep of this package and add citations to <a class="reference internal" href="publications.html#pubs-label"><span class="std std-ref">Publications and Projects</span></a>.</p>
 <p>Please cite the latest release of the code in any work that uses these tools (see the Citation Section below). If you receive support from me on your project or publication using the tools I ask that you acknowledge that support via a note in the acknowledgments or co-authorship.</p>
 <p>Please use this <a class="reference external" href="https://code.usgs.gov/StreamStats/FCPGtools/-/issues/new?issuable_template=new_project">Issues Form</a> to alert me of new projects or publications using the tools.</p>
 </section>
 <section id="citation">
-<h1>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h1>
+<h1>Citation<a class="headerlink" href="#citation" title="Permalink to this heading">¶</a></h1>
 <p>Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: <a class="reference external" href="https://doi.org/10.5066/P9W8UZ47">https://doi.org/10.5066/P9W8UZ47</a>.</p>
+<p>Version 1.1 was released in September, 2022.</p>
 <p>Version 1.0 (IP-112996) was approved on September 3, 2020.</p>
 </section>
 <section id="issues">
-<h1>Issues<a class="headerlink" href="#issues" title="Permalink to this headline">¶</a></h1>
+<h1>Issues<a class="headerlink" href="#issues" title="Permalink to this heading">¶</a></h1>
 <p>Please log any issues with the repository here using <a class="reference external" href="https://code.usgs.gov/StreamStats/FCPGtools/-/issues/new?issuable_template=bug">This Form</a>.</p>
 </section>
 <section id="documentation">
-<h1>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h1>
+<h1>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading">¶</a></h1>
 <p>The documentation for this library is available at <a class="reference external" href="https://usgs.github.io/water-fcpg-tools/">https://usgs.github.io/water-fcpg-tools/</a>.</p>
 </section>
 <section id="dependencies">
-<h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h1>
-<p>Dependencies for this work are largely taken care of via the <a class="reference external" href="https://www.anaconda.com/products/individual">Anaconda</a> environment specified by the yml file; however, the tools do rely on <a class="reference external" href="https://github.com/dtarb/TauDEM/tree/v5.3.8">TauDEM</a> <a class="bibtex reference internal" href="z_references.html#taudem" id="id1">[1]</a>, which needs to be installed and visible to your conda environment. Please install Anaconda Python 3 and TauDEM version 5.3.7 or greater prior to installing the Flow-Conditioned Parameter Grid Tools. You may also need to install Git.</p>
+<h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h1>
+<p>Dependencies for this work are best managed by the <a class="reference external" href="https://docs.conda.io/en/latest/">conda</a> package manager, with primary dependencies listed in the <a class="reference external" href="https://code.usgs.gov/StreamStats/FCPGtools/-/raw/master/FCPGtools_env.yml">FCPGtools_env.yml</a> environment file.</p>
+<p>FCPGtools relies on <a class="reference external" href="https://github.com/dtarb/TauDEM/tree/v5.3.8">TauDEM</a> <span id="id1">[<a class="reference internal" href="z_references.html#id2" title="David Tarboton. TauDEM Version 5.3.8. https://github.com/dtarb/TauDEM/tree/v5.3.8, 2016. Accessed: 2020-05-19.">1</a>]</span> as the terrain analysis engine. The <cite>FCPGtools_env.yml</cite> will install TauDEM v5.3.8 for Windows and Linux.  For Mac, TauDEM 5.3.7 or greater will need to be installed separately and be visible to your conda environment.</p>
 <p>This library works best with GeoTIFF files; however, other GDAL-compatible geospatial raster format could also potentially be used.</p>
 </section>
 <section id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>Download the FCPGtools environment file from <a class="reference external" href="https://code.usgs.gov/StreamStats/FCPGtools/-/raw/master/FCPGtools_env.yml">here</a>. Then create an <a class="reference external" href="https://www.anaconda.com/products/individual">Anaconda</a> environment using the supplied <code class="code docutils literal notranslate"><span class="pre">FCPGtools_env.yml</span></code> file by calling <code class="code docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span> <span class="pre">-f</span> <span class="pre">FCPGtools_env.yml</span></code>. <strong>Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.</strong></p>
-<p>On a HPC system you may need to load the correct Python module before building the Anaconda environment. This might be done with <code class="code docutils literal notranslate"><span class="pre">module</span> <span class="pre">load</span> <span class="pre">python/anaconda3</span></code>.</p>
-<section id="upgrading">
-<h2>Upgrading<a class="headerlink" href="#upgrading" title="Permalink to this headline">¶</a></h2>
-<p>Periodically, updates and bug fixes will be made to this library. To update your installation re-run <code class="code docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/usgs/water-fcpg-tools</span></code>.</p>
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h1>
+<p>FCPGtools is designed to work with Python 3.7, 3.8, and 3.9.</p>
+<p>To install, follow these three steps to create a <a class="reference external" href="https://docs.conda.io/">conda</a> environment and run as a developer:</p>
+<section id="install-the-anaconda-python-distribution-or-miniconda">
+<h2>1. Install the Anaconda Python Distribution or Miniconda<a class="headerlink" href="#install-the-anaconda-python-distribution-or-miniconda" title="Permalink to this heading">¶</a></h2>
+<p>We recommend installing the <a class="reference external" href="https://docs.anaconda.com/anaconda/reference/release-notes/">latest release</a> of <a class="reference external" href="https://www.anaconda.com/distribution">**Anaconda Individual Edition**</a>, which includes conda, a complete Python (and R) data science stack, and the helpful Anaconda Navigator GUI.
+- Follow <a class="reference external" href="https://docs.anaconda.com/anaconda/install/">Anaconda Installation</a> documentation.</p>
+<p>A lighter-weight alternative is to install <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p>
+</section>
+<section id="clone-or-download-this-fcpgtools-repository">
+<h2>2. Clone or Download this FCPGtools repository<a class="headerlink" href="#clone-or-download-this-fcpgtools-repository" title="Permalink to this heading">¶</a></h2>
+<p>From the <a class="reference external" href="https://code.usgs.gov/StreamStats/FCPGtools/">FCPGtools</a> GitLab page, download or clone this repository  using the  button on the near the upper right of the repo’s landing page.</p>
+<p>To most easily receive updates, we recommend cloning the repo using a git client, such as GitHub Desktop (which works on GitLab repos via the “Clone with HTTPS” function).</p>
+</section>
+<section id="create-the-fcpgtools-conda-environment">
+<h2>3. Create the FCPGtools Conda Environment<a class="headerlink" href="#create-the-fcpgtools-conda-environment" title="Permalink to this heading">¶</a></h2>
+<p>Create an <a class="reference external" href="https://docs.conda.io/en/latest/">conda</a> environment using the supplied <code class="code docutils literal notranslate"><span class="pre">FCPGtools_env.yml</span></code> file by calling <code class="code docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span> <span class="pre">-f</span> <span class="pre">FCPGtools_env.yml</span></code>.
+<strong>Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.</strong></p>
+</section>
+<section id="add-your-fcpgtools-path-to-anaconda-sites-packages">
+<h2>4. Add your FCPGtools Path to Anaconda sites-packages<a class="headerlink" href="#add-your-fcpgtools-path-to-anaconda-sites-packages" title="Permalink to this heading">¶</a></h2>
+<p>To have access to the FCPGtools modules in your Python environment, it is necessary to have a path to your copy of FCPGtools in the <code class="code docutils literal notranslate"><span class="pre">sites-packages</span></code> directory of your conda environment (i.e. something like <code class="code docutils literal notranslate"><span class="pre">$HOME/path/to/anaconda/lib/pythonX.X/site-packages</span></code> or <code class="code docutils literal notranslate"><span class="pre">$HOME/path/to/anaconda/lib/site-packages</span></code> similar).</p>
+<ul class="simple">
+<li><p>The easiest way to do this is to use the <a class="reference external" href="https://docs.conda.io/projects/conda-build/en/latest/resources/commands/conda-develop.html">conda develop</a> command in the console or terminal like this, replacing <code class="code docutils literal notranslate"><span class="pre">/path/to/module/</span></code> with the full file pathway to the local cloned FCPGtools repository:</p></li>
+</ul>
+<p><code class="code docutils literal notranslate"><span class="pre">conda-develop</span> <span class="pre">/path/to/module/</span></code></p>
+<p>You should now be able to run the Tutorials and create your own Jupyter Notebooks!</p>
+<p>If you cloned the repo, you will be able to switch branches to run different versions.</p>
 </section>
 </section>
 <section id="quick-start">
-<h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
+<h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading">¶</a></h1>
 <p>Load the FCPGtools using <code class="code docutils literal notranslate"><span class="pre">import</span> <span class="pre">FCPGtools</span> <span class="pre">as</span> <span class="pre">fcpg</span></code>.</p>
 <p>Please refer to the <a class="reference internal" href="cookbook.html#cookbook-label"><span class="std std-ref">Cookbook</span></a> and <a class="reference internal" href="functions.html#function-label"><span class="std std-ref">Function Documentation</span></a> for examples and usage.</p>
 </section>
 <section id="disclaimers">
-<h1>Disclaimers<a class="headerlink" href="#disclaimers" title="Permalink to this headline">¶</a></h1>
+<h1>Disclaimers<a class="headerlink" href="#disclaimers" title="Permalink to this heading">¶</a></h1>
 <p>Any use of trade, firm, or product names is for descriptive purposes only and does not imply endorsement by the U.S. Government.</p>
 <p>Please see DISCLAIMER.md in the project repository.</p>
 </section>
 <section id="license">
-<h1>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h1>
+<h1>License<a class="headerlink" href="#license" title="Permalink to this heading">¶</a></h1>
 <p>Please see LICENSE.md in the project repository.</p>
 <div class="toctree-wrapper compound">
-<p><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="cookbook.html#input-data">Input Data</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.ESRIDrainDir"><code class="docutils literal notranslate"><span class="pre">ESRIDrainDir()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.ExtremeUpslopeValue"><code class="docutils literal notranslate"><span class="pre">ExtremeUpslopeValue()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.FindDownstreamCellTauDir"><code class="docutils literal notranslate"><span class="pre">FindDownstreamCellTauDir()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.accumulateParam"><code class="docutils literal notranslate"><span class="pre">accumulateParam()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.accumulateParam_batch"><code class="docutils literal notranslate"><span class="pre">accumulateParam_batch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.adjustFAC"><code class="docutils literal notranslate"><span class="pre">adjustFAC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.adjustParam"><code class="docutils literal notranslate"><span class="pre">adjustParam()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.applyMult"><code class="docutils literal notranslate"><span class="pre">applyMult()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.binarizeCat"><code class="docutils literal notranslate"><span class="pre">binarizeCat()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.cat2bin"><code class="docutils literal notranslate"><span class="pre">cat2bin()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.changeNoData"><code class="docutils literal notranslate"><span class="pre">changeNoData()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.createUpdateDict"><code class="docutils literal notranslate"><span class="pre">createUpdateDict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.d8todinfinity"><code class="docutils literal notranslate"><span class="pre">d8todinfinity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.decayAccum"><code class="docutils literal notranslate"><span class="pre">decayAccum()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.dist2stream"><code class="docutils literal notranslate"><span class="pre">dist2stream()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.findLastFACFD"><code class="docutils literal notranslate"><span class="pre">findLastFACFD()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.findPourPoints"><code class="docutils literal notranslate"><span class="pre">findPourPoints()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.getFeatures"><code class="docutils literal notranslate"><span class="pre">getFeatures()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.getHUC4"><code class="docutils literal notranslate"><span class="pre">getHUC4()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.loadJSON"><code class="docutils literal notranslate"><span class="pre">loadJSON()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.loadRaster"><code class="docutils literal notranslate"><span class="pre">loadRaster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.makeDecayGrid"><code class="docutils literal notranslate"><span class="pre">makeDecayGrid()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.makeFACweight"><code class="docutils literal notranslate"><span class="pre">makeFACweight()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.makePourBasins"><code class="docutils literal notranslate"><span class="pre">makePourBasins()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.makeStreams"><code class="docutils literal notranslate"><span class="pre">makeStreams()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.make_fcpg"><code class="docutils literal notranslate"><span class="pre">make_fcpg()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.make_fcpg_batch"><code class="docutils literal notranslate"><span class="pre">make_fcpg_batch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.maskStreams"><code class="docutils literal notranslate"><span class="pre">maskStreams()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.parsebool"><code class="docutils literal notranslate"><span class="pre">parsebool()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.queryPoint"><code class="docutils literal notranslate"><span class="pre">queryPoint()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.resampleParam"><code class="docutils literal notranslate"><span class="pre">resampleParam()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.resampleParam_batch"><code class="docutils literal notranslate"><span class="pre">resampleParam_batch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.saveJSON"><code class="docutils literal notranslate"><span class="pre">saveJSON()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.tauDrainDir"><code class="docutils literal notranslate"><span class="pre">tauDrainDir()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.tauFlowAccum"><code class="docutils literal notranslate"><span class="pre">tauFlowAccum()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.updateDict"><code class="docutils literal notranslate"><span class="pre">updateDict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#tools.updateRaster"><code class="docutils literal notranslate"><span class="pre">updateRaster()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="publications.html">Publications and Projects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
 </ul>
 </div>
 </section>
 <section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
@@ -238,27 +313,28 @@
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="cookbook.html" class="btn btn-neutral float-right" title="Cookbook" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
+        <a href="cookbook.html" class="btn btn-neutral float-right" title="Cookbook" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea
+        &#169; Copyright Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -266,7 +342,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
