@@ -30,7 +30,7 @@ dependencies:
   #- sphinx
   #- sphinxcontrib-bibtex
   #- numpydoc
-  #- sphinx-rtd-theme
+  #- sphinx_rtd_theme
 
   # package management
   - conda
