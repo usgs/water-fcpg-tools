@@ -22,8 +22,11 @@ Citation
 
 Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: https://doi.org/10.5066/P9W8UZ47.
 
-Version 1.0 (IP-112996) was approved on September 3, 2020.
 Version 1.1 was released in September, 2022.
+
+Version 1.0 (IP-112996) was approved on September 3, 2020.
+
+
 
 Issues
 ======
@@ -49,31 +52,31 @@ Installation
 
 FCPGtools is designed to work with Python 3.7, 3.8, and 3.9.
 
-To install, follow these three steps to create a `conda <https://docs.conda.io/`_ environment and run as a developer:
+To install, follow these three steps to create a `conda <https://docs.conda.io/>`_ environment and run as a developer:
 
 1. Install the Anaconda Python Distribution or Miniconda
----------
+--------------------------------------------------------
 We recommend installing the `latest release <https://docs.anaconda.com/anaconda/reference/release-notes/>`_ of `**Anaconda Individual Edition** <https://www.anaconda.com/distribution>`_, which includes conda, a complete Python (and R) data science stack, and the helpful Anaconda Navigator GUI.
 - Follow `Anaconda Installation <https://docs.anaconda.com/anaconda/install/>`_ documentation.
 
 A lighter-weight alternative is to install `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_.
 
 2. Clone or Download this FCPGtools repository
----------
+----------------------------------------------
 From the `FCPGtools <https://code.usgs.gov/StreamStats/FCPGtools/>`_ GitLab page, download or clone this repository  using the  button on the near the upper right of the repo's landing page.
 
 To most easily receive updates, we recommend cloning the repo using a git client, such as GitHub Desktop (which works on GitLab repos via the "Clone with HTTPS" function). 
 
 3. Create the FCPGtools Conda Environment
----------
+-----------------------------------------
 Create an `conda <https://docs.conda.io/en/latest/>`_ environment using the supplied :code:`FCPGtools_env.yml` file by calling :code:`conda env create -f FCPGtools_env.yml`. 
 **Activate the FCPG environment using the instructions printed by conda after the environment is created successfully.**
 
 4. Add your FCPGtools Path to Anaconda sites-packages
----------
+-----------------------------------------------------
 To have access to the FCPGtools modules in your Python environment, it is necessary to have a path to your copy of FCPGtools in the :code:`sites-packages` directory of your conda environment (i.e. something like :code:`$HOME/path/to/anaconda/lib/pythonX.X/site-packages` or :code:`$HOME/path/to/anaconda/lib/site-packages` similar).
 
-- The easiest way to do this is to use the `conda develop`<https://docs.conda.io/projects/conda-build/en/latest/resources/commands/conda-develop.html`_ command in the console or terminal like this, replacing :code:`/path/to/module/` with the full file pathway to the local cloned FCPGtools repository:
+- The easiest way to do this is to use the `conda develop <https://docs.conda.io/projects/conda-build/en/latest/resources/commands/conda-develop.html>`_ command in the console or terminal like this, replacing :code:`/path/to/module/` with the full file pathway to the local cloned FCPGtools repository:
 
 :code:`conda-develop /path/to/module/`
 

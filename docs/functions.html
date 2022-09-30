@@ -1,40 +1,48 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Function Documentation &mdash; Flow-Conditioned Parameter Grid Tools 1.0.3 documentation</title>
+  <title>Function Documentation &mdash; Flow-Conditioned Parameter Grid Tools 1.1 documentation</title>
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Publications and Projects" href="publications.html" />
@@ -62,7 +70,7 @@
             
             
               <div class="version">
-                1.0.3
+                1.1
               </div>
             
           
@@ -79,6 +87,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -86,10 +95,49 @@
               
             
             
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Function Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Function Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tools.ESRIDrainDir"><code class="docutils literal notranslate"><span class="pre">ESRIDrainDir()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.ExtremeUpslopeValue"><code class="docutils literal notranslate"><span class="pre">ExtremeUpslopeValue()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.FindDownstreamCellTauDir"><code class="docutils literal notranslate"><span class="pre">FindDownstreamCellTauDir()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.accumulateParam"><code class="docutils literal notranslate"><span class="pre">accumulateParam()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.accumulateParam_batch"><code class="docutils literal notranslate"><span class="pre">accumulateParam_batch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.adjustFAC"><code class="docutils literal notranslate"><span class="pre">adjustFAC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.adjustParam"><code class="docutils literal notranslate"><span class="pre">adjustParam()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.applyMult"><code class="docutils literal notranslate"><span class="pre">applyMult()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.binarizeCat"><code class="docutils literal notranslate"><span class="pre">binarizeCat()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.cat2bin"><code class="docutils literal notranslate"><span class="pre">cat2bin()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.changeNoData"><code class="docutils literal notranslate"><span class="pre">changeNoData()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.createUpdateDict"><code class="docutils literal notranslate"><span class="pre">createUpdateDict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.d8todinfinity"><code class="docutils literal notranslate"><span class="pre">d8todinfinity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.decayAccum"><code class="docutils literal notranslate"><span class="pre">decayAccum()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.dist2stream"><code class="docutils literal notranslate"><span class="pre">dist2stream()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.findLastFACFD"><code class="docutils literal notranslate"><span class="pre">findLastFACFD()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.findPourPoints"><code class="docutils literal notranslate"><span class="pre">findPourPoints()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.getFeatures"><code class="docutils literal notranslate"><span class="pre">getFeatures()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.getHUC4"><code class="docutils literal notranslate"><span class="pre">getHUC4()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.loadJSON"><code class="docutils literal notranslate"><span class="pre">loadJSON()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.loadRaster"><code class="docutils literal notranslate"><span class="pre">loadRaster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.makeDecayGrid"><code class="docutils literal notranslate"><span class="pre">makeDecayGrid()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.makeFACweight"><code class="docutils literal notranslate"><span class="pre">makeFACweight()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.makePourBasins"><code class="docutils literal notranslate"><span class="pre">makePourBasins()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.makeStreams"><code class="docutils literal notranslate"><span class="pre">makeStreams()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.make_fcpg"><code class="docutils literal notranslate"><span class="pre">make_fcpg()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.make_fcpg_batch"><code class="docutils literal notranslate"><span class="pre">make_fcpg_batch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.maskStreams"><code class="docutils literal notranslate"><span class="pre">maskStreams()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.parsebool"><code class="docutils literal notranslate"><span class="pre">parsebool()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.queryPoint"><code class="docutils literal notranslate"><span class="pre">queryPoint()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.resampleParam"><code class="docutils literal notranslate"><span class="pre">resampleParam()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.resampleParam_batch"><code class="docutils literal notranslate"><span class="pre">resampleParam_batch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.saveJSON"><code class="docutils literal notranslate"><span class="pre">saveJSON()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.tauDrainDir"><code class="docutils literal notranslate"><span class="pre">tauDrainDir()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.tauFlowAccum"><code class="docutils literal notranslate"><span class="pre">tauFlowAccum()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.updateDict"><code class="docutils literal notranslate"><span class="pre">updateDict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools.updateRaster"><code class="docutils literal notranslate"><span class="pre">updateRaster()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="publications.html">Publications and Projects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
 </ul>
@@ -97,6 +145,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -131,18 +180,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Function Documentation</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/functions.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -157,13 +208,44 @@
            <div itemprop="articleBody">
             
   <section id="module-tools">
-<span id="function-documentation"></span><span id="function-label"></span><h1>Function Documentation<a class="headerlink" href="#module-tools" title="Permalink to this headline">¶</a></h1>
+<span id="function-documentation"></span><span id="function-label"></span><h1>Function Documentation<a class="headerlink" href="#module-tools" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
-<dt id="tools.ExtremeUpslopeValue">
-<code class="sig-name descname">ExtremeUpslopeValue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">param</span></em>, <em class="sig-param"><span class="n">output</span></em>, <em class="sig-param"><span class="n">accum_type</span><span class="o">=</span><span class="default_value">'MAX'</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">fac</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">thresh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#ExtremeUpslopeValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.ExtremeUpslopeValue" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper for the TauDEM D8 Extreme Upslope Value function <a class="bibtex reference internal" href="z_references.html#taudem" id="id1">[1]</a>.</p>
+<dt class="sig sig-object py" id="tools.ESRIDrainDir">
+<span class="sig-name descname"><span class="pre">ESRIDrainDir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updateDict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#ESRIDrainDir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.ESRIDrainDir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reclassifies TauDEM flow directions into ESRI flow directions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>inRast</strong><span class="classifier">str</span></dt><dd><p>Path to a raster encoded with TauDEM flow direction values.</p>
+</dd>
+<dt><strong>outRast</strong><span class="classifier">str</span></dt><dd><p>Path to output a raster with flow directions encoded for ESRI. File will be overwritten if it already exists.</p>
+</dd>
+<dt><strong>band</strong><span class="classifier">int (optional)</span></dt><dd><p>Band to read the flow direction grid from if inRast is multiband, defaults to 1.</p>
+</dd>
+<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><dl class="simple">
+<dt>Dictionary of Rasterio raster options used to create outRast.</dt><dd><p>Defaults have been supplied, but may not work in all situations and input file formats.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool (optional)</span></dt><dd><p>Print output, defaults to False.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>outRast</strong><span class="classifier">raster</span></dt><dd><p>Reclassified flow direction raster at the path specified above.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tools.ExtremeUpslopeValue">
+<span class="sig-name descname"><span class="pre">ExtremeUpslopeValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'MAX'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpiCall</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mpiexec'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpiArg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#ExtremeUpslopeValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.ExtremeUpslopeValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for the TauDEM D8 Extreme Upslope Value function <span id="id1">[<a class="reference internal" href="z_references.html#id2" title="David Tarboton. TauDEM Version 5.3.8. https://github.com/dtarb/TauDEM/tree/v5.3.8, 2016. Accessed: 2020-05-19.">1</a>]</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>fdr</strong><span class="classifier">str</span></dt><dd><p>Path to a flow direction grid in TauDEM format.</p>
 </dd>
@@ -187,7 +269,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>output</strong><span class="classifier">raster</span></dt><dd><p>Raster of either the maximum or minumum upslope value of the parameter grid supplied to the function.</p>
 </dd>
@@ -197,11 +279,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.FindDownstreamCellTauDir">
-<code class="sig-name descname">FindDownstreamCellTauDir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">w</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#FindDownstreamCellTauDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.FindDownstreamCellTauDir" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.FindDownstreamCellTauDir">
+<span class="sig-name descname"><span class="pre">FindDownstreamCellTauDir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/tools.html#FindDownstreamCellTauDir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.FindDownstreamCellTauDir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find downstream cell given the flow direction of a reference cell using TauDEM flow directions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>d</strong><span class="classifier">int</span></dt><dd><p>Flow direction of the reference cell.</p>
 </dd>
@@ -213,7 +295,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>x</strong><span class="classifier">float</span></dt><dd><p>Horizontal coordinate of the downstream cell.</p>
 </dd>
@@ -225,11 +307,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.accumulateParam">
-<code class="sig-name descname">accumulateParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paramRast</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">accumRast</span></em>, <em class="sig-param"><span class="n">outNoDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outNoDataAccum</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zeroNoDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#accumulateParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.accumulateParam" title="Permalink to this definition">¶</a></dt>
-<dd><p>Accumulate a parameter grid using TauDEM AreaD8 <a class="bibtex reference internal" href="z_references.html#taudem" id="id2">[1]</a>.</p>
+<dt class="sig sig-object py" id="tools.accumulateParam">
+<span class="sig-name descname"><span class="pre">accumulateParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paramRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accumRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outNoDataRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outNoDataAccum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeroNoDataRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpiCall</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mpiexec'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpiArg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#accumulateParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.accumulateParam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accumulate a parameter grid using TauDEM AreaD8 <span id="id2">[<a class="reference internal" href="z_references.html#id2" title="David Tarboton. TauDEM Version 5.3.8. https://github.com/dtarb/TauDEM/tree/v5.3.8, 2016. Accessed: 2020-05-19.">1</a>]</span>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>paramRast</strong><span class="classifier">str</span></dt><dd><p>Raster of parameter values to accumulate; this file is modified by the function.</p>
 </dd>
@@ -253,7 +335,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>accumRast</strong><span class="classifier">raster</span></dt><dd><p>Raster of accumulated parameter values.</p>
 </dd>
@@ -265,16 +347,23 @@
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied and there are “no data” values in the basin this function will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast. This function will then save a raster with all no data values set to one and other values set to zero (outNoDataRast) and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the zeroNoDataRast, and a subsequent correction will be needed in the make_fcpg() function based on the values in the outNoDataAccum raster.</p>
-<p>If some of the output file locations for handling no data values aren’t supplied or “no data” values aren’t present in the parameter grid, it will simply accumulate the parameter grid. If “no data” values are present, this will result in them being propagated downstream.</p>
+<p>If outNoDataRast, outNoDataAccum, and zeroNoDataRast inputs are all supplied and there are “no data” values in the
+basin this function will set any “no data” values in the basin to zero and save that raster as zeroNoDataRast.
+This function will then save a raster with all no data values set to one and other values set to zero (outNoDataRast)
+and use tauDEM to accumulate it (outNoDataAccum). It will then accumulate the parameter from the zeroNoDataRast,
+and a subsequent correction will be needed in the make_fcpg() function based on the values in the outNoDataAccum raster.</p>
+<p>If some of the output file locations for handling no data values aren’t supplied or “no data” values aren’t present
+in the parameter grid, it will simply accumulate the parameter grid. If “no data” values are present, this will
+result in them being propagated downstream.</p>
+<p>Version 5.3.8 of TauDEM uses the integer -1 as the no data value. This is hard coded into TauDEM and can cause issues when accumulating integer-type parameter grid where -1 is a valid value.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.accumulateParam_batch">
-<code class="sig-name descname">accumulateParam_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paramRasts</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">appStr</span><span class="o">=</span><span class="default_value">'accum'</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#accumulateParam_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.accumulateParam_batch" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.accumulateParam_batch">
+<span class="sig-name descname"><span class="pre">accumulateParam_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paramRasts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outWorkspace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">appStr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'accum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpiCall</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mpiexec'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpiArg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/tools.html#accumulateParam_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.accumulateParam_batch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Batch version of <a class="reference internal" href="#tools.accumulateParam" title="tools.accumulateParam"><code class="xref py py-func docutils literal notranslate"><span class="pre">accumulateParam()</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>paramRasts</strong><span class="classifier">list</span></dt><dd><p>List of input parameter raster paths to accumulate along the supplied fdr.</p>
 </dd>
@@ -284,7 +373,7 @@
 </dd>
 <dt><strong>cores</strong><span class="classifier">int (optional)</span></dt><dd><p>Number of cores to use. Defaults to 1.</p>
 </dd>
-<dt><strong>appStr :str (optional)</strong></dt><dd><p>String of text to append to accumulated parameter filenames. Defaults to “accum.”</p>
+<dt><strong>appStr</strong><span class="classifier">str (optional)</span></dt><dd><p>String of text to append to accumulated parameter filenames. Defaults to “accum.”</p>
 </dd>
 <dt><strong>mpiCall</strong><span class="classifier">str (optional)</span></dt><dd><p>MPI program to use to execute the program, defaults to mpiexec.</p>
 </dd>
@@ -294,7 +383,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>fileList</strong><span class="classifier">list</span></dt><dd><p>List of file paths to accumulated parameter rasters.</p>
 </dd>
@@ -304,11 +393,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.adjustFAC">
-<code class="sig-name descname">adjustFAC</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">facWeighttemplate</span></em>, <em class="sig-param"><span class="n">downstreamFACweightFl</span></em>, <em class="sig-param"><span class="n">updateDictFl</span></em>, <em class="sig-param"><span class="n">downstreamFDRFl</span></em>, <em class="sig-param"><span class="n">adjFACFl</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">scaleFactor</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">moveDownstream</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#adjustFAC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.adjustFAC" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.adjustFAC">
+<span class="sig-name descname"><span class="pre">adjustFAC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">facWeighttemplate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downstreamFACweightFl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updateDictFl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downstreamFDRFl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjFACFl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaleFactor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moveDownstream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#adjustFAC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.adjustFAC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate an updated flow accumulation grid (FAC) given an update dictionary produced by <a class="reference internal" href="#tools.createUpdateDict" title="tools.createUpdateDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">createUpdateDict()</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>facWeighttemplate</strong><span class="classifier">str</span></dt><dd><p>Path to a FDR or FAC grid used to make the FAC weighting grid.</p>
 </dd>
@@ -328,13 +417,15 @@
 </dd>
 <dt><strong>verbose</strong><span class="classifier">bool (optional)</span></dt><dd><p>Print output, defaults to False.</p>
 </dd>
-<dt><strong>scaleFactor</strong><span class="classifier">int (optional)</span></dt><dd><p>Value to divide weighting grid by for working with very large flow accumulation values and associated parameter value, defaults to None.</p>
+<dt><strong>scaleFactor</strong><span class="classifier">int (optional)</span></dt><dd><p>Value to divide weighting grid by for working with very large flow accumulation values and associated
+parameter value, defaults to None.</p>
 </dd>
-<dt><strong>moveDownstream</strong><span class="classifier">bool (optional)</span></dt><dd><p>Move the pour point downstream to account for pour points that do not overlap downstream geospatial tiles, defaults to False.</p>
+<dt><strong>moveDownstream</strong><span class="classifier">bool (optional)</span></dt><dd><p>Move the pour point downstream to account for pour points that do not overlap downstream geospatial
+tiles, defaults to False.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>adjFACFl</strong><span class="classifier">raster</span></dt><dd><p>Adjusted flow accumulation raster at adjFACFl.</p>
 </dd>
@@ -344,11 +435,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.adjustParam">
-<code class="sig-name descname">adjustParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">updatedParam</span></em>, <em class="sig-param"><span class="n">downstreamParamFL</span></em>, <em class="sig-param"><span class="n">updateDictFl</span></em>, <em class="sig-param"><span class="n">adjParamFl</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">scaleFactor</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">moveDownstream</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#adjustParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.adjustParam" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.adjustParam">
+<span class="sig-name descname"><span class="pre">adjustParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">updatedParam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downstreamParamFL</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updateDictFl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjParamFl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaleFactor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moveDownstream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#adjustParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.adjustParam" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate an updated parameter grid given an update dictionary from <a class="reference internal" href="#tools.createUpdateDict" title="tools.createUpdateDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">createUpdateDict()</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>updatedParam</strong><span class="classifier">str</span></dt><dd><p>Name of the parameter to update.</p>
 </dd>
@@ -360,13 +451,15 @@
 </dd>
 <dt><strong>verbose</strong><span class="classifier">bool (optional)</span></dt><dd><p>Print output, defaults to False.</p>
 </dd>
-<dt><strong>scaleFactor</strong><span class="classifier">int (optional)</span></dt><dd><p>Value to divide weighting grid by for working with very large flow accumulation values and associated parameter value, defaults to None.</p>
+<dt><strong>scaleFactor</strong><span class="classifier">int (optional)</span></dt><dd><p>Value to divide weighting grid by for working with very large flow accumulation values and associated
+parameter value, defaults to None.</p>
 </dd>
-<dt><strong>moveDownstream</strong><span class="classifier">bool (optional)</span></dt><dd><p>Move the pour point downstream to account for pour points that do not overlap downstream geospatial tiles, defaults to False.</p>
+<dt><strong>moveDownstream</strong><span class="classifier">bool (optional)</span></dt><dd><p>Move the pour point downstream to account for pour points that do not overlap downstream geospatial
+tiles, defaults to False.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>adjParamFl</strong><span class="classifier">raster</span></dt><dd><p>Adjusted parameter raster that can be accumulated prior to FCPG creation.</p>
 </dd>
@@ -376,11 +469,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.applyMult">
-<code class="sig-name descname">applyMult</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inRast</span></em>, <em class="sig-param"><span class="n">mult</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#applyMult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.applyMult" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.applyMult">
+<span class="sig-name descname"><span class="pre">applyMult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mult</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#applyMult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.applyMult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multiply input raster by mult.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>inRast</strong><span class="classifier">str</span></dt><dd><p>Path to input raster.</p>
 </dd>
@@ -392,7 +485,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>outRast</strong><span class="classifier">raster</span></dt><dd><p>Input raster multiplied by the multiplier raster.</p>
 </dd>
@@ -402,15 +495,17 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.binarizeCat">
-<code class="sig-name descname">binarizeCat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">nodata</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">baseName</span></em>, <em class="sig-param"><span class="n">ext</span></em>, <em class="sig-param"><span class="n">profile</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#binarizeCat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.binarizeCat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. See also <a class="reference internal" href="#tools.cat2bin" title="tools.cat2bin"><code class="xref py py-func docutils literal notranslate"><span class="pre">cat2bin()</span></code></a>.</p>
+<dt class="sig sig-object py" id="tools.binarizeCat">
+<span class="sig-name descname"><span class="pre">binarizeCat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outWorkspace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/tools.html#binarizeCat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.binarizeCat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the
+supplied raster, zero for areas where that class is not present, 1 for areas where that class is present,
+and -1 for regions of no data in the supplied raster. See also <a class="reference internal" href="#tools.cat2bin" title="tools.cat2bin"><code class="xref py py-func docutils literal notranslate"><span class="pre">cat2bin()</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>data</strong><span class="classifier">np.array</span></dt><dd><p>Numpy array of raster data to convert to binary.</p>
-</dd>
 <dt><strong>val</strong><span class="classifier">int</span></dt><dd><p>Raster value to extract binary for from data.</p>
+</dd>
+<dt><strong>data</strong><span class="classifier">np.array</span></dt><dd><p>Numpy array of raster data to convert to binary.</p>
 </dd>
 <dt><strong>nodata</strong><span class="classifier">int or float</span></dt><dd><p>Raster no data value.</p>
 </dd>
@@ -426,7 +521,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>catRaster</strong><span class="classifier">str</span></dt><dd><p>Filepath to the binary raster created.</p>
 </dd>
@@ -436,11 +531,13 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.cat2bin">
-<code class="sig-name descname">cat2bin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inCat</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">par</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#cat2bin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.cat2bin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the supplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for regions of no data in the supplied raster. Wrapper on <a class="reference internal" href="#tools.binarizeCat" title="tools.binarizeCat"><code class="xref py py-func docutils literal notranslate"><span class="pre">binarizeCat()</span></code></a>.</p>
+<dt class="sig sig-object py" id="tools.cat2bin">
+<span class="sig-name descname"><span class="pre">cat2bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inCat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outWorkspace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">par</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/tools.html#cat2bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.cat2bin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the
+supplied raster, zero for areas where that class is not present, 1 for areas where that class is present,
+and -1 for regions of no data in the supplied raster. Wrapper on <a class="reference internal" href="#tools.binarizeCat" title="tools.binarizeCat"><code class="xref py py-func docutils literal notranslate"><span class="pre">binarizeCat()</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>inCat</strong><span class="classifier">str</span></dt><dd><p>Input catagorical parameter raster.</p>
 </dd>
@@ -452,7 +549,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>fileList</strong><span class="classifier">list</span></dt><dd><p>List of filepaths to output files.</p>
 </dd>
@@ -462,11 +559,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.changeNoData">
-<code class="sig-name descname">changeNoData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inRast</span></em>, <em class="sig-param"><span class="n">newNoData</span></em>, <em class="sig-param"><span class="n">updateDict</span><span class="o">=</span><span class="default_value">{'compress': 'LZW', 'zlevel': 9, 'interleave': 'band', 'profile': 'GeoTIFF', 'tiled': True, 'sparse_ok': True, 'num_threads': 'ALL_CPUS', 'bigtiff': 'IF_SAFER'}</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#changeNoData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.changeNoData" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.changeNoData">
+<span class="sig-name descname"><span class="pre">changeNoData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newNoData</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updateDict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#changeNoData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.changeNoData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update raster no data value to a new value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>inRast</strong><span class="classifier">str</span></dt><dd><p>Path to input raster file.</p>
 </dd>
@@ -478,7 +575,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>None</dt><dd></dd>
 </dl>
@@ -487,11 +584,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.createUpdateDict">
-<code class="sig-name descname">createUpdateDict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">upstreamFACmax</span></em>, <em class="sig-param"><span class="n">fromHUC</span></em>, <em class="sig-param"><span class="n">outfl</span></em>, <em class="sig-param"><span class="n">replaceDict</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">outletX</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outletY</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#createUpdateDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.createUpdateDict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.createUpdateDict">
+<span class="sig-name descname"><span class="pre">createUpdateDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstreamFACmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fromHUC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replaceDict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outletX</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outletY</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/tools.html#createUpdateDict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.createUpdateDict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a dictionary for updating downstream FAC and parameter grids using values pulled from the next grid upstream.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>x</strong><span class="classifier">list</span></dt><dd><p>Horizontal coordinate(s) for where the update needs to happen in the downstream grid.</p>
 </dd>
@@ -513,7 +610,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>updateDict</strong><span class="classifier">dict</span></dt><dd><p>Update dictionary that is also written to outfl.</p>
 </dd>
@@ -523,11 +620,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.d8todinfinity">
-<code class="sig-name descname">d8todinfinity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inRast</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">updateDict</span><span class="o">=</span><span class="default_value">{'dtype': 'float32', 'compress': 'LZW', 'zlevel': 9, 'interleave': 'band', 'profile': 'GeoTIFF', 'tiled': True, 'sparse_ok': True, 'num_threads': 'ALL_CPUS', 'nodata': - 1, 'bigtiff': 'IF_SAFER'}</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#d8todinfinity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.d8todinfinity" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.d8todinfinity">
+<span class="sig-name descname"><span class="pre">d8todinfinity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updateDict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#d8todinfinity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.d8todinfinity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert TauDEM D-8 flow directions to D-Infinity flow directions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>inRast</strong><span class="classifier">str</span></dt><dd><p>Path to a TauDEM D-8 flow direction raster.</p>
 </dd>
@@ -539,7 +636,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>outRast</strong><span class="classifier">str</span></dt><dd><p>Path to output the TauDEM D-Infinity flow direction raster.</p>
 </dd>
@@ -549,11 +646,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.decayAccum">
-<code class="sig-name descname">decayAccum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ang</span></em>, <em class="sig-param"><span class="n">mult</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">paramRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#decayAccum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.decayAccum" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.decayAccum">
+<span class="sig-name descname"><span class="pre">decayAccum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ang</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mult</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paramRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpiCall</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mpiexec'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpiArg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#decayAccum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.decayAccum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decay the accumulation of a parameter raster.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>ang</strong><span class="classifier">str</span></dt><dd><p>Path to flow angle raster from the TauDEM D-Infinity flow direction tool.</p>
 </dd>
@@ -573,7 +670,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>outRast</strong><span class="classifier">raster</span></dt><dd><p>Decayed accumulation raster, either area or parameter depending on what is supplied to the function.</p>
 </dd>
@@ -583,11 +680,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.dist2stream">
-<code class="sig-name descname">dist2stream</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">fac</span></em>, <em class="sig-param"><span class="n">thresh</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#dist2stream"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.dist2stream" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.dist2stream">
+<span class="sig-name descname"><span class="pre">dist2stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpiCall</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mpiexec'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpiArg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#dist2stream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.dist2stream" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute distance to streams.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>fdr</strong><span class="classifier">str</span></dt><dd><p>Path to flow direction raster in TauDEM format.</p>
 </dd>
@@ -607,7 +704,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>outRast</strong><span class="classifier">raster</span></dt><dd><p>Raster with values of D-8 flow distance from each cell to the nearest stream.</p>
 </dd>
@@ -617,11 +714,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.findLastFACFD">
-<code class="sig-name descname">findLastFACFD</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">facfl</span></em>, <em class="sig-param"><span class="n">fl</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#findLastFACFD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.findLastFACFD" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.findLastFACFD">
+<span class="sig-name descname"><span class="pre">findLastFACFD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">facfl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tools.html#findLastFACFD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.findLastFACFD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the coordinate of the greatest cell in facfl, return the value from fl at that point.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>facfl</strong><span class="classifier">str</span></dt><dd><p>Path to a flow accumulation grid.</p>
 </dd>
@@ -629,7 +726,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>x</strong><span class="classifier">float</span></dt><dd><p>Horizontal coordinate of the greatest FAC cell.</p>
 </dd>
@@ -647,11 +744,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.findPourPoints">
-<code class="sig-name descname">findPourPoints</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pourBasins</span></em>, <em class="sig-param"><span class="n">upfacfl</span></em>, <em class="sig-param"><span class="n">upfdrfl</span></em>, <em class="sig-param"><span class="n">plotBasins</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#findPourPoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.findPourPoints" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.findPourPoints">
+<span class="sig-name descname"><span class="pre">findPourPoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pourBasins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">geopandas.GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upfacfl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upfdrfl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotBasins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/tools.html#findPourPoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.findPourPoints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds unique pour points between two HUC4s.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>pourBasins</strong><span class="classifier">GeoDataframe</span></dt><dd><p>GeoDataframe of the HUC12 basins that flow into the downstream HUC4. Used to clip the upstream FAC grid to identify pour points.</p>
 </dd>
@@ -663,7 +760,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>finalPoints</strong><span class="classifier">list</span></dt><dd><p>List of tuples containing (x,y,w). These pour points have not been incremented downstream and can be used to query accumulated (but not FCPGed) upstream parameter grids for information to cascade down to the next hydrologic region / geospatial tile downstream.</p>
 </dd>
@@ -673,17 +770,17 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.getFeatures">
-<code class="sig-name descname">getFeatures</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gdf</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#getFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.getFeatures" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.getFeatures">
+<span class="sig-name descname"><span class="pre">getFeatures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">geopandas.GeoDataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/tools.html#getFeatures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.getFeatures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function to parse features from a GeoPandas GeoDataframe in such a manner that Rasterio can handle them.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>gdf</strong><span class="classifier">GeoDataframe</span></dt><dd><p>GeoPandas GeoDataframe with a geometry column.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>features</strong><span class="classifier">geoJSON</span></dt><dd><p>GeoJSON representation of geometry features from the input GeoDataFrame.</p>
 </dd>
@@ -693,17 +790,17 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.getHUC4">
-<code class="sig-name descname">getHUC4</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">HUC12</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#getHUC4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.getHUC4" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.getHUC4">
+<span class="sig-name descname"><span class="pre">getHUC4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HUC12</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/tools.html#getHUC4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.getHUC4" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function to return HUC4 representation from a HUC12 identifier.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>HUC12</strong><span class="classifier">str</span></dt><dd><p>Text representation of the HUC12 identifier.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>HUC4</strong><span class="classifier">str</span></dt><dd><p>HUC4 identifier.</p>
 </dd>
@@ -713,17 +810,17 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.loadJSON">
-<code class="sig-name descname">loadJSON</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">infl</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#loadJSON"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.loadJSON" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.loadJSON">
+<span class="sig-name descname"><span class="pre">loadJSON</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/tools.html#loadJSON"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.loadJSON" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load dictionary stored in a JSON file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>infl</strong><span class="classifier">str</span></dt><dd><p>Path to the JSON to be loaded.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>dictionary</strong><span class="classifier">dict</span></dt><dd><p>Dictionary that was loaded.</p>
 </dd>
@@ -733,11 +830,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.loadRaster">
-<code class="sig-name descname">loadRaster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fl</span></em>, <em class="sig-param"><span class="n">returnMeta</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">band</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#loadRaster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.loadRaster" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.loadRaster">
+<span class="sig-name descname"><span class="pre">loadRaster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnMeta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/tools.html#loadRaster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.loadRaster" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function to load raster data and metadata.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>fl</strong><span class="classifier">str</span></dt><dd><p>Path to the raster file to load.</p>
 </dd>
@@ -747,7 +844,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>dat</strong><span class="classifier">np.array</span></dt><dd><p>Numpy array of the data in the selected raster band.</p>
 </dd>
@@ -759,15 +856,19 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.makeDecayGrid">
-<code class="sig-name descname">makeDecayGrid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d2strm</span></em>, <em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#makeDecayGrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.makeDecayGrid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a decay raster where grid cell values are computed as the inverse number of grid cells, <code class="code docutils literal notranslate"><span class="pre">np.exp((-1</span> <span class="pre">*</span> <span class="pre">decayGrid</span> <span class="pre">*</span> <span class="pre">xsize)</span> <span class="pre">/</span> <span class="pre">(xsize</span> <span class="pre">**</span> <span class="pre">k))</span></code>, where decayGrid is the distance from the d2strm raster from each grid cell to the nearest stream, k is a constant applied to the cell size values, and dx is the cell size of the raster, pulled from the d2strm raster directly.</p>
+<dt class="sig sig-object py" id="tools.makeDecayGrid">
+<span class="sig-name descname"><span class="pre">makeDecayGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d2strm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#makeDecayGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.makeDecayGrid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a decay raster where grid cell values are computed as the inverse number of grid cells,
+<code class="code docutils literal notranslate"><span class="pre">np.exp((-1</span> <span class="pre">*</span> <span class="pre">decayGrid</span> <span class="pre">*</span> <span class="pre">xsize)</span> <span class="pre">/</span> <span class="pre">(xsize</span> <span class="pre">**</span> <span class="pre">k))</span></code>, where decayGrid is the distance from
+the d2strm raster from each grid cell to the nearest stream, k is a constant applied to the
+cell size values, and dx is the cell size of the raster, pulled from the d2strm raster directly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>d2strm</strong><span class="classifier">str</span></dt><dd><p>Path to raster of flow distances from each grid cell to the nearest stream.</p>
 </dd>
-<dt><strong>k</strong><span class="classifier">float</span></dt><dd><p>Dimensionless constant applied to decay factor denominator. Set k to 2 for “moderate” decay; greater than 2 for slower decay; or less than 2 for faster decay.</p>
+<dt><strong>k</strong><span class="classifier">float</span></dt><dd><p>Dimensionless constant applied to decay factor denominator.
+Set k to 2 for “moderate” decay; greater than 2 for slower decay; or less than 2 for faster decay.</p>
 </dd>
 <dt><strong>outRast</strong><span class="classifier">str</span></dt><dd><p>Output file path for decay grid.</p>
 </dd>
@@ -775,7 +876,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>outRast</strong><span class="classifier">raster</span></dt><dd><p>Raster file with grid cells values representing weights decaying as a function of the distance to stream.</p>
 </dd>
@@ -787,11 +888,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.makeFACweight">
-<code class="sig-name descname">makeFACweight</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ingrd</span></em>, <em class="sig-param"><span class="n">outWeight</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#makeFACweight"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.makeFACweight" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.makeFACweight">
+<span class="sig-name descname"><span class="pre">makeFACweight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ingrd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outWeight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#makeFACweight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.makeFACweight" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make FAC weighting grid of ones based on the extents of the input grid. No-data cells are persisted.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>ingrd</strong><span class="classifier">str</span></dt><dd><p>Path to input raster from which to generate the weighting grid from.</p>
 </dd>
@@ -799,7 +900,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>outWeight</strong><span class="classifier">raster</span></dt><dd><p>Raster of the same extent and resolution as the input grid, but filled with ones where data exist. No-data cells are persisted.</p>
 </dd>
@@ -809,13 +910,14 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.makePourBasins">
-<code class="sig-name descname">makePourBasins</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wbd</span></em>, <em class="sig-param"><span class="n">fromHUC4</span></em>, <em class="sig-param"><span class="n">toHUC4</span></em>, <em class="sig-param"><span class="n">HUC12Key</span><span class="o">=</span><span class="default_value">'HUC12'</span></em>, <em class="sig-param"><span class="n">ToHUCKey</span><span class="o">=</span><span class="default_value">'ToHUC'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#makePourBasins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.makePourBasins" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.makePourBasins">
+<span class="sig-name descname"><span class="pre">makePourBasins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wbd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">geopandas.GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fromHUC4</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toHUC4</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HUC12Key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HUC12'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ToHUCKey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ToHUC'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">geopandas.GeoDataFrame</span></span></span><a class="reference internal" href="_modules/tools.html#makePourBasins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.makePourBasins" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make geodataframe of HUC12 basins flowing from fromHUC4 to toHUC4.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>wbd</strong><span class="classifier">GeoDataframe</span></dt><dd><p>HUC12-level geodataframe projected to the same coordinate reference system (CRS) as the flow accumulation (FAC) and flow direction (FDR) grids being used.</p>
+<dt><strong>wbd</strong><span class="classifier">GeoDataframe</span></dt><dd><p>HUC12-level geodataframe projected to the same coordinate reference system (CRS) as the flow accumulation (FAC)
+and flow direction (FDR) grids being used.</p>
 </dd>
 <dt><strong>fromHUC4</strong><span class="classifier">str</span></dt><dd><p>HUC4 string for the upstream basin.</p>
 </dd>
@@ -827,7 +929,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>pourBasins</strong><span class="classifier">GeoDataframe</span></dt><dd><p>HUC12-level geodataframe of units that drain from fromHUC4 to toHUC4.</p>
 </dd>
@@ -837,15 +939,16 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.makeStreams">
-<code class="sig-name descname">makeStreams</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fac</span></em>, <em class="sig-param"><span class="n">strPath</span></em>, <em class="sig-param"><span class="n">thresh</span><span class="o">=</span><span class="default_value">900</span></em>, <em class="sig-param"><span class="n">updateDict</span><span class="o">=</span><span class="default_value">{'nodata': 99, 'compress': 'LZW', 'zlevel': 9, 'interleave': 'band', 'profile': 'GeoTIFF', 'tiled': True, 'sparse_ok': True, 'num_threads': 'ALL_CPUS', 'bigtiff': 'IF_SAFER'}</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#makeStreams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.makeStreams" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.makeStreams">
+<span class="sig-name descname"><span class="pre">makeStreams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strPath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">900</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updateDict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#makeStreams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.makeStreams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create stream grid from a flow accumulation grid based on a threshold value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>fac</strong><span class="classifier">str</span></dt><dd><p>Path to the flow accumulation grid that will be used to create the stream grid.</p>
 </dd>
-<dt><strong>strPath</strong><span class="classifier">str</span></dt><dd><p>Path to output the stream grid where stream cells will be 1 and other cells will be the no-data value from the source fac grid.</p>
+<dt><strong>strPath</strong><span class="classifier">str</span></dt><dd><p>Path to output the stream grid where stream cells will be 1 and other cells will be the no-data value
+from the source fac grid.</p>
 </dd>
 <dt><strong>thresh</strong><span class="classifier">int (optional)</span></dt><dd><p>Flow accumulation threshold above which streams are created, defaults to 900 cells.</p>
 </dd>
@@ -855,7 +958,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>None</dt><dd></dd>
 </dl>
@@ -864,11 +967,12 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.make_fcpg">
-<code class="sig-name descname">make_fcpg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">accumParam</span></em>, <em class="sig-param"><span class="n">fac</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">noDataRast</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">minAccum</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ESRIFAC</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#make_fcpg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.make_fcpg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also <a class="reference internal" href="#tools.make_fcpg_batch" title="tools.make_fcpg_batch"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpg_batch()</span></code></a>.</p>
+<dt class="sig sig-object py" id="tools.make_fcpg">
+<span class="sig-name descname"><span class="pre">make_fcpg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumParam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noDataRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minAccum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ESRIFAC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#make_fcpg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.make_fcpg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a flow-conditioned parameter grid using accumulated parameter and area rasters.
+See also <a class="reference internal" href="#tools.make_fcpg_batch" title="tools.make_fcpg_batch"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpg_batch()</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>accumParam</strong><span class="classifier">str</span></dt><dd><p>File location of the accumulated parameter data raster.</p>
 </dd>
@@ -880,13 +984,14 @@
 </dd>
 <dt><strong>minAccum</strong><span class="classifier">float (optional)</span></dt><dd><p>Value of flow accumulation below which the CPG values will be set to no data.</p>
 </dd>
-<dt><strong>ESRIFAC</strong><span class="classifier">bool (optional)</span></dt><dd><p>Use an ESRI FAC grid, defaults to False. ESRI-derived FAC grids have zeros for the first cell in a flowpath, as such, a 1 is added to the grid.</p>
+<dt><strong>ESRIFAC</strong><span class="classifier">bool (optional)</span></dt><dd><p>Use an ESRI FAC grid, defaults to False.
+ESRI-derived FAC grids have zeros for the first cell in a flowpath, as such, a 1 is added to the grid.</p>
 </dd>
 <dt><strong>verbose</strong><span class="classifier">bool (optional)</span></dt><dd><p>Print output, defaults to False.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>outRast</strong><span class="classifier">raster</span></dt><dd><p>Flow-conditioned parameter grid file where grid cell values represent the mean upstream value of the paramter.</p>
 </dd>
@@ -896,11 +1001,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.make_fcpg_batch">
-<code class="sig-name descname">make_fcpg_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">accumParams</span></em>, <em class="sig-param"><span class="n">fac</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">minAccum</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">appStr</span><span class="o">=</span><span class="default_value">'FCPG'</span></em>, <em class="sig-param"><span class="n">ESRIFAC</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#make_fcpg_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.make_fcpg_batch" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.make_fcpg_batch">
+<span class="sig-name descname"><span class="pre">make_fcpg_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumParams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outWorkspace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minAccum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">appStr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'FCPG'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ESRIFAC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/tools.html#make_fcpg_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.make_fcpg_batch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Batch version of <a class="reference internal" href="#tools.make_fcpg" title="tools.make_fcpg"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpg()</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>accumParams</strong><span class="classifier">list</span></dt><dd><p>List of accumulated parameter rasters to create FCPGs from.</p>
 </dd>
@@ -912,13 +1017,14 @@
 </dd>
 <dt><strong>appStr</strong><span class="classifier">str (optional)</span></dt><dd><p>String of text to append to filenames of the produced FCPG grids.</p>
 </dd>
-<dt><strong>ESRIFAC</strong><span class="classifier">bool (optional)</span></dt><dd><p>Use an ESRI FAC grid, defaults to False. ESRI-derived FAC grids have zeros for the first cell in a flowpath, as such, a 1 is added to the grid.</p>
+<dt><strong>ESRIFAC</strong><span class="classifier">bool (optional)</span></dt><dd><p>Use an ESRI FAC grid, defaults to False.
+ESRI-derived FAC grids have zeros for the first cell in a flowpath, as such, a 1 is added to the grid.</p>
 </dd>
 <dt><strong>verbose</strong><span class="classifier">bool (optional)</span></dt><dd><p>Print output, defaults to False.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>fileList</strong><span class="classifier">list</span></dt><dd><p>List of file paths to the produced FCPGs.</p>
 </dd>
@@ -928,11 +1034,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.maskStreams">
-<code class="sig-name descname">maskStreams</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inRast</span></em>, <em class="sig-param"><span class="n">streamRast</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#maskStreams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.maskStreams" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.maskStreams">
+<span class="sig-name descname"><span class="pre">maskStreams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">streamRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#maskStreams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.maskStreams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mask areas not on the stream network.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>inRast</strong><span class="classifier">str</span></dt><dd><p>Path to the input raster to mask.</p>
 </dd>
@@ -944,7 +1050,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>outRast</strong><span class="classifier">raster</span></dt><dd><p>Raster with non-stream cells set to the no data value from inRast.</p>
 </dd>
@@ -954,17 +1060,17 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.parsebool">
-<code class="sig-name descname">parsebool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#parsebool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.parsebool" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.parsebool">
+<span class="sig-name descname"><span class="pre">parsebool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/tools.html#parsebool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.parsebool" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse a boolean argument from the command line.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>b</strong><span class="classifier">str</span></dt><dd><p>String of either True or False.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>res</strong><span class="classifier">bool</span></dt><dd><p>True if b is “True” or False if b is not “True.”</p>
 </dd>
@@ -974,11 +1080,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.queryPoint">
-<code class="sig-name descname">queryPoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">grd</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#queryPoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.queryPoint" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.queryPoint">
+<span class="sig-name descname"><span class="pre">queryPoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tools.html#queryPoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.queryPoint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Query grid based on a supplied point.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>x</strong><span class="classifier">float or int</span></dt><dd><p>Horizontal coordinate in grid projection.</p>
 </dd>
@@ -988,7 +1094,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>value</strong><span class="classifier">float or int</span></dt><dd><p>Value queried from the supplied raster.</p>
 </dd>
@@ -998,11 +1104,12 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.resampleParam">
-<code class="sig-name descname">resampleParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inParam</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">outParam</span></em>, <em class="sig-param"><span class="n">resampleMethod</span><span class="o">=</span><span class="default_value">'bilinear'</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">forceProj</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">forceProj4</span><span class="o">=</span><span class="default_value">'&quot;+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs&quot;'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#resampleParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.resampleParam" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the of the flow direction raster supplied. See also <code class="xref py py-func docutils literal notranslate"><span class="pre">resampleParams()</span></code>.</p>
+<dt class="sig sig-object py" id="tools.resampleParam">
+<span class="sig-name descname"><span class="pre">resampleParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inParam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outParam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resampleMethod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'bilinear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forceProj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forceProj4</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'&quot;+proj=aea</span> <span class="pre">+lat_1=29.5</span> <span class="pre">+lat_2=45.5</span> <span class="pre">+lat_0=23</span> <span class="pre">+lon_0=-96</span> <span class="pre">+x_0=0</span> <span class="pre">+y_0=0</span> <span class="pre">+ellps=GRS80</span> <span class="pre">+datum=NAD83</span> <span class="pre">+units=m</span> <span class="pre">+no_defs&quot;'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#resampleParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.resampleParam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resample, re-project, and clip the parameter raster based on the resolution, projection, and extent of the flow
+direction raster supplied. See also <code class="xref py py-func docutils literal notranslate"><span class="pre">resampleParams()</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>inParam</strong><span class="classifier">str</span></dt><dd><p>Path to the input parameter data raster</p>
 </dd>
@@ -1010,19 +1117,24 @@
 </dd>
 <dt><strong>outParam</strong><span class="classifier">str</span></dt><dd><p>Path to the output file for the resampled parameter raster.</p>
 </dd>
-<dt><strong>resampleMethod</strong><span class="classifier">str (optional)</span></dt><dd><p>resampling method, either ‘bilinear’ or ‘near’ for nearest neighbor. Bilinear should generally be used for continuous data sets such as precipitation while nearest neighbor should generally be used for categorical datasets such as land cover type. Defaults to bilinear.</p>
+<dt><strong>resampleMethod</strong><span class="classifier">str (optional)</span></dt><dd><p>resampling method, either ‘bilinear’ or ‘near’ for nearest neighbor. Bilinear should generally be used for
+continuous data sets such as precipitation while nearest neighbor should generally be used for categorical
+datasets such as land cover type. Defaults to bilinear.</p>
 </dd>
 <dt><strong>cores</strong><span class="classifier">int (optional)</span></dt><dd><p>The number of cores to use. Defaults to 1.</p>
 </dd>
-<dt><strong>forceProj</strong><span class="classifier">bool (optional)</span></dt><dd><p>Force the projection of the flow direction raster. This can be useful if the flow direction raster has an unusual projection. Defaults to False. This parameter defaults to False; however, if set to True, forceProj4 must also be specified or the default proj4 string for USGS Albers will be used, see below.</p>
+<dt><strong>forceProj</strong><span class="classifier">bool (optional)</span></dt><dd><p>Force the projection of the flow direction raster. This can be useful if the flow direction raster has an
+unusual projection. Defaults to False. This parameter defaults to False; however, if set to True, forceProj4
+must also be specified or the default proj4 string for USGS Albers will be used, see below.</p>
 </dd>
-<dt><strong>forceProj4</strong><span class="classifier">str (optional)</span></dt><dd><p>Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the forceProj parameter is set to True.</p>
+<dt><strong>forceProj4</strong><span class="classifier">str (optional)</span></dt><dd><p>Proj4 string used to force the flow direction raster. This defaults to USGS Albers, but is not used unless the
+forceProj parameter is set to True.</p>
 </dd>
 <dt><strong>verbose</strong><span class="classifier">bool (optional)</span></dt><dd><p>Print output, defaults to False.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>outParam</strong><span class="classifier">raster</span></dt><dd><p>Resampled, reprojected, and clipped parameter raster.</p>
 </dd>
@@ -1032,21 +1144,21 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.resampleParam_batch">
-<code class="sig-name descname">resampleParam_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inParams</span></em>, <em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">outWorkspace</span></em>, <em class="sig-param"><span class="n">resampleMethod</span><span class="o">=</span><span class="default_value">'bilinear'</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">appStr</span><span class="o">=</span><span class="default_value">'rprj'</span></em>, <em class="sig-param"><span class="n">forceProj</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">forceProj4</span><span class="o">=</span><span class="default_value">'&quot;+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs&quot;'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#resampleParam_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.resampleParam_batch" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.resampleParam_batch">
+<span class="sig-name descname"><span class="pre">resampleParam_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inParams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outWorkspace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resampleMethod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'bilinear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">appStr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rprj'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forceProj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forceProj4</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'&quot;+proj=aea</span> <span class="pre">+lat_1=29.5</span> <span class="pre">+lat_2=45.5</span> <span class="pre">+lat_0=23</span> <span class="pre">+lon_0=-96</span> <span class="pre">+x_0=0</span> <span class="pre">+y_0=0</span> <span class="pre">+ellps=GRS80</span> <span class="pre">+datum=NAD83</span> <span class="pre">+units=m</span> <span class="pre">+no_defs&quot;'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/tools.html#resampleParam_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.resampleParam_batch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Batch version of <a class="reference internal" href="#tools.resampleParam" title="tools.resampleParam"><code class="xref py py-func docutils literal notranslate"><span class="pre">resampleParam()</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>inParam</strong><span class="classifier">list</span></dt><dd><p>List of input parameter raster paths.</p>
 </dd>
 <dt><strong>fdr</strong><span class="classifier">str</span></dt><dd><p>Path to the flow direction raster.</p>
 </dd>
-<dt><strong>outWorkspace :</strong></dt><dd><p>Path to the output directory for the resampled rasters.</p>
+<dt><strong>outWorkspace</strong></dt><dd><p>Path to the output directory for the resampled rasters.</p>
 </dd>
 <dt><strong>resampleMethod</strong><span class="classifier">str (optional)</span></dt><dd><p>Resampling method, either bilinear or nearest neighbor. Defaults to bilinear.</p>
 </dd>
-<dt><strong>cores :</strong></dt><dd><p>Number of cores to use. Defaults to 1.</p>
+<dt><strong>cores</strong></dt><dd><p>Number of cores to use. Defaults to 1.</p>
 </dd>
 <dt><strong>appStr</strong><span class="classifier">str (optional)</span></dt><dd><p>String of text to append to the input parameter filenames. Defaults to “rprj.”</p>
 </dd>
@@ -1058,7 +1170,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>fileList</strong><span class="classifier">list</span></dt><dd><p>Paths to resampled, reprojected, and clipped parameter rasters.</p>
 </dd>
@@ -1068,11 +1180,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.saveJSON">
-<code class="sig-name descname">saveJSON</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dictionary</span></em>, <em class="sig-param"><span class="n">outfl</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#saveJSON"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.saveJSON" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.saveJSON">
+<span class="sig-name descname"><span class="pre">saveJSON</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#saveJSON"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.saveJSON" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save dictionary to JSON file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>dictionary</strong><span class="classifier">dict</span></dt><dd><p>Dictionary to be saved.</p>
 </dd>
@@ -1080,7 +1192,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>None</dt><dd></dd>
 </dl>
@@ -1089,11 +1201,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.tauDrainDir">
-<code class="sig-name descname">tauDrainDir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inRast</span></em>, <em class="sig-param"><span class="n">outRast</span></em>, <em class="sig-param"><span class="n">band</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">updateDict</span><span class="o">=</span><span class="default_value">{'compress': 'LZW', 'zlevel': 9, 'interleave': 'band', 'sparse': True, 'tiled': True, 'blockysize': 256, 'blockxsize': 256, 'driver': 'GTiff', 'nodata': 0, 'bigtiff': 'IF_SAFER'}</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#tauDrainDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.tauDrainDir" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.tauDrainDir">
+<span class="sig-name descname"><span class="pre">tauDrainDir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updateDict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#tauDrainDir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.tauDrainDir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reclassifies ESRI flow directions into TauDEM flow directions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>inRast</strong><span class="classifier">str</span></dt><dd><p>Path to a raster encoded with ESRI flow direction values.</p>
 </dd>
@@ -1101,13 +1213,14 @@
 </dd>
 <dt><strong>band</strong><span class="classifier">int (optional)</span></dt><dd><p>Band to read the flow direction grid from if inRast is multiband, defaults to 1.</p>
 </dd>
-<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of Rasterio raster options used to create outRast. Defaults have been supplied, but may not work in all situations and input file formats.</p>
+<dt><strong>updateDict</strong><span class="classifier">dict (optional)</span></dt><dd><p>Dictionary of Rasterio raster options used to create outRast.
+Defaults have been supplied, but may not work in all situations and input file formats.</p>
 </dd>
 <dt><strong>verbose</strong><span class="classifier">bool (optional)</span></dt><dd><p>Print output, defaults to False.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>outRast</strong><span class="classifier">raster</span></dt><dd><p>Reclassified flow direction raster at the path specified above.</p>
 </dd>
@@ -1117,11 +1230,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.tauFlowAccum">
-<code class="sig-name descname">tauFlowAccum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fdr</span></em>, <em class="sig-param"><span class="n">accumRast</span></em>, <em class="sig-param"><span class="n">cores</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mpiCall</span><span class="o">=</span><span class="default_value">'mpiexec'</span></em>, <em class="sig-param"><span class="n">mpiArg</span><span class="o">=</span><span class="default_value">'-n'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#tauFlowAccum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.tauFlowAccum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper for TauDEM AreaD8 <a class="bibtex reference internal" href="z_references.html#taudem" id="id3">[1]</a> to produce a flow acculation grid.</p>
+<dt class="sig sig-object py" id="tools.tauFlowAccum">
+<span class="sig-name descname"><span class="pre">tauFlowAccum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accumRast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpiCall</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mpiexec'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpiArg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#tauFlowAccum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.tauFlowAccum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for TauDEM AreaD8 <span id="id3">[<a class="reference internal" href="z_references.html#id2" title="David Tarboton. TauDEM Version 5.3.8. https://github.com/dtarb/TauDEM/tree/v5.3.8, 2016. Accessed: 2020-05-19.">1</a>]</span> to produce a flow acculation grid.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>fdr</strong><span class="classifier">str</span></dt><dd><p>Path to a flow direction raster in TauDEM format.</p>
 </dd>
@@ -1137,7 +1250,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>accumRast</strong><span class="classifier">raster</span></dt><dd><p>Raster of accumulated parameter values at the path specified above.</p>
 </dd>
@@ -1147,11 +1260,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.updateDict">
-<code class="sig-name descname">updateDict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ud</span></em>, <em class="sig-param"><span class="n">upHUC</span></em>, <em class="sig-param"><span class="n">varName</span></em>, <em class="sig-param"><span class="n">val</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#updateDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.updateDict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.updateDict">
+<span class="sig-name descname"><span class="pre">updateDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ud</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upHUC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#updateDict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.updateDict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update dictionary created using <a class="reference internal" href="#tools.createUpdateDict" title="tools.createUpdateDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">createUpdateDict()</span></code></a> with a parameter value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>ud</strong><span class="classifier">str</span></dt><dd><p>Path to the update dictionary to add a parameter to.</p>
 </dd>
@@ -1163,7 +1276,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>ud</strong><span class="classifier">json</span></dt><dd><p>Update dictionary written back out to ud.</p>
 </dd>
@@ -1173,11 +1286,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tools.updateRaster">
-<code class="sig-name descname">updateRaster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">grd</span></em>, <em class="sig-param"><span class="n">outgrd</span></em>, <em class="sig-param"><span class="n">scaleFactor</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#updateRaster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.updateRaster" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.updateRaster">
+<span class="sig-name descname"><span class="pre">updateRaster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outgrd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaleFactor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/tools.html#updateRaster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tools.updateRaster" title="Permalink to this definition">¶</a></dt>
 <dd><p>Insert value into grid at location specified by x,y; writes new raster to output grid.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>x</strong><span class="classifier">list or float</span></dt><dd><p>Horizontal coordinate in map units.</p>
 </dd>
@@ -1193,7 +1306,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>dat</strong><span class="classifier">raster</span></dt><dd><p>Raster dataset written to grdout.</p>
 </dd>
@@ -1209,29 +1322,29 @@
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="publications.html" class="btn btn-neutral float-right" title="Publications and Projects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="detect_missing.html" class="btn btn-neutral float-left" title="Detect Missing FCPGs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="publications.html" class="btn btn-neutral float-right" title="Publications and Projects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="detect_missing.html" class="btn btn-neutral float-left" title="Detect Missing FCPGs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea
+        &#169; Copyright Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -1239,7 +1352,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
