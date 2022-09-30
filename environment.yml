@@ -26,6 +26,12 @@ dependencies:
   - jupyter-lsp-python  # Includes both the server extension (jupyter-lsp) and pyls third-party server (python-language-server)
   - jupyterlab-lsp # Docs at https://github.com/krassowski/jupyterlab-lsp
 
+  # Documentation build / update (optional)
+  #- sphinx
+  #- sphinxcontrib-bibtex
+  #- numpydoc
+  #- sphinx-rtd-theme
+
   # package management
   - conda
   - conda-build
