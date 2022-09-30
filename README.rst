@@ -73,7 +73,7 @@ Create an `conda <https://docs.conda.io/en/latest/>`_ environment using the supp
 ---------
 To have access to the FCPGtools modules in your Python environment, it is necessary to have a path to your copy of FCPGtools in the :code:`sites-packages` directory of your conda environment (i.e. something like :code:`$HOME/path/to/anaconda/lib/pythonX.X/site-packages` or :code:`$HOME/path/to/anaconda/lib/site-packages` similar).
 
-- The easiest way to do this is to use the `conda develop`<https://docs.conda.io/projects/conda-build/en/latest/resources/commands/conda-develop.html`_ command in the console or terminal like this, replacing :code:`/path/to/module/` with the full file pathway to the local cloned HSPsquared repository:
+- The easiest way to do this is to use the `conda develop`<https://docs.conda.io/projects/conda-build/en/latest/resources/commands/conda-develop.html`_ command in the console or terminal like this, replacing :code:`/path/to/module/` with the full file pathway to the local cloned FCPGtools repository:
 
 :code:`conda-develop /path/to/module/`
 

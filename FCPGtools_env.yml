@@ -33,5 +33,4 @@ dependencies:
   - pip
    # PIP install requirements only if it is not  possible with conda
    # https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment
-  - pip:
-    # - git+https://github.com/usgs/water-fcpg-tools
+
