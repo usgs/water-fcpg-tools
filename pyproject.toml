@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "fcpgtools"
+version = "0.2.0"
+description = "Tools to create flow-conditioned parameter grids (FCPGs) from flow direction grids and input parameter datasets. Documentation: https://usgs.github.io/water-fcpg-tools/."
+authors = ["Theodore Barnhart <tbarnhart@usgs.gov>", "Paul Tomasula <ptomasula@limno.com>", Xavier R Nogueira <xrnogueira@limno.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
