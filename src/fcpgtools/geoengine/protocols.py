@@ -7,7 +7,8 @@ from typing import List
 from typing import Dict
 
 #TODO: We'll want to replace the `str` type here with some type of path object
-Raster: Union[xr.DataArray,str]
+Raster: Union[xr.DataArray, str]
+
 
 class SupportsFACtoFDR(Protocol):
     """"""

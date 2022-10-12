@@ -6,6 +6,7 @@ from typing import Tuple
 
 from geoengine.protocols import Raster
 
+
 def find_cell_downstream(d8_fdr: Raster, coords: Tuple) -> Tuple:
     """
     Uses a D8 FDR to find the cell center coordinates downstream from any cell (specified
@@ -18,11 +19,11 @@ def find_cell_downstream(d8_fdr: Raster, coords: Tuple) -> Tuple:
 
 # raster masking function
 def spatial_mask(in_raster: Raster,
-        mask_shp: Union[gpd.GeoDataFrame,str] = None,
-        out_path: str = None,
-        mask_cell_value: int = None,
-        inverse: bool = False,
-    ) -> xr.DataArray:
+                mask_shp: Union[gpd.GeoDataFrame, str] = None,
+                out_path: str = None,
+                mask_cell_value: int = None,
+                inverse: bool = False,
+                ) -> xr.DataArray:
     """
     Primarily for masking rasters (i.e., FAC) by basin shapefiles, converting out-of-mask raster
     values to NoData. A cell value can also be used to create a mask for integer rasters. 
@@ -117,7 +118,7 @@ def find_pour_points(
         fac_raster: Raster, 
         basins_shp: str = None, 
         basin_id_field: str = None,
-    ) -> dict:
+                    ) -> dict:
     """
     Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.
     :param fac_raster: (xr.DataArray or str raster path) a Flow Accumulation Cell raster (FAC).
@@ -190,58 +191,5 @@ def d8_fdr(dem: Raster, out_path: str = None, out_format: str = 'TauDEM') -> xr.
     :returns: the FDR as a xarray DataArray object.
     """
 
-##Possibly gets moved to a utilities.py file
-def clip(
-        in_raster: Raster, 
-        match_raster: Raster,
-        out_path: str = None, 
-        custom_shp: Union[str,gpd.GeoDataFrame] = None,
-        custom_bbox: list = None,
-    ) -> xr.DataArray:
-    """
-    Clips a raster to the rectangular extent (aka bounding box) of another raster (or shapefile).
-    :param in_raster: (xr.DataArray or str raster path) input raster.
-    :param match_raster: (xr.DataArray or str raster path) if defined, in_raster is
-        clipped to match the extent of match_raster.
-    :param out_path: (str, default=None) defines a path to save the output raster.
-    :param custom_shp: (str path or GeoDataFame, default=None) a shapefile that is used to define
-        the output extent if match_raster == None.
-    :param custom_bbox: (list, default=None) a list with bounding box coordinates that define the output
-        extent if match_raster == None. Coordinates must be of the form [minX, minY, maxX, maxY].
-    :returns: (xr.DataArray) the clipped raster as a xarray DataArray object.
-    """
-
-def reproject(
-        in_raster: Raster, 
-        match_raster: Raster,
-        out_path: str = None,
-        custom_crs: str = None,
-    ) -> xr.DataArray:
-    """
-    Reprojects a raster to match another rasters Coordinate Reference System (CRS), or a custom CRS.
-    :param in_raster: (xr.DataArray or str raster path) input raster.
-    :param match_raster: (xr.DataArray or str raster path) if defined, in_raster is
-        reprojected to match the Coordinate Reference System (CRS) of match_raster.
-    :param out_path: (str, default=None) defines a path to save the output raster.
-    :param custom_crs: (str) custom CRS string, only used if match_raster == None.
-    :returns: (xr.DataArray) the reprojected raster as a xarray DataArray object.
-    """
-    # figure out what types of CRS strings exist / can be read by whatever library we use.
-
-def resample(
-        in_raster: Raster, 
-        match_raster: Raster,
-        out_path: str = None, 
-        custom_cell_size: Union[float,int] = None,
-    ) -> xr.DataArray:
-    """
-    Resamples a raster to match another raster's cell size, or a custom cell size.
-    :param in_raster: (xr.DataArray or str raster path) input raster.
-    :param match_raster: (xr.DataArray or str raster path) if defined, in_raster is
-        resampled to match the cell size of match_raster.
-    :param out_path: (str, default=None) defines a path to save the output raster.
-    :param custom_cell_size: (float or int) custom cell size, only used if match_raster == None.
-    :returns: (xr.DataArray) the resampled raster as a xarray DataArray object.
-    """
 
 
