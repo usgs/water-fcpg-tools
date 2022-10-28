@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import xarray as xr
 import rioxarray as rio
+from rasterio.enums import Resampling
 import geopandas as gpd
 from geoengine.protocols import Raster, Shapefile
 from geoengine.protocols import RasterSuffixes, ShapefileSuffixes
@@ -66,31 +67,61 @@ def _save_shapefile(out_shapefile: gpd.GeoDataFrame,
     except Exception as e:
         print(e)
 
+def _verify_dtype(raster: xr.DataArray, value: Union[float, int]) -> bool:
+    dtype = str(raster.dtype)
+    if 'float' in dtype:
+        return True
+    elif not isinstance(value, int):
+        return False
+    else:
+        if 'int8' in dtype and value > 255:
+            return False
+        #TODO: How best to handle other int dtype? What are the value ranges.
+        return True
+
 # core utility functions
 def clip(in_raster: Raster,
-         match_raster: Raster,
-         out_path: str = None,
-         custom_shp: Shapefile = None,
+         match_raster: Raster = None,
+         match_shapefile: Shapefile = None,
          custom_bbox: list = None,
+         out_path: str = None,
          ) -> xr.DataArray:
     """
     Clips a raster to the rectangular extent (aka bounding box) of another raster (or shapefile).
     :param in_raster: (xr.DataArray or str raster path) input raster.
     :param match_raster: (xr.DataArray or str raster path) if defined, in_raster is
         clipped to match the extent of match_raster.
-    :param out_path: (str, default=None) defines a path to save the output raster.
-    :param custom_shp: (str path or GeoDataFame, default=None) a shapefile that is used to define
+    :param match_shapefile: (str path or GeoDataFame, default=None) a shapefile that is used to define
         the output extent if match_raster == None.
+    :param out_path: (str, default=None) defines a path to save the output raster.
     :param custom_bbox: (list, default=None) a list with bounding box coordinates that define the output
         extent if match_raster == None. Coordinates must be of the form [minX, minY, maxX, maxY].
+        Note: Using this parameter assumes that coordinates match the CRS of param:in_raster.
     :returns: (xr.DataArray) the clipped raster as a xarray DataArray object.
     """
     in_raster = _intake_raster(in_raster)
 
-    ## FUNTION HERE
-    out_raster = None # CHANGE THIS
+    if match_raster is not None:
+        match_raster = _intake_raster(match_raster)
+        crs = match_raster.rio.crs.to_wkt()
+        bbox = list(match_raster.rio.bounds)
+    elif match_shapefile is not None:
+        match_shapefile = _intake_shapefile(match_shapefile)
+        crs = match_shapefile.crs.to_wkt()
+        bbox = match_shapefile.geometry.total_bounds
+    elif custom_bbox is not None:
+        crs = in_raster.crs.to_wkt()
+        bbox = custom_bbox
+    out_raster = in_raster.rio.clip_box(minx=bbox[0],
+                                        miny=bbox[1],
+                                        maxx=bbox[2],
+                                        maxy=bbox[3],
+                                        crs=crs)
     if out_path is not None:
         _save_raster(out_raster, out_path)
+
+    return out_raster
+
 
 def reproject_raster(in_raster: Raster,
               out_crs: Union[Raster, Shapefile] = None,
@@ -142,26 +173,38 @@ def reproject_shapefile(in_shapefile: Shapefile,
         _save_shapefile(out_shapefile, out_path)
     return out_shapefile
 
+
 def resample(in_raster: Raster,
              match_raster: Raster,
+             method: str = 'bilinear',
              out_path: str = None,
-             custom_cell_size: Union[float, int] = None,
              ) -> xr.DataArray:
     """
     Resamples a raster to match another raster's cell size, or a custom cell size.
     :param in_raster: (xr.DataArray or str raster path) input raster.
     :param match_raster: (xr.DataArray or str raster path) if defined, in_raster is
         resampled to match the cell size of match_raster.
+    :param method: (str, default=bilinear) a valid resampling method from rasterio.enums.Resample.
     :param out_path: (str, default=None) defines a path to save the output raster.
-    :param custom_cell_size: (float or int) custom cell size, only used if match_raster == None.
     :returns: (xr.DataArray) the resampled raster as a xarray DataArray object.
     """
-    in_raster = intake_raster(in_raster)
+    in_raster = _intake_raster(in_raster)
+    match_raster = _intake_raster(match_raster)
 
-    ## FUNTION HERE
-    out_raster = None # CHANGE THIS
+    try:
+        out_raster = in_raster.rio.reproject(in_raster.rio.crs,
+                                            shape=(match_raster.rio.height, match_raster.rio.width),
+                                            resampling=getattr(Resampling, method))
+    except AttributeError:
+        #TODO: handle exceptions
+        real_methods = vars(Resampling)['_member_names_']
+        print(f'Resampling method {method} is invalid! Please select from {real_methods}')
+
     if out_path is not None:
-        save_raster(out_raster, out_path)
+        _save_raster(out_raster, out_path)
+
+    return out_raster
+
 
 def batch_process(Dataset: xr.Dataset,
                   function: callable = None,
@@ -187,17 +230,23 @@ def sample_raster(raster: xr.DataArray,
     :param coords: (tuple) coordinate as (lat:float, lon:float) of the cell to be sampled.
     :returns: (float or int) the cell value at param:coords.
     """
-    pass
+    return raster.sel({'x': coords[0],
+            'y': coords[1]}).values.item(0)
 
 
 def get_min_cell(raster: xr.DataArray) -> list[tuple, Union[float, int]]:
     """
-    Get the minimum cell coordinates + value from a raster.
+    Get the minimum cell coordinates + value from a single band raster.
     :param raster: (xr.DataArray) a raster as a DataArray in memory.
     :returns: (list) a list (len=2) with the min cell's coordinate tuple [0] and value [1]
         i.e., [coords:tuple, value:Union[float, int]].
     """
-    pass
+    xmin_index = raster.argmin(dim=['x', 'y'])['x'].data.item(0)
+    ymin_index = raster.argmin(dim=['x', 'y'])['y'].data.item(0)
+
+    min_slice = raster.isel({'x': xmin_index,
+                'y': ymin_index})
+    return [(min_slice.x.values.item(0), min_slice.y.values.item(0)), min_slice.values.item(0)]
 
 
 def get_max_cell(raster: xr.DataArray) -> list[tuple, Union[float, int]]:
@@ -207,11 +256,17 @@ def get_max_cell(raster: xr.DataArray) -> list[tuple, Union[float, int]]:
     :returns: (list) a list (len=2) with the max cell's coordinate tuple [0] and value [1]
         i.e., [coords:tuple, value:Union[float, int, np.array]].
     """
-    pass
+    xmax_index = raster.argmax(dim=['x', 'y'])['x'].data.item(0)
+    ymax_index = raster.argmax(dim=['x', 'y'])['y'].data.item(0)
+
+    max_slice = raster.isel({'x': xmax_index,
+                'y': ymax_index})
+    return [(max_slice.x.values.item(0), max_slice.y.values.item(0)), max_slice.values.item(0)]
 
 
 def update_cell_values(in_raster: Union[xr.DataArray, str],
-                       coords: tuple, value: Union[float, int],
+                       coords: tuple,
+                       value: Union[float, int],
                        out_path: str = None,
                        ) -> xr.DataArray:
     """
@@ -223,8 +278,17 @@ def update_cell_values(in_raster: Union[xr.DataArray, str],
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: param:in_raster with the updated cell value as a xarray DataArray object.
     """
-    pass
+    out_raster = _intake_raster(in_raster)
+    if _verify_dtype(out_raster, value):
+        out_raster.loc[{'x': coords[0], 'y': coords[1]}] = value
 
+        if out_path is not None:
+            _save_raster(out_raster, out_path)
+        return out_raster
+    else:
+        #TODO: Handle exceptions
+        print(f'ERROR: Value {value} does not match DataArray dtype = {in_raster.dtype}')
+        return in_raster
 
 def change_nodata(in_raster: Union[xr.DataArray, str],
                   nodata_value: Union[float, int],
@@ -259,7 +323,7 @@ def change_dtype(in_raster: Union[xr.DataArray, str],
     """
     pass
 
-
+# CIRCLE BACK TO THESE, MAY NOT BE NECESSARY?
 def get_raster_bbox(raster: xr.DataArray) -> list:
     """
     Get bounding box coordinates of a raster.
@@ -267,8 +331,17 @@ def get_raster_bbox(raster: xr.DataArray) -> list:
     :returns: (list) list with bounding bbox coordinates - [minX, minY, maxX, maxY]
     """
     # this function is used to in verify_extent() as well as clip().
+    # MAY NOT BE NECESSARY
     pass
 
+def get_shp_bbox(shp: Union[str, gpd.GeoDataFrame]) -> list:
+    """
+    Get bbox coordinates of a shapefile.
+    :param shp: (geopandas.GeoDataFrame or str shapefile path) a georeferenced shapefile.
+    :returns: (list) list with bounding bbox coordinates - [minX, minY, maxX, maxY]
+    """
+    # MAY NOT BE NECESSARY
+    pass
 
 def verify_extent(raster: xr.DataArray,
                   coords: tuple,
@@ -302,10 +375,3 @@ def minimize_extent(in_raster: Union[xr.DataArray, str],
     pass
 
 
-def get_shp_bbox(shp: Union[str, gpd.GeoDataFrame]) -> list:
-    """
-    Get bbox coordinates of a shapefile.
-    :param shp: (geopandas.GeoDataFrame or str shapefile path) a georeferenced shapefile.
-    :returns: (list) list with bounding bbox coordinates - [minX, minY, maxX, maxY]
-    """
-    pass
