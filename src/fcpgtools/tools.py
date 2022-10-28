@@ -1,10 +1,12 @@
+from typing import Union
 import xarray as xr
 import geopandas as gpd
 
 from typing import Union
 from typing import Tuple 
 
-from geoengine.protocols import Raster
+#from geoengine.protocols import Raster
+Raster = Union[xr.DataArray, str]
 
 
 def find_cell_downstream(d8_fdr: Raster, coords: Tuple) -> Tuple:
@@ -16,6 +18,7 @@ def find_cell_downstream(d8_fdr: Raster, coords: Tuple) -> Tuple:
     :returns: (tuple) an output (lat:float, lon:float) representing the cell center coorindates
         downstream from the cell defined via :param:coords.
     """
+
 
 # raster masking function
 def spatial_mask(in_raster: Raster,
