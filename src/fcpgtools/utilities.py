@@ -8,7 +8,7 @@ import geopandas as gpd
 from geoengine.protocols import Raster, Shapefile
 from geoengine.protocols import RasterSuffixes, ShapefileSuffixes
 
-# functions used across other utility functions
+# BACK-END FACING UTILITY FUNTIONS
 def _intake_raster(in_raster: Raster) -> xr.DataArray:
     """Used in the first line of most functions to make sure all inputs are DataArray"""
     if isinstance(in_raster, xr.DataArray):
@@ -79,7 +79,7 @@ def _verify_dtype(raster: xr.DataArray, value: Union[float, int]) -> bool:
         #TODO: How best to handle other int dtype? What are the value ranges.
         return True
 
-# core utility functions
+# FRONT-END/CLIENT FACING UTILITY FUNTIONS
 def clip(in_raster: Raster,
          match_raster: Raster = None,
          match_shapefile: Shapefile = None,
@@ -122,7 +122,6 @@ def clip(in_raster: Raster,
 
     return out_raster
 
-
 def reproject_raster(in_raster: Raster,
               out_crs: Union[Raster, Shapefile] = None,
               wkt_string: str = None,
@@ -152,7 +151,6 @@ def reproject_raster(in_raster: Raster,
         _save_raster(out_raster, out_path)
     return out_raster
 
-
 def reproject_shapefile(in_shapefile: Shapefile,
                         out_crs: Union[Raster, Shapefile] = None,
                         wkt_string: str = None,
@@ -172,7 +170,6 @@ def reproject_shapefile(in_shapefile: Shapefile,
     if out_path is not None:
         _save_shapefile(out_shapefile, out_path)
     return out_shapefile
-
 
 def resample(in_raster: Raster,
              match_raster: Raster,
@@ -205,23 +202,6 @@ def resample(in_raster: Raster,
 
     return out_raster
 
-
-def batch_process(Dataset: xr.Dataset,
-                  function: callable = None,
-                  out_path: str = None,
-                  **kwargs: dict,
-                  ) -> xr.Dataset:
-    """
-    Applies a function to each DataArray in a Dataset (should this be built into the functions themselves??)
-    :param Dataset: (xr.Dataset) an xarray Dataset where all DataArrays are ready to be processed together.
-    :param function: (callable) a function to apply to the Dataset.
-    :param out_path: (str path, default=None) a zarr or netcdf extension path to save the Dataset.
-    :param **kwargs: (dict) allows for non-default keyword parameters for param:function to be specified.
-    :returns: (xr.Dataset) the output Dataset with each DataArray altered by param:function.
-    """
-    pass
-
-
 def sample_raster(raster: xr.DataArray,
                   coords: tuple,
                   ) -> Union[float, int]:
@@ -248,7 +228,6 @@ def get_min_cell(raster: xr.DataArray) -> list[tuple, Union[float, int]]:
                 'y': ymin_index})
     return [(min_slice.x.values.item(0), min_slice.y.values.item(0)), min_slice.values.item(0)]
 
-
 def get_max_cell(raster: xr.DataArray) -> list[tuple, Union[float, int]]:
     """
     Get the maximum cell coordinates + value from a raster.
@@ -262,7 +241,6 @@ def get_max_cell(raster: xr.DataArray) -> list[tuple, Union[float, int]]:
     max_slice = raster.isel({'x': xmax_index,
                 'y': ymax_index})
     return [(max_slice.x.values.item(0), max_slice.y.values.item(0)), max_slice.values.item(0)]
-
 
 def update_cell_values(in_raster: Union[xr.DataArray, str],
                        coords: tuple,
@@ -290,6 +268,37 @@ def update_cell_values(in_raster: Union[xr.DataArray, str],
         print(f'ERROR: Value {value} does not match DataArray dtype = {in_raster.dtype}')
         return in_raster
 
+# CIRCLE BACK TO THESE, MAY NOT BE NECESSARY?
+def verify_extent(raster: xr.DataArray,
+                  coords: tuple,
+                  ) -> bool:
+    """
+    Returns True if coordinates are contained within a given raster.
+    :param raster: (xr.DataArray or str raster path) a georeferenced raster.
+    :param coords: (tuple) the input (lat:float, lon:float) to verify.
+    :returns: boolean. True if param:coords is w/in the spatial extent of param:raster.
+    """
+    # Note: this function should be used within other functions that query
+    # a raster using lat/long coordinates.
+    # 1. get raster bbox coorindates
+    # 2. see if coords is within the bbox, return a boolean
+    pass
+
+def minimize_extent(in_raster: Union[xr.DataArray, str],
+                    nodata_value: Union[float, int] = None,
+                    ) -> xr.DataArray:
+    """
+    Minimizes the extent of a raster to the bounding box of all non-nodata cells.
+    Useful after raster operations where extents don't match and nodata values are propageted forwards.
+    :param in_raster: (xr.DataArray or str raster path) the input raster.
+    :param nodata_value: (float->np.nan or int) if the nodata value for param:in_raster is not in the metadata,
+        set this parameter to equal the cell value storing nodata (i.e., np.nan or -999).
+    :returns: (xr.DataArray) the clipped output raster as a xarray DataArray object.
+    """
+    # if no nodata values -> return in_raster
+    # else return the minimum extent
+    pass
+
 def change_nodata(in_raster: Union[xr.DataArray, str],
                   nodata_value: Union[float, int],
                   out_path: str = None,
@@ -307,7 +316,6 @@ def change_nodata(in_raster: Union[xr.DataArray, str],
     # Note for dev: we need to understand xarray's handling of nodata values
     pass
 
-
 def change_dtype(in_raster: Union[xr.DataArray, str],
                  out_dtype: str,
                  out_path: str = None,
@@ -323,7 +331,6 @@ def change_dtype(in_raster: Union[xr.DataArray, str],
     """
     pass
 
-# CIRCLE BACK TO THESE, MAY NOT BE NECESSARY?
 def get_raster_bbox(raster: xr.DataArray) -> list:
     """
     Get bounding box coordinates of a raster.
@@ -343,35 +350,5 @@ def get_shp_bbox(shp: Union[str, gpd.GeoDataFrame]) -> list:
     # MAY NOT BE NECESSARY
     pass
 
-def verify_extent(raster: xr.DataArray,
-                  coords: tuple,
-                  ) -> bool:
-    """
-    Returns True if coordinates are contained within a given raster.
-    :param raster: (xr.DataArray or str raster path) a georeferenced raster.
-    :param coords: (tuple) the input (lat:float, lon:float) to verify.
-    :returns: boolean. True if param:coords is w/in the spatial extent of param:raster.
-    """
-    # Note: this function should be used within other functions that query
-    # a raster using lat/long coordinates.
-    # 1. get raster bbox coorindates
-    # 2. see if coords is within the bbox, return a boolean
-    pass
-
-
-def minimize_extent(in_raster: Union[xr.DataArray, str],
-                    nodata_value: Union[float, int] = None,
-                    ) -> xr.DataArray:
-    """
-    Minimizes the extent of a raster to the bounding box of all non-nodata cells.
-    Useful after raster operations where extents don't match and nodata values are propageted forwards.
-    :param in_raster: (xr.DataArray or str raster path) the input raster.
-    :param nodata_value: (float->np.nan or int) if the nodata value for param:in_raster is not in the metadata,
-        set this parameter to equal the cell value storing nodata (i.e., np.nan or -999).
-    :returns: (xr.DataArray) the clipped output raster as a xarray DataArray object.
-    """
-    # if no nodata values -> return in_raster
-    # else return the minimum extent
-    pass
 
 

@@ -18,7 +18,7 @@ def find_cell_downstream(d8_fdr: Raster, coords: Tuple) -> Tuple:
     :returns: (tuple) an output (lat:float, lon:float) representing the cell center coorindates
         downstream from the cell defined via :param:coords.
     """
-
+    # get index of cell and index and use to query surrounding cells
 
 # raster masking function
 def spatial_mask(in_raster: Raster,
@@ -194,5 +194,19 @@ def d8_fdr(dem: Raster, out_path: str = None, out_format: str = 'TauDEM') -> xr.
     :returns: the FDR as a xarray DataArray object.
     """
 
+def batch_process(Dataset: xr.Dataset,
+                  function: callable = None,
+                  out_path: str = None,
+                  **kwargs: dict,
+                  ) -> xr.Dataset:
+    """
+    Applies a function to each DataArray in a Dataset (should this be built into the functions themselves??)
+    :param Dataset: (xr.Dataset) an xarray Dataset where all DataArrays are ready to be processed together.
+    :param function: (callable) a function to apply to the Dataset.
+    :param out_path: (str path, default=None) a zarr or netcdf extension path to save the Dataset.
+    :param **kwargs: (dict) allows for non-default keyword parameters for param:function to be specified.
+    :returns: (xr.Dataset) the output Dataset with each DataArray altered by param:function.
+    """
+    pass
 
 
