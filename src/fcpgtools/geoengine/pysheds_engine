@@ -1,0 +1,19 @@
+from pysheds.grid import Grid
+from protocols import Raster
+from typing import List
+import xarray as xr
+# Grid.add_gridded_data(self, data, data_name, affine=None, shape=None, crs=None,
+#                         nodata=None, mask=None, metadata={}):
+
+# We need to make an "affine"
+
+def fac_from_fdr(
+            d8_fdr: Raster, 
+            upstream_pour_points: List = None,
+            out_path: str = None,
+            **kwargs,
+        ) -> xr.DataArray:
+
+    #TODO: PICK BACK UP HERE
+    d8_grid = Grid.add_gridded_data()
+    pass

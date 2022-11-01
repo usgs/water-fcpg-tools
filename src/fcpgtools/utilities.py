@@ -1,4 +1,5 @@
 from typing import Union
+from typing import List
 import os
 from pathlib import Path
 import xarray as xr
@@ -78,6 +79,25 @@ def _verify_dtype(raster: xr.DataArray, value: Union[float, int]) -> bool:
             return False
         #TODO: How best to handle other int dtype? What are the value ranges.
         return True
+
+def _update_cell_value_(raster: xr.DataArray,
+                       coords: tuple,
+                       value: Union[float, int],
+                       ) -> xr.DataArray:
+    """
+    Underlying function called in update_cell_values() to update a DataArray by x,y coordinates.
+    :param raster: (xr.DataArray) a raster as a DataArray in memory.
+    :param coords: (tuple) coordinate as (lat:float, lon:float) of the cell to be updated.
+    :param value: (float or int) new value to give the cell.
+    :returns: param:in_raster with the updated cell value as a xarray DataArray object.
+    """
+    if _verify_dtype(raster, value):
+        raster.loc[{'x': coords[0], 'y': coords[1]}] = value
+        return raster
+    else:
+        #TODO: Handle exceptions
+        print(f'ERROR: Value {value} does not match DataArray dtype = {raster.dtype}')
+        return raster
 
 # FRONT-END/CLIENT FACING UTILITY FUNTIONS
 def clip(in_raster: Raster,
@@ -213,7 +233,6 @@ def sample_raster(raster: xr.DataArray,
     return raster.sel({'x': coords[0],
             'y': coords[1]}).values.item(0)
 
-
 def get_min_cell(raster: xr.DataArray) -> list[tuple, Union[float, int]]:
     """
     Get the minimum cell coordinates + value from a single band raster.
@@ -243,30 +262,38 @@ def get_max_cell(raster: xr.DataArray) -> list[tuple, Union[float, int]]:
     return [(max_slice.x.values.item(0), max_slice.y.values.item(0)), max_slice.values.item(0)]
 
 def update_cell_values(in_raster: Union[xr.DataArray, str],
-                       coords: tuple,
-                       value: Union[float, int],
+                       update_points: List[tuple, Union[float, int]],
                        out_path: str = None,
                        ) -> xr.DataArray:
     """
     Update a specific raster cell's value based on it's coordindates. This is primarily used
     to add upstream accumulation values as boundary conditions before making a FAC or FCPG.
     :param in_raster: (xr.DataArray or str raster path) input raster.
-    :param coords: (tuple) coordinate as (lat:float, lon:float) of the cell to be updated.
-    :param value: (float or int) new value to give the cell.
+    :param update_points: (list) a list of lists storing cell coordinates updated values
+        of the form [[(x_coord:float, y_coord:float), updated_value],...].
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: param:in_raster with the updated cell value as a xarray DataArray object.
     """
     out_raster = _intake_raster(in_raster)
-    if _verify_dtype(out_raster, value):
-        out_raster.loc[{'x': coords[0], 'y': coords[1]}] = value
 
-        if out_path is not None:
-            _save_raster(out_raster, out_path)
-        return out_raster
-    else:
-        #TODO: Handle exceptions
-        print(f'ERROR: Value {value} does not match DataArray dtype = {in_raster.dtype}')
-        return in_raster
+    # if only a list of depth=1, assums the form [tuple(x, y), value]
+    if isinstance(update_points[0], tuple):
+        update_points = [update_points]
+
+    for update_list in update_points:
+        if isinstance(update_list[0], tuple):
+            coords, value = update_list
+            _update_cell_value_(out_raster, coords, value)
+        else:
+            #TODO: Exception handling
+            print('ERROR: Could not update cell, param:update_points must be of the form'
+                '[[(x_coord:float, y_coord:float), updated_value],...]')
+
+    if out_path is not None:
+        _save_raster(out_raster, out_path)
+
+    return out_raster
+
 
 # CIRCLE BACK TO THESE, MAY NOT BE NECESSARY?
 def verify_extent(raster: xr.DataArray,

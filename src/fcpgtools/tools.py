@@ -1,13 +1,27 @@
+from os import PathLike
 from typing import Union
 import xarray as xr
 import geopandas as gpd
 
 from typing import Union
-from typing import Tuple 
+from typing import Tuple
+
+from utilities import *
 
 #from geoengine.protocols import Raster
 Raster = Union[xr.DataArray, str]
 
+# CLIENT FACING FUNCTIONS
+def align_raster(in_raster,
+                match_raster: Raster,
+                resample_method: str = 'bilinear', 
+                out_path: str = None) -> xr.DataArray:
+    out_raster = clip(in_raster, match_raster)
+    out_raster = reproject_raster(in_raster, out_crs=match_raster)
+    out_raster = resample(in_raster, match_raster,
+                        method=resample_method,
+                        out_path=out_path)
+    return out_raster
 
 def find_cell_downstream(d8_fdr: Raster, coords: Tuple) -> Tuple:
     """
@@ -40,7 +54,6 @@ def spatial_mask(in_raster: Raster,
     :returns: (xr.DataArray) the output binary mask raster.
     """
 
-
 def value_mask(in_raster: Raster,
         thresh: Union[int,float] = None,
         greater_than: bool = True,
@@ -63,7 +76,6 @@ def value_mask(in_raster: Raster,
     :returns: (xr.DataArray) the output binary mask raster.
     """
 
-
 def nodata_mask(
         in_raster: Raster, 
         inverse: bool = False,
@@ -81,7 +93,6 @@ def nodata_mask(
     :returns: (xr.DataArray) the output binary mask raster.
     """
 
-
 def apply_mask(
         in_raster: Raster, 
         mask_raster: Raster, 
@@ -96,7 +107,6 @@ def apply_mask(
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the output raster with nodata cells.
     """
-
 
 def binarize_categorical_rasters(
         cat_raster: Raster, 
@@ -115,7 +125,6 @@ def binarize_categorical_rasters(
         Note that this is the behavior in V1.1 of FCPGTools.
     :returns: (xr.DataArray) a N-band multi-dimensional raster as a xarray DataArray object.
     """
-
 
 def find_pour_points(
         fac_raster: Raster, 
@@ -162,7 +171,6 @@ def fix_pits(dem: Raster, out_path: str = None, fix: bool = True) -> xr.DataArra
     :returns: (xr.DataArray) the filled DEM an xarray DataArray object (while fix=True).
     """
 
-
 def fix_depressions(dem: Raster, out_path: str = None, fix: bool = True) -> xr.DataArray:
     """
     Detect and fills multi-cell "depressions" in a DEM raster using pysheds: .detect_depressions()/.fill_depressions().
@@ -173,7 +181,6 @@ def fix_depressions(dem: Raster, out_path: str = None, fix: bool = True) -> xr.D
     :returns: (xr.DataArray) the filled DEM an xarray DataArray object (while fix=True).
     """
 
-
 def fix_flats(dem: Raster, out_path: str = None, fix: bool = True) -> xr.DataArray:
     """
     Detect and resolves "flats" in a DEM using pysheds: .detect_flats()/.resolve_flats().
@@ -183,7 +190,6 @@ def fix_flats(dem: Raster, out_path: str = None, fix: bool = True) -> xr.DataArr
         without fixing them. The input raster is returned as is.
     :returns: (xr.DataArray) the resolved DEM an xarray DataArray object (while fix=True).
     """
-
 
 def d8_fdr(dem: Raster, out_path: str = None, out_format: str = 'TauDEM') -> xr.DataArray:
     """

@@ -1,0 +1,362 @@
+import pathlib
+from tempfile import tempdir
+from typing import List
+from pathlib import Path
+import os
+import traceback
+import subprocess
+import xarray as xr
+from protocols import Raster
+from tools import *
+from utilities import _intake_raster, _save_raster
+
+#TODO: Find what to do about saving temporary files
+TEMP_DIR = Path(r'C:\Users\xrnogueira\Downloads')
+
+def fac_from_fdr(
+            d8_fdr: Raster, 
+            upstream_pour_points: List = None,
+            out_path: str = None,
+            **kwargs,
+        ) -> xr.DataArray:
+    """
+    Create a Flow Accumulation Cell (FAC) raster from a TauDEM format D8 Flow Direction Raster.
+    :param d8_fdr: (xr.DataArray or str raster path) a TauDEM format D8 Flow Direction Raster (dtype=Int).
+    :param upstream_pour_points: (list, default=None) a list of lists each with with coordinate tuples
+        as the first item [0], and updated cell values as the second [1]. This allows the FAC to be made
+        with boundary conditions such as upstream basin pour points.
+    :param out_path: (str, default=None) defines a path to save the output raster.
+    :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
+    :returns: (xr.DataArray) the Flow Accumulation Cells (FAC) raster as a xarray DataArray object.
+    """
+    #TODO: Implement upstream pour points using weighting grid!
+
+    if isinstance(d8_fdr, xr.DataArray):
+        temp_path = TEMP_DIR.parent / 'fdr_d8_temp.tif'
+        _save_raster(d8_fdr, temp_path)
+        d8_fdr = str(temp_path)
+    elif isinstance(d8_fdr, pathlib.PathLike):
+        d8_fdr = str(d8_fdr)
+    else:
+        # No support for raw string in cmd line tools!
+        print('ERROR: param:d8_fdr must be a xr.DataArray of a PathLike object.')
+        #TODO: Handle exceptions
+        raise Exception
+    
+    save = False
+    if out_path is None:
+        out_path = TEMP_DIR.parent / 'fac_temp.tif'
+    else: save = True
+
+    taudem_dict = {
+            'fdr': d8_fdr,
+            'outFl': out_path,
+            'cores': 1,
+            'mpiCall': 'mpiexec',
+            'mpiArg': '-n'}
+
+    # use kwargs if neccessary
+    for key, value in kwargs.items():
+        if key in taudem_dict.keys():
+            taudem_dict.update(key, value)
+        else:
+            print('WARNING: Kwarg argument {key} is invalid.')
+
+    # use TauDEM via subprocess to make a Flow Accumulation Raster
+    try:
+        cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(
+            **taudem_dict)
+        _ = subprocess.run(cmd, shell=True)
+
+    except:
+        #TODO: Handle exceptions
+        print('ERROR: TauDEM AreaD8 failed!')
+        traceback.print_exc()
+    
+    out_raster = _intake_raster(out_path)
+    if not save: os.remove(out_path)
+    return out_raster
+
+def distance_to_stream(
+            d8_fdr: Raster,
+            fac_raster: Raster,
+            upstream_pour_points: List = None,
+            out_path: str = None,
+            **kwargs,
+        ) -> xr.DataArray:
+    """
+    
+    """
+    #TODO: BUILD THIS OUT TUESDAY!
+    if isinstance(d8_fdr, xr.DataArray):
+        temp_path = TEMP_DIR.parent / 'fdr_d8_temp.tif'
+        _save_raster(d8_fdr, temp_path)
+        d8_fdr = str(temp_path)
+    elif isinstance(d8_fdr, pathlib.PathLike):
+        d8_fdr = str(d8_fdr)
+    else:
+        # No support for raw string in cmd line tools!
+        print('ERROR: param:d8_fdr must be a xr.DataArray of a PathLike object.')
+        #TODO: Handle exceptions
+        raise Exception
+
+    save = False
+    if out_path is None:
+        out_path = TEMP_DIR.parent / 'fac_temp.tif'
+    else: save = True
+
+    # use kwargs if neccessary
+    for key, value in kwargs.items():
+        if key in taudem_dict.keys():
+            taudem_dict.update(key, value)
+        else:
+            print('WARNING: Kwarg argument {key} is invalid.')
+
+    taudem_dict = {
+            'fdr': d8_fdr,
+            'outFl': out_path,
+            'cores': 1,
+            'mpiCall': 'mpiexec',
+            'mpiArg': '-n'}
+
+    try:
+        tauParams = {
+            'fdr': fdr,
+            'cores': cores,
+            'fac': fac,
+            'outRast': outRast,
+            'thresh': thresh,
+            'mpiCall': mpiCall,
+            'mpiArg': mpiArg
+        }
+
+        cmd = '{mpiCall} {mpiArg} {cores} d8hdisttostrm -p {fdr} -src {fac} -dist {outRast}, -thresh {thresh}'.format(
+            **tauParams)  # Create string of tauDEM shell command
+        if verbose: print(cmd)
+        result = subprocess.run(cmd, shell=True)  # Run shell command
+        result.stdout
+        if verbose: print("Distance raster written to: {0}".format(outRast))
+
+    except:
+        print('Error computing distance to streams')
+    out_raster = _intake_raster(out_path)
+    if not save: os.remove(out_path)
+    return out_raste
+
+def decay_raster() -> xr.DataArray:
+    pass
+
+def decay_decay_accumulation() -> xr.DataArray:
+    pass
+
+def get_max_upslope() -> xr.DataArray:
+    pass
+
+# NON_REFACTORED, FOR REFERENCE
+def decayAccum(ang, mult, outRast, paramRast=None, cores=1, mpiCall='mpiexec', mpiArg='-n', verbose=False):
+    """Decay the accumulation of a parameter raster.
+
+    Parameters
+    ----------
+    ang : str
+        Path to flow angle raster from the TauDEM D-Infinity flow direction tool.
+    mult : str
+        Path to raster of multiplier values applied to upstream accumulations,
+        1 corresponds to no decay, 0 corresponds to complete decay.
+    outRast : str
+        Path to output raster for decayed accumulation raster.
+    paramRast : str (optional)
+        Raster of parameter values to accumulate. If not supplied area will be accumulated. Defaults to None.
+    cores : int (optional)
+        Number of cores to use. Defaults to 1.
+    mpiCall : str (optional)
+        The command to use for mpi, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to '-n'.
+    verbose : bool (optional)
+        Print output, defaults to False.
+
+    Returns
+    -------
+    outRast : raster
+        Decayed accumulation raster, either area or parameter depending on what is supplied to the function.
+    """
+
+    if paramRast != None:
+        try:
+            if verbose: print('Accumulating parameter')
+            tauParams = {
+                'ang': ang,
+                'cores': cores,
+                'dm': mult,
+                'dsca': outRast,
+                'weight': paramRast,
+                'mpiCall': mpiCall,
+                'mpiArg': mpiArg
+            }
+
+            cmd = '{mpiCall} {mpiArg} {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -wg {weight} -nc'.format(
+                **tauParams)  # Create string of tauDEM shell command
+            if verbose: print(cmd)
+            result = subprocess.run(cmd, shell=True)  # Run shell command
+            result.stdout
+            if verbose: print("Parameter accumulation written to: {0}".format(outRast))
+
+        except:
+            print('Error Accumulating Data')
+            traceback.print_exc()
+    else:
+        try:
+            if verbose: print('Accumulating parameter')
+            tauParams = {
+                'ang': ang,
+                'cores': cores,
+                'dm': mult,
+                'dsca': outRast,
+                'mpiCall': mpiCall,
+                'mpiArg': mpiArg
+            }
+
+            cmd = '{mpiCall} {mpiArg} {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -nc'.format(
+                **tauParams)  # Create string of tauDEM shell command
+            if verbose: print(cmd)
+            result = subprocess.run(cmd, shell=True)  # Run shell command
+            result.stdout
+            if verbose: print("Parameter accumulation written to: {0}".format(outRast))
+
+        except:
+            print('Error Accumulating Data')
+            traceback.print_exc()
+
+def dist2stream(fdr, fac, thresh, outRast, cores=1, mpiCall='mpiexec', mpiArg='-n', verbose=False):
+    """Compute distance to streams.
+
+    Parameters
+    ----------
+    fdr : str
+        Path to flow direction raster in TauDEM format.
+    fac : str
+        Path to flow accumulation raster.
+    thresh : int
+        Accumulation threshold for stream formation in number of grid cells.
+    outRast : str
+        Path to output the distance raster.
+    cores : int (optional)
+        The number of cores to use. Defaults to 1.
+    mpiCall : str (optional)
+        The command to use for mpi, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to '-n'.
+    verbose : bool (optional)
+        Print output, defaults to False.
+
+    Returns
+    -------
+    outRast : raster
+        Raster with values of D-8 flow distance from each cell to the nearest stream.
+    """
+
+    try:
+        tauParams = {
+            'fdr': fdr,
+            'cores': cores,
+            'fac': fac,
+            'outRast': outRast,
+            'thresh': thresh,
+            'mpiCall': mpiCall,
+            'mpiArg': mpiArg
+        }
+
+        cmd = '{mpiCall} {mpiArg} {cores} d8hdisttostrm -p {fdr} -src {fac} -dist {outRast}, -thresh {thresh}'.format(
+            **tauParams)  # Create string of tauDEM shell command
+        if verbose: print(cmd)
+        result = subprocess.run(cmd, shell=True)  # Run shell command
+        result.stdout
+        if verbose: print("Distance raster written to: {0}".format(outRast))
+
+    except:
+        print('Error computing distances')
+        traceback.print_exc()
+
+def ExtremeUpslopeValue(fdr, param, output, accum_type="MAX", cores=1, fac=None, thresh=None, mpiCall='mpiexec',
+                        mpiArg='-n', verbose=False):
+    '''
+    Wrapper for the TauDEM D8 Extreme Upslope Value function :cite:`TauDEM`.
+
+    Parameters
+    ----------
+    fdr : str
+        Path to a flow direction grid in TauDEM format.
+    param : str
+        Path to parameter raster to run through the D8 Extreme Upslope Value tool
+    output : str
+        Path to output raster file.
+    accum_type : str (optional) 
+        Either  "MAX" or "MIN." Defaults to "MAX."
+    cores : int (optional) 
+        Number of cores to run this process on. Defaults to 1.
+    fac : str (optional)
+        Path to a flow accumulation raster. Defaults to None.
+    thresh : int (optional)
+        Threshold values, in the same units as fac to mask output to stream channels. Defaults to None.
+    mpiCall : str (optional)
+        The command to use for mpi, defaults to mpiexec.
+    mpiArg : str (optional)
+        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to '-n'.
+    verbose : bool (optional)
+        Print output, defaults to False.
+
+    Returns
+    -------
+    output : raster
+        Raster of either the maximum or minumum upslope value of the parameter grid supplied to the function.
+    '''
+
+    tauParams = {
+        'fdr': fdr,
+        'cores': cores,
+        'outFl': output,
+        'param': param,
+        'accum_type': accum_type.lower(),
+        'mpiCall': mpiCall,
+        'mpiArg': mpiArg
+    }
+
+    if accum_type == "min":  # insert flag for min
+        cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -{accum_type} -nc'.format(
+            **tauParams)  # Create string of tauDEM shell command
+    else:  # no flag for max
+        cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} -nc'.format(
+            **tauParams)  # Create string of tauDEM shell command
+
+    if verbose: print(cmd)  # print the command to be run to the output.
+    result = subprocess.run(cmd, shell=True)  # Run shell command
+
+    result.stdout
+
+    if fac != None and thresh != None:  # if a stream mask is specified
+        outNoData = -9999
+
+        with rs.open(output) as src:
+            dat = src.read(1)
+            params = src.meta.copy()
+            noData = src.nodata
+            dat[dat == noData] = np.NaN
+
+        del src
+
+        with rs.open(fac) as src:
+            fac = src.read(1)
+            fac[fac == src.nodata] = outNoData
+
+        del src
+
+        dat[fac < thresh] = outNoData  # make low accumulation areas noData
+        dat[fac == outNoData] = outNoData  # make borders noData
+
+        params['nodata'] = outNoData
+
+        with rs.open(output, 'w', **params) as dst:  # write out raster.
+            dst.write(dat, 1)
+
+    return None
