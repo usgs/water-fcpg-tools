@@ -1374,7 +1374,6 @@ def getHUC4(HUC12):
     """
     return HUC12[:4]
 
-
 def makePourBasins(wbd, fromHUC4, toHUC4, HUC12Key='HUC12', ToHUCKey='ToHUC'):
     """Make geodataframe of HUC12 basins flowing from HUC4 to toHUC4.
 
@@ -1650,7 +1649,6 @@ def FindDownstreamCellTauDir(d, x, y, w):
 
     return float(newX), float(newY)
 
-
 def saveJSON(dictionary, outfl):
     """Save dictionary to JSON file.
 
@@ -1674,7 +1672,6 @@ def saveJSON(dictionary, outfl):
 
     return None
 
-
 def loadJSON(infl):
     """Load dictionary stored in a JSON file.
 
@@ -1693,7 +1690,6 @@ def loadJSON(infl):
         dictionary = json.load(data_file)
 
     return dictionary
-
 
 def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict=True, verbose=False, outletX=None, outletY=None):
     """Create a dictionary for updating downstream FAC and parameter grids using values pulled from the next grid upstream.

@@ -15,7 +15,8 @@ def validate_engine(protocol):
     def validator(func, *args, **kwargs) -> callable:
         def valid_func(engine, *args, **kwargs): 
             if not isinstance(engine, protocol):
-                raise TypeError(f'Invalid engine provided, {func.__name__} requires engine implementing {protocol.__name__} protocol')
+                raise TypeError(f'Invalid engine provided, {func.__name__}'
+                                f'requires engine implementing {protocol.__name__} protocol')
             func(engine, *args, **kwargs)
         return valid_func
-    return validato
+    return validator
