@@ -3,7 +3,7 @@
     "name": "FCPGtools",
     "organization": "U.S. Geological Survey",
     "description": "Tools to make Flow-Conditioned Parameter Grids (FCPG)",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "status": "Production",
 
     "permissions": {
