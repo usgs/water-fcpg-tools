@@ -1,4 +1,3 @@
-from os import PathLike
 from typing import Union
 import xarray as xr
 import geopandas as gpd
@@ -6,7 +5,7 @@ import geopandas as gpd
 from typing import Union
 from typing import Tuple
 
-from utilities import *
+from .utilities import *
 
 #from geoengine.protocols import Raster
 Raster = Union[xr.DataArray, str]

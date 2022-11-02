@@ -6,9 +6,9 @@ import os
 import traceback
 import subprocess
 import xarray as xr
-from protocols import Raster
-from tools import *
-from utilities import _intake_raster, _save_raster
+from .protocols import Raster
+from src.fcpgtools.tools import *
+from src.fcpgtools.utilities import intake_raster, save_raster
 
 #TODO: Find what to do about saving temporary files
 TEMP_DIR = Path(r'C:\Users\xrnogueira\Downloads')
@@ -85,7 +85,7 @@ def fac_from_fdr(
         print('ERROR: TauDEM AreaD8 failed!')
         traceback.print_exc()
     
-    out_raster = _intake_raster(out_path)
+    out_raster = intake_raster(out_path)
     if not save: os.remove(out_path)
     return out_raster
 
@@ -135,7 +135,7 @@ def distance_to_stream(
         print('ERROR: TauDEM d8hdisttostrm failed!')
         traceback.print_exc()
 
-    out_raster = _intake_raster(out_path)
+    out_raster = intake_raster(out_path)
     if not save: os.remove(out_path)
     return out_raster
 
@@ -191,7 +191,7 @@ def get_max_upslope(d8_fdr: Raster,
         print('ERROR: TauDEM d8flowpathextremeup failed!')
         traceback.print_exc()
 
-    out_raster = _intake_raster(out_path)
+    out_raster = intake_raster(out_path)
 
     #TODO: Add stream mask function!
 

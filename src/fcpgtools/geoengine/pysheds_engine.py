@@ -1,6 +1,6 @@
 from pysheds.grid import Grid
 from pysheds.view import Raster, ViewFinder
-from protocols import Raster
+from .protocols import Raster
 from typing import List
 import xarray as xr
 # Grid.add_gridded_data(self, data, data_name, affine=None, shape=None, crs=None,

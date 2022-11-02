@@ -1,53 +1,30 @@
 from typing import Union
-from typing import List
+from typing import Tuple
 import os
 from pathlib import Path
 import xarray as xr
 import rioxarray as rio
 from rasterio.enums import Resampling
 import geopandas as gpd
-from geoengine.protocols import Raster, Shapefile
-from geoengine.protocols import RasterSuffixes, ShapefileSuffixes
+from .geoengine.protocols import Raster, Shapefile
+from .geoengine.protocols import RasterSuffixes, ShapefileSuffixes
 
-# BACK-END FACING UTILITY FUNTIONS
-def _intake_raster(in_raster: Raster) -> xr.DataArray:
+# CLIENT FACING I/O FUNCTIONS
+def intake_raster(in_raster: Raster) -> xr.DataArray:
     """Used in the first line of most functions to make sure all inputs are DataArray"""
     if isinstance(in_raster, xr.DataArray):
         return in_raster
     elif isinstance(in_raster, os.PathLike):
         return rio.open_rasterio(in_raster)
 
-def _intake_shapefile(in_shapefile: Shapefile) -> gpd.GeoDataFrame:
+def intake_shapefile(in_shapefile: Shapefile) -> gpd.GeoDataFrame:
     """Used in the first line of most functions to make sure all shapefile data is in a GeoDataFrame"""
     if isinstance(in_shapefile, gpd.GeoDataFrame):
         return in_shapefile
     elif isinstance(in_shapefile, os.PathLike):
         return gpd.read_file(in_shapefile)
 
-def _intake_ambigous(in_data: Union[Raster, Shapefile]) -> Union[xr.DataArray, gpd.GeoDataFrame]:
-    """Somewhat less performant intake function when the input can be either a Raster or Shapefile"""
-    if isinstance(in_data, os.PathLike):
-        if in_data.suffix in RasterSuffixes:
-            return _intake_raster(in_data)
-        elif in_data.suffix in ShapefileSuffixes:
-            return _intake_shapefile(in_data)
-    elif isinstance(in_data, Union[xr.DataArray, gpd.GeoDataFrame]):
-        return in_data
-
-def _get_crs(out_crs: Union[Raster, Shapefile]) -> str:
-    crs_data = _intake_ambigous(out_crs)
-
-    if isinstance(crs_data, xr.DataArray):
-        return crs_data.rio.crs.to_wkt()
-    elif isinstance(crs_data, gpd.GeoDataFrame):
-        return crs_data.crs.to_wkt()
-
-def _prep_parameter_raster() -> xr.DataArray:
-    """Handles 3 dimensionality if necessary, squeezes otherwise"""
-    #TODO: COME BACK TO THIS!
-    pass
-
-def _save_raster(out_raster: xr.DataArray,
+def save_raster(out_raster: xr.DataArray,
                 out_path: Union[str, os.PathLike]) -> None:
     if isinstance(out_path, str):
         out_path = Path(out_path)
@@ -60,7 +37,7 @@ def _save_raster(out_raster: xr.DataArray,
     except Exception as e:
         print(e)
 
-def _save_shapefile(out_shapefile: gpd.GeoDataFrame,
+def save_shapefile(out_shapefile: gpd.GeoDataFrame,
                     out_path: Union[str, os.PathLike]) -> None:
     if isinstance(out_path, str):
         out_path = Path(out_path)
@@ -72,6 +49,25 @@ def _save_shapefile(out_shapefile: gpd.GeoDataFrame,
         out_shapefile.to_file(out_path)
     except Exception as e:
         print(e)
+
+# BACK-END FACING UTILITY FUNTIONS
+def _intake_ambigous(in_data: Union[Raster, Shapefile]) -> Union[xr.DataArray, gpd.GeoDataFrame]:
+    """Somewhat less performant intake function when the input can be either a Raster or Shapefile"""
+    if isinstance(in_data, os.PathLike):
+        if in_data.suffix in RasterSuffixes:
+            return intake_raster(in_data)
+        elif in_data.suffix in ShapefileSuffixes:
+            return intake_shapefile(in_data)
+    elif isinstance(in_data, Union[xr.DataArray, gpd.GeoDataFrame]):
+        return in_data
+
+def _get_crs(out_crs: Union[Raster, Shapefile]) -> str:
+    crs_data = _intake_ambigous(out_crs)
+
+    if isinstance(crs_data, xr.DataArray):
+        return crs_data.rio.crs.to_wkt()
+    elif isinstance(crs_data, gpd.GeoDataFrame):
+        return crs_data.crs.to_wkt()
 
 def _verify_dtype(raster: xr.DataArray, value: Union[float, int]) -> bool:
     dtype = str(raster.dtype)
@@ -124,18 +120,18 @@ def clip(in_raster: Raster,
         Note: Using this parameter assumes that coordinates match the CRS of param:in_raster.
     :returns: (xr.DataArray) the clipped raster as a xarray DataArray object.
     """
-    in_raster = _intake_raster(in_raster)
+    in_raster = intake_raster(in_raster)
 
     if match_raster is not None:
-        match_raster = _intake_raster(match_raster)
+        match_raster = intake_raster(match_raster)
         crs = match_raster.rio.crs.to_wkt()
         bbox = list(match_raster.rio.bounds)
     elif match_shapefile is not None:
-        match_shapefile = _intake_shapefile(match_shapefile)
+        match_shapefile = intake_shapefile(match_shapefile)
         crs = match_shapefile.crs.to_wkt()
         bbox = match_shapefile.geometry.total_bounds
     elif custom_bbox is not None:
-        crs = in_raster.crs.to_wkt()
+        crs = in_raster.rio.crs.to_wkt()
         bbox = custom_bbox
     out_raster = in_raster.rio.clip_box(minx=bbox[0],
                                         miny=bbox[1],
@@ -143,7 +139,7 @@ def clip(in_raster: Raster,
                                         maxy=bbox[3],
                                         crs=crs)
     if out_path is not None:
-        _save_raster(out_raster, out_path)
+        save_raster(out_raster, out_path)
 
     return out_raster
 
@@ -161,7 +157,7 @@ def reproject_raster(in_raster: Raster,
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the reprojected raster as a xarray DataArray object.
     """
-    in_raster = _intake_raster(in_raster)
+    in_raster = intake_raster(in_raster)
     if out_crs is not None:
         out_crs = _get_crs(out_crs)
     elif wkt_string is not None:
@@ -173,7 +169,7 @@ def reproject_raster(in_raster: Raster,
 
     out_raster = in_raster.rio.reproject(out_crs, nodata=in_raster.rio.nodata)
     if out_path is not None:
-        _save_raster(out_raster, out_path)
+        save_raster(out_raster, out_path)
     return out_raster
 
 def reproject_shapefile(in_shapefile: Shapefile,
@@ -181,7 +177,7 @@ def reproject_shapefile(in_shapefile: Shapefile,
                         wkt_string: str = None,
                         out_path: str = None,
                         ) -> xr.DataArray:
-    in_shapefile = _intake_raster(in_shapefile)
+    in_shapefile = intake_raster(in_shapefile)
     if out_crs is not None:
         out_crs = _get_crs(out_crs)
     elif wkt_string is not None:
@@ -193,7 +189,7 @@ def reproject_shapefile(in_shapefile: Shapefile,
 
     out_shapefile = in_shapefile.to_crs(out_crs)
     if out_path is not None:
-        _save_shapefile(out_shapefile, out_path)
+        save_shapefile(out_shapefile, out_path)
     return out_shapefile
 
 def resample(in_raster: Raster,
@@ -210,8 +206,8 @@ def resample(in_raster: Raster,
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the resampled raster as a xarray DataArray object.
     """
-    in_raster = _intake_raster(in_raster)
-    match_raster = _intake_raster(match_raster)
+    in_raster = intake_raster(in_raster)
+    match_raster = intake_raster(match_raster)
 
     try:
         out_raster = in_raster.rio.reproject(in_raster.rio.crs,
@@ -223,7 +219,7 @@ def resample(in_raster: Raster,
         print(f'Resampling method {method} is invalid! Please select from {real_methods}')
 
     if out_path is not None:
-        _save_raster(out_raster, out_path)
+        save_raster(out_raster, out_path)
 
     return out_raster
 
@@ -238,7 +234,7 @@ def sample_raster(raster: xr.DataArray,
     return raster.sel({'x': coords[0],
             'y': coords[1]}).values.item(0)
 
-def get_min_cell(raster: xr.DataArray) -> list[tuple, Union[float, int]]:
+def get_min_cell(raster: xr.DataArray) -> Tuple[tuple, Union[float, int]]:
     """
     Get the minimum cell coordinates + value from a single band raster.
     :param raster: (xr.DataArray) a raster as a DataArray in memory.
@@ -252,7 +248,7 @@ def get_min_cell(raster: xr.DataArray) -> list[tuple, Union[float, int]]:
                 'y': ymin_index})
     return [(min_slice.x.values.item(0), min_slice.y.values.item(0)), min_slice.values.item(0)]
 
-def get_max_cell(raster: xr.DataArray) -> list[tuple, Union[float, int]]:
+def get_max_cell(raster: xr.DataArray) -> Tuple[tuple, Union[float, int]]:
     """
     Get the maximum cell coordinates + value from a raster.
     :param raster: (xr.DataArray) a raster as a DataArray in memory.
@@ -267,7 +263,7 @@ def get_max_cell(raster: xr.DataArray) -> list[tuple, Union[float, int]]:
     return [(max_slice.x.values.item(0), max_slice.y.values.item(0)), max_slice.values.item(0)]
 
 def update_cell_values(in_raster: Union[xr.DataArray, str],
-                       update_points: List[tuple, Union[float, int]],
+                       update_points: Tuple[tuple, Union[float, int]],
                        out_path: str = None,
                        ) -> xr.DataArray:
     """
@@ -279,15 +275,15 @@ def update_cell_values(in_raster: Union[xr.DataArray, str],
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: param:in_raster with the updated cell value as a xarray DataArray object.
     """
-    out_raster = _intake_raster(in_raster)
+    out_raster = intake_raster(in_raster)
 
     # if only a list of depth=1, assums the form [tuple(x, y), value]
     if isinstance(update_points[0], tuple):
         update_points = [update_points]
 
-    for update_list in update_points:
-        if isinstance(update_list[0], tuple):
-            coords, value = update_list
+    for update_tuple in update_points:
+        if isinstance(update_tuple[0], tuple):
+            coords, value = update_tuple
             _update_cell_value_(out_raster, coords, value)
         else:
             #TODO: Exception handling
@@ -295,7 +291,7 @@ def update_cell_values(in_raster: Union[xr.DataArray, str],
                 '[[(x_coord:float, y_coord:float), updated_value],...]')
 
     if out_path is not None:
-        _save_raster(out_raster, out_path)
+        save_raster(out_raster, out_path)
 
     return out_raster
 
