@@ -18,7 +18,7 @@ from FCPGtools import __version__
 
 # test the python version
 major, minor = sys.version_info[0:2]
-if (major, minor) >= (3,7):
+if (major, minor) < (3,7):
 	sys.stderr.write('\nPython 3.7 or later is required for this package.\n')
 	sys.exit(1)
 
