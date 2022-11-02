@@ -42,6 +42,11 @@ def _get_crs(out_crs: Union[Raster, Shapefile]) -> str:
     elif isinstance(crs_data, gpd.GeoDataFrame):
         return crs_data.crs.to_wkt()
 
+def _prep_parameter_raster() -> xr.DataArray:
+    """Handles 3 dimensionality if necessary, squeezes otherwise"""
+    #TODO: COME BACK TO THIS!
+    pass
+
 def _save_raster(out_raster: xr.DataArray,
                 out_path: Union[str, os.PathLike]) -> None:
     if isinstance(out_path, str):
