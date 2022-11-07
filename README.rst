@@ -22,6 +22,7 @@ Citation
 
 Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: https://doi.org/10.5066/P9W8UZ47.
 
+Version 1.0 (IP-112996) was approved on September 3, 2020.
 Version 1.1 was released in September, 2022.
 
 Issues
@@ -72,7 +73,7 @@ On a HPC system you may need to load the correct Python module before building t
 
 To have access to the FCPGtools modules in your Python environment, it is necessary to have a path to your copy of FCPGtools in Anaconda's :code:`sites-packages` directory (i.e. something like :code:`$HOME/path/to/anaconda/lib/pythonX.X/site-packages` or :code:`$HOME/path/to/anaconda/lib/site-packages` similar).
 
-- The easiest way to do this is to use the `conda develop`<https://docs.conda.io/projects/conda-build/en/latest/resources/commands/conda-develop.html`_ command in the console or terminal like this, replacing :code:`/path/to/module/` with the full file pathway to the local cloned HSPsquared repository:
+- The easiest way to do this is to use the `conda develop`<https://docs.conda.io/projects/conda-build/en/latest/resources/commands/conda-develop.html`_ command in the console or terminal like this, replacing :code:`/path/to/module/` with the full file pathway to the local cloned FCPGtools repository:
 
 :code:`conda-develop /path/to/module/`
 
