@@ -58,7 +58,7 @@ def _intake_ambigous(in_data: Union[Raster, Shapefile]) -> Union[xr.DataArray, g
             return intake_raster(in_data)
         elif in_data.suffix in ShapefileSuffixes:
             return intake_shapefile(in_data)
-    elif isinstance(in_data, Union[xr.DataArray, gpd.GeoDataFrame]):
+    elif isinstance(in_data, xr.DataArray) or isinstance(in_data, gpd.GeoDataFrame):
         return in_data
 
 def _get_crs(out_crs: Union[Raster, Shapefile]) -> str:
@@ -125,7 +125,7 @@ def clip(in_raster: Raster,
     if match_raster is not None:
         match_raster = intake_raster(match_raster)
         crs = match_raster.rio.crs.to_wkt()
-        bbox = list(match_raster.rio.bounds)
+        bbox = list(match_raster.rio.bounds())
     elif match_shapefile is not None:
         match_shapefile = intake_shapefile(match_shapefile)
         crs = match_shapefile.crs.to_wkt()

@@ -14,7 +14,8 @@ Raster = Union[xr.DataArray, str]
 def align_raster(in_raster,
                 match_raster: Raster,
                 resample_method: str = 'bilinear', 
-                out_path: str = None) -> xr.DataArray:
+                out_path: str = None,
+            ) -> xr.DataArray:
     out_raster = clip(in_raster, match_raster)
     out_raster = reproject_raster(in_raster, out_crs=match_raster)
     out_raster = resample(in_raster, match_raster,
@@ -129,7 +130,7 @@ def find_pour_points(
         fac_raster: Raster, 
         basins_shp: str = None, 
         basin_id_field: str = None,
-                    ) -> dict:
+    ) -> dict:
     """
     Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.
     :param fac_raster: (xr.DataArray or str raster path) a Flow Accumulation Cell raster (FAC).
