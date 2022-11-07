@@ -19,8 +19,8 @@ def _taudem_prepper(in_raster: Raster) -> str:
     If param:in_raster is a xr.DataArray, it is saved in a temporary location.
     """
     if isinstance(in_raster, xr.DataArray):
-        temp_path = TEMP_DIR.parent / 'fdr_d8_temp.tif'
-        _save_raster(in_raster, temp_path)
+        temp_path = TEMP_DIR / 'fdr_d8_temp.tif'
+        save_raster(in_raster, temp_path)
         in_raster = str(temp_path)
     elif isinstance(in_raster, pathlib.PathLike):
         in_raster = str(in_raster)
@@ -62,12 +62,12 @@ def fac_from_fdr(
     d8_fdr = _taudem_prepper(d8_fdr)
     save = False
     if out_path is None:
-        out_path = TEMP_DIR.parent / 'fac_temp.tif'
+        out_path = TEMP_DIR / 'fac_temp.tif'
     else: save = True
 
     taudem_dict = {
             'fdr': d8_fdr,
-            'outFl': out_path,
+            'outFl': str(out_path),
             'cores': 1,
             'mpiCall': 'mpiexec',
             'mpiArg': '-n'}

@@ -18,11 +18,15 @@ try:
     import src.fcpgtools.tools as tools
     import src.fcpgtools.utilities as utilities
     import src.fcpgtools.geoengine as geoengine
+    from src.fcpgtools.geoengine import taudem_engine
     from src.fcpgtools.geoengine import pysheds_engine
 except ImportError as e:
     print(f'ERROR: Could not import FCPGTools v2 properly. \nException: {e}')
 
-def main(multi_dimensional_test: bool = MULTI_DIMENSIONAL_TEST) -> bool:
+def main(
+    multi_dimensional_test: bool = MULTI_DIMENSIONAL_TEST,
+    test_taudem: bool = True,
+    ) -> bool:
     # get all necessary paths for in/out data
     in_data_dir = Path(os.path.join(str(os.getcwd()), 'examples\data'))
     print(f'Variable in_data_dir accesses {in_data_dir}')
@@ -64,7 +68,6 @@ def main(multi_dimensional_test: bool = MULTI_DIMENSIONAL_TEST) -> bool:
                                 us_fdr,
                                 resample_method='bilinear', 
                                 out_path=Path(os.path.join(out_data_dir, 'us_fdr_daymet.tif')))
-    return us_precip
 
     # ISSUE: Landcover alignment runs into nodata range problem, we need a utility to resolve
     #print('Aligning landcover raster to the upstream fdr')
@@ -73,5 +76,13 @@ def main(multi_dimensional_test: bool = MULTI_DIMENSIONAL_TEST) -> bool:
     #                                resample_method='bilinear', 
     #                                out_path=None)
     #return us_landcover
+    if test_taudem:
+        print('Making a FAC from us_fdr w/ TauDEM engine')
+        us_fac = taudem_engine.fac_from_fdr(
+            d8_fdr=us_fdr, 
+            upstream_pour_points=None,
+            out_path=None)
+        return us_fac
 if __name__ == '__main__':
-    main(MULTI_DIMENSIONAL_TEST)
+    main(MULTI_DIMENSIONAL_TEST,
+    test_taudem=True)
