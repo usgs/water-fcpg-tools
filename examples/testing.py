@@ -17,9 +17,9 @@ except ImportError as e:
 try:
     import src.fcpgtools.tools as tools
     import src.fcpgtools.utilities as utilities
-    import src.fcpgtools.geoengine as geoengine
-    from src.fcpgtools.geoengine import taudem_engine
-    from src.fcpgtools.geoengine import pysheds_engine
+    import src.fcpgtools.terrainengine as terrainengine
+    from src.fcpgtools.terrainengine import taudem_engine
+    from src.fcpgtools.terrainengine import pysheds_engine
 except ImportError as e:
     print(f'ERROR: Could not import FCPGTools v2 properly. \nException: {e}')
 
@@ -51,12 +51,14 @@ def main(
         print('Pulling in multi-dimensional DAYMET precipitation data')
         bounding_box = list(us_basin_shp.geometry.total_bounds)
         print(f'Boudning box: {bounding_box}')
-        precip = pydaymet.get_bygeom(bounding_box,
-                                        crs=us_basin_shp.crs.to_wkt(),
-                                        dates=("2021-01-01", "2021-12-30"),
-                                        variables='prcp',
-                                        time_scale="monthly"
-                                        )['prcp']
+
+        precip = pydaymet.get_bygeom(
+            bounding_box,
+            crs=us_basin_shp.crs.to_wkt(),
+            dates=("2021-01-01", "2021-12-30"),
+            variables='prcp',
+            time_scale="monthly",
+            )['prcp']
     else:
         print('Using one dimensional precipitation data')
         precip_tif = Path(os.path.join(in_data_dir, 'validation_daymet_an_P_2017.tif'))
@@ -64,10 +66,12 @@ def main(
 
     # align parameter raster
     print('Aligning precipitation raster to the upstream fdr')
-    us_precip = tools.align_raster(precip,
-                                us_fdr,
-                                resample_method='bilinear', 
-                                out_path=Path(os.path.join(out_data_dir, 'us_fdr_daymet.tif')))
+    us_precip = tools.align_raster(
+        precip,
+        us_fdr,
+        resample_method='bilinear', 
+        out_path=Path(os.path.join(out_data_dir, 'us_fdr_daymet.tif')),
+        )
 
     # ISSUE: Landcover alignment runs into nodata range problem, we need a utility to resolve
     #print('Aligning landcover raster to the upstream fdr')

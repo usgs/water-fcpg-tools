@@ -3,7 +3,7 @@
 
 __version__ = '2.0.0'
 
-from .geoengine import *
+from .terrainengine import *
 from .utilities import *
 from .tools import *
 

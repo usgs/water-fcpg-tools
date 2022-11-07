@@ -6,8 +6,8 @@ import xarray as xr
 import rioxarray as rio
 from rasterio.enums import Resampling
 import geopandas as gpd
-from .geoengine.protocols import Raster, Shapefile
-from .geoengine.protocols import RasterSuffixes, ShapefileSuffixes
+from .terrainengine.protocols import Raster, Shapefile
+from .terrainengine.protocols import RasterSuffixes, ShapefileSuffixes
 
 # CLIENT FACING I/O FUNCTIONS
 def intake_raster(in_raster: Raster) -> xr.DataArray:

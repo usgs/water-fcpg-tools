@@ -7,7 +7,7 @@ from typing import Tuple
 
 from .utilities import *
 
-#from geoengine.protocols import Raster
+#from terrainengine.protocols import Raster
 Raster = Union[xr.DataArray, str]
 
 # CLIENT FACING FUNCTIONS
