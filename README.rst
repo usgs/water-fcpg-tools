@@ -68,7 +68,7 @@ Create an `conda <https://docs.conda.io/en/latest/>`_ environment using the supp
 
 On a HPC system you may need to load the correct Python module before building the Anaconda environment. This might be done with :code:`module load python/anaconda3`.
 
-4. Add your HSPsquared Path to Anaconda sites-packages
+4. Add your FCPGtools Path to Anaconda sites-packages
 ---------
 
 To have access to the FCPGtools modules in your Python environment, it is necessary to have a path to your copy of FCPGtools in Anaconda's :code:`sites-packages` directory (i.e. something like :code:`$HOME/path/to/anaconda/lib/pythonX.X/site-packages` or :code:`$HOME/path/to/anaconda/lib/site-packages` similar).
