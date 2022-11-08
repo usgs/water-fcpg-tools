@@ -85,7 +85,7 @@ def fac_from_fdr(
             **taudem_dict)
         _ = subprocess.run(cmd, shell=True)
 
-    except:
+    except Exception:
         #TODO: Handle exceptions
         print('ERROR: TauDEM AreaD8 failed!')
         traceback.print_exc()
@@ -136,7 +136,7 @@ def distance_to_stream(
             **taudem_dict)
         _ = subprocess.run(cmd, shell=True)
 
-    except:
+    except Exception:
         #TODO: Handle exceptions
         print('ERROR: TauDEM d8hdisttostrm failed!')
         traceback.print_exc()
@@ -173,11 +173,8 @@ def get_max_upslope(
         out_path = TEMP_DIR.parent / 'fac_temp.tif'
     else: save = True
 
-    if not get_min_upslope:
-        accum_type_str = ''
-    else:
-        accum_type_str = '-min'
-
+    accum_type_str = '-min' if get_min_upslope else ''
+    
     taudem_dict = {
         'fdr': d8_fdr,
         'param': param_raster,
@@ -195,7 +192,7 @@ def get_max_upslope(
             **taudem_dict)  # Create string of tauDEM shell command
         _ = subprocess.run(cmd, shell=True)
 
-    except:
+    except Exception:
         #TODO: Handle exceptions
         print('ERROR: TauDEM d8flowpathextremeup failed!')
         traceback.print_exc()
@@ -274,7 +271,7 @@ def decayAccum(
             result.stdout
             if verbose: print("Parameter accumulation written to: {0}".format(outRast))
 
-        except:
+        except Exception:
             print('Error Accumulating Data')
             traceback.print_exc()
     else:
@@ -296,6 +293,6 @@ def decayAccum(
             result.stdout
             if verbose: print("Parameter accumulation written to: {0}".format(outRast))
 
-        except:
+        except Exception:
             print('Error Accumulating Data')
             traceback.print_exc()
