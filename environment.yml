@@ -6,25 +6,35 @@ channels:
 
 dependencies:
   - python =3.9 # 3.10 caused conflicts with taudem
+  - xarray
 
-  # geospatial processing
+  # geospatial I/O & processing
   - rasterio =1.2
-  - geopandas =0.11
+  - rioxarray
+  - geopandas >=0.12.1
   - descartes =1.1
 
   # terrain analysis engines
   # taudem not available for osx-64; https://anaconda.org/conda-forge/taudem
   - taudem =5.3.8  # Limits to older versions of gdal =3.1.4; rasterio =1.2.1
+  - pysheds
 
   # Interactivity & Visualization (optional, but required for examples)
   - jupyterlab  # also installs ipython & jupyter nbclassic
   - ipympl  # jupyter-matplotlib, also installs matplotlib
-  # - nodejs    # required for many JupyterLab extensions
+  - nodejs    # required for many JupyterLab extensions
+  - pydaymet  # data source for demo notebook
 
   # Dev tools (optional)
   - python-language-server
   - jupyter-lsp-python  # Includes both the server extension (jupyter-lsp) and pyls third-party server (python-language-server)
   - jupyterlab-lsp # Docs at https://github.com/krassowski/jupyterlab-lsp
+
+  # Documentation build / update (optional)
+  - sphinx
+  - sphinxcontrib-bibtex
+  - numpydoc
+  - sphinx_rtd_theme
 
   # package management
   - conda
@@ -33,5 +43,4 @@ dependencies:
   - pip
    # PIP install requirements only if it is not  possible with conda
    # https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment
-  - pip:
-    # - git+https://github.com/usgs/water-fcpg-tools
+   
