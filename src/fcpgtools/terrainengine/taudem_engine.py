@@ -7,8 +7,8 @@ import traceback
 import subprocess
 import xarray as xr
 from .protocols import Raster
-from src.fcpgtools.tools import *
-from src.fcpgtools.utilities import intake_raster, save_raster
+from fcpgtools.tools import *
+from fcpgtools.utilities import intake_raster, save_raster
 
 #TODO: Find what to do about saving temporary files
 TEMP_DIR = Path(r'C:\Users\xrnogueira\Downloads')
@@ -86,7 +86,7 @@ def fac_from_fdr(
         traceback.print_exc()
     
     out_raster = intake_raster(out_path)
-    if not save: os.remove(out_path)
+    #FIXME: if not save: os.remove(out_path)
     return out_raster
 
 def distance_to_stream(
