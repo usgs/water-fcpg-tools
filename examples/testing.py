@@ -14,14 +14,12 @@ except ImportError as e:
     MULTI_DIMENSIONAL_TEST = False
 
 # import fcpgtools!
-try:
-    import src.fcpgtools.tools as tools
-    import src.fcpgtools.utilities as utilities
-    import src.fcpgtools.terrainengine as terrainengine
-    from src.fcpgtools.terrainengine import taudem_engine
-    from src.fcpgtools.terrainengine import pysheds_engine
-except ImportError as e:
-    print(f'ERROR: Could not import FCPGTools v2 properly. \nException: {e}')
+
+import src.fcpgtools.tools as tools
+import src.fcpgtools.utilities as utilities
+import src.fcpgtools.terrainengine as terrainengine
+from src.fcpgtools.terrainengine import taudem_engine
+from src.fcpgtools.terrainengine import pysheds_engine
 
 def main(
     multi_dimensional_test: bool = MULTI_DIMENSIONAL_TEST,
