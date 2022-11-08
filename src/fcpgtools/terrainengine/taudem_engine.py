@@ -211,10 +211,10 @@ def get_max_upslope(
 #TODO: Return to decay. The first function should be in tools.py.
 # The TauDEM command relies on a D-inf raster, which we also need to add to tools.py/
 def decay_raster() -> xr.DataArray:
-    pass
+    raise NotImplementedError
 
 def decay_decay_accumulation() -> xr.DataArray:
-    pass
+    raise NotImplementedError
 
 # NON_REFACTORED, FOR REFERENCE
 def decayAccum(
@@ -254,7 +254,6 @@ def decayAccum(
     outRast : raster
         Decayed accumulation raster, either area or parameter depending on what is supplied to the function.
     """
-
     if paramRast != None:
         try:
             if verbose: print('Accumulating parameter')

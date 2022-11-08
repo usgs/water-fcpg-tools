@@ -346,7 +346,7 @@ def verify_extent(
     # a raster using lat/long coordinates.
     # 1. get raster bbox coorindates
     # 2. see if coords is within the bbox, return a boolean
-    pass
+    raise NotImplementedError
 
 def minimize_extent(
     in_raster: Union[xr.DataArray, str],
@@ -362,7 +362,7 @@ def minimize_extent(
     """
     # if no nodata values -> return in_raster
     # else return the minimum extent
-    pass
+    raise NotImplementedError
 
 def change_nodata(
     in_raster: Union[xr.DataArray, str],
@@ -380,7 +380,7 @@ def change_nodata(
     :returns: param:in_raster with the updated nodata values as a xarray DataArray object.
     """
     # Note for dev: we need to understand xarray's handling of nodata values
-    pass
+    raise NotImplementedError
 
 def change_dtype(
     in_raster: Union[xr.DataArray, str],
@@ -396,7 +396,7 @@ def change_dtype(
     :param allow_rounding: (bool, default=False) allows rounding of float -> int.
     :returns: (xr.DataArray) the raster with it's dtype changed.
     """
-    pass
+    raise NotImplementedError
 
 def get_raster_bbox(
     raster: xr.DataArray,
@@ -408,7 +408,7 @@ def get_raster_bbox(
     """
     # this function is used to in verify_extent() as well as clip().
     # MAY NOT BE NECESSARY
-    pass
+    raise NotImplementedError
 
 def get_shp_bbox(
     shp: Union[str, gpd.GeoDataFrame],
@@ -419,7 +419,7 @@ def get_shp_bbox(
     :returns: (list) list with bounding bbox coordinates - [minX, minY, maxX, maxY]
     """
     # MAY NOT BE NECESSARY
-    pass
+    raise NotImplementedError
 
 
 

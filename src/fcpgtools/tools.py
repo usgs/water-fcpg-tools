@@ -41,6 +41,7 @@ def find_cell_downstream(
         downstream from the cell defined via :param:coords.
     """
     # get index of cell and index and use to query surrounding cells
+    raise NotImplementedError
 
 # raster masking function
 def spatial_mask(
@@ -62,6 +63,7 @@ def spatial_mask(
     :param inverse: (bool, default=False) if True, cells that ARE COVERED by mask_shp -> NoData.
     :returns: (xr.DataArray) the output binary mask raster.
     """
+    raise NotImplementedError
 
 def value_mask(
     in_raster: Raster,
@@ -85,6 +87,7 @@ def value_mask(
     :param inverse: (bool, default=False) if True, the inverse of the mask is made.
     :returns: (xr.DataArray) the output binary mask raster.
     """
+    raise NotImplementedError
 
 def nodata_mask(
     in_raster: Raster, 
@@ -102,6 +105,7 @@ def nodata_mask(
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the output binary mask raster.
     """
+    raise NotImplementedError
 
 def apply_mask(
     in_raster: Raster, 
@@ -117,6 +121,7 @@ def apply_mask(
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the output raster with nodata cells.
     """
+    raise NotImplementedError
 
 def binarize_categorical_rasters(
     cat_raster: Raster, 
@@ -135,6 +140,7 @@ def binarize_categorical_rasters(
         Note that this is the behavior in V1.1 of FCPGTools.
     :returns: (xr.DataArray) a N-band multi-dimensional raster as a xarray DataArray object.
     """
+    raise NotImplementedError
 
 def find_pour_points(
     fac_raster: Raster, 
@@ -151,7 +157,7 @@ def find_pour_points(
     :returns: (dict) a dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(lat, lon).
     """
     # check extents of shapefile bbox and make sure all overlap the FAC raster extent
-
+    raise NotImplementedError
 
 # make FCPG raster
 def create_fcpg(
@@ -171,6 +177,7 @@ def create_fcpg(
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the output FCPG raster as a xarray DataArray object.
     """
+    raise NotImplementedError
 
 #TODO: Evaluate feasibility of implementing 
 #These are extra add ons that would be nice to implement budget permitting 
@@ -188,6 +195,7 @@ def fix_pits(
         without fixing them. The input raster is returned as is.
     :returns: (xr.DataArray) the filled DEM an xarray DataArray object (while fix=True).
     """
+    raise NotImplementedError
 
 def fix_depressions(
     dem: Raster,
@@ -202,6 +210,7 @@ def fix_depressions(
         without fixing them. The input raster is returned as is.
     :returns: (xr.DataArray) the filled DEM an xarray DataArray object (while fix=True).
     """
+    raise NotImplementedError
 
 def fix_flats(
     dem: Raster,
@@ -216,6 +225,7 @@ def fix_flats(
         without fixing them. The input raster is returned as is.
     :returns: (xr.DataArray) the resolved DEM an xarray DataArray object (while fix=True).
     """
+    raise NotImplementedError
 
 def d8_fdr(
     dem: Raster,
@@ -229,6 +239,7 @@ def d8_fdr(
     :param out_format: (str, default=TauDEM) type of D8 flow direction encoding for output.
     :returns: the FDR as a xarray DataArray object.
     """
+    raise NotImplementedError
 
 def batch_process(
     dataset: xr.Dataset,
@@ -244,6 +255,6 @@ def batch_process(
     :param **kwargs: (dict) allows for non-default keyword parameters for param:function to be specified.
     :returns: (xr.Dataset) the output Dataset with each DataArray altered by param:function.
     """
-    pass
+    raise NotImplementedError
 
 

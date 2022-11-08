@@ -65,4 +65,4 @@ def fac_from_fdr(
 
     #TODO: PICK BACK UP HERE
     d8_grid = Grid.add_gridded_data()
-    pass
+    raise NotImplementedError
