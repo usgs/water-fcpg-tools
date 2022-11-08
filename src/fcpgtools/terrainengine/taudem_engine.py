@@ -29,7 +29,7 @@ def _taudem_prepper(
         # No support for raw string in cmd line tools!
         print('ERROR: param:d8_fdr must be a xr.DataArray of a PathLike object.')
         #TODO: Handle exceptions
-        raise Exception
+        raise TypeError
     return in_raster
 
 def _update_taudem_dict(
