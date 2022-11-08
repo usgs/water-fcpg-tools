@@ -1,19 +1,20 @@
-import pathlib
-from tempfile import tempdir
-from typing import List
-from pathlib import Path
 import os
 import traceback
 import subprocess
+import pathlib
+from tempfile import tempdir
+from typing import List, Union
+from pathlib import Path
 import xarray as xr
-from .protocols import Raster
-from fcpgtools.tools import *
-from fcpgtools.utilities import intake_raster, save_raster
+from src.fcpgtools.types import Raster, TauDEMDict
+from src.fcpgtools.utilities import intake_raster, save_raster
 
 #TODO: Find what to do about saving temporary files
 TEMP_DIR = Path(r'C:\Users\xrnogueira\Downloads')
 
-def _taudem_prepper(in_raster: Raster) -> str:
+def _taudem_prepper(
+    in_raster: Raster,
+    ) -> str:
     """
     Converts an input raster into a TauDEM compatible path string. 
     If param:in_raster is a xr.DataArray, it is saved in a temporary location.
@@ -31,7 +32,10 @@ def _taudem_prepper(in_raster: Raster) -> str:
         raise Exception
     return in_raster
 
-def _update_taudem_dict(taudem_dict: dict, kwargs: dict) -> dict:
+def _update_taudem_dict(
+    taudem_dict: TauDEMDict,
+    kwargs: dict
+    ) -> TauDEMDict:
     if kwargs:
         for key, value in kwargs.items():
             if key in taudem_dict.keys():
@@ -41,11 +45,11 @@ def _update_taudem_dict(taudem_dict: dict, kwargs: dict) -> dict:
     return taudem_dict
 
 def fac_from_fdr(
-            d8_fdr: Raster, 
-            upstream_pour_points: List = None,
-            out_path: str = None,
-            **kwargs,
-        ) -> xr.DataArray:
+    d8_fdr: Raster, 
+    upstream_pour_points: List = None,
+    out_path: str = None,
+    **kwargs,
+    ) -> xr.DataArray:
     """
     Create a Flow Accumulation Cell (FAC) raster from a TauDEM format D8 Flow Direction Raster.
         Note: this is a command line wrapper of TauDEM:aread8.
@@ -66,11 +70,12 @@ def fac_from_fdr(
     else: save = True
 
     taudem_dict = {
-            'fdr': d8_fdr,
-            'outFl': str(out_path),
-            'cores': 1,
-            'mpiCall': 'mpiexec',
-            'mpiArg': '-n'}
+        'fdr': d8_fdr,
+        'outFl': str(out_path),
+        'cores': 1,
+        'mpiCall': 'mpiexec',
+        'mpiArg': '-n',
+        }
 
     taudem_dict = _update_taudem_dict(taudem_dict, kwargs)
 
@@ -90,12 +95,12 @@ def fac_from_fdr(
     return out_raster
 
 def distance_to_stream(
-            d8_fdr: Raster,
-            fac_raster: Raster,
-            accum_threshold: int = None,
-            out_path: str = None,
-            **kwargs,
-        ) -> xr.DataArray:
+    d8_fdr: Raster,
+    fac_raster: Raster,
+    accum_threshold: int = None,
+    out_path: str = None,
+    **kwargs,
+    ) -> xr.DataArray:
     """
     Calculates distance each cell is from a stream (as defined by a cell accumulation threshold).
         Note: this is a command line wrapper of TauDEM:aread8.
@@ -115,13 +120,14 @@ def distance_to_stream(
     else: save = True
 
     taudem_dict = {
-            'fdr': d8_fdr,
-            'fac': fac_raster,
-            'outRast': out_path,
-            'thresh': accum_threshold,
-            'cores': 1,
-            'mpiCall': 'mpiexec',
-            'mpiArg': '-n'}
+        'fdr': d8_fdr,
+        'fac': fac_raster,
+        'outRast': out_path,
+        'thresh': accum_threshold,
+        'cores': 1,
+        'mpiCall': 'mpiexec',
+        'mpiArg': '-n',
+        }
     
     taudem_dict = _update_taudem_dict(taudem_dict, kwargs)
 
@@ -139,12 +145,14 @@ def distance_to_stream(
     if not save: os.remove(out_path)
     return out_raster
 
-def get_max_upslope(d8_fdr: Raster,
-                    param_raster: Raster,
-                    stream_mask: Raster = None,
-                    out_path: str = None,
-                    get_min_upslope: bool = False,
-                    **kwargs,) -> xr.DataArray:
+def get_max_upslope(
+    d8_fdr: Raster,
+    param_raster: Raster,
+    stream_mask: Raster = None,
+    out_path: str = None,
+    get_min_upslope: bool = False,
+    **kwargs,
+    ) -> xr.DataArray:
     """
     Finds the max (or min if get_min_upslope=True) value of a parameter grid upstream
         from each cell in a D8 FDR raster (with TauDEM direction format).
@@ -171,13 +179,14 @@ def get_max_upslope(d8_fdr: Raster,
         accum_type_str = '-min'
 
     taudem_dict = {
-            'fdr': d8_fdr,
-            'param': param_raster,
-            'outRast': out_path,
-            'accum_type': accum_type_str,
-            'cores': 1,
-            'mpiCall': 'mpiexec',
-            'mpiArg': '-n'}
+        'fdr': d8_fdr,
+        'param': param_raster,
+        'outRast': out_path,
+        'accum_type': accum_type_str,
+        'cores': 1,
+        'mpiCall': 'mpiexec',
+        'mpiArg': '-n',
+        }
     
     taudem_dict = _update_taudem_dict(taudem_dict, kwargs)
 
@@ -208,7 +217,16 @@ def decay_decay_accumulation() -> xr.DataArray:
     pass
 
 # NON_REFACTORED, FOR REFERENCE
-def decayAccum(ang, mult, outRast, paramRast=None, cores=1, mpiCall='mpiexec', mpiArg='-n', verbose=False):
+def decayAccum(
+    ang,
+    mult,
+    outRast,
+    paramRast=None,
+    cores=1,
+    mpiCall='mpiexec',
+    mpiArg='-n',
+    verbose=False,
+    ) -> xr.DataArray:
     """Decay the accumulation of a parameter raster.
 
     Parameters

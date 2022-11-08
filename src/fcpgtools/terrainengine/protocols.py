@@ -1,18 +1,8 @@
 import abc
 import xarray as xr
 import geopandas as gpd
-from typing import Protocol
-from typing import Union
-from typing import List
-from typing import Dict
-
-#TODO: We'll want to replace the `str` type here with some type of path object
-Raster = Union[xr.DataArray, str]
-Shapefile = Union[gpd.GeoDataFrame, str]
-Engines = ['taudem', 'pysheds']
-RasterSuffixes = ['.tif']
-ShapefileSuffixes = ['.shp']
-
+from typing import Protocol, Union, List, Dict
+from src.fcpgtools.types import Raster
 
 class SupportsFDRtoFAC(Protocol):
     """"""

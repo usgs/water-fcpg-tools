@@ -1,29 +1,37 @@
-from typing import Union
+from typing import Union, Tuple, Dict
 import xarray as xr
 import geopandas as gpd
-
-from typing import Union
-from typing import Tuple
-
-from .utilities import *
-
-#from terrainengine.protocols import Raster
-Raster = Union[xr.DataArray, str]
+from src.fcpgtools.types import Raster
+from utilities import clip, reproject_raster, resample
 
 # CLIENT FACING FUNCTIONS
-def align_raster(in_raster,
-                match_raster: Raster,
-                resample_method: str = 'bilinear', 
-                out_path: str = None,
-            ) -> xr.DataArray:
-    out_raster = clip(in_raster, match_raster)
-    out_raster = reproject_raster(in_raster, out_crs=match_raster)
-    out_raster = resample(in_raster, match_raster,
-                        method=resample_method,
-                        out_path=out_path)
+def align_raster(
+    in_raster,
+    match_raster: Raster,
+    resample_method: str = 'bilinear', 
+    out_path: str = None,
+    ) -> xr.DataArray:
+
+    out_raster = clip(
+        in_raster,
+        match_raster,
+        )
+    out_raster = reproject_raster(
+        in_raster,
+        out_crs=match_raster,
+        )
+    out_raster = resample(
+        in_raster,
+        match_raster,
+        method=resample_method,
+        out_path=out_path,
+        )
     return out_raster
 
-def find_cell_downstream(d8_fdr: Raster, coords: Tuple) -> Tuple:
+def find_cell_downstream(
+    d8_fdr: Raster,
+    coords: Tuple[float, float],
+    ) -> Tuple[float, float]:
     """
     Uses a D8 FDR to find the cell center coordinates downstream from any cell (specified
     Note: this replaces py:func:FindDownstreamCellTauDir(d, x, y, w) in the V1.1 repo.
@@ -35,12 +43,13 @@ def find_cell_downstream(d8_fdr: Raster, coords: Tuple) -> Tuple:
     # get index of cell and index and use to query surrounding cells
 
 # raster masking function
-def spatial_mask(in_raster: Raster,
-                mask_shp: Union[gpd.GeoDataFrame, str] = None,
-                out_path: str = None,
-                mask_cell_value: int = None,
-                inverse: bool = False,
-                ) -> xr.DataArray:
+def spatial_mask(
+    in_raster: Raster,
+    mask_shp: Union[gpd.GeoDataFrame, str] = None,
+    out_path: str = None,
+    mask_cell_value: int = None,
+    inverse: bool = False,
+    ) -> xr.DataArray:
     """
     Primarily for masking rasters (i.e., FAC) by basin shapefiles, converting out-of-mask raster
     values to NoData. A cell value can also be used to create a mask for integer rasters. 
@@ -54,13 +63,14 @@ def spatial_mask(in_raster: Raster,
     :returns: (xr.DataArray) the output binary mask raster.
     """
 
-def value_mask(in_raster: Raster,
-        thresh: Union[int,float] = None,
-        greater_than: bool = True,
-        equals: int = None,
-        out_mask_value: int = None,
-        out_path: str = None,
-        inverse: bool = False,
+def value_mask(
+    in_raster: Raster,
+    thresh: Union[int,float] = None,
+    greater_than: bool = True,
+    equals: int = None,
+    out_mask_value: int = None,
+    out_path: str = None,
+    inverse: bool = False,
     ) -> xr.DataArray:
     """"
     Mask a raster via a value threshold. Primary use case is to identify high acumulation zones / stream cells.
@@ -77,10 +87,10 @@ def value_mask(in_raster: Raster,
     """
 
 def nodata_mask(
-        in_raster: Raster, 
-        inverse: bool = False,
-        nodata_value: Union[float,int] = None,
-        out_path: str = None,
+    in_raster: Raster, 
+    inverse: bool = False,
+    nodata_value: Union[float,int] = None,
+    out_path: str = None,
     ) -> xr.DataArray:
     """
     Creates an output binary raster based on an input where nodata values -> 1, and valued cells -> 0.
@@ -94,10 +104,10 @@ def nodata_mask(
     """
 
 def apply_mask(
-        in_raster: Raster, 
-        mask_raster: Raster, 
-        inverse: bool = False, 
-        out_path: str = None,
+    in_raster: Raster, 
+    mask_raster: Raster, 
+    inverse: bool = False, 
+    out_path: str = None,
     ) -> xr.DataArray:
     """
     Converts all values NOT included within a mask (i.e., value=0 while inverse=False) param:in_raster's nodata value.
@@ -109,10 +119,10 @@ def apply_mask(
     """
 
 def binarize_categorical_rasters(
-        cat_raster: Raster, 
-        ignore_caregories: list = None,
-        out_path: str = None,
-        split_rasters: bool = False,
+    cat_raster: Raster, 
+    ignore_caregories: list = None,
+    out_path: str = None,
+    split_rasters: bool = False,
     ) -> xr.DataArray:
     """
     :param cat_raster: (xr.DataArray or str raster path) a categorical (dtype=int) raster with N
@@ -127,10 +137,10 @@ def binarize_categorical_rasters(
     """
 
 def find_pour_points(
-        fac_raster: Raster, 
-        basins_shp: str = None, 
-        basin_id_field: str = None,
-    ) -> dict:
+    fac_raster: Raster, 
+    basins_shp: str = None, 
+    basin_id_field: str = None,
+    ) -> Dict[Union[str, int], Tuple[float, float]]:
     """
     Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.
     :param fac_raster: (xr.DataArray or str raster path) a Flow Accumulation Cell raster (FAC).
@@ -144,8 +154,12 @@ def find_pour_points(
 
 
 # make FCPG raster
-def create_fcpg(param_accum_raster: Raster, fac_raster: Raster,
-                ignore_nodata: bool = False, out_path: str = None) -> xr.DataArray:
+def create_fcpg(
+    param_accum_raster: Raster,
+    fac_raster: Raster,
+    ignore_nodata: bool = False,
+    out_path: str = None,
+    ) -> xr.DataArray:
     """
     Creates a Flow Conditioned Parameter Grid raster by dividing a paramater accumulation
     raster by a Flow Accumulation Cell (FAC) raster. FCPG = param_accum / fac.
@@ -161,7 +175,11 @@ def create_fcpg(param_accum_raster: Raster, fac_raster: Raster,
 #TODO: Evaluate feasibility of implementing 
 #These are extra add ons that would be nice to implement budget permitting 
 #Prepare flow direction raster (FDR)
-def fix_pits(dem: Raster, out_path: str = None, fix: bool = True) -> xr.DataArray:
+def fix_pits(
+    dem: Raster,
+    out_path: str = None,
+    fix: bool = True,
+    ) -> xr.DataArray:
     """
     Detect and fills single cell "pits" in a DEM raster using pysheds: .detect_pits()/.fill_pits().
     :param dem: (xr.DataArray or str raster path) the input DEM raster.
@@ -171,7 +189,11 @@ def fix_pits(dem: Raster, out_path: str = None, fix: bool = True) -> xr.DataArra
     :returns: (xr.DataArray) the filled DEM an xarray DataArray object (while fix=True).
     """
 
-def fix_depressions(dem: Raster, out_path: str = None, fix: bool = True) -> xr.DataArray:
+def fix_depressions(
+    dem: Raster,
+    out_path: str = None,
+    fix: bool = True,
+    ) -> xr.DataArray:
     """
     Detect and fills multi-cell "depressions" in a DEM raster using pysheds: .detect_depressions()/.fill_depressions().
     :param dem: (xr.DataArray or str raster path) the input DEM raster.
@@ -181,7 +203,11 @@ def fix_depressions(dem: Raster, out_path: str = None, fix: bool = True) -> xr.D
     :returns: (xr.DataArray) the filled DEM an xarray DataArray object (while fix=True).
     """
 
-def fix_flats(dem: Raster, out_path: str = None, fix: bool = True) -> xr.DataArray:
+def fix_flats(
+    dem: Raster,
+    out_path: str = None,
+    fix: bool = True,
+    ) -> xr.DataArray:
     """
     Detect and resolves "flats" in a DEM using pysheds: .detect_flats()/.resolve_flats().
     :param dem: (xr.DataArray or str raster path) the input DEM raster.
@@ -191,7 +217,11 @@ def fix_flats(dem: Raster, out_path: str = None, fix: bool = True) -> xr.DataArr
     :returns: (xr.DataArray) the resolved DEM an xarray DataArray object (while fix=True).
     """
 
-def d8_fdr(dem: Raster, out_path: str = None, out_format: str = 'TauDEM') -> xr.DataArray:
+def d8_fdr(
+    dem: Raster,
+    out_path: str = None,
+    out_format: str = 'TauDEM',
+    ) -> xr.DataArray:
     """
     Creates a flow direction raster from a DEM. Can either save the raster or keep in memory.
     :param dem: (xr.DataArray or str raster path) the DEM from which to make the FDR.
@@ -200,11 +230,12 @@ def d8_fdr(dem: Raster, out_path: str = None, out_format: str = 'TauDEM') -> xr.
     :returns: the FDR as a xarray DataArray object.
     """
 
-def batch_process(Dataset: xr.Dataset,
-                  function: callable = None,
-                  out_path: str = None,
-                  **kwargs: dict,
-                  ) -> xr.Dataset:
+def batch_process(
+    dataset: xr.Dataset,
+    function: callable = None,
+    out_path: str = None,
+    *kwargs: dict,
+    ) -> xr.Dataset:
     """
     Applies a function to each DataArray in a Dataset (should this be built into the functions themselves??)
     :param Dataset: (xr.Dataset) an xarray Dataset where all DataArrays are ready to be processed together.

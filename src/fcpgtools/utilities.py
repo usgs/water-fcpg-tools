@@ -5,8 +5,7 @@ import xarray as xr
 import rioxarray as rio
 from rasterio.enums import Resampling
 import geopandas as gpd
-from .terrainengine.protocols import Raster, Shapefile
-from .terrainengine.protocols import RasterSuffixes, ShapefileSuffixes
+from src.fcpgtools.types import Raster, Shapefile, RasterSuffixes, ShapefileSuffixes
 
 # CLIENT FACING I/O FUNCTIONS
 def intake_raster(
@@ -401,11 +400,11 @@ def change_dtype(
 
 def get_raster_bbox(
     raster: xr.DataArray,
-    ) -> List[float, float, float, float]:
+    ) -> Tuple[float, float, float, float]:
     """
     Get bounding box coordinates of a raster.
     :param raster: (xr.DataArray or str raster path) a georeferenced raster.
-    :returns: (list) list with bounding bbox coordinates - [minX, minY, maxX, maxY]
+    :returns: (Tuple)  with bounding bbox coordinates - [minX, minY, maxX, maxY]
     """
     # this function is used to in verify_extent() as well as clip().
     # MAY NOT BE NECESSARY
