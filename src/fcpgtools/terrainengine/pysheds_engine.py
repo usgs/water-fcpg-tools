@@ -4,7 +4,7 @@ from pysheds.grid import Grid
 from pysheds.view import Raster as PyShedsRaster
 from pysheds.view import ViewFinder
 from typing import List, Dict, TypedDict
-from src.fcpgtools.types import Raster, PyShedsInputDict
+from fcpgtools.types import Raster, PyShedsInputDict
 
 # Grid.add_gridded_data(self, data, data_name, affine=None, shape=None, crs=None,
 #                         nodata=None, mask=None, metadata={}):

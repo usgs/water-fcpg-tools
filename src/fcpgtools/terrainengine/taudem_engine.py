@@ -6,8 +6,8 @@ from tempfile import tempdir
 from typing import List, Union
 from pathlib import Path
 import xarray as xr
-from src.fcpgtools.types import Raster, TauDEMDict
-from src.fcpgtools.utilities import intake_raster, save_raster
+from fcpgtools.types import Raster, TauDEMDict
+from fcpgtools.utilities import intake_raster, save_raster
 
 #TODO: Find what to do about saving temporary files
 TEMP_DIR = Path(r'C:\Users\xrnogueira\Downloads')

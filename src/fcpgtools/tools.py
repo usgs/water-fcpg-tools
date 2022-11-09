@@ -1,8 +1,8 @@
 from typing import Union, Tuple, Dict
 import xarray as xr
 import geopandas as gpd
-from src.fcpgtools.types import Raster
-from utilities import clip, reproject_raster, resample
+from fcpgtools.types import Raster
+from fcpgtools.utilities import clip, reproject_raster, resample
 
 # CLIENT FACING FUNCTIONS
 def align_raster(

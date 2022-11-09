@@ -5,7 +5,7 @@ import xarray as xr
 import rioxarray as rio
 from rasterio.enums import Resampling
 import geopandas as gpd
-from src.fcpgtools.types import Raster, Shapefile, RasterSuffixes, ShapefileSuffixes
+from fcpgtools.types import Raster, Shapefile #, RasterSuffixes, ShapefileSuffixes
 
 # CLIENT FACING I/O FUNCTIONS
 def intake_raster(

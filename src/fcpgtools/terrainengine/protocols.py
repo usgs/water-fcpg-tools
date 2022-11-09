@@ -2,7 +2,7 @@ import abc
 import xarray as xr
 import geopandas as gpd
 from typing import Protocol, Union, List, Dict
-from src.fcpgtools.types import Raster
+from fcpgtools.types import Raster
 
 class SupportsFDRtoFAC(Protocol):
     """"""

@@ -1,3 +1,3 @@
-from .protocols import *
-from .taudem_engine import *
-from .pysheds_engine import *
+
+# populate module namespace
+from fcpgtools.terrainengine import protocols, taudem_engine, pysheds_engine

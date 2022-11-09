@@ -9,8 +9,8 @@ from pysheds.view import Raster as PyShedsRaster
 Raster = Union[DataArray, str]
 Shapefile = Union[GeoDataFrame, str]
 Engines = Tuple[str('taudem'), str('pysheds')]
-RasterSuffixes = Tuple[str('.tif')]
-ShapefileSuffixes = Tuple[str('.shp')]
+# RasterSuffixes = Tuple[str('.tif')]
+# ShapefileSuffixes = Tuple[str('.shp')]
 
 # create custom type hint for PyShedsInputDict
 class PyShedsInputDict(TypedDict):
