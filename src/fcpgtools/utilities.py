@@ -2,10 +2,11 @@ from typing import Union, List, Tuple, Dict
 import os
 from pathlib import Path
 import xarray as xr
+import numpy as np
 import rioxarray as rio
 from rasterio.enums import Resampling
 import geopandas as gpd
-from fcpgtools.types import Raster, Shapefile #, RasterSuffixes, ShapefileSuffixes
+from fcpgtools.types import Raster, Shapefile, RasterSuffixes, ShapefileSuffixes
 
 # CLIENT FACING I/O FUNCTIONS
 def intake_raster(
@@ -55,6 +56,16 @@ def save_shapefile(
         out_shapefile.to_file(out_path)
     except Exception as e:
         print(e)
+
+def id_d8_format(
+    raster: Raster,
+    ) -> str:
+    raster = intake_raster(raster)
+    uniques = np.unique(raster.values)
+    if np.max(uniques) > 8: return 'esri'
+    elif np.max(uniques) == 8: return 'taudem'
+    else: return print('ERROR: Cant recognize D8 Flow Direction Raster format '
+    'as either ESRI or TauDEM. Please use the param:in_format for pyfunc:convert_fdr_formats()')
 
 # BACK-END FACING UTILITY FUNTIONS
 def _intake_ambigous(

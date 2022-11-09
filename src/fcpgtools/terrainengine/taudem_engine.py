@@ -1,4 +1,5 @@
 import os
+import tempfile
 import traceback
 import subprocess
 import pathlib
@@ -9,9 +10,6 @@ import xarray as xr
 from fcpgtools.types import Raster, TauDEMDict
 from fcpgtools.utilities import intake_raster, save_raster
 
-#TODO: Find what to do about saving temporary files
-TEMP_DIR = Path(r'C:\Users\xrnogueira\Downloads')
-
 def _taudem_prepper(
     in_raster: Raster,
     ) -> str:
@@ -20,11 +18,19 @@ def _taudem_prepper(
     If param:in_raster is a xr.DataArray, it is saved in a temporary location.
     """
     if isinstance(in_raster, xr.DataArray):
-        temp_path = TEMP_DIR / 'fdr_d8_temp.tif'
+        temp_path = Path(
+            tempfile.TemporaryFile(
+                dir=Path.cwd(),
+                prefix='fdr_d8_temp',
+                suffix='.tif',
+                ).name
+            )
         save_raster(in_raster, temp_path)
         in_raster = str(temp_path)
+
     elif isinstance(in_raster, pathlib.PathLike):
         in_raster = str(in_raster)
+        
     else:
         # No support for raw string in cmd line tools!
         print('ERROR: param:d8_fdr must be a xr.DataArray of a PathLike object.')
@@ -66,7 +72,13 @@ def fac_from_fdr(
     d8_fdr = _taudem_prepper(d8_fdr)
     save = False
     if out_path is None:
-        out_path = TEMP_DIR / 'fac_temp.tif'
+        out_path = Path(
+            tempfile.TemporaryFile(
+                dir=Path.cwd(),
+                prefix='fac_temp',
+                suffix='.tif',
+                ).name
+            )
     else: save = True
 
     taudem_dict = {
@@ -91,7 +103,7 @@ def fac_from_fdr(
         traceback.print_exc()
     
     out_raster = intake_raster(out_path)
-    #FIXME: if not save: os.remove(out_path)
+    out_raster = out_raster.astype('uint64')
     return out_raster
 
 def distance_to_stream(
@@ -116,7 +128,13 @@ def distance_to_stream(
 
     save = False
     if out_path is None:
-        out_path = TEMP_DIR.parent / 'fac_temp.tif'
+        out_path = Path(
+            tempfile.TemporaryFile(
+                dir=Path.cwd(),
+                prefix='fac_temp',
+                suffix='.tif',
+                ).name
+            )
     else: save = True
 
     taudem_dict = {
@@ -142,7 +160,6 @@ def distance_to_stream(
         traceback.print_exc()
 
     out_raster = intake_raster(out_path)
-    if not save: os.remove(out_path)
     return out_raster
 
 def get_max_upslope(
@@ -170,7 +187,13 @@ def get_max_upslope(
 
     save = False
     if out_path is None:
-        out_path = TEMP_DIR.parent / 'fac_temp.tif'
+        out_path = Path(
+            tempfile.TemporaryFile(
+                dir=Path.cwd(),
+                prefix='fac_temp',
+                suffix='.tif',
+                ).name
+            )
     else: save = True
 
     accum_type_str = '-min' if get_min_upslope else ''
@@ -200,8 +223,6 @@ def get_max_upslope(
     out_raster = intake_raster(out_path)
 
     #TODO: Add stream mask function!
-
-    if not save: os.remove(out_path)
     return out_raster
 
 

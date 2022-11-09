@@ -1,8 +1,11 @@
 from typing import Union, Tuple, Dict
 import xarray as xr
+import numpy as np
+import pandas as pd
 import geopandas as gpd
-from fcpgtools.types import Raster
-from fcpgtools.utilities import clip, reproject_raster, resample
+from fcpgtools.types import Raster, FDRD8Formats, D8ConversionDicts
+from fcpgtools.utilities import intake_raster, clip, reproject_raster, \
+    resample, id_d8_format
 
 # CLIENT FACING FUNCTIONS
 def align_raster(
@@ -27,6 +30,59 @@ def align_raster(
         out_path=out_path,
         )
     return out_raster
+
+def convert_fdr_formats(
+    d8_fdr: Raster,
+    out_format: str,
+    in_format: str = None,
+    ) -> xr.DataArray:
+    """
+    Converts the D8 encoding of Flow Direction Rasters (FDR).
+    :param d8_fdr: (xr.DataArray, or path) the input D8 Flow Direction Raster (FDR).
+    :param out_format: (str)
+    :param in_format: (str, optional -> ESRI or TauDEM) a string D8 name that
+        overrides the auto-recognized format from param:d8_fdr.
+        Note: manually inputting param:in_format will improve performance.
+    :returns: (xr.DataArray) the re-encoded D8 Flow Direction Raster (FDR).
+    """
+    # identify the input D8 format
+    d8_fdr = intake_raster(d8_fdr)
+    out_format = out_format.lower()
+    if in_format is not None: in_format = in_format.lower()
+    else:
+        in_format = id_d8_format(d8_fdr)
+    
+    # check that both formats are valid before proceeding
+    if in_format not in FDRD8Formats: return print(
+        f'ERROR: param:in_format = {in_format} which is not in {FDRD8Formats}'
+        )
+    if out_format not in FDRD8Formats: return print(
+        f'ERROR: param:out_format = {out_format} which is not in {FDRD8Formats}'
+        )
+    if in_format == out_format: return d8_fdr
+
+    # get the conversion dictionary
+    in_dict, out_dict = D8ConversionDicts[in_format], D8ConversionDicts[out_format]
+
+    # convert appropriately using pandas (no clean implementation in xarray)
+    for key, old_value in in_dict.items():
+        if old_value in list(np.unique(d8_fdr.values)):
+            new_value = out_dict[key]
+            if old_value != new_value:
+                df = pd.DataFrame()
+                df[0] = d8_fdr.values.ravel()
+                df[0].replace(
+                    old_value,
+                    new_value,
+                    inplace=True,
+                    )
+                d8_fdr = d8_fdr.copy(
+                    data=df[0].values.reshape(d8_fdr.shape),
+                    )
+    print(f'Converted the D8 Flow Direction Raster (FDR) from {in_format} format'
+    ' to {out_format}')
+    return d8_fdr
+    
 
 def find_cell_downstream(
     d8_fdr: Raster,

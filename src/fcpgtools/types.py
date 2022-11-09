@@ -12,6 +12,30 @@ Shapefile = Union[GeoDataFrame, str, Path]
 Engines = ('taudem', 'pysheds')
 RasterSuffixes = ('.tif')
 ShapefileSuffixes = ('.shp')
+FDRD8Formats = ('esri', 'taudem')
+
+# create D8 conversion dictionaries
+D8ConversionDicts = {
+    'taudem': {
+        'southeast': 8,
+        'south': 7,
+        'southwest': 6,
+        'west': 5,
+        'northwest': 4,
+        'north': 3,
+        'northeast': 2,
+        'nodata': 0,
+        },
+    'esri': {'southeast': 2,
+        'south': 4,
+        'southwest': 8,
+        'west': 16,
+        'northwest': 32,
+        'north': 64,
+        'northeast': 128,
+        'nodata': 255,
+        }
+    }
 
 # create custom type hint for PyShedsInputDict
 class PyShedsInputDict(TypedDict):
