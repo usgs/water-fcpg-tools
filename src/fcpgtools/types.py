@@ -24,15 +24,18 @@ D8ConversionDicts = {
         'northwest': 4,
         'north': 3,
         'northeast': 2,
+        'east': 1,
         'nodata': 0,
         },
-    'esri': {'southeast': 2,
+    'esri': {
+        'southeast': 2,
         'south': 4,
         'southwest': 8,
         'west': 16,
         'northwest': 32,
         'north': 64,
         'northeast': 128,
+        'east': 1,
         'nodata': 255,
         }
     }

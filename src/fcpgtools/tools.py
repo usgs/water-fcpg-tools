@@ -80,7 +80,7 @@ def convert_fdr_formats(
                     data=df[0].values.reshape(d8_fdr.shape),
                     )
     print(f'Converted the D8 Flow Direction Raster (FDR) from {in_format} format'
-    ' to {out_format}')
+    f' to {out_format}')
     return d8_fdr
     
 

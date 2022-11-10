@@ -63,7 +63,7 @@ def id_d8_format(
     raster = intake_raster(raster)
     uniques = np.unique(raster.values)
     if np.max(uniques) > 8: return 'esri'
-    elif np.max(uniques) == 8: return 'taudem'
+    elif np.max(uniques) <= 8: return 'taudem'
     else: return print('ERROR: Cant recognize D8 Flow Direction Raster format '
     'as either ESRI or TauDEM. Please use the param:in_format for pyfunc:convert_fdr_formats()')
 
