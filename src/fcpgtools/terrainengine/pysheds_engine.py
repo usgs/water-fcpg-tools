@@ -66,3 +66,12 @@ def fac_from_fdr(
     #TODO: PICK BACK UP HERE
     d8_grid = Grid.add_gridded_data()
     raise NotImplementedError
+
+def parameter_accumulate( 
+    d8_fdr: Raster, 
+    parameter_raster: Raster,
+    upstream_pour_points: List = None,
+    out_path: str = None,
+    **kwargs,
+    ) -> xr.DataArray:
+    raise NotImplementedError

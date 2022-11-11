@@ -83,13 +83,14 @@ def main(
         )
     print('Done')
     
-    # ISSUE: Landcover alignment runs into nodata range problem, we need a utility to resolve
-    #print('Aligning landcover raster to the upstream fdr')
-    #us_landcover = tools.align_raster(landcover,
-    #                                us_fdr,
-    #                                resample_method='bilinear', 
-    #                                out_path=None)
-    #return us_landcover
+    print('Aligning landcover raster to the upstream fdr')
+    us_landcover = tools.align_raster(
+        landcover,
+        us_fdr,
+        resample_method='bilinear', 
+        out_path=None
+        )
+    
     if test_pysheds:
         print('Making a FAC from us_fdr w/ PySheds engine')
         us_fdr_grid = terrainengine.pysheds_engine.fac_from_fdr(

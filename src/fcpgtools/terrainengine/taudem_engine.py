@@ -126,9 +126,9 @@ def parameter_accumulate(
         with boundary conditions such as upstream basin pour points.
     :param out_path: (str, default=None) defines a path to save the output raster.
     :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
-    :returns: (xr.DataArray) the Flow Accumulation Cells (FAC) raster as a xarray DataArray object.
+    :returns: (xr.DataArray) the parameter accumulation raster as a xarray DataArray object.
     """
-    pass
+    raise NotImplementedError
 
 
 

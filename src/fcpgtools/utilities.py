@@ -125,8 +125,26 @@ def _update_cell_value_(
         print(f'ERROR: Value {value} does not match DataArray dtype = {raster.dtype}')
         return raster
 
-def _check_d8fdr_type():
-    pass
+def _format_nodata(
+    in_raster: xr.DataArray,
+    ):
+    """
+    If in_raster.rio.nodata is None, a nodata value is added.
+    For dtype=float -> np.nan, for dtype=int -> 255.
+    """
+    if in_raster.rio.nodata is None:
+        og_dtype = str(in_raster.dtype)
+        if 'float' in og_dtype: nodata_value = np.nan
+        elif 'int' in og_dtype: nodata_value = 255
+        if 'int8' in og_dtype:
+            if np.min(np.unique(in_raster.values)) < 0: in_raster = in_raster.astype('int16')
+            else: in_raster = in_raster.astype('uint8')
+
+        in_raster.rio.write_nodata(
+            nodata_value,
+            inplace=True,
+            ) 
+    return in_raster
 
 # FRONT-END/CLIENT FACING UTILITY FUNTIONS
 def clip(
@@ -197,10 +215,20 @@ def reproject_raster(
         out_crs = wkt_string
     else:
         #TODO: Update exceptions
-        print('Must pass in eitehr param:out_crs or param:wkt_string')
+        print('Must pass in either param:out_crs or param:wkt_string')
         return None
+    
+    # set nodata value, change dtype if necessary
+    in_raster = _format_nodata(in_raster)
+        
+    out_raster = in_raster.rio.reproject(
+        out_crs,
+        nodata=in_raster.rio.nodata,
+        kwargs={
+            'dst_nodata': in_raster.rio.nodata,
+            },
+        )
 
-    out_raster = in_raster.rio.reproject(out_crs, nodata=in_raster.rio.nodata)
     if out_path is not None:
         save_raster(out_raster, out_path)
     return out_raster
@@ -244,12 +272,18 @@ def resample(
     in_raster = intake_raster(in_raster)
     match_raster = intake_raster(match_raster)
 
+    # set nodata value, change dtype if necessary
+    in_raster = _format_nodata(in_raster)
+
     try:
         out_raster = in_raster.rio.reproject(
-            in_raster.rio.crs,
-            shape=(match_raster.rio.height, match_raster.rio.width),
-            resampling=getattr(Resampling, method),
-            )
+        in_raster.rio.crs,
+        shape=(match_raster.rio.height, match_raster.rio.width),
+        resampling=getattr(Resampling, method),
+        kwargs={
+        'dst_nodata': in_raster.rio.nodata,
+            },
+        )
 
     except AttributeError:
         #TODO: handle exceptions

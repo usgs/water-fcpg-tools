@@ -29,24 +29,24 @@ class SupportsParameterAccumulation(Protocol):
     """"""
 
     @abc.abstractmethod
-    def parameter_accumulation(
-            param_raster: Raster, 
-            fac_raster: Raster,
-            update_input: Union[Dict,List] = None, 
-            update_add: bool = False,
-            out_path: str = None
+    def parameter_accumulate( 
+        d8_fdr: Raster, 
+        parameter_raster: Raster,
+        upstream_pour_points: List = None,
+        out_path: str = None,
+        **kwargs,
         ) -> xr.DataArray:
         """
         Create a accumulation raster from an arbitrary parameter raster.
-        :param param_raster: (xr.DataArray or str raster path)
-        :param fac_raster: (xr.DataArray or str raster path) the Flow Accumulation Cells (FAC) raster.
-        :param update_input: (dict or list, optional) allows boundary conditions to be set by updating the
-            input param:param_raster with upstream pour point accumulation sums. Either a list of lists or a dictionary.
-            with integer keys to reference band index storing list[coords:tuple, value:Union[float, int]].
-            Note: if the input is multi-dimensional this must be a dictionary.
-        :param add_update: (bool, default=False) if True while update_raster!=None, the update_raster dict
-                values are added to the parameter raster value instead of replacing them.
+        :param d8_fdr: (xr.DataArray or str raster path) a TauDEM format D8 Flow Direction Raster (dtype=Int).
+        :param parameter_raster: (xr.DataArray or str raster path) a parameter raster aligned via tools.align_raster()
+            with the us_fdr. 
+            Note: This can be multi-dimensional (i.e. f(x, y, t)), and if so, a multi-dimensional output is returned.
+        :param upstream_pour_points: (list, default=None) a list of lists each with with coordinate tuples
+            as the first item [0], and updated cell values as the second [1]. This allows the FAC to be made
+            with boundary conditions such as upstream basin pour points.
         :param out_path: (str, default=None) defines a path to save the output raster.
+        :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
         :returns: (xr.DataArray) the parameter accumulation raster as a xarray DataArray object.
         """
         raise NotImplementedError
