@@ -106,6 +106,32 @@ def fac_from_fdr(
     out_raster = out_raster.astype('uint64')
     return out_raster
 
+
+def parameter_accumulate( 
+    d8_fdr: Raster, 
+    parameter_raster: Raster,
+    upstream_pour_points: List = None,
+    out_path: str = None,
+    **kwargs,
+    ) -> xr.DataArray:
+    """
+    Create a parameter accumulation raster from a TauDEM format D8 Flow Direction Raster and a parameter raster.
+        Note: this is a command line wrapper of TauDEM:aread8.
+    :param d8_fdr: (xr.DataArray or str raster path) a TauDEM format D8 Flow Direction Raster (dtype=Int).
+    :param parameter_raster: (xr.DataArray or str raster path) a parameter raster aligned via tools.align_raster()
+        with the us_fdr. 
+        Note: This can be multi-dimensional (i.e. f(x, y, t)), and if so, a multi-dimensional output is returned.
+    :param upstream_pour_points: (list, default=None) a list of lists each with with coordinate tuples
+        as the first item [0], and updated cell values as the second [1]. This allows the FAC to be made
+        with boundary conditions such as upstream basin pour points.
+    :param out_path: (str, default=None) defines a path to save the output raster.
+    :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
+    :returns: (xr.DataArray) the Flow Accumulation Cells (FAC) raster as a xarray DataArray object.
+    """
+    pass
+
+
+
 def distance_to_stream(
     d8_fdr: Raster,
     fac_raster: Raster,

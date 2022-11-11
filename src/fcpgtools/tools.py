@@ -1,9 +1,9 @@
-from typing import Union, Tuple, Dict
+from typing import Union, Tuple, Dict, List
 import xarray as xr
 import numpy as np
 import pandas as pd
 import geopandas as gpd
-from fcpgtools.types import Raster, FDRD8Formats, D8ConversionDicts
+from fcpgtools.types import Raster, FDRD8Formats, D8ConversionDicts, PourPointLocationsDict, PourPointValuesDict
 from fcpgtools.utilities import intake_raster, clip, reproject_raster, \
     resample, id_d8_format
 
@@ -65,6 +65,8 @@ def convert_fdr_formats(
     in_dict, out_dict = D8ConversionDicts[in_format], D8ConversionDicts[out_format]
 
     # convert appropriately using pandas (no clean implementation in xarray)
+    #TODO: Improve this somewhat, works for now but we can likely test simpler solutions
+    #NOTE: One option is using df.map() to covert all format values at once rather than iteratively
     for key, old_value in in_dict.items():
         if old_value in list(np.unique(d8_fdr.values)):
             new_value = out_dict[key]
@@ -202,7 +204,7 @@ def find_pour_points(
     fac_raster: Raster, 
     basins_shp: str = None, 
     basin_id_field: str = None,
-    ) -> Dict[Union[str, int], Tuple[float, float]]:
+    ) -> PourPointLocationsDict:
     """
     Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.
     :param fac_raster: (xr.DataArray or str raster path) a Flow Accumulation Cell raster (FAC).
@@ -215,6 +217,22 @@ def find_pour_points(
     # check extents of shapefile bbox and make sure all overlap the FAC raster extent
     raise NotImplementedError
 
+def get_pour_point_values(
+    pour_point_locations: Dict[Union[str, int], Tuple[float, float]],
+    accumulation_raster: Raster,
+    ) -> PourPointValuesDict:
+    """
+    Get the accumlation raster values from downstream pour points. Note: This function is intended to feed
+        into terrainengine.fac_from_fdr() or terrainengine.parameter_accumlate() param:upstream_pour_points.
+    :param pour_point_locations:  (dict) a dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(lat, lon).
+    :param accumulation_raster: (xr.DataArray or str raster path) a Flow Accumulation Cell raster (FAC) or a
+        parameter accumulation raster.
+    :returns: (list) a list of tuples (one for each pour point) storing their coordinates [0] and accumulation value [1].
+    """
+    # to support multi-dimensionality I think it is best to iterate over this function as the pour point locations will be constant.
+    #TODO: let's actually keep it as a basinID references dictionary, storing either a list of tuples (one for each band), or just a tuple
+    raise NotImplementedError
+    
 # make FCPG raster
 def create_fcpg(
     param_accum_raster: Raster,
