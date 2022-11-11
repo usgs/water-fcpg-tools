@@ -29,7 +29,7 @@ def main(
     # get all necessary paths for in/out data
     examples_dir = str(Path.cwd())
     if 'FCPGtools' in examples_dir:
-        examples_dir = Path(examples_dir.split('FCPGtools', 2)[0] + 'FCPGtools\\examples')
+        examples_dir = Path(examples_dir.split('FCPGtools', 2)[0]) / Path('FCPGtools/examples')
         print(f'var:examples_dir = {examples_dir}')
     else:
         del examples_dir

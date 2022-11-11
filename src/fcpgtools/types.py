@@ -42,14 +42,11 @@ D8ConversionDicts = {
 
 # create a custom type hint dictionary for pour points
 class PourPointLocationsDict(TypedDict):
-    pour_point_ids: List[int, str]
+    pour_point_ids: List[Union[int, str]]
     pour_point_coords: List[Tuple[float, float]]
 
-class PourPointValuesDict(TypedDict):
-    pour_point_ids: List[int, str]
-    pour_point_coords: List[Tuple[float, float]]
+class PourPointValuesDict(PourPointLocationsDict):
     pour_point_values: Union[List[List[Union[float, int]]], List[Union[float, int]]] 
-
 
 # create custom type hint for PyShedsInputDict
 class PyShedsInputDict(TypedDict):

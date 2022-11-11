@@ -218,7 +218,7 @@ def find_pour_points(
     raise NotImplementedError
 
 def get_pour_point_values(
-    pour_point_locations: Dict[Union[str, int], Tuple[float, float]],
+    pour_point_locations: PourPointLocationsDict,
     accumulation_raster: Raster,
     ) -> PourPointValuesDict:
     """
