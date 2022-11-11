@@ -5,6 +5,7 @@ from pysheds.view import Raster as PyShedsRaster
 from pysheds.view import ViewFinder
 from typing import List, Dict, TypedDict
 from fcpgtools.types import Raster, PyShedsInputDict
+from fcpgtools.utilities import intake_raster
 
 # Grid.add_gridded_data(self, data, data_name, affine=None, shape=None, crs=None,
 #                         nodata=None, mask=None, metadata={}):
@@ -50,8 +51,7 @@ def _pysheds_to_xarray(raster, original_array) -> xr.DataArray:
         raster,
         coords=original_array.squeeze().coords,
         name='fac_raster',
-        attrs={'dtype': original_array.dtype,
-            'spatial_ref': original_array.spatial_ref},
+        attrs=original_array.attrs,
         )
     return array
 
@@ -63,8 +63,10 @@ def fac_from_fdr(
             **kwargs,
         ) -> xr.DataArray:
 
-    #TODO: PICK BACK UP HERE
-    d8_grid = Grid.add_gridded_data()
+    d8_fdr = intake_raster(d8_fdr)
+    d8_grid = _xarray_to_pysheds(d8_fdr)
+
+
     raise NotImplementedError
 
 def parameter_accumulate( 

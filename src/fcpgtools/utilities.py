@@ -14,9 +14,9 @@ def intake_raster(
     ) -> xr.DataArray:
     """Used in the first line of most functions to make sure all inputs are DataArray"""
     if isinstance(in_raster, xr.DataArray):
-        return in_raster
+        return in_raster.squeeze()
     elif isinstance(in_raster, os.PathLike):
-        return rio.open_rasterio(in_raster)
+        return rio.open_rasterio(in_raster).squeeze()
 
 def intake_shapefile(
     in_shapefile: Shapefile,
@@ -127,7 +127,7 @@ def _update_cell_value_(
 
 def _format_nodata(
     in_raster: xr.DataArray,
-    ):
+    ) -> xr.DataArray:
     """
     If in_raster.rio.nodata is None, a nodata value is added.
     For dtype=float -> np.nan, for dtype=int -> 255.
@@ -145,6 +145,33 @@ def _format_nodata(
             inplace=True,
             ) 
     return in_raster
+
+def _split_bands(
+    in_raster: xr.DataArray,
+    ) -> Dict[Tuple[int, Union[int, str, np.datetime64]], xr.DataArray]:
+    """
+    Splits a 3 dimensional xr.DataArray into 2D arrays indexed by either an int or string dimension label.
+    :param in_raster: (xr.DataArray) a raster with a 3rd dimension (i.e. band, or f(x, y, t)). 
+    :returns: (dict) a dictionary with the int or string 3rd dimension label as keys, storing 2D data arrays.
+    """
+    if len(in_raster.shape) > 3:
+        print(f'ERROR: param:in_raster (xr.DataArray) has 4 dimensions (shape={in_raster.shape}).'
+        ' Please use a 2 or 3 dimension xr.DataArray.')
+        raise TypeError
+    if len(in_raster.shape) < 3:
+        print('WARNING: param:in_raster was expected to have 3-dimensions, but only has two.')
+        return {0: in_raster}
+    
+    # if 3 dimensions are passed, pull out the first dimension index values
+    dim_index = list(in_raster[in_raster.dims[0]].values)
+    index_tuples = []
+    for i, index_val in enumerate(dim_index):
+        index_tuples.append((i, index_val))
+    
+    out_dict = {}
+    for index_tuple in index_tuples:
+        out_dict[index_tuple[0]] = in_raster.sel({in_raster.dims[0]: index_tuple[-1]})
+    return out_dict
 
 # FRONT-END/CLIENT FACING UTILITY FUNTIONS
 def clip(
