@@ -7,7 +7,8 @@ import pandas as pd
 import rioxarray as rio
 from rasterio.enums import Resampling
 import geopandas as gpd
-from fcpgtools.types import Raster, Shapefile, RasterSuffixes, ShapefileSuffixes
+from fcpgtools.types import Raster, Shapefile, RasterSuffixes, ShapefileSuffixes, \
+    PourPointValuesDict
 
 # CLIENT FACING I/O FUNCTIONS
 def intake_raster(
@@ -180,8 +181,8 @@ def _combine_split_bands(
     split_dict: Dict[Tuple[int, Union[int, str, np.datetime64]], xr.DataArray],
     ) -> xr.DataArray:
 
-    index_name = 'name'
-    if isinstance(split_dict.keys()[0][-1], np.datetime64): name = 'time'
+    index_name = 'band'
+    if isinstance(list(split_dict.keys())[0][-1], np.datetime64): index_name = 'time'
 
     # re-create the 4th dimension index and concat
     index = pd.Index(
@@ -191,6 +192,53 @@ def _combine_split_bands(
         objs=split_dict.values(),
         dim=index,
         )
+
+def _update_parameter_raster(
+    parameter_raster: xr.DataArray,
+    upstream_pour_points: PourPointValuesDict,
+    ) -> xr.DataArray:
+    #TODO: Decide when to find downstream cell, probs best here?
+    
+    # pull in pour point data
+    pour_point_ids = upstream_pour_points['pour_point_ids']
+    pour_point_coords = upstream_pour_points['pour_point_coords']
+    pour_point_values = upstream_pour_points['pour_point_values']
+
+    if len(parameter_raster.shape) == 2:
+        # make update cell values list
+        update_cells_list = []
+        for i, coords in pour_point_coords:
+            value = pour_point_values[i][0]
+            update_cells_list.append(
+                (coords, value)
+            )
+
+        parameter_raster = update_cell_values(
+            in_raster=parameter_raster,
+            update_points=update_cells_list,
+            )
+    else:
+        dim_index = parameter_raster[parameter_raster.dims[0]].values
+        for i, value in enumerate(dim_index):
+            slice = parameter_raster.isel(
+                {parameter_raster.dims[0]: i}
+                )
+
+            # make update cell values list
+            update_cells_list = []
+            for j, coords in pour_point_coords:
+                value = pour_point_values[j][i]
+                update_cells_list.append(
+                    (coords, value)
+                )
+
+            #TODO: verify that this behavior works well
+            slice = update_cell_values(
+                in_raster=slice,
+                update_points=update_cells_list,
+                )
+    return parameter_raster
+
 
 # FRONT-END/CLIENT FACING UTILITY FUNTIONS
 def clip(
@@ -389,38 +437,31 @@ def get_max_cell(
 
 def update_cell_values(
     in_raster: Union[xr.DataArray, str],
-    update_points: Tuple[Tuple[float, float], Union[float, int]],
+    update_points: List[Tuple[Tuple[float, float], Union[float, int]]],
     out_path: str = None,
     ) -> xr.DataArray:
     """
     Update a specific raster cell's value based on it's coordindates. This is primarily used
     to add upstream accumulation values as boundary conditions before making a FAC or FCPG.
     :param in_raster: (xr.DataArray or str raster path) input raster.
-    :param update_points: (list) a list of lists storing cell coordinates updated values
-        of the form [[(x_coord:float, y_coord:float), updated_value],...].
+    :param update_points: (list) a list of tuples storing cell coordinates updated values
+        of the form [((x_coord:float, y_coord:float), updated_value),...].
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: param:in_raster with the updated cell value as a xarray DataArray object.
     """
     out_raster = intake_raster(in_raster)
 
-    # if only a list of depth=1, assums the form [tuple(x, y), value]
-    if isinstance(update_points[0], tuple):
-        update_points = [update_points]
-
     for update_tuple in update_points:
-        if isinstance(update_tuple[0], tuple):
-            coords, value = update_tuple
-            _update_cell_value_(out_raster, coords, value)
-        else:
-            #TODO: Exception handling
-            print('ERROR: Could not update cell, param:update_points must be of the form'
-                '[[(x_coord:float, y_coord:float), updated_value],...]')
+        _update_cell_value_(
+            out_raster,
+            coords=update_tuple[0],
+            value=update_tuple[-1],
+            )
 
     if out_path is not None:
         save_raster(out_raster, out_path)
 
     return out_raster
-
 
 # CIRCLE BACK TO THESE, MAY NOT BE NECESSARY?
 def verify_extent(

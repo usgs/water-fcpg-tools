@@ -5,7 +5,8 @@ from pysheds.view import Raster as PyShedsRaster
 from pysheds.view import ViewFinder
 from typing import List, Dict, TypedDict
 from fcpgtools.types import Raster, PyShedsInputDict
-from fcpgtools.utilities import intake_raster, _split_bands, _combine_split_bands
+from fcpgtools.utilities import intake_raster, _split_bands, _combine_split_bands, \
+    _update_parameter_raster
 
 # Grid.add_gridded_data(self, data, data_name, affine=None, shape=None, crs=None,
 #                         nodata=None, mask=None, metadata={}):
@@ -28,7 +29,7 @@ def _xarray_to_pysheds(
         'raster': pysheds.Raster(),
         'grid': pysheds.Grid()}
     """
-    array.rio.write_transform
+    array.rio.write_transform()
     affine = array.rio.transform()
     
     # nodata must be defined for pysheds
@@ -36,7 +37,7 @@ def _xarray_to_pysheds(
         array_np, nodata_val = _make_new_nodata(array)
     else:
         nodata_val = array.rio.nodata
-        array_np = array.data.squeeze()  
+        array_np = array.values.squeeze()  
     view = ViewFinder(shape=array_np.shape,
                       affine=affine,
                       nodata=nodata_val)
@@ -108,13 +109,17 @@ def parameter_accumulate(
     ) -> xr.DataArray:
     
     d8_fdr = intake_raster(d8_fdr)
-    parameter_accumulate = intake_raster(parameter_accumulate)
+    parameter_raster = intake_raster(parameter_raster)
 
     #TODO: add pour points via adding to the parameter raster
     # make it so it "zips" with the first index of pour_points_dict
+    if upstream_pour_points is not None: parameter_raster = _update_parameter_raster(
+        parameter_raster,
+        upstream_pour_points,
+        )
 
     # split if multi-dimensional
-    if len(parameter_raster.shape[0]) > 1:
+    if len(parameter_raster.shape) > 2:
         raster_bands = _split_bands(parameter_raster)
     else:
         dim_name = list(parameter_raster[parameter_raster.dims[0]].values)[0]
@@ -128,18 +133,18 @@ def parameter_accumulate(
         i, dim_name = index_tuple
         param_input_dict = _xarray_to_pysheds(array)
 
-        fac_from_fdr(
+        accumulated = fac_from_fdr(
+            d8_fdr,
+            upstream_pour_points=upstream_pour_points,
             kwargs={
                 'weights': param_input_dict['raster'],
-                }
+                },
             )
-        out_dict[(i, dim_name)] = fac_from_fdr
+        out_dict[(i, dim_name)] = accumulated
 
     # re-combine 4th dimension if necessary
     if len(out_dict.keys()) > 1:
         return _combine_split_bands(out_dict)
     else: return list(out_dict.items())[0][1] 
 
-
-    #TODO: create function for recombining a raster
 

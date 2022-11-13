@@ -100,6 +100,11 @@ def main(
         )
         print('Done')
 
+        daymet_accumulated = terrainengine.pysheds_engine.parameter_accumulate(
+            us_fdr,
+            us_precip,
+            )
+
 
     if test_taudem:
         # convert D8 encoding

@@ -46,7 +46,8 @@ class PourPointLocationsDict(TypedDict):
     pour_point_coords: List[Tuple[float, float]]
 
 class PourPointValuesDict(PourPointLocationsDict):
-    pour_point_values: Union[List[List[Union[float, int]]], List[Union[float, int]]] 
+    # the lists in the list will be len==1 if a one band array is supplied
+    pour_point_values: List[List[Union[float, int]]]
 
 # create custom type hint for PyShedsInputDict
 class PyShedsInputDict(TypedDict):
