@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import xarray as xr
 import numpy as np
+import pandas as pd
 import rioxarray as rio
 from rasterio.enums import Resampling
 import geopandas as gpd
@@ -170,8 +171,26 @@ def _split_bands(
     
     out_dict = {}
     for index_tuple in index_tuples:
-        out_dict[index_tuple[0]] = in_raster.sel({in_raster.dims[0]: index_tuple[-1]})
+        out_dict[index_tuple] = in_raster.sel(
+            {in_raster.dims[0]: index_tuple[-1]},
+            )
     return out_dict
+
+def _combine_split_bands(
+    split_dict: Dict[Tuple[int, Union[int, str, np.datetime64]], xr.DataArray],
+    ) -> xr.DataArray:
+
+    index_name = 'name'
+    if isinstance(split_dict.keys()[0][-1], np.datetime64): name = 'time'
+
+    # re-create the 4th dimension index and concat
+    index = pd.Index(
+        [i[-1] for i in list(split_dict.keys())],
+        name=index_name)
+    return xr.concat(
+        objs=split_dict.values(),
+        dim=index,
+        )
 
 # FRONT-END/CLIENT FACING UTILITY FUNTIONS
 def clip(
