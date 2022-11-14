@@ -6,7 +6,7 @@ from pysheds.view import ViewFinder
 from typing import List, Dict, TypedDict
 from fcpgtools.types import Raster, PyShedsInputDict
 from fcpgtools.utilities import intake_raster, _split_bands, _combine_split_bands, \
-    _update_parameter_raster
+    _update_parameter_raster, save_raster
 
 # Grid.add_gridded_data(self, data, data_name, affine=None, shape=None, crs=None,
 #                         nodata=None, mask=None, metadata={}):
@@ -37,7 +37,7 @@ def _xarray_to_pysheds(
         array_np, nodata_val = _make_new_nodata(array)
     else:
         nodata_val = array.rio.nodata
-        array_np = array.values.squeeze()  
+        array_np = array.values.astype(dtype=str(array.dtype)).squeeze()
     view = ViewFinder(shape=array_np.shape,
                       affine=affine,
                       nodata=nodata_val)
@@ -79,15 +79,15 @@ def fac_from_fdr(
     pysheds_input_dict = _xarray_to_pysheds(d8_fdr)
 
     # add weights if necessary
-    weights = None
-    if 'weights' in kwargs.keys():
-        weights = kwargs['weights']
+    if kwargs == {}: weights = None
+    elif 'weights' in kwargs['kwargs'].keys(): weights = kwargs['kwargs']['weights']
+    else: weights = None
 
     # apply accumulate function
     accumulate = pysheds_input_dict['grid'].accumulation(
         pysheds_input_dict['raster'],
         nodata_in=pysheds_input_dict['input_array'].rio.nodata,
-        weights=None,
+        weights=weights,
         )
 
     # export back to DataArray
@@ -96,9 +96,9 @@ def fac_from_fdr(
             'grid': pysheds_input_dict['grid'],
             'raster': accumulate,
             'input_array': pysheds_input_dict['input_array'],
-        },
+            },
         name='accumulate',
-    )
+        )
 
 def parameter_accumulate( 
     d8_fdr: Raster, 
@@ -111,8 +111,7 @@ def parameter_accumulate(
     d8_fdr = intake_raster(d8_fdr)
     parameter_raster = intake_raster(parameter_raster)
 
-    #TODO: add pour points via adding to the parameter raster
-    # make it so it "zips" with the first index of pour_points_dict
+    # add any pour point accumulation via utilities._update_parameter_raster()
     if upstream_pour_points is not None: parameter_raster = _update_parameter_raster(
         parameter_raster,
         upstream_pour_points,
@@ -123,28 +122,34 @@ def parameter_accumulate(
         raster_bands = _split_bands(parameter_raster)
     else:
         dim_name = list(parameter_raster[parameter_raster.dims[0]].values)[0]
-        raster_bands = {
-            (0, dim_name): parameter_raster,
-            }
+        raster_bands = {(0, dim_name): parameter_raster}
 
     # create weighted accumulation rasters
     out_dict = {}
     for index_tuple, array in raster_bands.items():
         i, dim_name = index_tuple
+        #TODO: switch to where 0s are added only for where there IS FDR data
+        # array = array.fillna(0)
         param_input_dict = _xarray_to_pysheds(array)
 
         accumulated = fac_from_fdr(
             d8_fdr,
             upstream_pour_points=upstream_pour_points,
-            kwargs={
-                'weights': param_input_dict['raster'],
-                },
+            kwargs={'weights': param_input_dict['raster']},
             )
         out_dict[(i, dim_name)] = accumulated
 
-    # re-combine 4th dimension if necessary
+    # re-combine into DataArray
     if len(out_dict.keys()) > 1:
-        return _combine_split_bands(out_dict)
-    else: return list(out_dict.items())[0][1] 
+        out_raster =  _combine_split_bands(out_dict)
+    else: out_raster =  list(out_dict.items())[0][1] 
+
+    # save if necessary
+    if out_path is not None:
+        save_raster(out_raster, out_path)
+    
+    return out_raster
+
+    
 
 

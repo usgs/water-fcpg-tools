@@ -187,7 +187,8 @@ def _combine_split_bands(
     # re-create the 4th dimension index and concat
     index = pd.Index(
         [i[-1] for i in list(split_dict.keys())],
-        name=index_name)
+        name=index_name,
+        )
     return xr.concat(
         objs=split_dict.values(),
         dim=index,
@@ -197,47 +198,31 @@ def _update_parameter_raster(
     parameter_raster: xr.DataArray,
     upstream_pour_points: PourPointValuesDict,
     ) -> xr.DataArray:
-    #TODO: Decide when to find downstream cell, probs best here?
     
     # pull in pour point data
-    pour_point_ids = upstream_pour_points['pour_point_ids']
     pour_point_coords = upstream_pour_points['pour_point_coords']
     pour_point_values = upstream_pour_points['pour_point_values']
 
-    if len(parameter_raster.shape) == 2:
-        # make update cell values list
-        update_cells_list = []
-        for i, coords in pour_point_coords:
-            value = pour_point_values[i][0]
-            update_cells_list.append(
-                (coords, value)
-            )
+    #TODO: attach another function that coverts coords to downstream cell
 
-        parameter_raster = update_cell_values(
-            in_raster=parameter_raster,
-            update_points=update_cells_list,
-            )
-    else:
-        dim_index = parameter_raster[parameter_raster.dims[0]].values
-        for i, value in enumerate(dim_index):
-            slice = parameter_raster.isel(
-                {parameter_raster.dims[0]: i}
+    # update values iteratively
+    for i, coords in pour_point_coords:
+        values_list = pour_point_values[i]
+        if len(parameter_raster.shape) == 2: 
+            parameter_raster = update_cell_values(
+                in_raster=parameter_raster,
+                update_points=[(coords, values_list[0])],
                 )
-
-            # make update cell values list
-            update_cells_list = []
-            for j, coords in pour_point_coords:
-                value = pour_point_values[j][i]
-                update_cells_list.append(
-                    (coords, value)
-                )
-
-            #TODO: verify that this behavior works well
-            slice = update_cell_values(
-                in_raster=slice,
-                update_points=update_cells_list,
-                )
+        else:
+            dim_index_values = parameter_raster[parameter_raster.dims[0]].values
+            for band_index, value in enumerate(dim_index_values):
+                parameter_raster[band_index,:,:] = update_cell_values(
+                    in_raster=parameter_raster[band_index,:,:],
+                    update_points=[(coords, values_list[band_index])],
+                    )
     return parameter_raster
+
+
 
 
 # FRONT-END/CLIENT FACING UTILITY FUNTIONS
@@ -511,7 +496,7 @@ def change_nodata(
         with in_raster's dtype, a dtype conversion is default unless False.
     :returns: param:in_raster with the updated nodata values as a xarray DataArray object.
     """
-    # Note for dev: we need to understand xarray's handling of nodata values
+    #NOTE: likely not needed!
     raise NotImplementedError
 
 def change_dtype(
@@ -528,6 +513,7 @@ def change_dtype(
     :param allow_rounding: (bool, default=False) allows rounding of float -> int.
     :returns: (xr.DataArray) the raster with it's dtype changed.
     """
+    #NOTE: likely not needed!
     raise NotImplementedError
 
 def get_raster_bbox(
@@ -550,7 +536,7 @@ def get_shp_bbox(
     :param shp: (geopandas.GeoDataFrame or str shapefile path) a georeferenced shapefile.
     :returns: (list) list with bounding bbox coordinates - [minX, minY, maxX, maxY]
     """
-    # MAY NOT BE NECESSARY
+    #NOTE: likely not needed!
     raise NotImplementedError
 
 

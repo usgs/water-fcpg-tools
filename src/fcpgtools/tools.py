@@ -150,7 +150,7 @@ def value_mask(
 def nodata_mask(
     in_raster: Raster, 
     inverse: bool = False,
-    nodata_value: Union[float,int] = None,
+    nodata_value: Union[float, int] = None,
     out_path: str = None,
     ) -> xr.DataArray:
     """
