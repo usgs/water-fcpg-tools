@@ -384,6 +384,21 @@ def sample_raster(
     return raster.sel({'x': coords[0],
             'y': coords[1]}).values.item(0)
 
+def find_cell_downstream(
+    d8_fdr: Raster,
+    coords: Tuple[float, float],
+    ) -> Tuple[float, float]:
+    """
+    Uses a D8 FDR to find the cell center coordinates downstream from any cell (specified
+    Note: this replaces py:func:FindDownstreamCellTauDir(d, x, y, w) in the V1.1 repo.
+    :param d8_fdr: (xr.DataArray or str raster path) a D8 Flow Direction Raster (dtype=Int).
+    :param coords: (tuple) the input (lat:float, lon:float) to find the next cell downstream from.
+    :returns: (tuple) an output (lat:float, lon:float) representing the cell center coorindates
+        downstream from the cell defined via :param:coords.
+    """
+    # get index of cell and index and use to query surrounding cells
+    raise NotImplementedError
+
 def get_min_cell(
     raster: xr.DataArray,
     ) -> Tuple[Tuple[float, float], Union[float, int]]:
