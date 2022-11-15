@@ -223,8 +223,6 @@ def _update_parameter_raster(
     return parameter_raster
 
 
-
-
 # FRONT-END/CLIENT FACING UTILITY FUNTIONS
 def clip(
     in_raster: Raster,

@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 from fcpgtools.types import Raster, FDRD8Formats, D8ConversionDicts, PourPointLocationsDict, PourPointValuesDict
-from fcpgtools.utilities import intake_raster, clip, reproject_raster, \
-    resample, id_d8_format
+from fcpgtools.utilities import intake_raster, intake_shapefile, save_raster, clip, reproject_raster, \
+    resample, id_d8_format, _format_nodata, _combine_split_bands
 
 # CLIENT FACING FUNCTIONS
 def align_raster(
@@ -85,7 +85,6 @@ def convert_fdr_formats(
     f' to {out_format}')
     return d8_fdr
     
-
 def find_cell_downstream(
     d8_fdr: Raster,
     coords: Tuple[float, float],
@@ -99,14 +98,14 @@ def find_cell_downstream(
         downstream from the cell defined via :param:coords.
     """
     # get index of cell and index and use to query surrounding cells
+    #TODO: move to utilities
     raise NotImplementedError
 
 # raster masking function
 def spatial_mask(
     in_raster: Raster,
-    mask_shp: Union[gpd.GeoDataFrame, str] = None,
+    mask_shp: Union[gpd.GeoDataFrame, str],
     out_path: str = None,
-    mask_cell_value: int = None,
     inverse: bool = False,
     ) -> xr.DataArray:
     """
@@ -116,21 +115,32 @@ def spatial_mask(
     :param in_raster: (xr.DataArray or str raster path) input raster.
     :param mask_shp: (geopandas.GeoDataFrame or a str shapefile path) shapefile used for masking.
     :param out_path: (str, default=None) defines a path to save the output raster.
-    :param mask_cell_value: (int, optional) if mask_shp == None this parameter can be used to mask
-        cells (i.e., change to NoData) if they equal mask_cell_value.
     :param inverse: (bool, default=False) if True, cells that ARE COVERED by mask_shp -> NoData.
-    :returns: (xr.DataArray) the output binary mask raster.
+    :returns: (xr.DataArray) the output spatially masked raster.
     """
-    raise NotImplementedError
+    in_raster = intake_raster(in_raster)
+    in_raster = _format_nodata(in_raster)
+    mask_shp = intake_shapefile(mask_shp)
+
+    out_raster = in_raster.rio.clip(
+        mask_shp.geometry.values,
+        mask_shp.crs,
+        drop=False,
+        invert=inverse,
+        )
+
+    if out_path is not None:
+        save_raster(out_raster, out_path)
+    return out_raster
 
 def value_mask(
     in_raster: Raster,
-    thresh: Union[int,float] = None,
+    thresh: Union[int, float] = None,
     greater_than: bool = True,
     equals: int = None,
+    inverse_equals: bool = False,
     out_mask_value: int = None,
     out_path: str = None,
-    inverse: bool = False,
     ) -> xr.DataArray:
     """"
     Mask a raster via a value threshold. Primary use case is to identify high acumulation zones / stream cells.
@@ -140,16 +150,39 @@ def value_mask(
     :param thresh: (int or float, default=None) 
     :param greater_than: (bool, default=True) if False, only values less than param:thresh are included in the mask.
     :param equals: (int, default=None) if not None, only cells matching the value of param:equals are included in the mask.
+    :param inverse_equals: (bool, default=False) is True and param:equals==True, values NOT equal to :param:thresh are masked out.
     :param out_mask_value: (int, default=None) allows non-included cells to be given a non-zero integer value.
     :param out_path: (str, default=None) defines a path to save the output raster.
-    :param inverse: (bool, default=False) if True, the inverse of the mask is made.
-    :returns: (xr.DataArray) the output binary mask raster.
+    :returns: (xr.DataArray) the output raster with all masked out values == nodata or param:out_mask_value.
     """
-    raise NotImplementedError
+    # handle nodata / out-of-mask values
+    in_raster = intake_raster(in_raster)
+    in_raster = _format_nodata(in_raster)
+    if out_mask_value is None: out_mask_value = in_raster.rio.nodata
+    
+    # build conditionals
+    if equals and 'float' in str(in_raster.dtype): print(
+        f'WARNING: Applying an equality mask to a {in_raster.dtype} raster'
+        )
+    
+    if equals and not inverse_equals: conditional = (in_raster == thresh)
+    if equals and inverse_equals: conditional = (in_raster != thresh)
+    elif greater_than: conditional = (in_raster > thresh)
+    elif not greater_than: conditional = (in_raster < thresh)
 
-def nodata_mask(
-    in_raster: Raster, 
-    inverse: bool = False,
+    out_raster = in_raster.where(
+        conditional,
+        out_mask_value,
+        ).astype(
+            in_raster.dtype,
+            )
+
+    if out_path is not None:
+        save_raster(out_raster, out_path)
+    return out_raster
+
+def binarize_nodata(
+    in_raster: Raster,
     nodata_value: Union[float, int] = None,
     out_path: str = None,
     ) -> xr.DataArray:
@@ -157,48 +190,82 @@ def nodata_mask(
     Creates an output binary raster based on an input where nodata values -> 1, and valued cells -> 0.
     Note: while param:inverse=True this can be used with pyfunc:apply_mask() to match nodata cells between rasters.
     :param in_raster: (xr.DataArray or str raster path) input raster.
-    :param inverse: (bool, default=False) if True, values that are NOT nodata -> 1, and nodata values -> 0.
     :param nodata_value: (float->np.nan or int) if the nodata value for param:in_raster is not in the metadata,
         set this parameter to equal the cell value storing nodata (i.e., np.nan or -999).
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the output binary mask raster.
     """
-    raise NotImplementedError
+    # handle nodata / out-of-mask values
+    in_raster = intake_raster(in_raster)
+    in_raster = _format_nodata(in_raster)
+    if nodata_value is None: nodata_value = in_raster.rio.nodata
 
-def apply_mask(
-    in_raster: Raster, 
-    mask_raster: Raster, 
-    inverse: bool = False, 
-    out_path: str = None,
-    ) -> xr.DataArray:
-    """
-    Converts all values NOT included within a mask (i.e., value=0 while inverse=False) param:in_raster's nodata value.
-    :param in_raster: (xr.DataArray or str raster path) input raster.
-    :param mask_raster: (xr.DataArray or str raster path) a binary "mask" raster where value=0 -> nodata in param:in_raster.
-    :param inverse: (bool, default=False) if True param:mask_raster cells with a value of 1 are converted to nodata.
-    :param out_path: (str, default=None) defines a path to save the output raster.
-    :returns: (xr.DataArray) the output raster with nodata cells.
-    """
-    raise NotImplementedError
+    # convert all values to 0 or 1
+    nodata_binary = 1
+    out_raster = in_raster.where(
+        in_raster.isnull(),
+        0,
+        ).astype(
+            in_raster.dtype,
+            )
+    out_raster = out_raster.where(
+        out_raster == 0,
+        1,
+        ).astype('uint8')
 
-def binarize_categorical_rasters(
+    out_raster.rio.set_nodata(nodata_binary)
+
+    if out_path is not None:
+        save_raster(out_raster, out_path)
+    return out_raster
+
+def binarize_categorical_raster(
     cat_raster: Raster, 
-    ignore_caregories: list = None,
+    categories_dict: Dict[int, str] = {},
+    ignore_categories: list = None,
     out_path: str = None,
-    split_rasters: bool = False,
     ) -> xr.DataArray:
     """
     :param cat_raster: (xr.DataArray or str raster path) a categorical (dtype=int) raster with N
         unique categories (i.e., land cover classes).
+    :param categogies_dict: (dict) a dictionary assigning string names (values) to integer raster values (keys).
     :param ignore_categories: (list of integers, default=None) category cell values not include
         in the output raster.
     :param out_path: (str, default=None) defines a path to save the output raster.
-    :param split_rasters: (bool, default=False) if True AND out_path != None, the directory
-        in out_path is used to store N separate .tif files for each unique cat_raster value.
-        Note that this is the behavior in V1.1 of FCPGTools.
     :returns: (xr.DataArray) a N-band multi-dimensional raster as a xarray DataArray object.
     """
-    raise NotImplementedError
+    cat_raster = intake_raster(cat_raster)
+    cat_dtype = str(cat_raster.dtype)
+    if 'int'  not in cat_dtype:
+        print('ERROR: Categorical rasters must be dtype=int.')
+        return TypeError
+    if len(cat_raster.shape) >= 3:
+        print('ERROR: Categorical rasters must be of form f(x, y).')
+        return TypeError
+
+    categories = [int(i) for i in list(np.unique(cat_raster.values))]
+    if ignore_categories: categories = [i for i in categories if i not in ignore_categories]
+
+    combine_dict = {}
+    for i, cat in enumerate(categories):
+        if cat in list(categories_dict.keys()): index = categories_dict[cat]
+        else: index = i
+        out_layer = cat_raster.where(
+            cat_raster == cat,
+            0,
+            ).astype(cat_dtype)
+        out_layer = out_layer.where(
+            out_layer == 0,
+            1,
+            ).astype('uint8')
+        combine_dict[(i, index)] = out_layer
+
+    out_raster = _combine_split_bands(combine_dict)
+
+    if out_path is not None:
+        save_raster(out_raster, out_path)
+    return out_raster
+
 
 def find_pour_points(
     fac_raster: Raster, 
