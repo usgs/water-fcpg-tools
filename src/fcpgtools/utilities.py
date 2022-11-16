@@ -111,9 +111,8 @@ def _replace_nodata_value(
         in_raster.values != in_raster.rio.nodata,
         new_nodata,
         )
-    in_raster.rio.set_nodata(
+    in_raster = in_raster.rio.set_nodata(
         new_nodata,
-        inplace=True,
         )
     return in_raster
 
@@ -155,21 +154,29 @@ def _prep_parameter_grid(
         raise TypeError
 
     # use a where query to replace out of bounds values
+    og_nodata = parameter_raster.rio.nodata
     parameter_raster = parameter_raster.where(
         d8_fdr.values != d8_fdr.rio.nodata,
         out_of_bounds_value,
         )
 
     # convert in-bounds nodata to 0
-    if np.isin(parameter_raster.rio.nodata, parameter_raster.values):
+    print(parameter_raster.rio.nodata)
+    if np.isin(og_nodata, parameter_raster.values):
         parameter_raster = parameter_raster.where(
             (d8_fdr.values == d8_fdr.rio.nodata) & \
-                (parameter_raster.values != parameter_raster.rio.nodata),
+                (parameter_raster.values != og_nodata),
             0,
             )
 
-    return parameter_raster
+    # update nodata
+    parameter_raster.rio.set_nodata = og_nodata
+    parameter_raster = _replace_nodata_value(
+        parameter_raster,
+        out_of_bounds_value,
+        )
 
+    return parameter_raster
 
 def _update_cell_value_(
     raster: xr.DataArray,

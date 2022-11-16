@@ -10,7 +10,8 @@ import numpy as np
 import xarray as xr
 from fcpgtools.types import Raster, TauDEMDict
 from fcpgtools.utilities import intake_raster, save_raster, _verify_shape_match, \
-    _combine_split_bands, _split_bands, _update_parameter_raster, _prep_parameter_grid
+    _combine_split_bands, _split_bands, _update_parameter_raster, _prep_parameter_grid, \
+    _replace_nodata_value
 
 def _taudem_prepper(
     in_raster: Raster,
@@ -136,7 +137,19 @@ def fac_from_fdr(
     
     print(taudem_dict['outFl'])
     out_raster = intake_raster(Path(taudem_dict['outFl']))
-    out_raster = out_raster.astype(str(out_dtype))
+    out_raster = out_raster.astype(np.float64)
+
+    # convert out of bounds values to np.nan
+    out_raster = out_raster.where(
+        d8_fdr.values != d8_fdr.rio.nodata,
+        out_raster.rio.nodata,
+        )
+
+    out_raster = _replace_nodata_value(
+        out_raster,
+        np.nan
+        )
+
     return out_raster
 
 def parameter_accumulate( 
@@ -177,8 +190,7 @@ def parameter_accumulate(
     if len(parameter_raster.shape) > 2:
         raster_bands = _split_bands(parameter_raster)
     else:
-        dim_name = list(parameter_raster[parameter_raster.dims[0]].values)[0]
-        raster_bands = {(0, dim_name): parameter_raster}
+        raster_bands = {(0, 0): parameter_raster}
 
     # create weighted accumulation rasters
     out_dict = {}
@@ -239,7 +251,7 @@ def distance_to_stream(
     taudem_dict = {
         'fdr': d8_fdr,
         'fac': fac_raster,
-        'outRast': out_path,
+        'outRast': str(out_path),
         'thresh': accum_threshold,
         'cores': 1,
         'mpiCall': 'mpiexec',
