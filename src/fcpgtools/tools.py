@@ -83,7 +83,7 @@ def convert_fdr_formats(
                     )
 
     # update nodata
-    d8_fdr = d8_fdr.rio.set_nodata(out_dict['nodata'])
+    d8_fdr.rio.write_nodata(out_dict['nodata'], inplace=True)
 
     print(f'Converted the D8 Flow Direction Raster (FDR) from {in_format} format'
     f' to {out_format}')
@@ -198,7 +198,7 @@ def binarize_nodata(
         1,
         ).astype('uint8')
 
-    out_raster.rio.set_nodata(nodata_binary)
+    out_raster.rio.write_nodata(nodata_binary, inplace=True)
 
     if out_path is not None:
         save_raster(out_raster, out_path)
@@ -236,7 +236,7 @@ def binarize_categorical_raster(
     for i, cat in enumerate(categories):
         if cat not in ignore_categories:
             if cat in list(categories_dict.keys()): index = categories_dict[cat]
-            else: index = i
+            else: index = cat
             out_layer = cat_raster.where(
                 cat_raster == cat,
                 0,

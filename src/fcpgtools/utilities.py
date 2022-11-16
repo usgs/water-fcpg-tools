@@ -111,8 +111,9 @@ def _replace_nodata_value(
         in_raster.values != in_raster.rio.nodata,
         new_nodata,
         )
-    in_raster = in_raster.rio.set_nodata(
+    in_raster = in_raster.rio.write_nodata(
         new_nodata,
+        inplace=True,
         )
     return in_raster
 
@@ -155,13 +156,13 @@ def _prep_parameter_grid(
 
     # use a where query to replace out of bounds values
     og_nodata = parameter_raster.rio.nodata
+    og_crs = _get_crs(parameter_raster)
     parameter_raster = parameter_raster.where(
         d8_fdr.values != d8_fdr.rio.nodata,
         out_of_bounds_value,
         )
 
     # convert in-bounds nodata to 0
-    print(parameter_raster.rio.nodata)
     if np.isin(og_nodata, parameter_raster.values):
         parameter_raster = parameter_raster.where(
             (d8_fdr.values == d8_fdr.rio.nodata) & \
@@ -169,8 +170,12 @@ def _prep_parameter_grid(
             0,
             )
 
-    # update nodata
-    parameter_raster.rio.set_nodata = og_nodata
+    # update nodata and crs
+    parameter_raster.rio.write_nodata(
+        og_nodata,
+        inplace=True,
+        )
+    parameter_raster.rio.write_crs(og_crs, inplace=True)
     parameter_raster = _replace_nodata_value(
         parameter_raster,
         out_of_bounds_value,
