@@ -11,7 +11,7 @@ from fcpgtools.utilities import intake_raster, intake_shapefile, save_raster, cl
 def align_raster(
     in_raster,
     match_raster: Raster,
-    resample_method: str = 'bilinear', 
+    resample_method: str = 'nearest', 
     out_path: str = None,
     ) -> xr.DataArray:
 
@@ -232,21 +232,24 @@ def binarize_categorical_raster(
         return TypeError
 
     categories = [int(i) for i in list(np.unique(cat_raster.values))]
-    if ignore_categories: categories = [i for i in categories if i not in ignore_categories]
+    if not ignore_categories: ignore_categories = []
 
     combine_dict = {}
+    count = 0
     for i, cat in enumerate(categories):
-        if cat in list(categories_dict.keys()): index = categories_dict[cat]
-        else: index = i
-        out_layer = cat_raster.where(
-            cat_raster == cat,
-            0,
-            ).astype(cat_dtype)
-        out_layer = out_layer.where(
-            out_layer == 0,
-            1,
-            ).astype('uint8')
-        combine_dict[(i, index)] = out_layer
+        if cat not in ignore_categories:
+            if cat in list(categories_dict.keys()): index = categories_dict[cat]
+            else: index = i
+            out_layer = cat_raster.where(
+                cat_raster == cat,
+                0,
+                ).astype(cat_dtype)
+            out_layer = out_layer.where(
+                out_layer == 0,
+                1,
+                ).astype('uint8')
+            combine_dict[(count, index)] = out_layer
+            count += 1
 
     out_raster = _combine_split_bands(combine_dict)
 

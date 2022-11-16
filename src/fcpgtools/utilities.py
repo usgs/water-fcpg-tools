@@ -14,11 +14,11 @@ from fcpgtools.types import Raster, Shapefile, RasterSuffixes, ShapefileSuffixes
 def intake_raster(
     in_raster: Raster,
     ) -> xr.DataArray:
-    """Used in the first line of most functions to make sure all inputs are DataArray"""
+    """Used in the first line of most functions to make sure all inputs are DataArray w/ valid nodata"""
     if isinstance(in_raster, xr.DataArray):
-        return in_raster.squeeze()
+        return _format_nodata(in_raster.squeeze())
     elif isinstance(in_raster, os.PathLike):
-        return rio.open_rasterio(in_raster).squeeze()
+        return _format_nodata(rio.open_rasterio(in_raster).squeeze())
 
 def intake_shapefile(
     in_shapefile: Shapefile,
@@ -82,6 +82,27 @@ def _intake_ambigous(
     elif isinstance(in_data, xr.DataArray) or isinstance(in_data, gpd.GeoDataFrame):
         return in_data
 
+def _format_nodata(
+    in_raster: xr.DataArray,
+    ) -> xr.DataArray:
+    """
+    If in_raster.rio.nodata is None, a nodata value is added.
+    For dtype=float -> np.nan, for dtype=int -> 255.
+    """
+    if in_raster.rio.nodata is None:
+        og_dtype = str(in_raster.dtype)
+        if 'float' in og_dtype: nodata_value = np.nan
+        elif 'int' in og_dtype: nodata_value = 255
+        if 'int8' in og_dtype:
+            if np.min(np.unique(in_raster.values)) < 0: in_raster = in_raster.astype('int16')
+            else: in_raster = in_raster.astype('uint8')
+
+        in_raster.rio.write_nodata(
+            nodata_value,
+            inplace=True,
+            ) 
+    return in_raster
+
 def _get_crs(
     out_crs: Union[Raster, Shapefile],
     ) -> str:
@@ -127,26 +148,6 @@ def _update_cell_value_(
         print(f'ERROR: Value {value} does not match DataArray dtype = {raster.dtype}')
         return raster
 
-def _format_nodata(
-    in_raster: xr.DataArray,
-    ) -> xr.DataArray:
-    """
-    If in_raster.rio.nodata is None, a nodata value is added.
-    For dtype=float -> np.nan, for dtype=int -> 255.
-    """
-    if in_raster.rio.nodata is None:
-        og_dtype = str(in_raster.dtype)
-        if 'float' in og_dtype: nodata_value = np.nan
-        elif 'int' in og_dtype: nodata_value = 255
-        if 'int8' in og_dtype:
-            if np.min(np.unique(in_raster.values)) < 0: in_raster = in_raster.astype('int16')
-            else: in_raster = in_raster.astype('uint8')
-
-        in_raster.rio.write_nodata(
-            nodata_value,
-            inplace=True,
-            ) 
-    return in_raster
 
 def _verify_shape_match(
     in_raster1: Raster,
@@ -314,9 +315,6 @@ def reproject_raster(
         #TODO: Update exceptions
         print('Must pass in either param:out_crs or param:wkt_string')
         return None
-    
-    # set nodata value, change dtype if necessary
-    in_raster = _format_nodata(in_raster)
         
     out_raster = in_raster.rio.reproject(
         out_crs,
@@ -354,7 +352,7 @@ def reproject_shapefile(
 def resample(
     in_raster: Raster,
     match_raster: Raster,
-    method: str = 'bilinear',
+    method: str = 'nearest',
     out_path: str = None,
     ) -> xr.DataArray:
     """
@@ -362,7 +360,8 @@ def resample(
     :param in_raster: (xr.DataArray or str raster path) input raster.
     :param match_raster: (xr.DataArray or str raster path) if defined, in_raster is
         resampled to match the cell size of match_raster.
-    :param method: (str, default=bilinear) a valid resampling method from rasterio.enums.Resample.
+    :param method: (str, default=nearest) a valid resampling method from rasterio.enums.Resample.
+        NOTE: Do not use any averaging resample methods when working with a categorical raster!
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the resampled raster as a xarray DataArray object.
     """
