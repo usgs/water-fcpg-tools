@@ -103,6 +103,20 @@ def _format_nodata(
             ) 
     return in_raster
 
+def _replace_nodata_value(
+    in_raster: xr.DataArray,
+    new_nodata: Union[float, int]
+    ) -> xr.DataArray:
+    in_raster = in_raster.where(
+        in_raster.values != in_raster.rio.nodata,
+        new_nodata,
+        )
+    in_raster.rio.set_nodata(
+        new_nodata,
+        inplace=True,
+        )
+    return in_raster
+
 def _get_crs(
     out_crs: Union[Raster, Shapefile],
     ) -> str:
@@ -128,6 +142,35 @@ def _verify_dtype(
         #TODO: How best to handle other int dtype? What are the value ranges.
         return True
 
+def _prep_parameter_grid(
+    parameter_raster: xr.DataArray,
+    d8_fdr: xr.DataArray,
+    out_of_bounds_value: Union[float, int],
+    ) -> xr.DataArray:
+
+    # check that shapes match
+    if not _verify_shape_match(d8_fdr, parameter_raster):
+        print('ERROR: The D8 FDR raster and the parameter raster must have the same shape. '
+        'Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).')
+        raise TypeError
+
+    # use a where query to replace out of bounds values
+    parameter_raster = parameter_raster.where(
+        d8_fdr.values != d8_fdr.rio.nodata,
+        out_of_bounds_value,
+        )
+
+    # convert in-bounds nodata to 0
+    if np.isin(parameter_raster.rio.nodata, parameter_raster.values):
+        parameter_raster = parameter_raster.where(
+            (d8_fdr.values == d8_fdr.rio.nodata) & \
+                (parameter_raster.values != parameter_raster.rio.nodata),
+            0,
+            )
+
+    return parameter_raster
+
+
 def _update_cell_value_(
     raster: xr.DataArray,
     coords: Tuple[float, float],
@@ -147,7 +190,6 @@ def _update_cell_value_(
         #TODO: Handle exceptions
         print(f'ERROR: Value {value} does not match DataArray dtype = {raster.dtype}')
         return raster
-
 
 def _verify_shape_match(
     in_raster1: Raster,
@@ -367,9 +409,6 @@ def resample(
     """
     in_raster = intake_raster(in_raster)
     match_raster = intake_raster(match_raster)
-
-    # set nodata value, change dtype if necessary
-    in_raster = _format_nodata(in_raster)
 
     try:
         out_raster = in_raster.rio.reproject(

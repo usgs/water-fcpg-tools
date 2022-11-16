@@ -10,7 +10,7 @@ import numpy as np
 import xarray as xr
 from fcpgtools.types import Raster, TauDEMDict
 from fcpgtools.utilities import intake_raster, save_raster, _verify_shape_match, \
-    _combine_split_bands, _split_bands, _update_parameter_raster
+    _combine_split_bands, _split_bands, _update_parameter_raster, _prep_parameter_grid
 
 def _taudem_prepper(
     in_raster: Raster,
@@ -39,33 +39,6 @@ def _taudem_prepper(
         #TODO: Handle exceptions
         raise TypeError
     return in_raster
-
-def _prep_parameter_grid(
-    parameter_raster: xr.DataArray,
-    d8_fdr: xr.DataArray,
-    ) -> xr.DataArray:
-
-    # check that shapes match
-    if not _verify_shape_match(d8_fdr, parameter_raster):
-        print('ERROR: The D8 FDR raster and the parameter raster must have the same shape. '
-        'Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).')
-        raise TypeError
-
-    # use a where query to replace out of bounds values with -1 for taudem
-    parameter_raster = parameter_raster.where(
-        d8_fdr.values != d8_fdr.rio.nodata,
-        -1,
-        )
-
-    # convert in-bounds nodata to 0
-    if np.isin(parameter_raster.rio.nodata, parameter_raster.values):
-        parameter_raster = parameter_raster.where(
-            (d8_fdr.values == d8_fdr.rio.nodata) & \
-                (parameter_raster.values != parameter_raster.rio.nodata),
-            0,
-            )
-
-    return parameter_raster
 
 def _update_taudem_dict(
     taudem_dict: TauDEMDict,
@@ -121,6 +94,7 @@ def fac_from_fdr(
             weights = _prep_parameter_grid(
                 weights,
                 d8_fdr,
+                -1,
                 )
         weight_path = _taudem_prepper(weights)
         wg = '-wg '
@@ -144,7 +118,9 @@ def fac_from_fdr(
         'mpiArg': '-n',
         }
 
-    taudem_dict['finalArg'] = f'{wg}{str(weight_path)} -n'
+    if wg != '': taudem_dict['finalArg'] = f'{wg}{str(weight_path)} -nc'
+    else: taudem_dict['finalArg'] = '-nc'
+
     taudem_dict = _update_taudem_dict(taudem_dict, kwargs)
 
     # use TauDEM via subprocess to make a Flow Accumulation Raster
@@ -159,7 +135,7 @@ def fac_from_fdr(
         traceback.print_exc()
     
     print(taudem_dict['outFl'])
-    out_raster = intake_raster(taudem_dict['outFl'])
+    out_raster = intake_raster(Path(taudem_dict['outFl']))
     out_raster = out_raster.astype(str(out_dtype))
     return out_raster
 
@@ -188,6 +164,7 @@ def parameter_accumulate(
     parameter_raster = _prep_parameter_grid(
         parameter_raster=parameter_raster,
         d8_fdr=d8_fdr,
+        out_of_bounds_value=-1,
         )
 
     # add any pour point accumulation via utilities._update_parameter_raster()

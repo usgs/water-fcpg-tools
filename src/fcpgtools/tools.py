@@ -5,7 +5,7 @@ import pandas as pd
 import geopandas as gpd
 from fcpgtools.types import Raster, FDRD8Formats, D8ConversionDicts, PourPointLocationsDict, PourPointValuesDict
 from fcpgtools.utilities import intake_raster, intake_shapefile, save_raster, clip, reproject_raster, \
-    resample, id_d8_format, _format_nodata, _combine_split_bands
+    resample, id_d8_format, _combine_split_bands
 
 # CLIENT FACING FUNCTIONS
 def align_raster(
@@ -107,7 +107,6 @@ def spatial_mask(
     :returns: (xr.DataArray) the output spatially masked raster.
     """
     in_raster = intake_raster(in_raster)
-    in_raster = _format_nodata(in_raster)
     mask_shp = intake_shapefile(mask_shp)
 
     out_raster = in_raster.rio.clip(
@@ -145,7 +144,6 @@ def value_mask(
     """
     # handle nodata / out-of-mask values
     in_raster = intake_raster(in_raster)
-    in_raster = _format_nodata(in_raster)
     if out_mask_value is None: out_mask_value = in_raster.rio.nodata
     
     # build conditionals
@@ -185,7 +183,6 @@ def binarize_nodata(
     """
     # handle nodata / out-of-mask values
     in_raster = intake_raster(in_raster)
-    in_raster = _format_nodata(in_raster)
     if nodata_value is None: nodata_value = in_raster.rio.nodata
 
     # convert all values to 0 or 1

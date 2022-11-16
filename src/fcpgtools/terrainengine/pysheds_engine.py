@@ -6,10 +6,8 @@ from pysheds.view import ViewFinder
 from typing import List, Dict, TypedDict
 from fcpgtools.types import Raster, PyShedsInputDict
 from fcpgtools.utilities import intake_raster, _split_bands, _combine_split_bands, \
-    _update_parameter_raster, save_raster, _verify_shape_match
+    _update_parameter_raster, save_raster, _verify_shape_match, _replace_nodata_value, _prep_parameter_grid
 
-# Grid.add_gridded_data(self, data, data_name, affine=None, shape=None, crs=None,
-#                         nodata=None, mask=None, metadata={}):
 
 # UNDERLYING FUNCTIONS TO IMPORT/EXPORT DATA FROM PYSHEDS OBJECTS
 def _make_new_nodata(
@@ -65,33 +63,6 @@ def _pysheds_to_xarray(
         )
     return array
 
-def _prep_parameter_grid(
-    parameter_raster: xr.DataArray,
-    d8_fdr: xr.DataArray,
-    ) -> xr.DataArray:
-
-    # check that shapes match
-    if not _verify_shape_match(d8_fdr, parameter_raster):
-        print('ERROR: The D8 FDR raster and the parameter raster must have the same shape. '
-        'Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).')
-        raise TypeError
-
-    # use a where query to replace out of bounds values with -1 for taudem
-    parameter_raster = parameter_raster.where(
-        d8_fdr.values != d8_fdr.rio.nodata,
-        np.nan,
-        )
-
-    # convert in-bounds nodata to 0
-    if np.isin(parameter_raster.rio.nodata, parameter_raster.values):
-        parameter_raster = parameter_raster.where(
-            (d8_fdr.values == d8_fdr.rio.nodata) & \
-                (parameter_raster.values != parameter_raster.rio.nodata),
-            0,
-            )
-
-    return parameter_raster
-
 # CLIENT FACING PROTOCOL IMPLEMENTATIONS
 def fac_from_fdr(
     d8_fdr: Raster, 
@@ -121,6 +92,7 @@ def fac_from_fdr(
             _prep_parameter_grid(
                 weights,
                 d8_fdr,
+                np.nan,
                 )
             )
     else: weights_dict = {'raster': None}
@@ -133,7 +105,7 @@ def fac_from_fdr(
         )
 
     # export back to DataArray
-    return _pysheds_to_xarray(
+    out_raster = _pysheds_to_xarray(
         pysheds_io_dict={
             'grid': pysheds_input_dict['grid'],
             'raster': accumulate,
@@ -141,6 +113,23 @@ def fac_from_fdr(
             },
         name='accumulate',
         )
+
+    # convert out of bounds values to np.nan
+    out_raster = out_raster.where(
+        d8_fdr.values != d8_fdr.rio.nodata,
+        out_raster.rio.nodata,
+        )
+
+    out_raster = _replace_nodata_value(
+        out_raster,
+        np.nan
+        )
+
+    # save if necessary
+    if out_path is not None:
+        save_raster(out_raster, out_path)
+    
+    return out_raster
 
 def parameter_accumulate( 
     d8_fdr: Raster, 
@@ -174,6 +163,7 @@ def parameter_accumulate(
             _prep_parameter_grid(
                 array,
                 d8_fdr,
+                array.rio.nodata,
                 )
             )
 
