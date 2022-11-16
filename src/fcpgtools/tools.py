@@ -81,25 +81,13 @@ def convert_fdr_formats(
                 d8_fdr = d8_fdr.copy(
                     data=df[0].values.reshape(d8_fdr.shape),
                     )
+
+    # update nodata
+    d8_fdr = d8_fdr.rio.set_nodata(out_dict['nodata'])
+
     print(f'Converted the D8 Flow Direction Raster (FDR) from {in_format} format'
     f' to {out_format}')
     return d8_fdr
-    
-def find_cell_downstream(
-    d8_fdr: Raster,
-    coords: Tuple[float, float],
-    ) -> Tuple[float, float]:
-    """
-    Uses a D8 FDR to find the cell center coordinates downstream from any cell (specified
-    Note: this replaces py:func:FindDownstreamCellTauDir(d, x, y, w) in the V1.1 repo.
-    :param d8_fdr: (xr.DataArray or str raster path) a D8 Flow Direction Raster (dtype=Int).
-    :param coords: (tuple) the input (lat:float, lon:float) to find the next cell downstream from.
-    :returns: (tuple) an output (lat:float, lon:float) representing the cell center coorindates
-        downstream from the cell defined via :param:coords.
-    """
-    # get index of cell and index and use to query surrounding cells
-    #TODO: move to utilities
-    raise NotImplementedError
 
 # raster masking function
 def spatial_mask(

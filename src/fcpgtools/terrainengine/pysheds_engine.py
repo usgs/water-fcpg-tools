@@ -6,7 +6,7 @@ from pysheds.view import ViewFinder
 from typing import List, Dict, TypedDict
 from fcpgtools.types import Raster, PyShedsInputDict
 from fcpgtools.utilities import intake_raster, _split_bands, _combine_split_bands, \
-    _update_parameter_raster, save_raster
+    _update_parameter_raster, save_raster, _verify_shape_match
 
 # Grid.add_gridded_data(self, data, data_name, affine=None, shape=None, crs=None,
 #                         nodata=None, mask=None, metadata={}):
@@ -65,29 +65,71 @@ def _pysheds_to_xarray(
         )
     return array
 
-#TODO: figure out concating to re-build multi-dimensions
+def _prep_parameter_grid(
+    parameter_raster: xr.DataArray,
+    d8_fdr: xr.DataArray,
+    ) -> xr.DataArray:
+
+    # check that shapes match
+    if not _verify_shape_match(d8_fdr, parameter_raster):
+        print('ERROR: The D8 FDR raster and the parameter raster must have the same shape. '
+        'Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).')
+        raise TypeError
+
+    # use a where query to replace out of bounds values with -1 for taudem
+    parameter_raster = parameter_raster.where(
+        d8_fdr.values != d8_fdr.rio.nodata,
+        np.nan,
+        )
+
+    # convert in-bounds nodata to 0
+    if np.isin(parameter_raster.rio.nodata, parameter_raster.values):
+        parameter_raster = parameter_raster.where(
+            (d8_fdr.values == d8_fdr.rio.nodata) & \
+                (parameter_raster.values != parameter_raster.rio.nodata),
+            0,
+            )
+
+    return parameter_raster
 
 # CLIENT FACING PROTOCOL IMPLEMENTATIONS
 def fac_from_fdr(
-            d8_fdr: Raster, 
-            upstream_pour_points: List = None,
-            out_path: str = None,
-            **kwargs,
-        ) -> xr.DataArray:
+    d8_fdr: Raster, 
+    weights: xr.DataArray = None,
+    upstream_pour_points: List = None,
+    out_path: str = None,
+    **kwargs,
+    ) -> xr.DataArray:
 
     d8_fdr = intake_raster(d8_fdr)
     pysheds_input_dict = _xarray_to_pysheds(d8_fdr)
 
-    # add weights if necessary
-    if kwargs == {}: weights = None
-    elif 'weights' in kwargs['kwargs'].keys(): weights = kwargs['kwargs']['weights']
-    else: weights = None
+    if weights is not None and upstream_pour_points is not None:
+        # add weights if necessary
+        if weights is not None: weights = weights
+        #TODO: Implement upstream pour points using weighting grid!
+        elif upstream_pour_points is not None:
+            weights = xr.zeros_like(
+                d8_fdr,
+                dtype=np.dtype('float64'),
+                )
+            weights = _update_parameter_raster(
+                weights,
+                upstream_pour_points,
+                )
+        weights_dict = _xarray_to_pysheds(
+            _prep_parameter_grid(
+                weights,
+                d8_fdr,
+                )
+            )
+    else: weights_dict = {'raster': None}
 
     # apply accumulate function
     accumulate = pysheds_input_dict['grid'].accumulation(
         pysheds_input_dict['raster'],
         nodata_in=pysheds_input_dict['input_array'].rio.nodata,
-        weights=weights,
+        weights=weights_dict['raster'],
         )
 
     # export back to DataArray
@@ -121,16 +163,19 @@ def parameter_accumulate(
     if len(parameter_raster.shape) > 2:
         raster_bands = _split_bands(parameter_raster)
     else:
-        dim_name = list(parameter_raster[parameter_raster.dims[0]].values)[0]
-        raster_bands = {(0, dim_name): parameter_raster}
+        raster_bands = {(0, 0): parameter_raster}
 
     # create weighted accumulation rasters
     out_dict = {}
     for index_tuple, array in raster_bands.items():
         i, dim_name = index_tuple
         #TODO: switch to where 0s are added only for where there IS FDR data
-        # array = array.fillna(0)
-        param_input_dict = _xarray_to_pysheds(array)
+        param_input_dict = _xarray_to_pysheds(
+            _prep_parameter_grid(
+                array,
+                d8_fdr,
+                )
+            )
 
         accumulated = fac_from_fdr(
             d8_fdr,

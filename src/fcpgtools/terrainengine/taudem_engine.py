@@ -6,9 +6,11 @@ import pathlib
 from tempfile import tempdir
 from typing import List, Union
 from pathlib import Path
+import numpy as np
 import xarray as xr
 from fcpgtools.types import Raster, TauDEMDict
-from fcpgtools.utilities import intake_raster, save_raster
+from fcpgtools.utilities import intake_raster, save_raster, _verify_shape_match, \
+    _combine_split_bands, _split_bands, _update_parameter_raster
 
 def _taudem_prepper(
     in_raster: Raster,
@@ -21,7 +23,7 @@ def _taudem_prepper(
         temp_path = Path(
             tempfile.TemporaryFile(
                 dir=Path.cwd(),
-                prefix='fdr_d8_temp',
+                prefix='fdr_to_fac_temp',
                 suffix='.tif',
                 ).name
             )
@@ -38,6 +40,33 @@ def _taudem_prepper(
         raise TypeError
     return in_raster
 
+def _prep_parameter_grid(
+    parameter_raster: xr.DataArray,
+    d8_fdr: xr.DataArray,
+    ) -> xr.DataArray:
+
+    # check that shapes match
+    if not _verify_shape_match(d8_fdr, parameter_raster):
+        print('ERROR: The D8 FDR raster and the parameter raster must have the same shape. '
+        'Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).')
+        raise TypeError
+
+    # use a where query to replace out of bounds values with -1 for taudem
+    parameter_raster = parameter_raster.where(
+        d8_fdr.values != d8_fdr.rio.nodata,
+        -1,
+        )
+
+    # convert in-bounds nodata to 0
+    if np.isin(parameter_raster.rio.nodata, parameter_raster.values):
+        parameter_raster = parameter_raster.where(
+            (d8_fdr.values == d8_fdr.rio.nodata) & \
+                (parameter_raster.values != parameter_raster.rio.nodata),
+            0,
+            )
+
+    return parameter_raster
+
 def _update_taudem_dict(
     taudem_dict: TauDEMDict,
     kwargs: dict
@@ -51,8 +80,10 @@ def _update_taudem_dict(
     return taudem_dict
 
 def fac_from_fdr(
-    d8_fdr: Raster, 
+    d8_fdr: Raster,
     upstream_pour_points: List = None,
+    weights: xr.DataArray = None,
+    out_dtype: np.dtype = np.dtype('int64'),
     out_path: str = None,
     **kwargs,
     ) -> xr.DataArray:
@@ -64,12 +95,36 @@ def fac_from_fdr(
         as the first item [0], and updated cell values as the second [1]. This allows the FAC to be made
         with boundary conditions such as upstream basin pour points.
     :param out_path: (str, default=None) defines a path to save the output raster.
+    :param out_dtype) (np.dtype) allows the output raster dtype to match a parameter grids.
     :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
     :returns: (xr.DataArray) the Flow Accumulation Cells (FAC) raster as a xarray DataArray object.
     """
-    #TODO: Implement upstream pour points using weighting grid!
-    
-    d8_fdr = _taudem_prepper(d8_fdr)
+    d8_fdr = intake_raster(d8_fdr)
+    d8_fdr_path = _taudem_prepper(d8_fdr)
+
+    # get tempoarary files for necessary inputs
+    if upstream_pour_points is None and weights is None:
+        weight_path = ''
+        wg = ''
+    else:
+        if weights is not None: weights = weights
+        #TODO: Implement upstream pour points using weighting grid!
+        else:
+            weights = xr.zeros_like(
+                d8_fdr,
+                dtype=np.dtype('float64'),
+                )
+            weights = _update_parameter_raster(
+                weights,
+                upstream_pour_points,
+                )
+            weights = _prep_parameter_grid(
+                weights,
+                d8_fdr,
+                )
+        weight_path = _taudem_prepper(weights)
+        wg = '-wg '
+
     save = False
     if out_path is None:
         out_path = Path(
@@ -82,18 +137,19 @@ def fac_from_fdr(
     else: save = True
 
     taudem_dict = {
-        'fdr': d8_fdr,
+        'fdr': d8_fdr_path,
         'outFl': str(out_path),
         'cores': 1,
         'mpiCall': 'mpiexec',
         'mpiArg': '-n',
         }
 
+    taudem_dict['finalArg'] = f'{wg}{str(weight_path)} -n'
     taudem_dict = _update_taudem_dict(taudem_dict, kwargs)
 
     # use TauDEM via subprocess to make a Flow Accumulation Raster
     try:
-        cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} -nc'.format(
+        cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} {finalArg}'.format(
             **taudem_dict)
         _ = subprocess.run(cmd, shell=True)
 
@@ -102,10 +158,10 @@ def fac_from_fdr(
         print('ERROR: TauDEM AreaD8 failed!')
         traceback.print_exc()
     
-    out_raster = intake_raster(out_path)
-    out_raster = out_raster.astype('uint64')
+    print(taudem_dict['outFl'])
+    out_raster = intake_raster(taudem_dict['outFl'])
+    out_raster = out_raster.astype(str(out_dtype))
     return out_raster
-
 
 def parameter_accumulate( 
     d8_fdr: Raster, 
@@ -128,8 +184,48 @@ def parameter_accumulate(
     :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
     :returns: (xr.DataArray) the parameter accumulation raster as a xarray DataArray object.
     """
-    raise NotImplementedError
+    d8_fdr = intake_raster(d8_fdr)
+    parameter_raster = _prep_parameter_grid(
+        parameter_raster=parameter_raster,
+        d8_fdr=d8_fdr,
+        )
 
+    # add any pour point accumulation via utilities._update_parameter_raster()
+    if upstream_pour_points is not None: parameter_raster = _update_parameter_raster(
+        parameter_raster,
+        upstream_pour_points,
+        )
+
+    # split if multi-dimensional
+    if len(parameter_raster.shape) > 2:
+        raster_bands = _split_bands(parameter_raster)
+    else:
+        dim_name = list(parameter_raster[parameter_raster.dims[0]].values)[0]
+        raster_bands = {(0, dim_name): parameter_raster}
+
+    # create weighted accumulation rasters
+    out_dict = {}
+    for index_tuple, array in raster_bands.items():
+        i, dim_name = index_tuple
+
+        accumulated = fac_from_fdr(
+            d8_fdr,
+            weights=array,
+            out_dtype=array.dtype,
+            )
+
+        out_dict[(i, dim_name)] = accumulated
+
+    # re-combine into DataArray
+    if len(out_dict.keys()) > 1:
+        out_raster =  _combine_split_bands(out_dict)
+    else: out_raster =  list(out_dict.items())[0][1] 
+
+    # save if necessary
+    if out_path is not None:
+        save_raster(out_raster, out_path)
+    
+    return out_raster
 
 
 def distance_to_stream(
@@ -185,7 +281,7 @@ def distance_to_stream(
         print('ERROR: TauDEM d8hdisttostrm failed!')
         traceback.print_exc()
 
-    out_raster = intake_raster(out_path)
+    out_raster = intake_raster(taudem_dict['outRast'])
     return out_raster
 
 def get_max_upslope(
@@ -227,7 +323,7 @@ def get_max_upslope(
     taudem_dict = {
         'fdr': d8_fdr,
         'param': param_raster,
-        'outRast': out_path,
+        'outRast': str(out_path),
         'accum_type': accum_type_str,
         'cores': 1,
         'mpiCall': 'mpiexec',
@@ -246,7 +342,7 @@ def get_max_upslope(
         print('ERROR: TauDEM d8flowpathextremeup failed!')
         traceback.print_exc()
 
-    out_raster = intake_raster(out_path)
+    out_raster = intake_raster(taudem_dict['outRast'])
 
     #TODO: Add stream mask function!
     return out_raster

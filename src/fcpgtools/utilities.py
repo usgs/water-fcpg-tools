@@ -148,6 +148,26 @@ def _format_nodata(
             ) 
     return in_raster
 
+def _verify_shape_match(
+    in_raster1: Raster,
+    in_raster2: Raster,
+    ) -> bool:
+    # get dimension info
+    shape1 = intake_raster(in_raster1).shape
+    shape2 = intake_raster(in_raster2).shape
+    len1 = len(shape1)
+    len2 = len(shape2)
+
+    # check that inputs have correct # of dimensions
+    if max([len1, len2]) > 3 or min([len1, len2]) < 2:
+        print('ERROR: A raster has incorrect dimensions. Must be f(x, y) or f(x, y, t).')
+        raise TypeError
+
+    # compare shapes appropriately
+    if len1 == len2: return bool(shape1 == shape2)
+    elif len1 > len2: return bool(shape1[1:] == shape2)
+    else: return bool(shape1 == shape2[1:])
+
 def _split_bands(
     in_raster: xr.DataArray,
     ) -> Dict[Tuple[int, Union[int, str, np.datetime64]], xr.DataArray]:
