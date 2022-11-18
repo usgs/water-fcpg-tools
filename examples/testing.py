@@ -83,12 +83,31 @@ def main(
         )
     print('Done')
     
+    landcover_classes = {
+        1: 'evergreen forest',
+        7: 'tropical shrubland',
+        8: 'temperate shrubland',
+        9: 'tropical grassland',
+        10: 'temperate grassland',
+        14: 'wetland',
+        15: 'cropland',
+        16: 'barren',
+        17: 'urban',
+        18: 'open water',
+        }
+
     print('Aligning landcover raster to the upstream fdr')
     us_landcover = tools.align_raster(
         landcover,
         us_fdr,
-        resample_method='bilinear', 
+        resample_method='nearest', 
         out_path=None
+        )
+
+    us_binary_landcover = tools.binarize_categorical_raster(
+        us_landcover,
+        categories_dict=landcover_classes,
+        ignore_categories=[18] # ignoring open water
         )
     
     if test_pysheds:
@@ -97,36 +116,55 @@ def main(
             us_fdr,
             upstream_pour_points=None,
             out_path=None,
-        )
+            )
         print('Done')
 
         daymet_accumulated = terrainengine.pysheds_engine.parameter_accumulate(
             us_fdr,
-            us_precip,
+            us_precip[0],
+            out_path=Path(out_data_dir / Path('test_accum1.tif')),
             )
 
+        landcover_accumulated = terrainengine.pysheds_engine.parameter_accumulate(
+            us_fdr,
+            us_binary_landcover,
+            out_path=Path(out_data_dir / Path('test_accum2.tif')),
+            )
 
     if test_taudem:
         # convert D8 encoding
         print('Converting the FDR format to taudem encoding')
-        us_fdr_taudem = tools.convert_fdr_formats(us_fdr,
-        out_format='taudem',
-        #in_format: str = None,
-        )
+        us_fdr_taudem = tools.convert_fdr_formats(
+            us_fdr,
+            out_format='taudem',
+            )
         print('Done')
 
         print('Making a FAC from us_fdr w/ TauDEM engine')
         us_fac = taudem_engine.fac_from_fdr(
             d8_fdr=us_fdr_taudem, 
             upstream_pour_points=None,
-            out_path=Path(os.path.join(out_data_dir, 'us_fac_taudem.tif')),
+            out_path=None,
             )
         print('Done')
         
         print('Make a multi-dimensional parameter (i.e. precipitation) accumulation grid w/ TauDEM engine')
-        # add code here
+        daymet_accumulated = terrainengine.taudem_engine.parameter_accumulate(
+            us_fdr_taudem,
+            us_precip[0],
+            out_path=Path(out_data_dir / Path('test_accum1.tif')),
+            )
+
+        landcover_accumulated = terrainengine.taudem_engine.parameter_accumulate(
+            us_fdr_taudem,
+            us_binary_landcover,
+            out_path=Path(out_data_dir / Path('test_accum2.tif')),
+            )
         print('Done')
 
 if __name__ == '__main__':
-    main(MULTI_DIMENSIONAL_TEST,
-    test_taudem=True)
+    main(
+        MULTI_DIMENSIONAL_TEST,
+        test_taudem=True,
+        test_pysheds=False,
+        )

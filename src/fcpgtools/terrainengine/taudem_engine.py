@@ -139,7 +139,7 @@ def fac_from_fdr(
     out_raster = intake_raster(Path(taudem_dict['outFl']))
     out_raster = out_raster.astype(np.float64)
 
-    # convert out of bounds values to np.nan
+    # convert out of bounds values to np.nan, in bounds nan to 0, and update nodata
     out_raster = out_raster.where(
         d8_fdr.values != d8_fdr.rio.nodata,
         out_raster.rio.nodata,
