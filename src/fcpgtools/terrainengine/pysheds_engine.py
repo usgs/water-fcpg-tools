@@ -99,7 +99,7 @@ def fac_from_fdr(
 
     # apply accumulate function
     accumulate = pysheds_input_dict['grid'].accumulation(
-        pysheds_input_dict['raster'],
+        pysheds_input_dict['raster'], 
         nodata_in=pysheds_input_dict['input_array'].rio.nodata,
         weights=weights_dict['raster'],
         )

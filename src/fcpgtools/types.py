@@ -43,7 +43,7 @@ D8ConversionDicts = {
 # create a custom type hint dictionary for pour points
 class PourPointLocationsDict(TypedDict):
     pour_point_ids: List[Union[int, str]]
-    pour_point_coords: List[Tuple[float, float]]
+    pour_point_coords: List[Tuple[float, float]]  # (x, y) in raster coordinates 
 
 class PourPointValuesDict(PourPointLocationsDict):
     # the lists in the list will be len==1 if a one band array is supplied

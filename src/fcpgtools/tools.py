@@ -5,7 +5,7 @@ import pandas as pd
 import geopandas as gpd
 from fcpgtools.types import Raster, FDRD8Formats, D8ConversionDicts, PourPointLocationsDict, PourPointValuesDict
 from fcpgtools.utilities import intake_raster, intake_shapefile, save_raster, clip, reproject_raster, \
-    resample, id_d8_format, _combine_split_bands
+    resample, id_d8_format, _combine_split_bands, _verify_basin_coverage, get_max_cell
 
 # CLIENT FACING FUNCTIONS
 def align_raster(
@@ -254,11 +254,35 @@ def binarize_categorical_raster(
         save_raster(out_raster, out_path)
     return out_raster
 
+def d8_to_dinf(
+    d8_fdr: Raster,
+    ) -> xr.DataArray:
+    """Converts a D8 Flow Direction Raster to D-Infinity"""
+
+    # if not taudem format, convert
+    d8_fdr = intake_raster(d8_fdr)
+    d8_fdr = convert_fdr_formats(
+        d8_fdr,
+        out_format='taudem',
+        )
+    
+    # replace nodata with nan and convert to float
+    dinf_fdr = d8_fdr.where(
+        (d8_fdr.values != d8_fdr.rio.nodata),
+        np.nan,
+        ).astype('float32')
+    dinf_fdr.rio.write_nodata(np.nan, inplace=True)
+
+    # convert to d-infinity / radians (as floats, range 0 - 6.2)
+    dinf_fdr = ((dinf_fdr - 1) * np.pi) / 4
+    dinf_fdr.name = 'DInfinity_FDR'
+    return dinf_fdr
 
 def find_pour_points(
     fac_raster: Raster, 
     basins_shp: str = None, 
-    basin_id_field: str = None,
+    basin_id_field: str = 'HUC12',
+    use_huc4: bool = True,
     ) -> PourPointLocationsDict:
     """
     Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.
@@ -267,10 +291,52 @@ def find_pour_points(
     :basin_id_field: default behavior is for each GeoDataFrame row to be a unique basin.s
         However, if one wants to use a higher level basin id that is shared acrcoss rows,
         this should be set to the column header storing the higher level basin id.
-    :returns: (dict) a dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(lat, lon).
+    :param basin_level: (str), either 'HUC4' or 'HUC12'
+    :returns: (dict) a dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(x, y).
     """
-    # check extents of shapefile bbox and make sure all overlap the FAC raster extent
-    raise NotImplementedError
+    fac_raster = intake_raster(fac_raster)
+    basins_shp = intake_shapefile(basins_shp)
+
+    # verify that we can find the basin_id_field
+    if basin_id_field is not None:
+        if basin_id_field not in list(basins_shp.columns):
+            print(f'ERROR: param:basin_id_field = {basin_id_field} is not in param:basins_shp')
+            return ValueError
+    
+    # convert basin levels if necessary PourPointLocationsDict
+    pour_point_locations_dict = {}
+    pour_point_locations_dict['pour_point_ids'] = []
+    pour_point_locations_dict['pour_point_coords'] = []
+
+    if use_huc4 and basin_id_field == 'HUC12':
+        print('Using HUC4 level flow basins, converting from HUC12')
+        basins_shp['HUC4'] = basins_shp[basin_id_field].str[:4]
+        sub_basin_id = 'HUC4'
+    else: sub_basin_id = basin_id_field
+    
+    # iterate over sub basins and fill the
+    basins_shp = basins_shp.dissolve(by=sub_basin_id).reset_index()
+
+    for basin in basins_shp[sub_basin_id].unique():
+        sub_shp = basins_shp.loc[basins_shp[sub_basin_id] == basin]
+
+        # check extents of shapefile bbox and make sure all overlap the FAC raster extent
+        if not _verify_basin_coverage(fac_raster, sub_shp):
+            print(f'WARNING: sub basin with {sub_basin_id} == {basin} is not'
+            ' completely enclosed by param:raster! Some relevant areas may be missing.')
+        
+        # apply spatial mask and find max accumulation value
+        sub_raster = spatial_mask(
+            fac_raster,
+            sub_shp,
+            )
+        pour_point_locations_dict['pour_point_ids'].append(basin)
+        pour_point_locations_dict['pour_point_coords'].append(get_max_cell(sub_raster))
+    
+    return pour_point_locations_dict
+        
+
+
 
 def get_pour_point_values(
     pour_point_locations: PourPointLocationsDict,

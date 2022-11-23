@@ -71,9 +71,9 @@ def main(
         print('Using one dimensional precipitation data')
         precip_tif = Path(os.path.join(in_data_dir, 'validation_daymet_an_P_2017.tif'))
         precip = utilities.intake_raster(precip_tif)
-    print('Done')
+    print('Done\n')
 
-    # align parameter raster
+    # align precipitation raster
     print('Aligning precipitation raster to the upstream fdr')
     us_precip = tools.align_raster(
         precip,
@@ -81,8 +81,9 @@ def main(
         resample_method='bilinear', 
         out_path=Path(os.path.join(out_data_dir, 'us_fdr_daymet.tif')),
         )
-    print('Done')
+    print('Done\n')
     
+    # binarize and align landcover raster
     landcover_classes = {
         1: 'evergreen forest',
         7: 'tropical shrubland',
@@ -109,27 +110,56 @@ def main(
         categories_dict=landcover_classes,
         ignore_categories=[18] # ignoring open water
         )
+    print('Done\n')
     
+    # use the pysheds engine
     if test_pysheds:
-        print('Making a FAC from us_fdr w/ PySheds engine')
-        us_fdr_grid = terrainengine.pysheds_engine.fac_from_fdr(
+        print('Converting the FDR format to ESRI encoding')
+        us_fdr_esri = tools.convert_fdr_formats(
             us_fdr,
+            out_format='esri',
+            )
+        print('Done\n')
+
+
+        print('PySheds: Making a FAC from us_fdr')
+        fac_pysheds = terrainengine.pysheds_engine.fac_from_fdr(
+            us_fdr_esri,
             upstream_pour_points=None,
             out_path=None,
             )
-        print('Done')
+        print('Done\n')
 
-        daymet_accumulated = terrainengine.pysheds_engine.parameter_accumulate(
-            us_fdr,
+        print('Testing getting pour points (HUC12 and HUC4 levels)')
+        huc4_pour_points = tools.find_pour_points(
+            fac_pysheds,
+            us_basin_shp,
+            basin_id_field='HUC12',
+            use_huc4=True,
+            )
+
+        huc12_pour_points = tools.find_pour_points(
+            fac_pysheds,
+            us_basin_shp,
+            basin_id_field='HUC12',
+            use_huc4=False,
+            )
+
+        print('PySheds: Making a daymet accumulation grid')
+        daymet_acc_pysheds = terrainengine.pysheds_engine.parameter_accumulate(
+            us_fdr_esri,
             us_precip[0],
             out_path=Path(out_data_dir / Path('test_accum1.tif')),
             )
+        print('Done\n')
 
-        landcover_accumulated = terrainengine.pysheds_engine.parameter_accumulate(
-            us_fdr,
+        print('PySheds: Making a landcover accumulation grid')
+        landcover_acc_pysheds = terrainengine.pysheds_engine.parameter_accumulate(
+            us_fdr_esri,
             us_binary_landcover,
             out_path=Path(out_data_dir / Path('test_accum2.tif')),
             )
+        print('Done\n')
 
     if test_taudem:
         # convert D8 encoding
@@ -138,33 +168,35 @@ def main(
             us_fdr,
             out_format='taudem',
             )
-        print('Done')
+        print('Done\n')
 
-        print('Making a FAC from us_fdr w/ TauDEM engine')
-        us_fac = taudem_engine.fac_from_fdr(
+        print('TauDEM: Making a FAC from us_fdr')
+        fac_taudem = taudem_engine.fac_from_fdr(
             d8_fdr=us_fdr_taudem, 
             upstream_pour_points=None,
             out_path=None,
             )
-        print('Done')
+        print('Done\n')
         
-        print('Make a multi-dimensional parameter (i.e. precipitation) accumulation grid w/ TauDEM engine')
-        daymet_accumulated = terrainengine.taudem_engine.parameter_accumulate(
+        print('TauDEM: Making a daymet accumulation grid')
+        daymet_acc_taudem = terrainengine.taudem_engine.parameter_accumulate(
             us_fdr_taudem,
             us_precip[0],
             out_path=Path(out_data_dir / Path('test_accum1.tif')),
             )
+        print('Done\n')
 
-        landcover_accumulated = terrainengine.taudem_engine.parameter_accumulate(
+        print('TauDEM: Making a landcover accumulation grid w/ engine')
+        landcover_acc_taudem = terrainengine.taudem_engine.parameter_accumulate(
             us_fdr_taudem,
             us_binary_landcover,
             out_path=Path(out_data_dir / Path('test_accum2.tif')),
             )
-        print('Done')
+        print('Done\n')
 
 if __name__ == '__main__':
     main(
         MULTI_DIMENSIONAL_TEST,
-        test_taudem=True,
-        test_pysheds=False,
+        test_taudem=False,
+        test_pysheds=True,
         )

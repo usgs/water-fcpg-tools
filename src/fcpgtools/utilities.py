@@ -144,12 +144,12 @@ def _verify_dtype(
 
 def _prep_parameter_grid(
     parameter_raster: xr.DataArray,
-    d8_fdr: xr.DataArray,
+    fdr_raster: xr.DataArray,
     out_of_bounds_value: Union[float, int],
     ) -> xr.DataArray:
 
     # check that shapes match
-    if not _verify_shape_match(d8_fdr, parameter_raster):
+    if not _verify_shape_match(fdr_raster, parameter_raster):
         print('ERROR: The D8 FDR raster and the parameter raster must have the same shape. '
         'Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).')
         raise TypeError
@@ -158,14 +158,14 @@ def _prep_parameter_grid(
     og_nodata = parameter_raster.rio.nodata
     og_crs = _get_crs(parameter_raster)
     parameter_raster = parameter_raster.where(
-        d8_fdr.values != d8_fdr.rio.nodata,
+        fdr_raster.values != fdr_raster.rio.nodata,
         out_of_bounds_value,
         )
 
     # convert in-bounds nodata to 0
     if np.isin(og_nodata, parameter_raster.values):
         parameter_raster = parameter_raster.where(
-            (d8_fdr.values == d8_fdr.rio.nodata) & \
+            (fdr_raster.values == fdr_raster.rio.nodata) & \
                 (parameter_raster.values != og_nodata),
             0,
             )
@@ -451,8 +451,9 @@ def sample_raster(
     :param coords: (tuple) coordinate as (lat:float, lon:float) of the cell to be sampled.
     :returns: (float or int) the cell value at param:coords.
     """
-    return raster.sel({'x': coords[0],
-            'y': coords[1]}).values.item(0)
+    #TODO: verify this works well
+    return raster.sel({'x': coords[1],
+            'y': coords[0]}).values.item(0)
 
 def find_cell_downstream(
     d8_fdr: Raster,
@@ -471,37 +472,35 @@ def find_cell_downstream(
 
 def get_min_cell(
     raster: xr.DataArray,
-    ) -> Tuple[Tuple[float, float], Union[float, int]]:
+    ) -> Tuple[float, float]:
     """
     Get the minimum cell coordinates + value from a single band raster.
     :param raster: (xr.DataArray) a raster as a DataArray in memory.
-    :returns: (list) a list (len=2) with the min cell's coordinate tuple [0] and value [1]
-        i.e., [coords:tuple, value:Union[float, int]].
+    :returns: (tuple) with the min cell's x, y coordinates.
     """
     xmin_index = raster.argmin(dim=['x', 'y'])['x'].data.item(0)
     ymin_index = raster.argmin(dim=['x', 'y'])['y'].data.item(0)
 
     min_slice = raster.isel({'x': xmin_index,
                 'y': ymin_index})
-    return [(min_slice.x.values.item(0), min_slice.y.values.item(0)), min_slice.values.item(0)]
+    return (min_slice.x.values.item(0),
+            min_slice.y.values.item(0))
 
 def get_max_cell(
     raster: xr.DataArray,
-    ) -> Tuple[Tuple[float, float], Union[float, int]]:
+    ) -> Tuple[float, float]:
     """
     Get the maximum cell coordinates + value from a raster.
     :param raster: (xr.DataArray) a raster as a DataArray in memory.
-    :returns: (list) a list (len=2) with the max cell's coordinate tuple [0] and value [1]
-        i.e., [coords:tuple, value:Union[float, int, np.array]].
+    :returns: (tuple) with the max cell's x, y coordinates.
     """
     xmax_index = raster.argmax(dim=['x', 'y'])['x'].data.item(0)
     ymax_index = raster.argmax(dim=['x', 'y'])['y'].data.item(0)
 
     max_slice = raster.isel({'x': xmax_index,
                 'y': ymax_index})
-    return [(max_slice.x.values.item(0),
-            max_slice.y.values.item(0)),
-            max_slice.values.item(0)]
+    return (max_slice.x.values.item(0),
+            max_slice.y.values.item(0))
 
 def update_cell_values(
     in_raster: Union[xr.DataArray, str],
@@ -531,96 +530,25 @@ def update_cell_values(
 
     return out_raster
 
-# CIRCLE BACK TO THESE, MAY NOT BE NECESSARY?
-def verify_extent(
+def _verify_basin_coverage(
     raster: xr.DataArray,
-    coords: tuple,
+    basin_shapefile: gpd.GeoDataFrame,
     ) -> bool:
     """
-    Returns True if coordinates are contained within a given raster.
-    :param raster: (xr.DataArray or str raster path) a georeferenced raster.
-    :param coords: (tuple) the input (lat:float, lon:float) to verify.
-    :returns: boolean. True if param:coords is w/in the spatial extent of param:raster.
+    Returns True if a basin shapefile/GeoDataFrame is completely covered by a raster.
+    :param raster: (xr.DataArray) a georeferenced raster.
+    :param basin_shapefile: (gpd.GeoDataFrame) basin shapefile.
+    :returns: (boolean)
     """
-    # Note: this function should be used within other functions that query
-    # a raster using lat/long coordinates.
-    # 1. get raster bbox coorindates
-    # 2. see if coords is within the bbox, return a boolean
-    raise NotImplementedError
-
-def minimize_extent(
-    in_raster: Union[xr.DataArray, str],
-    nodata_value: Union[float, int] = None,
-    ) -> xr.DataArray:
-    """
-    Minimizes the extent of a raster to the bounding box of all non-nodata cells.
-    Useful after raster operations where extents don't match and nodata values are propageted forwards.
-    :param in_raster: (xr.DataArray or str raster path) the input raster.
-    :param nodata_value: (float->np.nan or int) if the nodata value for param:in_raster is not in the metadata,
-        set this parameter to equal the cell value storing nodata (i.e., np.nan or -999).
-    :returns: (xr.DataArray) the clipped output raster as a xarray DataArray object.
-    """
-    # if no nodata values -> return in_raster
-    # else return the minimum extent
-    raise NotImplementedError
-
-def change_nodata(
-    in_raster: Union[xr.DataArray, str],
-    nodata_value: Union[float, int],
-    out_path: str = None,
-    convert_dtype: bool = True,
-    ) -> xr.DataArray:
-    """
-    Update a specific raster nodata value.
-    :param in_raster: (xr.DataArray or str raster path) input raster.
-    :param nodata_value: (float or int) new value to give nodata cells before saving.
-    :param out_path: (str, default=None) defines a path to save the output raster.
-    :param convert_dtype: (bool, default=True) if param:nodata_value is non-compatible
-        with in_raster's dtype, a dtype conversion is default unless False.
-    :returns: param:in_raster with the updated nodata values as a xarray DataArray object.
-    """
-    #NOTE: likely not needed!
-    raise NotImplementedError
-
-def change_dtype(
-    in_raster: Union[xr.DataArray, str],
-    out_dtype: str,
-    out_path: str = None,
-    allow_rounding: bool = False,
-    ) -> xr.DataArray:
-    """
-    Change a rasters datatype to another valid xarray datatype.
-    :param in_raster: (xr.DataArray or str path) input raster.
-    :param out_dtype: (str) a valid xarray datatype string (i.e., float64, int64...).
-    :param out_path: (str, default=None) defines a path to save the output raster.
-    :param allow_rounding: (bool, default=False) allows rounding of float -> int.
-    :returns: (xr.DataArray) the raster with it's dtype changed.
-    """
-    #NOTE: likely not needed!
-    raise NotImplementedError
-
-def get_raster_bbox(
-    raster: xr.DataArray,
-    ) -> Tuple[float, float, float, float]:
-    """
-    Get bounding box coordinates of a raster.
-    :param raster: (xr.DataArray or str raster path) a georeferenced raster.
-    :returns: (Tuple)  with bounding bbox coordinates - [minX, minY, maxX, maxY]
-    """
-    # this function is used to in verify_extent() as well as clip().
-    # MAY NOT BE NECESSARY
-    raise NotImplementedError
-
-def get_shp_bbox(
-    shp: Union[str, gpd.GeoDataFrame],
-    ) -> list:
-    """
-    Get bbox coordinates of a shapefile.
-    :param shp: (geopandas.GeoDataFrame or str shapefile path) a georeferenced shapefile.
-    :returns: (list) list with bounding bbox coordinates - [minX, minY, maxX, maxY]
-    """
-    #NOTE: likely not needed!
-    raise NotImplementedError
-
-
-
+    # reproject the raster to align with the basin_shapefile
+    raster = reproject_raster(
+        raster,
+        basin_shapefile,
+        )
+    raster_bbox = np.array(raster.rio.bounds())
+    shp_bbox = basin_shapefile.geometry.total_bounds
+    
+    # compare geometry to verify inclusion
+    diff = np.array(raster_bbox) - np.array(shp_bbox)
+    compare = np.sign(diff) == np.array([-1, -1, 1, 1])
+    return np.all(compare)

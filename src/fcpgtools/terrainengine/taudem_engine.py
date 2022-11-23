@@ -216,7 +216,6 @@ def parameter_accumulate(
     
     return out_raster
 
-
 def distance_to_stream(
     d8_fdr: Raster,
     fac_raster: Raster,
@@ -227,8 +226,8 @@ def distance_to_stream(
     """
     Calculates distance each cell is from a stream (as defined by a cell accumulation threshold).
         Note: this is a command line wrapper of TauDEM:aread8.
-    :param fdr: (str) path to flow direction raster in TauDEM format.
-    :param fac_raster: (str) path to flow accumulation raster.
+    :param fdr: (xr.DataArray or path str) path to flow direction raster in TauDEM format.
+    :param fac_raster: (xr.DataArray or path str) path to flow accumulation raster.
     :param accum_threshold: (int) # of upstream/accumulated cells to consider classify a stream cell.
     :param out_path: (str, default=None) defines a path to save the output raster.
     :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
@@ -342,8 +341,65 @@ def get_max_upslope(
 def decay_raster() -> xr.DataArray:
     raise NotImplementedError
 
-def decay_decay_accumulation() -> xr.DataArray:
-    raise NotImplementedError
+def decay_accumulation(
+    dinf_fdr: Raster,
+    multiplier_raster: Raster,
+    parameter_raster: Raster = None,
+    out_path: str = None,
+    **kwargs,
+    ) -> xr.DataArray:
+    """
+    Creates a D-Infinity based accumulation raster (parameter or cell accumulation) while applying decay via a multiplier_raster.
+        Note: This is a command line wrapper of TauDEM:DinfDecayAccum.
+    :param dinf_fdr: (xr.DataArray or str raster path) path to flow direction raster in D-Infinity format.
+        Note: This input can be made with tools.d8_to_dinf().
+    :param multiplier_raster: (xr.DataArray or str raster path)
+    :param parameter_raster: (optional, xr.DataArray or str raster path)
+    :param out_path: (str, default=None) defines a path to save the output raster.
+    :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
+    :returns:
+    """
+    # prep data for taudem
+    dinf_fdr_path = _taudem_prepper(dinf_fdr)
+    multiplier_raster_path = _taudem_prepper(multiplier_raster)
+
+    # prep parameter raster is applicable
+    if parameter_raster is not None:
+        parameter_raster = intake_raster(parameter_raster)
+        parameter_raster = _prep_parameter_grid(
+            _prep_parameter_grid,
+            out_of_bounds_value=-1
+        )
+        parameter_raster_path = _taudem_prepper(parameter_raster)
+
+    # make temporary files as necessary
+    out_write_path = str
+
+    # build the input dictionary
+    taudem_dict = {
+        'dinf_fdr_path': dinf_fdr_path,
+        'dm': multiplier_raster_path,
+        'dsca': out_write_path,
+        'cores': 1,
+        'mpiCall': 'mpiexec',
+        'mpiArg': '-n',
+        }
+
+    if parameter_raster is not None: taudem_dict['finalArg'] = f'-wg {str(parameter_raster_path)} -nc'
+    else: taudem_dict['finalArg'] = '-nc'
+
+    taudem_dict = _update_taudem_dict(taudem_dict, kwargs)
+
+    # use TauDEM via subprocess to make a Flow Accumulation Raster
+    try:
+        cmd = '{mpiCall} {mpiArg} {cores} dinfdecayaccum -ang {dinf_fdr_path} -dm {dm} -dsca {dsca} {finalArg}'.format(
+            **taudem_dict)
+        _ = subprocess.run(cmd, shell=True)
+
+    except Exception:
+        #TODO: Handle exceptions
+        print('ERROR: TauDEM AreaD8 failed!')
+        traceback.print_exc()
 
 # NON_REFACTORED, FOR REFERENCE
 def decayAccum(
