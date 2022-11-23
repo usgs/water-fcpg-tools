@@ -8,7 +8,7 @@ import rioxarray as rio
 from rasterio.enums import Resampling
 import geopandas as gpd
 from fcpgtools.types import Raster, Shapefile, RasterSuffixes, ShapefileSuffixes, \
-    PourPointValuesDict
+    PourPointValuesDict, D8ConversionDicts
 
 # CLIENT FACING I/O FUNCTIONS
 def intake_raster(
@@ -269,36 +269,96 @@ def _combine_split_bands(
         dim=index,
         )
 
-def _update_parameter_raster(
-    parameter_raster: xr.DataArray,
+def _find_cell_downstream(
+    d8_fdr: xr.DataArray,
+    coords: Tuple[float, float],
+    ) -> Tuple[float, float]:
+    """
+    Uses a D8 FDR to find the cell center coordinates downstream from any cell (specified
+    Note: this replaces py:func:FindDownstreamCellTauDir(d, x, y, w) in the V1.1 repo.
+    :param d8_fdr: (xr.DataArray or str raster path) a D8 Flow Direction Raster (dtype=Int).
+    :param coords: (tuple) the input (lat:float, lon:float) to find the next cell downstream from.
+    :returns: (tuple) an output (lat:float, lon:float) representing the cell center coorindates
+        downstream from the cell defined via :param:coords.
+    """
+    # identify d8 fdr format
+    d8_format = id_d8_format(d8_fdr)
+    dir_dict = D8ConversionDicts[d8_format]
+    dir_dict = dict(zip(dir_dict.values(), dir_dict.keys()))
+
+    # get cell size
+    cell_size = np.abs(d8_fdr.rio.resolution(recalc=True)[0])
+
+    # get FDR cell value
+    value = int(
+        sample_raster(
+            d8_fdr,
+            coords,
+            )
+        )
+    
+    # find downstream cell coordinates via hashmap and return
+    dxdy_dict = {
+        'east': (cell_size, 0.0),
+        'northeast': (cell_size, cell_size),
+        'north': (0.0, cell_size),
+        'northwest': (cell_size * -1.0, 0.0),
+        'west': (cell_size * -1.0, 0.0),
+        'southwest': (cell_size * -1.0, cell_size * -1.0),
+        'south': (0.0, cell_size * -1.0),
+        'southeast': (cell_size, cell_size * -1.0),
+    }
+    dx_dy_tuple = dxdy_dict[dir_dict[value]]
+
+    return (coords[0] + dx_dy_tuple[0], coords[1] + dx_dy_tuple[1])
+
+# FRONT-END/CLIENT FACING UTILITY FUNTIONS
+def update_parameter_raster(
+    parameter_raster: Raster,
+    d8_fdr: Raster,
     upstream_pour_points: PourPointValuesDict,
     ) -> xr.DataArray:
-    
+
+    # pull in data
+    parameter_raster = intake_raster(parameter_raster)
+    d8_fdr = intake_raster(d8_fdr)
+
     # pull in pour point data
     pour_point_coords = upstream_pour_points['pour_point_coords']
     pour_point_values = upstream_pour_points['pour_point_values']
 
-    #TODO: attach another function that coverts coords to downstream cell
-
     # update values iteratively
-    for i, coords in pour_point_coords:
+    for i, coords in enumerate(pour_point_coords):
         values_list = pour_point_values[i]
+
+        # get downstream coordinates
+        ds_coords = _find_cell_downstream(
+            d8_fdr,
+            coords,
+            )
+
+        # verify coverage
+        if not _verify_coords_coverage(
+            parameter_raster,
+            ds_coords,
+            ):
+            print(f'WARNING: Cell downstream from pour point coords={coords} is out of bounds -> skipped!')
+            continue
+
         if len(parameter_raster.shape) == 2: 
             parameter_raster = update_cell_values(
                 in_raster=parameter_raster,
-                update_points=[(coords, values_list[0])],
+                update_points=[(ds_coords, values_list[0])],
                 )
         else:
             dim_index_values = parameter_raster[parameter_raster.dims[0]].values
             for band_index, value in enumerate(dim_index_values):
                 parameter_raster[band_index,:,:] = update_cell_values(
                     in_raster=parameter_raster[band_index,:,:],
-                    update_points=[(coords, values_list[band_index])],
+                    update_points=[(ds_coords, values_list[band_index])],
                     )
     return parameter_raster
 
-
-# FRONT-END/CLIENT FACING UTILITY FUNTIONS
 def clip(
     in_raster: Raster,
     match_raster: Raster = None,
@@ -452,23 +512,8 @@ def sample_raster(
     :returns: (float or int) the cell value at param:coords.
     """
     #TODO: verify this works well
-    return raster.sel({'x': coords[1],
-            'y': coords[0]}).values.item(0)
-
-def find_cell_downstream(
-    d8_fdr: Raster,
-    coords: Tuple[float, float],
-    ) -> Tuple[float, float]:
-    """
-    Uses a D8 FDR to find the cell center coordinates downstream from any cell (specified
-    Note: this replaces py:func:FindDownstreamCellTauDir(d, x, y, w) in the V1.1 repo.
-    :param d8_fdr: (xr.DataArray or str raster path) a D8 Flow Direction Raster (dtype=Int).
-    :param coords: (tuple) the input (lat:float, lon:float) to find the next cell downstream from.
-    :returns: (tuple) an output (lat:float, lon:float) representing the cell center coorindates
-        downstream from the cell defined via :param:coords.
-    """
-    # get index of cell and index and use to query surrounding cells
-    raise NotImplementedError
+    return raster.sel({'x': coords[0],
+        'y': coords[1]}).values.item(0)
 
 def get_min_cell(
     raster: xr.DataArray,
@@ -529,6 +574,18 @@ def update_cell_values(
         save_raster(out_raster, out_path)
 
     return out_raster
+
+def _verify_coords_coverage(
+    raster: xr.DataArray,
+    coords: Tuple[float, float],
+    ) -> bool:
+    """Returns True if an x, y coordinate is in the bounds of a raster"""
+    bbox = list(raster.rio.bounds())
+
+    # check if x, y coordaintes are within bounds
+    if coords[0] > bbox[0] and coords[0] < bbox[2]:
+        if coords[1] > bbox[1] and coords[1] < bbox[3]: return True
+    return False
 
 def _verify_basin_coverage(
     raster: xr.DataArray,

@@ -121,7 +121,6 @@ def main(
             )
         print('Done\n')
 
-
         print('PySheds: Making a FAC from us_fdr')
         fac_pysheds = terrainengine.pysheds_engine.fac_from_fdr(
             us_fdr_esri,
@@ -129,6 +128,22 @@ def main(
             out_path=None,
             )
         print('Done\n')
+
+        print('Testing utilities.update_parameter_raster()')
+        test_update_dict = {
+            'pour_point_ids': ['1407'],
+            'pour_point_coords': [(-1370609.9999999995, 1648259.9999999963)],
+            'pour_point_values': [[999999]],
+            }
+        updated_fac = utilities.update_parameter_raster(
+            fac_pysheds,
+            us_fdr_esri,
+            test_update_dict,
+            )
+        if utilities.sample_raster(updated_fac,
+            utilities.get_max_cell(updated_fac),
+            ) == 999999:
+            print('Done. Raster was correctly updated.')
 
         print('Testing getting pour points (HUC12 and HUC4 levels)')
         huc4_pour_points = tools.find_pour_points(
@@ -145,10 +160,20 @@ def main(
             use_huc4=False,
             )
 
+        huc4_pp_values = tools.get_pour_point_values(
+            huc4_pour_points,
+            fac_pysheds,
+            )
+
+        huc12_pp_values = tools.get_pour_point_values(
+            huc12_pour_points,
+            fac_pysheds,
+            )
+
         print('PySheds: Making a daymet accumulation grid')
         daymet_acc_pysheds = terrainengine.pysheds_engine.parameter_accumulate(
             us_fdr_esri,
-            us_precip[0],
+            us_precip,
             out_path=Path(out_data_dir / Path('test_accum1.tif')),
             )
         print('Done\n')

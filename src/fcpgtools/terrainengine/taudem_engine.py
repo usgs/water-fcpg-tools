@@ -10,7 +10,7 @@ import numpy as np
 import xarray as xr
 from fcpgtools.types import Raster, TauDEMDict
 from fcpgtools.utilities import intake_raster, save_raster, _verify_shape_match, \
-    _combine_split_bands, _split_bands, _update_parameter_raster, _prep_parameter_grid, \
+    _combine_split_bands, _split_bands, update_parameter_raster, _prep_parameter_grid, \
     _replace_nodata_value
 
 def _taudem_prepper(
@@ -87,8 +87,8 @@ def fac_from_fdr(
             weights = xr.zeros_like(
                 d8_fdr,
                 dtype=np.dtype('float64'),
-                )
-            weights = _update_parameter_raster(
+                ) + 1
+            weights = update_parameter_raster(
                 weights,
                 upstream_pour_points,
                 )
@@ -180,8 +180,8 @@ def parameter_accumulate(
         out_of_bounds_value=-1,
         )
 
-    # add any pour point accumulation via utilities._update_parameter_raster()
-    if upstream_pour_points is not None: parameter_raster = _update_parameter_raster(
+    # add any pour point accumulation via utilities.update_parameter_raster()
+    if upstream_pour_points is not None: parameter_raster = update_parameter_raster(
         parameter_raster,
         upstream_pour_points,
         )

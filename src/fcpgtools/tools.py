@@ -5,7 +5,8 @@ import pandas as pd
 import geopandas as gpd
 from fcpgtools.types import Raster, FDRD8Formats, D8ConversionDicts, PourPointLocationsDict, PourPointValuesDict
 from fcpgtools.utilities import intake_raster, intake_shapefile, save_raster, clip, reproject_raster, \
-    resample, id_d8_format, _combine_split_bands, _verify_basin_coverage, get_max_cell
+    resample, id_d8_format, _combine_split_bands, _verify_basin_coverage, get_max_cell, sample_raster, \
+    _split_bands
 
 # CLIENT FACING FUNCTIONS
 def align_raster(
@@ -334,26 +335,49 @@ def find_pour_points(
         pour_point_locations_dict['pour_point_coords'].append(get_max_cell(sub_raster))
     
     return pour_point_locations_dict
-        
-
-
-
+    
 def get_pour_point_values(
-    pour_point_locations: PourPointLocationsDict,
+    pour_points_dict: PourPointLocationsDict,
     accumulation_raster: Raster,
     ) -> PourPointValuesDict:
     """
     Get the accumlation raster values from downstream pour points. Note: This function is intended to feed
         into terrainengine.fac_from_fdr() or terrainengine.parameter_accumlate() param:upstream_pour_points.
-    :param pour_point_locations:  (dict) a dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(lat, lon).
+    :param pour_points_dict: (dict) a dictionary of form fcpgtools.types.PourPointValuesDict.
     :param accumulation_raster: (xr.DataArray or str raster path) a Flow Accumulation Cell raster (FAC) or a
         parameter accumulation raster.
     :returns: (list) a list of tuples (one for each pour point) storing their coordinates [0] and accumulation value [1].
     """
-    # to support multi-dimensionality I think it is best to iterate over this function as the pour point locations will be constant.
-    #TODO: let's actually keep it as a basinID references dictionary, storing either a list of tuples (one for each band), or just a tuple
-    raise NotImplementedError
+    # pull in the accumulation raster
+    accumulation_raster = intake_raster(accumulation_raster)
     
+    # remove old values if accidentally passed in
+    if 'pour_point_values' in list(pour_points_dict.keys()):
+        del pour_points_dict['pour_point_values']
+
+    # split bands if necessary
+    if len(accumulation_raster.shape) > 2:
+        raster_bands = _split_bands(accumulation_raster)
+    else:
+        raster_bands = {(0, 0): accumulation_raster}
+
+    # iterate over all basins and bands, extract values
+    dict_values_list = []
+    for pour_point_coords in pour_points_dict['pour_point_coords']:
+        basin_values_list = []
+        for band in raster_bands.values():
+            basin_values_list.append(
+                sample_raster(
+                    band,
+                    pour_point_coords,
+                    )
+                )
+        dict_values_list.append(basin_values_list)
+
+    # convert to types.PourPointValuesDict and return
+    pour_points_dict['pour_point_values'] = dict_values_list
+    return pour_points_dict
+
 # make FCPG raster
 def create_fcpg(
     param_accum_raster: Raster,
@@ -371,84 +395,6 @@ def create_fcpg(
         if given to the cell without adjustment.
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the output FCPG raster as a xarray DataArray object.
-    """
-    raise NotImplementedError
-
-#TODO: Evaluate feasibility of implementing 
-#These are extra add ons that would be nice to implement budget permitting 
-#Prepare flow direction raster (FDR)
-def fix_pits(
-    dem: Raster,
-    out_path: str = None,
-    fix: bool = True,
-    ) -> xr.DataArray:
-    """
-    Detect and fills single cell "pits" in a DEM raster using pysheds: .detect_pits()/.fill_pits().
-    :param dem: (xr.DataArray or str raster path) the input DEM raster.
-    :param out_path: (str, default=None) defines a path to save the output raster.
-    :param fix: (bool, default=True) if False, a print statement warns of the # of single cell pits
-        without fixing them. The input raster is returned as is.
-    :returns: (xr.DataArray) the filled DEM an xarray DataArray object (while fix=True).
-    """
-    raise NotImplementedError
-
-def fix_depressions(
-    dem: Raster,
-    out_path: str = None,
-    fix: bool = True,
-    ) -> xr.DataArray:
-    """
-    Detect and fills multi-cell "depressions" in a DEM raster using pysheds: .detect_depressions()/.fill_depressions().
-    :param dem: (xr.DataArray or str raster path) the input DEM raster.
-    :param out_path: (str, default=None) defines a path to save the output raster.
-    :param fix: (bool, default=True) if False, a print statement warns of the # of dpressions
-        without fixing them. The input raster is returned as is.
-    :returns: (xr.DataArray) the filled DEM an xarray DataArray object (while fix=True).
-    """
-    raise NotImplementedError
-
-def fix_flats(
-    dem: Raster,
-    out_path: str = None,
-    fix: bool = True,
-    ) -> xr.DataArray:
-    """
-    Detect and resolves "flats" in a DEM using pysheds: .detect_flats()/.resolve_flats().
-    :param dem: (xr.DataArray or str raster path) the input DEM raster.
-    :param out_path: (str, default=None) defines a path to save the output raster.
-    :param fix: (bool, default=True) if False, a print statement warns of the # flats
-        without fixing them. The input raster is returned as is.
-    :returns: (xr.DataArray) the resolved DEM an xarray DataArray object (while fix=True).
-    """
-    raise NotImplementedError
-
-def d8_fdr(
-    dem: Raster,
-    out_path: str = None,
-    out_format: str = 'TauDEM',
-    ) -> xr.DataArray:
-    """
-    Creates a flow direction raster from a DEM. Can either save the raster or keep in memory.
-    :param dem: (xr.DataArray or str raster path) the DEM from which to make the FDR.
-    :param out_path: (str, default=None) defines a path to save the output raster.
-    :param out_format: (str, default=TauDEM) type of D8 flow direction encoding for output.
-    :returns: the FDR as a xarray DataArray object.
-    """
-    raise NotImplementedError
-
-def batch_process(
-    dataset: xr.Dataset,
-    function: callable = None,
-    out_path: str = None,
-    *kwargs: dict,
-    ) -> xr.Dataset:
-    """
-    Applies a function to each DataArray in a Dataset (should this be built into the functions themselves??)
-    :param Dataset: (xr.Dataset) an xarray Dataset where all DataArrays are ready to be processed together.
-    :param function: (callable) a function to apply to the Dataset.
-    :param out_path: (str path, default=None) a zarr or netcdf extension path to save the Dataset.
-    :param **kwargs: (dict) allows for non-default keyword parameters for param:function to be specified.
-    :returns: (xr.Dataset) the output Dataset with each DataArray altered by param:function.
     """
     raise NotImplementedError
 

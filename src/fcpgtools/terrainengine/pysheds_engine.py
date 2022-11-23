@@ -6,7 +6,7 @@ from pysheds.view import ViewFinder
 from typing import List, Dict, TypedDict
 from fcpgtools.types import Raster, PyShedsInputDict
 from fcpgtools.utilities import intake_raster, _split_bands, _combine_split_bands, \
-    _update_parameter_raster, save_raster, _verify_shape_match, _replace_nodata_value, _prep_parameter_grid
+    update_parameter_raster, save_raster, _verify_shape_match, _replace_nodata_value, _prep_parameter_grid
 
 
 # UNDERLYING FUNCTIONS TO IMPORT/EXPORT DATA FROM PYSHEDS OBJECTS
@@ -18,10 +18,12 @@ def _make_new_nodata(
 
 def _xarray_to_pysheds(
     array: xr.DataArray,
+    is_fdr: bool,
     ) -> PyShedsInputDict:
     """
     Converts a three dimension (i.e. value = f(x, y)) xr.DataArray into a pysheds inputs.
     :param array: (xr.DataArray) a 3-dimension array.
+    :param is_fdr: (bool) controls whether a nodata mask is writted in the grid object
     :returns: (dict) a dict storing PyShed's relevant data formats of the following form:
         {'input_array': param:array,
         'raster': pysheds.Raster(),
@@ -36,11 +38,22 @@ def _xarray_to_pysheds(
     else:
         nodata_val = array.rio.nodata
         array_np = array.values.astype(dtype=str(array.dtype)).squeeze()
+
+    # make a mask for the grid object
+    if is_fdr:
+        mask = array.astype('bool')
+        mask = mask.where(array != array.rio.nodata, False).values
+    else: mask = None
+    
     view = ViewFinder(shape=array_np.shape,
                       affine=affine,
-                      nodata=nodata_val)
+                      nodata=nodata_val,
+                      mask=mask,
+                      )
+
     raster_obj = PyShedsRaster(array_np, view)
     
+
     # note: edits to this dictionary should be reflected in the PyShedsInputDict TypedDict instance
     out_dict = {
         'input_array': array,
@@ -73,9 +86,13 @@ def fac_from_fdr(
     ) -> xr.DataArray:
 
     d8_fdr = intake_raster(d8_fdr)
-    pysheds_input_dict = _xarray_to_pysheds(d8_fdr)
+    d8_fdr = d8_fdr.where(
+        (d8_fdr.values != d8_fdr.rio.nodata),
+        0,
+        )
+    pysheds_input_dict = _xarray_to_pysheds(d8_fdr, is_fdr=True)
 
-    if weights is not None and upstream_pour_points is not None:
+    if weights is not None or upstream_pour_points is not None:
         # add weights if necessary
         if weights is not None: weights = weights
         #TODO: Implement upstream pour points using weighting grid!
@@ -83,25 +100,26 @@ def fac_from_fdr(
             weights = xr.zeros_like(
                 d8_fdr,
                 dtype=np.dtype('float64'),
-                )
-            weights = _update_parameter_raster(
+                ) + 1
+            weights = update_parameter_raster(
                 weights,
                 upstream_pour_points,
                 )
-        weights_dict = _xarray_to_pysheds(
-            _prep_parameter_grid(
-                weights,
-                d8_fdr,
-                np.nan,
-                )
-            )
-    else: weights_dict = {'raster': None}
+            weights = _xarray_to_pysheds(
+                _prep_parameter_grid(
+                    weights,
+                    d8_fdr,
+                    np.nan,
+                    ),
+                is_fdr=False,
+                )['raster']
+    else: weights = None
 
     # apply accumulate function
     accumulate = pysheds_input_dict['grid'].accumulation(
         pysheds_input_dict['raster'], 
         nodata_in=pysheds_input_dict['input_array'].rio.nodata,
-        weights=weights_dict['raster'],
+        weights=weights,
         )
 
     # export back to DataArray
@@ -142,8 +160,8 @@ def parameter_accumulate(
     d8_fdr = intake_raster(d8_fdr)
     parameter_raster = intake_raster(parameter_raster)
 
-    # add any pour point accumulation via utilities._update_parameter_raster()
-    if upstream_pour_points is not None: parameter_raster = _update_parameter_raster(
+    # add any pour point accumulation via utilities.update_parameter_raster()
+    if upstream_pour_points is not None: parameter_raster = update_parameter_raster(
         parameter_raster,
         upstream_pour_points,
         )
@@ -164,15 +182,16 @@ def parameter_accumulate(
                 array,
                 d8_fdr,
                 array.rio.nodata,
-                )
+                ),
+            is_fdr=False,
             )
 
         accumulated = fac_from_fdr(
             d8_fdr,
             upstream_pour_points=upstream_pour_points,
-            kwargs={'weights': param_input_dict['raster']},
+            weights=param_input_dict['raster'],
             )
-        out_dict[(i, dim_name)] = accumulated
+        out_dict[(i, dim_name)] = accumulated.copy()
 
     # re-combine into DataArray
     if len(out_dict.keys()) > 1:
