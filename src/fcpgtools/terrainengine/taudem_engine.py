@@ -9,9 +9,8 @@ from pathlib import Path
 import numpy as np
 import xarray as xr
 from fcpgtools.types import Raster, TauDEMDict
-from fcpgtools.utilities import intake_raster, save_raster, _verify_shape_match, \
-    _combine_split_bands, _split_bands, update_parameter_raster, \
-    _replace_nodata_value
+from fcpgtools.utilities import intake_raster, save_raster, \
+    _combine_split_bands, _split_bands, update_parameter_raster
 from fcpgtools.tools import prep_parameter_grid
 
 def _taudem_prepper(
@@ -82,7 +81,6 @@ def fac_from_fdr(
         wg = ''
     else:
         if weights is not None: weights = weights
-        #TODO: Implement upstream pour points using weighting grid!
         else:
             weights = xr.zeros_like(
                 d8_fdr,
@@ -153,7 +151,6 @@ def parameter_accumulate(
     parameter_raster: Raster,
     upstream_pour_points: List = None,
     out_path: str = None,
-    **kwargs,
     ) -> xr.DataArray:
     """
     Create a parameter accumulation raster from a TauDEM format D8 Flow Direction Raster and a parameter raster.
@@ -212,6 +209,7 @@ def parameter_accumulate(
     
     return out_raster
 
+#TODO: test out, make sure it works in a variety of settings
 def distance_to_stream(
     d8_fdr: Raster,
     fac_raster: Raster,
@@ -268,6 +266,7 @@ def distance_to_stream(
     out_raster = intake_raster(taudem_dict['outRast'])
     return out_raster
 
+#TODO: test out, make sure it works in a variety of settings
 def get_max_upslope(
     d8_fdr: Raster,
     param_raster: Raster,
@@ -397,86 +396,3 @@ def decay_accumulation(
         print('ERROR: TauDEM AreaD8 failed!')
         traceback.print_exc()
 
-# NON_REFACTORED, FOR REFERENCE
-def decayAccum(
-    ang,
-    mult,
-    outRast,
-    paramRast=None,
-    cores=1,
-    mpiCall='mpiexec',
-    mpiArg='-n',
-    verbose=False,
-    ) -> xr.DataArray:
-    """Decay the accumulation of a parameter raster.
-
-    Parameters
-    ----------
-    ang : str
-        Path to flow angle raster from the TauDEM D-Infinity flow direction tool.
-    mult : str
-        Path to raster of multiplier values applied to upstream accumulations,
-        1 corresponds to no decay, 0 corresponds to complete decay.
-    outRast : str
-        Path to output raster for decayed accumulation raster.
-    paramRast : str (optional)
-        Raster of parameter values to accumulate. If not supplied area will be accumulated. Defaults to None.
-    cores : int (optional)
-        Number of cores to use. Defaults to 1.
-    mpiCall : str (optional)
-        The command to use for mpi, defaults to mpiexec.
-    mpiArg : str (optional)
-        Argument flag passed to mpiCall, which is followed by the cores parameter, defaults to '-n'.
-    verbose : bool (optional)
-        Print output, defaults to False.
-
-    Returns
-    -------
-    outRast : raster
-        Decayed accumulation raster, either area or parameter depending on what is supplied to the function.
-    """
-    if paramRast != None:
-        try:
-            if verbose: print('Accumulating parameter')
-            tauParams = {
-                'ang': ang,
-                'cores': cores,
-                'dm': mult,
-                'dsca': outRast,
-                'weight': paramRast,
-                'mpiCall': mpiCall,
-                'mpiArg': mpiArg
-            }
-
-            cmd = '{mpiCall} {mpiArg} {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -wg {weight} -nc'.format(
-                **tauParams)  # Create string of tauDEM shell command
-            if verbose: print(cmd)
-            result = subprocess.run(cmd, shell=True)  # Run shell command
-            result.stdout
-            if verbose: print("Parameter accumulation written to: {0}".format(outRast))
-
-        except Exception:
-            print('Error Accumulating Data')
-            traceback.print_exc()
-    else:
-        try:
-            if verbose: print('Accumulating parameter')
-            tauParams = {
-                'ang': ang,
-                'cores': cores,
-                'dm': mult,
-                'dsca': outRast,
-                'mpiCall': mpiCall,
-                'mpiArg': mpiArg
-            }
-
-            cmd = '{mpiCall} {mpiArg} {cores} dinfdecayaccum -ang {ang} -dm {dm} -dsca {dsca}, -nc'.format(
-                **tauParams)  # Create string of tauDEM shell command
-            if verbose: print(cmd)
-            result = subprocess.run(cmd, shell=True)  # Run shell command
-            result.stdout
-            if verbose: print("Parameter accumulation written to: {0}".format(outRast))
-
-        except Exception:
-            print('Error Accumulating Data')
-            traceback.print_exc()

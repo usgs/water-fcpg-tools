@@ -69,209 +69,7 @@ def id_d8_format(
     else: return print('ERROR: Cant recognize D8 Flow Direction Raster format '
     'as either ESRI or TauDEM. Please use the param:in_format for pyfunc:convert_fdr_formats()')
 
-# BACK-END FACING UTILITY FUNTIONS
-def _intake_ambigous(
-    in_data: Union[Raster, Shapefile],
-    ) -> Union[xr.DataArray, gpd.GeoDataFrame]:
-    """Somewhat less performant intake function when the input can be either a Raster or Shapefile"""
-    if isinstance(in_data, os.PathLike):
-        if in_data.suffix in RasterSuffixes:
-            return intake_raster(in_data)
-        elif in_data.suffix in ShapefileSuffixes:
-            return intake_shapefile(in_data)
-    elif isinstance(in_data, xr.DataArray) or isinstance(in_data, gpd.GeoDataFrame):
-        return in_data
-
-def _format_nodata(
-    in_raster: xr.DataArray,
-    ) -> xr.DataArray:
-    """
-    If in_raster.rio.nodata is None, a nodata value is added.
-    For dtype=float -> np.nan, for dtype=int -> 255.
-    """
-    if in_raster.rio.nodata is None:
-        og_dtype = str(in_raster.dtype)
-        if 'float' in og_dtype: nodata_value = np.nan
-        elif 'int' in og_dtype: nodata_value = 255
-        if 'int8' in og_dtype:
-            if np.min(np.unique(in_raster.values)) < 0: in_raster = in_raster.astype('int16')
-            else: in_raster = in_raster.astype('uint8')
-
-        in_raster.rio.write_nodata(
-            nodata_value,
-            inplace=True,
-            ) 
-    return in_raster
-
-def _replace_nodata_value(
-    in_raster: xr.DataArray,
-    new_nodata: Union[float, int]
-    ) -> xr.DataArray:
-    in_raster = in_raster.where(
-        in_raster.values != in_raster.rio.nodata,
-        new_nodata,
-        )
-    in_raster = in_raster.rio.write_nodata(
-        new_nodata,
-        inplace=True,
-        )
-    return in_raster
-
-def _get_crs(
-    out_crs: Union[Raster, Shapefile],
-    ) -> str:
-    crs_data = _intake_ambigous(out_crs)
-
-    if isinstance(crs_data, xr.DataArray):
-        return crs_data.rio.crs.to_wkt()
-    elif isinstance(crs_data, gpd.GeoDataFrame):
-        return crs_data.crs.to_wkt()
-
-def _verify_dtype(
-    raster: xr.DataArray,
-    value: Union[float, int],
-    ) -> bool:
-    dtype = str(raster.dtype)
-    if 'float' in dtype:
-        return True
-    elif not isinstance(value, int):
-        return False
-    else:
-        if 'int8' in dtype and value > 255:
-            return False
-        #TODO: How best to handle other int dtype? What are the value ranges.
-        return True
-
-def _update_cell_value_(
-    raster: xr.DataArray,
-    coords: Tuple[float, float],
-    value: Union[float, int],
-    ) -> xr.DataArray:
-    """
-    Underlying function called in update_cell_values() to update a DataArray by x,y coordinates.
-    :param raster: (xr.DataArray) a raster as a DataArray in memory.
-    :param coords: (tuple) coordinate as (lat:float, lon:float) of the cell to be updated.
-    :param value: (float or int) new value to give the cell.
-    :returns: param:in_raster with the updated cell value as a xarray DataArray object.
-    """
-    if _verify_dtype(raster, value):
-        raster.loc[{'x': coords[0], 'y': coords[1]}] = value
-        return raster
-    else:
-        #TODO: Handle exceptions
-        print(f'ERROR: Value {value} does not match DataArray dtype = {raster.dtype}')
-        return raster
-
-def _verify_shape_match(
-    in_raster1: Raster,
-    in_raster2: Raster,
-    ) -> bool:
-    # get dimension info
-    shape1 = intake_raster(in_raster1).shape
-    shape2 = intake_raster(in_raster2).shape
-    len1 = len(shape1)
-    len2 = len(shape2)
-
-    # check that inputs have correct # of dimensions
-    if max([len1, len2]) > 3 or min([len1, len2]) < 2:
-        print('ERROR: A raster has incorrect dimensions. Must be f(x, y) or f(x, y, t).')
-        raise TypeError
-
-    # compare shapes appropriately
-    if len1 == len2: return bool(shape1 == shape2)
-    elif len1 > len2: return bool(shape1[1:] == shape2)
-    else: return bool(shape1 == shape2[1:])
-
-def _split_bands(
-    in_raster: xr.DataArray,
-    ) -> Dict[Tuple[int, Union[int, str, np.datetime64]], xr.DataArray]:
-    """
-    Splits a 3 dimensional xr.DataArray into 2D arrays indexed by either an int or string dimension label.
-    :param in_raster: (xr.DataArray) a raster with a 3rd dimension (i.e. band, or f(x, y, t)). 
-    :returns: (dict) a dictionary with the int or string 3rd dimension label as keys, storing 2D data arrays.
-    """
-    if len(in_raster.shape) > 3:
-        print(f'ERROR: param:in_raster (xr.DataArray) has 4 dimensions (shape={in_raster.shape}).'
-        ' Please use a 2 or 3 dimension xr.DataArray.')
-        raise TypeError
-    if len(in_raster.shape) < 3:
-        print('WARNING: param:in_raster was expected to have 3-dimensions, but only has two.')
-        return {0: in_raster}
-    
-    # if 3 dimensions are passed, pull out the first dimension index values
-    dim_index = list(in_raster[in_raster.dims[0]].values)
-    index_tuples = []
-    for i, index_val in enumerate(dim_index):
-        index_tuples.append((i, index_val))
-    
-    out_dict = {}
-    for index_tuple in index_tuples:
-        out_dict[index_tuple] = in_raster.sel(
-            {in_raster.dims[0]: index_tuple[-1]},
-            )
-    return out_dict
-
-def _combine_split_bands(
-    split_dict: Dict[Tuple[int, Union[int, str, np.datetime64]], xr.DataArray],
-    ) -> xr.DataArray:
-
-    index_name = 'band'
-    if isinstance(list(split_dict.keys())[0][-1], np.datetime64): index_name = 'time'
-
-    # re-create the 4th dimension index and concat
-    index = pd.Index(
-        [i[-1] for i in list(split_dict.keys())],
-        name=index_name,
-        )
-    return xr.concat(
-        objs=split_dict.values(),
-        dim=index,
-        )
-
-def _find_cell_downstream(
-    d8_fdr: xr.DataArray,
-    coords: Tuple[float, float],
-    ) -> Tuple[float, float]:
-    """
-    Uses a D8 FDR to find the cell center coordinates downstream from any cell (specified
-    Note: this replaces py:func:FindDownstreamCellTauDir(d, x, y, w) in the V1.1 repo.
-    :param d8_fdr: (xr.DataArray or str raster path) a D8 Flow Direction Raster (dtype=Int).
-    :param coords: (tuple) the input (lat:float, lon:float) to find the next cell downstream from.
-    :returns: (tuple) an output (lat:float, lon:float) representing the cell center coorindates
-        downstream from the cell defined via :param:coords.
-    """
-    # identify d8 fdr format
-    d8_format = id_d8_format(d8_fdr)
-    dir_dict = D8ConversionDicts[d8_format]
-    dir_dict = dict(zip(dir_dict.values(), dir_dict.keys()))
-
-    # get cell size
-    cell_size = np.abs(d8_fdr.rio.resolution(recalc=True)[0])
-
-    # get FDR cell value
-    value = int(
-        sample_raster(
-            d8_fdr,
-            coords,
-            )
-        )
-    
-    # find downstream cell coordinates via hashmap and return
-    dxdy_dict = {
-        'east': (cell_size, 0.0),
-        'northeast': (cell_size, cell_size),
-        'north': (0.0, cell_size),
-        'northwest': (cell_size * -1.0, 0.0),
-        'west': (cell_size * -1.0, 0.0),
-        'southwest': (cell_size * -1.0, cell_size * -1.0),
-        'south': (0.0, cell_size * -1.0),
-        'southeast': (cell_size, cell_size * -1.0),
-    }
-    dx_dy_tuple = dxdy_dict[dir_dict[value]]
-
-    return (coords[0] + dx_dy_tuple[0], coords[1] + dx_dy_tuple[1])
-
-# FRONT-END/CLIENT FACING UTILITY FUNTIONS
+# CLIENT FACING UTILITY FUNTIONS
 def update_parameter_raster(
     parameter_raster: Raster,
     d8_fdr: Raster,
@@ -538,6 +336,208 @@ def update_cell_values(
         save_raster(out_raster, out_path)
 
     return out_raster
+
+# BACK-END FACING UTILITY FUNTIONS
+def _intake_ambigous(
+    in_data: Union[Raster, Shapefile],
+    ) -> Union[xr.DataArray, gpd.GeoDataFrame]:
+    """Somewhat less performant intake function when the input can be either a Raster or Shapefile"""
+    if isinstance(in_data, os.PathLike):
+        if in_data.suffix in RasterSuffixes:
+            return intake_raster(in_data)
+        elif in_data.suffix in ShapefileSuffixes:
+            return intake_shapefile(in_data)
+    elif isinstance(in_data, xr.DataArray) or isinstance(in_data, gpd.GeoDataFrame):
+        return in_data
+
+def _format_nodata(
+    in_raster: xr.DataArray,
+    ) -> xr.DataArray:
+    """
+    If in_raster.rio.nodata is None, a nodata value is added.
+    For dtype=float -> np.nan, for dtype=int -> 255.
+    """
+    if in_raster.rio.nodata is None:
+        og_dtype = str(in_raster.dtype)
+        if 'float' in og_dtype: nodata_value = np.nan
+        elif 'int' in og_dtype: nodata_value = 255
+        if 'int8' in og_dtype:
+            if np.min(np.unique(in_raster.values)) < 0: in_raster = in_raster.astype('int16')
+            else: in_raster = in_raster.astype('uint8')
+
+        in_raster.rio.write_nodata(
+            nodata_value,
+            inplace=True,
+            ) 
+    return in_raster
+
+def _replace_nodata_value(
+    in_raster: xr.DataArray,
+    new_nodata: Union[float, int]
+    ) -> xr.DataArray:
+    in_raster = in_raster.where(
+        in_raster.values != in_raster.rio.nodata,
+        new_nodata,
+        )
+    in_raster = in_raster.rio.write_nodata(
+        new_nodata,
+        inplace=True,
+        )
+    return in_raster
+
+def _get_crs(
+    out_crs: Union[Raster, Shapefile],
+    ) -> str:
+    crs_data = _intake_ambigous(out_crs)
+
+    if isinstance(crs_data, xr.DataArray):
+        return crs_data.rio.crs.to_wkt()
+    elif isinstance(crs_data, gpd.GeoDataFrame):
+        return crs_data.crs.to_wkt()
+
+def _verify_dtype(
+    raster: xr.DataArray,
+    value: Union[float, int],
+    ) -> bool:
+    dtype = str(raster.dtype)
+    if 'float' in dtype:
+        return True
+    elif not isinstance(value, int):
+        return False
+    else:
+        if 'int8' in dtype and value > 255:
+            return False
+        #TODO: How best to handle other int dtype? What are the value ranges.
+        return True
+
+def _update_cell_value_(
+    raster: xr.DataArray,
+    coords: Tuple[float, float],
+    value: Union[float, int],
+    ) -> xr.DataArray:
+    """
+    Underlying function called in update_cell_values() to update a DataArray by x,y coordinates.
+    :param raster: (xr.DataArray) a raster as a DataArray in memory.
+    :param coords: (tuple) coordinate as (lat:float, lon:float) of the cell to be updated.
+    :param value: (float or int) new value to give the cell.
+    :returns: param:in_raster with the updated cell value as a xarray DataArray object.
+    """
+    if _verify_dtype(raster, value):
+        raster.loc[{'x': coords[0], 'y': coords[1]}] = value
+        return raster
+    else:
+        #TODO: Handle exceptions
+        print(f'ERROR: Value {value} does not match DataArray dtype = {raster.dtype}')
+        return raster
+
+def _verify_shape_match(
+    in_raster1: Raster,
+    in_raster2: Raster,
+    ) -> bool:
+    # get dimension info
+    shape1 = intake_raster(in_raster1).shape
+    shape2 = intake_raster(in_raster2).shape
+    len1 = len(shape1)
+    len2 = len(shape2)
+
+    # check that inputs have correct # of dimensions
+    if max([len1, len2]) > 3 or min([len1, len2]) < 2:
+        print('ERROR: A raster has incorrect dimensions. Must be f(x, y) or f(x, y, t).')
+        raise TypeError
+
+    # compare shapes appropriately
+    if len1 == len2: return bool(shape1 == shape2)
+    elif len1 > len2: return bool(shape1[1:] == shape2)
+    else: return bool(shape1 == shape2[1:])
+
+def _split_bands(
+    in_raster: xr.DataArray,
+    ) -> Dict[Tuple[int, Union[int, str, np.datetime64]], xr.DataArray]:
+    """
+    Splits a 3 dimensional xr.DataArray into 2D arrays indexed by either an int or string dimension label.
+    :param in_raster: (xr.DataArray) a raster with a 3rd dimension (i.e. band, or f(x, y, t)). 
+    :returns: (dict) a dictionary with the int or string 3rd dimension label as keys, storing 2D data arrays.
+    """
+    if len(in_raster.shape) > 3:
+        print(f'ERROR: param:in_raster (xr.DataArray) has 4 dimensions (shape={in_raster.shape}).'
+        ' Please use a 2 or 3 dimension xr.DataArray.')
+        raise TypeError
+    if len(in_raster.shape) < 3:
+        print('WARNING: param:in_raster was expected to have 3-dimensions, but only has two.')
+        return {0: in_raster}
+    
+    # if 3 dimensions are passed, pull out the first dimension index values
+    dim_index = list(in_raster[in_raster.dims[0]].values)
+    index_tuples = []
+    for i, index_val in enumerate(dim_index):
+        index_tuples.append((i, index_val))
+    
+    out_dict = {}
+    for index_tuple in index_tuples:
+        out_dict[index_tuple] = in_raster.sel(
+            {in_raster.dims[0]: index_tuple[-1]},
+            )
+    return out_dict
+
+def _combine_split_bands(
+    split_dict: Dict[Tuple[int, Union[int, str, np.datetime64]], xr.DataArray],
+    ) -> xr.DataArray:
+
+    index_name = 'band'
+    if isinstance(list(split_dict.keys())[0][-1], np.datetime64): index_name = 'time'
+
+    # re-create the 4th dimension index and concat
+    index = pd.Index(
+        [i[-1] for i in list(split_dict.keys())],
+        name=index_name,
+        )
+    return xr.concat(
+        objs=split_dict.values(),
+        dim=index,
+        )
+
+def _find_cell_downstream(
+    d8_fdr: xr.DataArray,
+    coords: Tuple[float, float],
+    ) -> Tuple[float, float]:
+    """
+    Uses a D8 FDR to find the cell center coordinates downstream from any cell (specified
+    Note: this replaces py:func:FindDownstreamCellTauDir(d, x, y, w) in the V1.1 repo.
+    :param d8_fdr: (xr.DataArray or str raster path) a D8 Flow Direction Raster (dtype=Int).
+    :param coords: (tuple) the input (lat:float, lon:float) to find the next cell downstream from.
+    :returns: (tuple) an output (lat:float, lon:float) representing the cell center coorindates
+        downstream from the cell defined via :param:coords.
+    """
+    # identify d8 fdr format
+    d8_format = id_d8_format(d8_fdr)
+    dir_dict = D8ConversionDicts[d8_format]
+    dir_dict = dict(zip(dir_dict.values(), dir_dict.keys()))
+
+    # get cell size
+    cell_size = np.abs(d8_fdr.rio.resolution(recalc=True)[0])
+
+    # get FDR cell value
+    value = int(
+        sample_raster(
+            d8_fdr,
+            coords,
+            )
+        )
+    
+    # find downstream cell coordinates via hashmap and return
+    dxdy_dict = {
+        'east': (cell_size, 0.0),
+        'northeast': (cell_size, cell_size),
+        'north': (0.0, cell_size),
+        'northwest': (cell_size * -1.0, 0.0),
+        'west': (cell_size * -1.0, 0.0),
+        'southwest': (cell_size * -1.0, cell_size * -1.0),
+        'south': (0.0, cell_size * -1.0),
+        'southeast': (cell_size, cell_size * -1.0),
+    }
+    dx_dy_tuple = dxdy_dict[dir_dict[value]]
+
+    return (coords[0] + dx_dy_tuple[0], coords[1] + dx_dy_tuple[1])
 
 def _verify_coords_coverage(
     raster: xr.DataArray,
