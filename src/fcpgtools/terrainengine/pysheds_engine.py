@@ -106,7 +106,7 @@ def fac_from_fdr(
                 upstream_pour_points,
                 )
             weights = _xarray_to_pysheds(
-                _prep_parameter_grid(
+                prep_parameter_grid(
                     weights,
                     d8_fdr,
                     np.nan,
@@ -178,7 +178,7 @@ def parameter_accumulate(
         i, dim_name = index_tuple
         #TODO: switch to where 0s are added only for where there IS FDR data
         param_input_dict = _xarray_to_pysheds(
-            _prep_parameter_grid(
+            prep_parameter_grid(
                 array,
                 d8_fdr,
                 array.rio.nodata,

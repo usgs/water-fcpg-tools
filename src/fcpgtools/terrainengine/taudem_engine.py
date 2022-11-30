@@ -137,15 +137,15 @@ def fac_from_fdr(
 
     # convert out of bounds values to np.nan, in bounds nan to 0, and update nodata
     out_raster = out_raster.where(
-        d8_fdr.values != d8_fdr.rio.nodata,
-        out_raster.rio.nodata,
+        (out_raster != out_raster.rio.nodata),
+        np.nan,
         )
-
-    out_raster = _replace_nodata_value(
-        out_raster,
-        np.nan
+    out_raster = out_raster.rio.write_nodata(np.nan)
+    out_raster = out_raster.fillna(0)
+    out_raster = out_raster.where(
+        (d8_fdr.values != d8_fdr.rio.nodata),
+        np.nan,
         )
-
     return out_raster
 
 def parameter_accumulate( 
