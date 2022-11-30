@@ -440,6 +440,20 @@ def create_fcpg(
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the output FCPG raster as a xarray DataArray object.
     """
-    raise NotImplementedError
+    # bring in data
+    fac_raster = intake_raster(fac_raster)
+    param_accum_raster = intake_raster(param_accum_raster)
+
+    #TODO: deal with zero values in a more clever way (upstream in the pipeline?)
+    fcpg_raster = param_accum_raster / (fac_raster + 1)
+    fcpg_raster.name = 'FCPG'
+
+    # save if necessary
+    if out_path is not None:
+        save_raster(fcpg_raster, out_path)
+
+    #TODO: deal with nodata, replace with raw FAC scores if ignore_nodata=True
+
+    return fcpg_raster
 
 

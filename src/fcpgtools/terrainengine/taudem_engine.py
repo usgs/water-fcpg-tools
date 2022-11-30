@@ -202,6 +202,7 @@ def parameter_accumulate(
     if len(out_dict.keys()) > 1:
         out_raster =  _combine_split_bands(out_dict)
     else: out_raster =  list(out_dict.items())[0][1] 
+    out_raster.name = 'Parameter_Accumulate'
 
     # save if necessary
     if out_path is not None:
