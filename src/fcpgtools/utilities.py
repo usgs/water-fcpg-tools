@@ -142,47 +142,6 @@ def _verify_dtype(
         #TODO: How best to handle other int dtype? What are the value ranges.
         return True
 
-def _prep_parameter_grid(
-    parameter_raster: xr.DataArray,
-    fdr_raster: xr.DataArray,
-    out_of_bounds_value: Union[float, int],
-    ) -> xr.DataArray:
-
-    # check that shapes match
-    if not _verify_shape_match(fdr_raster, parameter_raster):
-        print('ERROR: The D8 FDR raster and the parameter raster must have the same shape. '
-        'Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).')
-        raise TypeError
-
-    # use a where query to replace out of bounds values
-    og_nodata = parameter_raster.rio.nodata
-    og_crs = _get_crs(parameter_raster)
-    parameter_raster = parameter_raster.where(
-        fdr_raster.values != fdr_raster.rio.nodata,
-        out_of_bounds_value,
-        )
-
-    # convert in-bounds nodata to 0
-    if np.isin(og_nodata, parameter_raster.values):
-        parameter_raster = parameter_raster.where(
-            (fdr_raster.values == fdr_raster.rio.nodata) & \
-                (parameter_raster.values != og_nodata),
-            0,
-            )
-
-    # update nodata and crs
-    parameter_raster.rio.write_nodata(
-        og_nodata,
-        inplace=True,
-        )
-    parameter_raster.rio.write_crs(og_crs, inplace=True)
-    parameter_raster = _replace_nodata_value(
-        parameter_raster,
-        out_of_bounds_value,
-        )
-
-    return parameter_raster
-
 def _update_cell_value_(
     raster: xr.DataArray,
     coords: Tuple[float, float],
@@ -384,7 +343,7 @@ def clip(
     if match_raster is not None:
         match_raster = intake_raster(match_raster)
         crs = match_raster.rio.crs.to_wkt()
-        bbox = list(match_raster.rio.bounds())
+        bbox = match_raster.rio.bounds()
     elif match_shapefile is not None:
         match_shapefile = intake_shapefile(match_shapefile)
         crs = match_shapefile.crs.to_wkt()
@@ -400,6 +359,7 @@ def clip(
         maxy=bbox[3],
         crs=crs,
         )
+
     if out_path is not None:
         save_raster(out_raster, out_path)
 
@@ -408,6 +368,7 @@ def clip(
 def reproject_raster(
     in_raster: Raster,
     out_crs: Union[Raster, Shapefile] = None,
+    resolution: Union[float, Tuple[float, float]] = None,
     wkt_string: str = None,
     out_path: str = None,
     ) -> xr.DataArray:
@@ -416,6 +377,7 @@ def reproject_raster(
     :param in_raster: (xr.DataArray or str raster path) input raster.
     :param out_crs: (xr.DataArray, gpd.GeoDataFrame, or string file path) the output CRS,
         defined by either copying another raster or shapefile's CRS.
+    :param resolution: (float or Tuple[float, float], default=None) allows the output resolution to be overriden.
     :param wkt_string: (str, valid CRS WKT - default is None) allows the user to pass in a custom WKT string.
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the reprojected raster as a xarray DataArray object.
@@ -425,13 +387,15 @@ def reproject_raster(
         out_crs = _get_crs(out_crs)
     elif wkt_string is not None:
         out_crs = wkt_string
+        resolution = None
     else:
         #TODO: Update exceptions
         print('Must pass in either param:out_crs or param:wkt_string')
         return None
-        
+    
     out_raster = in_raster.rio.reproject(
         out_crs,
+        resolution=resolution,
         nodata=in_raster.rio.nodata,
         kwargs={
             'dst_nodata': in_raster.rio.nodata,
@@ -609,3 +573,24 @@ def _verify_basin_coverage(
     diff = np.array(raster_bbox) - np.array(shp_bbox)
     compare = np.sign(diff) == np.array([-1, -1, 1, 1])
     return np.all(compare)
+
+def _verify_alignment(
+    raster1: xr.DataArray,
+    raster2: xr.DataArray,
+    ) -> bool:
+    """
+    Returns True if the CRS, shape, and bbox of param:raster1 and param:raster2 match.
+    Note: This only works for two 2D rasters!
+    """
+    raster_list = [raster1, raster2]
+    for i, raster in enumerate(raster_list):
+        if len(raster.shape) == 3:
+            raster_list[i] = raster[1,:]
+
+    if raster1.rio.crs == raster2.rio.crs and raster_list[0].shape == raster_list[1].shape:
+        diff = np.array(raster_list[0].rio.bounds()) - \
+            np.array(raster_list[1].rio.bounds())
+        if np.max(diff) == 0: return True
+    return False
+        
+

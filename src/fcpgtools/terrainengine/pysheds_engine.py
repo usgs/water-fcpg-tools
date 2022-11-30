@@ -6,7 +6,8 @@ from pysheds.view import ViewFinder
 from typing import List, Dict, TypedDict
 from fcpgtools.types import Raster, PyShedsInputDict
 from fcpgtools.utilities import intake_raster, _split_bands, _combine_split_bands, \
-    update_parameter_raster, save_raster, _verify_shape_match, _replace_nodata_value, _prep_parameter_grid
+    update_parameter_raster, save_raster, _verify_shape_match, _replace_nodata_value
+from fcpgtools.tools import prep_parameter_grid
 
 
 # UNDERLYING FUNCTIONS TO IMPORT/EXPORT DATA FROM PYSHEDS OBJECTS
@@ -53,7 +54,6 @@ def _xarray_to_pysheds(
 
     raster_obj = PyShedsRaster(array_np, view)
     
-
     # note: edits to this dictionary should be reflected in the PyShedsInputDict TypedDict instance
     out_dict = {
         'input_array': array,

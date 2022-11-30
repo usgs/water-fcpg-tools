@@ -10,8 +10,9 @@ import numpy as np
 import xarray as xr
 from fcpgtools.types import Raster, TauDEMDict
 from fcpgtools.utilities import intake_raster, save_raster, _verify_shape_match, \
-    _combine_split_bands, _split_bands, update_parameter_raster, _prep_parameter_grid, \
+    _combine_split_bands, _split_bands, update_parameter_raster, \
     _replace_nodata_value
+from fcpgtools.tools import prep_parameter_grid
 
 def _taudem_prepper(
     in_raster: Raster,
@@ -73,7 +74,6 @@ def fac_from_fdr(
     :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
     :returns: (xr.DataArray) the Flow Accumulation Cells (FAC) raster as a xarray DataArray object.
     """
-    d8_fdr = intake_raster(d8_fdr)
     d8_fdr_path = _taudem_prepper(d8_fdr)
 
     # get tempoarary files for necessary inputs
@@ -92,7 +92,7 @@ def fac_from_fdr(
                 weights,
                 upstream_pour_points,
                 )
-            weights = _prep_parameter_grid(
+            weights = prep_parameter_grid(
                 weights,
                 d8_fdr,
                 -1,
@@ -125,17 +125,13 @@ def fac_from_fdr(
     taudem_dict = _update_taudem_dict(taudem_dict, kwargs)
 
     # use TauDEM via subprocess to make a Flow Accumulation Raster
-    try:
-        cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} {finalArg}'.format(
-            **taudem_dict)
-        _ = subprocess.run(cmd, shell=True)
-
-    except Exception:
-        #TODO: Handle exceptions
-        print('ERROR: TauDEM AreaD8 failed!')
-        traceback.print_exc()
+    cmd = '{mpiCall} {mpiArg} {cores} aread8 -p {fdr} -ad8 {outFl} {finalArg}'.format(
+        **taudem_dict)
+    _ = subprocess.run(cmd, shell=True)
     
-    print(taudem_dict['outFl'])
+    if not Path(taudem_dict['outFl']).exists():
+        raise FileNotFoundError('ERROR: TauDEM areaD8 failed to create an output!')
+
     out_raster = intake_raster(Path(taudem_dict['outFl']))
     out_raster = out_raster.astype(np.float64)
 
@@ -174,9 +170,9 @@ def parameter_accumulate(
     :returns: (xr.DataArray) the parameter accumulation raster as a xarray DataArray object.
     """
     d8_fdr = intake_raster(d8_fdr)
-    parameter_raster = _prep_parameter_grid(
+    parameter_raster = prep_parameter_grid(
         parameter_raster=parameter_raster,
-        d8_fdr=d8_fdr,
+        fdr_raster=d8_fdr,
         out_of_bounds_value=-1,
         )
 
@@ -366,8 +362,8 @@ def decay_accumulation(
     # prep parameter raster is applicable
     if parameter_raster is not None:
         parameter_raster = intake_raster(parameter_raster)
-        parameter_raster = _prep_parameter_grid(
-            _prep_parameter_grid,
+        parameter_raster = prep_parameter_grid(
+            prep_parameter_grid,
             out_of_bounds_value=-1
         )
         parameter_raster_path = _taudem_prepper(parameter_raster)

@@ -3,10 +3,11 @@ import xarray as xr
 import numpy as np
 import pandas as pd
 import geopandas as gpd
+from rasterio.enums import Resampling
 from fcpgtools.types import Raster, FDRD8Formats, D8ConversionDicts, PourPointLocationsDict, PourPointValuesDict
 from fcpgtools.utilities import intake_raster, intake_shapefile, save_raster, clip, reproject_raster, \
     resample, id_d8_format, _combine_split_bands, _verify_basin_coverage, get_max_cell, sample_raster, \
-    _split_bands
+    _split_bands, _verify_shape_match, _get_crs, _replace_nodata_value, _verify_alignment
 
 # CLIENT FACING FUNCTIONS
 def align_raster(
@@ -16,20 +17,13 @@ def align_raster(
     out_path: str = None,
     ) -> xr.DataArray:
 
-    out_raster = clip(
-        in_raster,
+    out_raster = in_raster.rio.reproject_match(
         match_raster,
+        resampling=getattr(Resampling, resample_method),
         )
-    out_raster = reproject_raster(
-        in_raster,
-        out_crs=match_raster,
-        )
-    out_raster = resample(
-        in_raster,
-        match_raster,
-        method=resample_method,
-        out_path=out_path,
-        )
+    
+    if out_path is not None:
+        save_raster(out_raster, out_path)
     return out_raster
 
 def convert_fdr_formats(
@@ -89,6 +83,56 @@ def convert_fdr_formats(
     print(f'Converted the D8 Flow Direction Raster (FDR) from {in_format} format'
     f' to {out_format}')
     return d8_fdr
+
+def prep_parameter_grid(
+    parameter_raster: xr.DataArray,
+    fdr_raster: xr.DataArray,
+    out_of_bounds_value: Union[float, int],
+    ) -> xr.DataArray:
+
+    # check that shapes match
+    if not _verify_shape_match(fdr_raster, parameter_raster):
+        print('ERROR: The D8 FDR raster and the parameter raster must have the same shape. '
+        'Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).')
+        raise TypeError
+
+    # use a where query to replace out of bounds values
+    og_nodata = parameter_raster.rio.nodata
+    og_crs = _get_crs(parameter_raster)
+    out_crs = _get_crs(fdr_raster)
+
+    if not _verify_alignment(parameter_raster, fdr_raster):
+        parameter_raster = align_raster(
+            parameter_raster,
+            fdr_raster,
+            resample_method='nearest',
+            )
+
+    parameter_raster = parameter_raster.where(
+        fdr_raster.values != fdr_raster.rio.nodata,
+        out_of_bounds_value,
+        )
+
+    # convert in-bounds nodata to 0
+    if np.isin(og_nodata, parameter_raster.values):
+        parameter_raster = parameter_raster.where(
+            (fdr_raster.values == fdr_raster.rio.nodata) & \
+                (parameter_raster.values != og_nodata),
+            0,
+            )
+
+    # update nodata and crs
+    parameter_raster.rio.write_nodata(
+        og_nodata,
+        inplace=True,
+        )
+    parameter_raster.rio.write_crs(og_crs, inplace=True)
+    parameter_raster = _replace_nodata_value(
+        parameter_raster,
+        out_of_bounds_value,
+        )
+
+    return parameter_raster
 
 # raster masking function
 def spatial_mask(
