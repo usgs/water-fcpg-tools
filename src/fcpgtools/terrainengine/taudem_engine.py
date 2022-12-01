@@ -11,7 +11,7 @@ import xarray as xr
 from fcpgtools.types import Raster, TauDEMDict
 from fcpgtools.utilities import intake_raster, save_raster, \
     _combine_split_bands, _split_bands, update_parameter_raster
-from fcpgtools.tools import prep_parameter_grid
+from fcpgtools.tools import prep_parameter_grid, value_mask
 
 def _taudem_prepper(
     in_raster: Raster,
@@ -24,7 +24,7 @@ def _taudem_prepper(
         temp_path = Path(
             tempfile.TemporaryFile(
                 dir=Path.cwd(),
-                prefix='fdr_to_fac_temp',
+                prefix='taudem_temp_input',
                 suffix='.tif',
                 ).name
             )
@@ -52,6 +52,30 @@ def _update_taudem_dict(
             else:
                 print(f'WARNING: Kwarg argument {key} is invalid.')
     return taudem_dict
+
+def _clear_temp_files(
+    prefixs: Union[str, List[str]],
+    directory: Path = Path.cwd(),
+    ) -> None:
+    """
+    Deletes all files with a given prefix in a directory
+    :param prefixs: (str or list of str)
+    :param directory: (pathlike directory, default=current working directory) directory to look within.
+    :returns: None
+    """
+    if directory != Path.cwd():
+        if not directory.is_dir(): raise TypeError(f'ERROR: param:dir={str(directory)} is not a valid directory!')
+    if isinstance(prefixs, str): prefixs = [prefixs]
+
+    # delete files with matching prefixes
+    for file in directory.iterdir():
+        try:
+            remove = False
+            for prefix in prefixs:
+                if prefix in str(file): remove = True
+            if remove: file.unlink()
+        except PermissionError: pass # print('WARNING: Could not delete temp files due to a PermissionError')
+    return None
 
 def fac_from_fdr(
     d8_fdr: Raster,
@@ -98,7 +122,6 @@ def fac_from_fdr(
         weight_path = _taudem_prepper(weights)
         wg = '-wg '
 
-    save = False
     if out_path is None:
         out_path = Path(
             tempfile.TemporaryFile(
@@ -107,7 +130,6 @@ def fac_from_fdr(
                 suffix='.tif',
                 ).name
             )
-    else: save = True
 
     taudem_dict = {
         'fdr': d8_fdr_path,
@@ -144,6 +166,11 @@ def fac_from_fdr(
         (d8_fdr.values != d8_fdr.rio.nodata),
         np.nan,
         )
+
+    # remove temporary files and return output
+    out_raster.close()
+    _clear_temp_files(prefixs=['fac_temp'])
+
     return out_raster
 
 def parameter_accumulate( 
@@ -201,16 +228,17 @@ def parameter_accumulate(
     # re-combine into DataArray
     if len(out_dict.keys()) > 1:
         out_raster =  _combine_split_bands(out_dict)
-    else: out_raster =  list(out_dict.items())[0][1] 
+    else: out_raster = list(out_dict.items())[0][1] 
     out_raster.name = 'Parameter_Accumulate'
 
-    # save if necessary
+    # save if necessary and remove temp files
     if out_path is not None:
         save_raster(out_raster, out_path)
-    
+    out_raster.close()
+    _clear_temp_files(prefixs=['taudem_temp_input'])
+
     return out_raster
 
-#TODO: test out, make sure it works in a variety of settings
 def distance_to_stream(
     d8_fdr: Raster,
     fac_raster: Raster,
@@ -229,18 +257,20 @@ def distance_to_stream(
     :returns: (xr.DataArray) a raster with values of D8 flow distance from each cell to the nearest stream.
     """
     d8_fdr = _taudem_prepper(d8_fdr)
-    fac_raster = _taudem_prepper(fac_raster)
 
-    save = False
+    # get stream grid as a taudem tempfile
+    #TODO: fix this
+    fac_raster = intake_raster(fac_raster)
+    stream_raster = _taudem_prepper(stream_raster)
+
     if out_path is None:
         out_path = Path(
             tempfile.TemporaryFile(
                 dir=Path.cwd(),
-                prefix='fac_temp',
+                prefix='dist2stream_temp',
                 suffix='.tif',
                 ).name
             )
-    else: save = True
 
     taudem_dict = {
         'fdr': d8_fdr,
@@ -254,17 +284,18 @@ def distance_to_stream(
     
     taudem_dict = _update_taudem_dict(taudem_dict, kwargs)
 
-    try:
-        cmd = '{mpiCall} {mpiArg} {cores} d8hdisttostrm -p {fdr} -src {fac} -dist {outRast}, -thresh {thresh}'.format(
-            **taudem_dict)
-        _ = subprocess.run(cmd, shell=True)
+    cmd = '{mpiCall} {mpiArg} {cores} D8HDistTostrm -p {fdr} -src {fac} -dist {outRast} -thresh {thresh}'.format(
+        **taudem_dict)
+    _ = subprocess.run(cmd, shell=True)
 
-    except Exception:
-        #TODO: Handle exceptions
-        print('ERROR: TauDEM d8hdisttostrm failed!')
-        traceback.print_exc()
+    if not Path(taudem_dict['outRast']).exists():
+        raise FileNotFoundError('ERROR: TauDEM D8HDistTostrm failed to create an output!')
 
-    out_raster = intake_raster(taudem_dict['outRast'])
+    # clear temporary files and return the output
+    out_raster = intake_raster(out_path)
+    out_raster.close()
+    _clear_temp_files(prefixs=['taudem_temp_input', 'dist2stream_temp'])
+
     return out_raster
 
 #TODO: test out, make sure it works in a variety of settings
@@ -291,16 +322,14 @@ def get_max_upslope(
     d8_fdr = _taudem_prepper(d8_fdr)
     param_raster = _taudem_prepper(param_raster)
 
-    save = False
     if out_path is None:
         out_path = Path(
             tempfile.TemporaryFile(
                 dir=Path.cwd(),
-                prefix='fac_temp',
+                prefix='max_upslope_temp',
                 suffix='.tif',
                 ).name
             )
-    else: save = True
 
     accum_type_str = '-min' if get_min_upslope else ''
     
@@ -316,19 +345,17 @@ def get_max_upslope(
     
     taudem_dict = _update_taudem_dict(taudem_dict, kwargs)
 
-    try:
-        cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} {accum_type} -nc'.format(
-            **taudem_dict)  # Create string of tauDEM shell command
-        _ = subprocess.run(cmd, shell=True)
+    cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} {accum_type} -nc'.format(
+        **taudem_dict)  # Create string of tauDEM shell command
+    _ = subprocess.run(cmd, shell=True)
 
-    except Exception:
-        #TODO: Handle exceptions
-        print('ERROR: TauDEM d8flowpathextremeup failed!')
-        traceback.print_exc()
+    if not Path(taudem_dict['outRast']).exists():
+        raise FileNotFoundError('ERROR: TauDEM d8flowpathextremeup failed to create an output!')
 
     out_raster = intake_raster(taudem_dict['outRast'])
+    out_raster.close()
+    _clear_temp_files(prefixs=['taudem_temp_input', 'max_upslope_temp'])
 
-    #TODO: Add stream mask function!
     return out_raster
 
 

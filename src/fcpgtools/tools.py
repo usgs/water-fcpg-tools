@@ -171,6 +171,7 @@ def value_mask(
     greater_than: bool = True,
     equals: int = None,
     inverse_equals: bool = False,
+    in_mask_value: int = None,
     out_mask_value: int = None,
     out_path: str = None,
     ) -> xr.DataArray:
@@ -183,6 +184,7 @@ def value_mask(
     :param greater_than: (bool, default=True) if False, only values less than param:thresh are included in the mask.
     :param equals: (int, default=None) if not None, only cells matching the value of param:equals are included in the mask.
     :param inverse_equals: (bool, default=False) is True and param:equals==True, values NOT equal to :param:thresh are masked out.
+    :param in_mask_value: (int, default=None) allows included cells to be given a non-zero integer value.
     :param out_mask_value: (int, default=None) allows non-included cells to be given a non-zero integer value.
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the output raster with all masked out values == nodata or param:out_mask_value.
@@ -201,13 +203,22 @@ def value_mask(
     elif greater_than: conditional = (in_raster > thresh)
     elif not greater_than: conditional = (in_raster < thresh)
 
+    # set dtype
+    if in_mask_value and out_mask_value is not None: dtype = 'int64'
+    else: dtype = in_raster.dtype
+
     out_raster = in_raster.where(
         conditional,
         out_mask_value,
-        ).astype(
-            in_raster.dtype,
+        )
+        
+    if in_mask_value is not None:
+        out_raster = out_raster.where(
+            (out_raster.values == out_mask_value),
+            in_mask_value,
             )
 
+    out_raster = out_raster.astype(dtype)
     if out_path is not None:
         save_raster(out_raster, out_path)
     return out_raster
