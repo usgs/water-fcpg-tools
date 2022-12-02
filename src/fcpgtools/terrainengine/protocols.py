@@ -1,4 +1,5 @@
 import abc
+from pathlib import Path
 import xarray as xr
 import geopandas as gpd
 from typing import Protocol, Union, List, Dict
@@ -11,7 +12,7 @@ class SupportsFDRtoFAC(Protocol):
     def fac_from_fdr(
             d8_fdr: Raster, 
             upstream_pour_points: List = None,
-            out_path: str = None,
+            out_path: Union[str, Path] = None,
         ) -> xr.DataArray:
         """
         Create a Flow Accumulation Cell (FAC) raster from a TauDEM format D8 Flow Direction Raster.
@@ -33,7 +34,7 @@ class SupportsParameterAccumulation(Protocol):
         d8_fdr: Raster, 
         parameter_raster: Raster,
         upstream_pour_points: List = None,
-        out_path: str = None,
+        out_path: Union[str, Path] = None,
         **kwargs,
         ) -> xr.DataArray:
         """
@@ -60,7 +61,7 @@ class SupportsMaxUpslope(Protocol):
             fdr: Raster, 
             param_raster: Raster, 
             get_min: bool = False,
-            out_path: str = None, 
+            out_path: Union[str, Path] = None, 
             mask_raster: Raster = None,
         ) -> xr.DataArray:
         """
@@ -85,7 +86,7 @@ class SupportsDistanceToStream(Protocol):
     def distance_to_stream(
             fdr: Raster, 
             stream_mask: Raster,
-            out_path: str = None
+            out_path: Union[str, Path] = None
         ) -> xr.DataArray:
         """
         Create a raster where cell values represent the horizantal distance to the nearest stream ALONG the flow path.
@@ -106,7 +107,7 @@ class SupportsDecayRaster(Protocol):
     def decay_raster(
             distance_to_stream_raster: Raster, 
             decay_constant: Union[float,int] = 2,
-            out_path: str = None,
+            out_path: Union[str, Path] = None,
         ) -> xr.DataArray:
         """
         Creates a decay weight raster based on distance to stream and a decay factor. The output raster
@@ -129,7 +130,7 @@ class SupportsDecayAccumulation(Protocol):
             dinf_fdr:  Raster, 
             decay_raster:  Raster,
             param_raster:  Raster, 
-            out_path: str = None,
+            out_path: Union[str, Path] = None,
         ) -> xr.DataArray:
         """
         Create a decayed accumulation raster from a D-Infinity FDR.

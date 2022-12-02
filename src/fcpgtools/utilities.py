@@ -31,7 +31,7 @@ def intake_shapefile(
 
 def save_raster(
     out_raster: xr.DataArray,
-    out_path: Union[str, os.PathLike],
+    out_path: Union[str, Path],
     ) -> None:
     if isinstance(out_path, str):
         out_path = Path(out_path)
@@ -121,7 +121,7 @@ def clip(
     match_raster: Raster = None,
     match_shapefile: Shapefile = None,
     custom_bbox: list = None,
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     """
     Clips a raster to the rectangular extent (aka bounding box) of another raster (or shapefile).
@@ -168,7 +168,7 @@ def reproject_raster(
     out_crs: Union[Raster, Shapefile] = None,
     resolution: Union[float, Tuple[float, float]] = None,
     wkt_string: str = None,
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     """
     Reprojects a raster to match another rasters Coordinate Reference System (CRS), or a custom CRS.
@@ -208,7 +208,7 @@ def reproject_shapefile(
     in_shapefile: Shapefile,
     out_crs: Union[Raster, Shapefile] = None,
     wkt_string: str = None,
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     in_shapefile = intake_raster(in_shapefile)
     if out_crs is not None:
@@ -229,7 +229,7 @@ def resample(
     in_raster: Raster,
     match_raster: Raster,
     method: str = 'nearest',
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     """
     Resamples a raster to match another raster's cell size, or a custom cell size.
@@ -312,7 +312,7 @@ def get_max_cell(
 def update_cell_values(
     in_raster: Union[xr.DataArray, str],
     update_points: List[Tuple[Tuple[float, float], Union[float, int]]],
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     """
     Update a specific raster cell's value based on it's coordindates. This is primarily used

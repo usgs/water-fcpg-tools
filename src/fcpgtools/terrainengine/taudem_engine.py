@@ -80,7 +80,7 @@ def fac_from_fdr(
     upstream_pour_points: List = None,
     weights: xr.DataArray = None,
     out_dtype: np.dtype = np.dtype('int64'),
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     **kwargs,
     ) -> xr.DataArray:
     """
@@ -175,7 +175,7 @@ def parameter_accumulate(
     d8_fdr: Raster, 
     parameter_raster: Raster,
     upstream_pour_points: List = None,
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     """
     Create a parameter accumulation raster from a TauDEM format D8 Flow Direction Raster and a parameter raster.
@@ -241,7 +241,7 @@ def distance_to_stream(
     d8_fdr: Raster,
     fac_raster: Raster,
     accum_threshold: int = None,
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     **kwargs,
     ) -> xr.DataArray:
     """
@@ -303,7 +303,7 @@ def get_max_upslope(
     d8_fdr: Raster,
     param_raster: Raster,
     stream_mask: Raster = None,
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     get_min_upslope: bool = False,
     **kwargs,
     ) -> xr.DataArray:
@@ -368,7 +368,7 @@ def decay_accumulation(
     dinf_fdr: Raster,
     multiplier_raster: Raster,
     parameter_raster: Raster = None,
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     **kwargs,
     ) -> xr.DataArray:
     """

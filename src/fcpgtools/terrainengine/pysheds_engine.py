@@ -3,7 +3,8 @@ import numpy as np
 from pysheds.grid import Grid
 from pysheds.view import Raster as PyShedsRaster
 from pysheds.view import ViewFinder
-from typing import List, Dict, TypedDict
+from pathlib import Path
+from typing import List, Dict, TypedDict, Union
 from fcpgtools.types import Raster, PyShedsInputDict
 from fcpgtools.utilities import intake_raster, _split_bands, _combine_split_bands, \
     update_parameter_raster, save_raster, _verify_shape_match, _replace_nodata_value
@@ -65,7 +66,7 @@ def _xarray_to_pysheds(
 
 def _pysheds_to_xarray(
     pysheds_io_dict: PyShedsInputDict,
-    name: str = 'pysheds_output'
+    name: str = 'pysheds_output',
     ) -> xr.DataArray:
 
     array = xr.DataArray(
@@ -81,7 +82,7 @@ def fac_from_fdr(
     d8_fdr: Raster, 
     weights: xr.DataArray = None,
     upstream_pour_points: List = None,
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     **kwargs,
     ) -> xr.DataArray:
 
@@ -153,7 +154,7 @@ def parameter_accumulate(
     d8_fdr: Raster, 
     parameter_raster: Raster,
     upstream_pour_points: List = None,
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     **kwargs,
     ) -> xr.DataArray:
     

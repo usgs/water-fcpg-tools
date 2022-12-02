@@ -1,4 +1,5 @@
 from typing import Union, Tuple, Dict, List
+from pathlib import Path
 import xarray as xr
 import numpy as np
 import pandas as pd
@@ -14,7 +15,7 @@ def align_raster(
     in_raster,
     match_raster: Raster,
     resample_method: str = 'nearest', 
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
 
     out_raster = in_raster.rio.reproject_match(
@@ -138,7 +139,7 @@ def prep_parameter_grid(
 def spatial_mask(
     in_raster: Raster,
     mask_shp: Union[gpd.GeoDataFrame, str],
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     inverse: bool = False,
     ) -> xr.DataArray:
     """
@@ -173,7 +174,7 @@ def value_mask(
     inverse_equals: bool = False,
     in_mask_value: int = None,
     out_mask_value: int = None,
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     """"
     Mask a raster via a value threshold. Primary use case is to identify high acumulation zones / stream cells.
@@ -226,7 +227,7 @@ def value_mask(
 def binarize_nodata(
     in_raster: Raster,
     nodata_value: Union[float, int] = None,
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     """
     Creates an output binary raster based on an input where nodata values -> 1, and valued cells -> 0.
@@ -264,7 +265,7 @@ def binarize_categorical_raster(
     cat_raster: Raster, 
     categories_dict: Dict[int, str] = {},
     ignore_categories: list = None,
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     """
     :param cat_raster: (xr.DataArray or str raster path) a categorical (dtype=int) raster with N
@@ -438,7 +439,7 @@ def create_fcpg(
     param_accum_raster: Raster,
     fac_raster: Raster,
     ignore_nodata: bool = False,
-    out_path: str = None,
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     """
     Creates a Flow Conditioned Parameter Grid raster by dividing a paramater accumulation
