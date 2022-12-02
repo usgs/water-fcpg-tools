@@ -79,7 +79,6 @@ def fac_from_fdr(
     d8_fdr: Raster,
     upstream_pour_points: List = None,
     weights: xr.DataArray = None,
-    out_dtype: np.dtype = np.dtype('int64'),
     out_path: Union[str, Path] = None,
     **kwargs,
     ) -> xr.DataArray:
@@ -128,6 +127,7 @@ def fac_from_fdr(
                 suffix='.tif',
                 ).name
             )
+    elif isinstance(out_path, str): out_path = Path(out_path)
 
     taudem_dict = {
         'fdr': d8_fdr_path,
@@ -230,8 +230,10 @@ def parameter_accumulate(
     out_raster.name = 'Parameter_Accumulate'
 
     # save if necessary and remove temp files
+    if isinstance(out_path, str): out_path = Path(out_path)
     if out_path is not None:
         save_raster(out_raster, out_path)
+
     out_raster.close()
     _clear_temp_files(prefixs=['taudem_temp_input'])
 
@@ -271,6 +273,7 @@ def distance_to_stream(
                 suffix='.tif',
                 ).name
             )
+    elif isinstance(out_path, str): out_path = Path(out_path)
 
     taudem_dict = {
         'fdr': d8_fdr,
@@ -330,6 +333,7 @@ def get_max_upslope(
                 suffix='.tif',
                 ).name
             )
+    elif isinstance(out_path, str): out_path = Path(out_path)
 
     accum_type_str = '-min' if get_min_upslope else ''
     
@@ -395,7 +399,7 @@ def decay_accumulation(
         )
         parameter_raster_path = _taudem_prepper(parameter_raster)
 
-    # make temporary files as necessary
+    #TODO: make temporary files as necessary
     out_write_path = str
 
     # build the input dictionary

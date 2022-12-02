@@ -17,6 +17,15 @@ def align_raster(
     resample_method: str = 'nearest', 
     out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
+    """
+    Aligns the projection/CRS, spatial extent, and resolution of one raster to another.
+    :param in_raster: (xr.DataArray or str raster path) input raster that needs to be aligned.
+    :param match_raster: (xr.DataArray or str raster path) raster to align to.
+    :param resample_method: (str, default=nearest) a valid resampling method from rasterio.enums.Resample.
+        NOTE: Do not use any averaging resample methods when working with a categorical raster!
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
+    :returns: (xr.DataArray) the output aligned raster.
+    """
 
     out_raster = in_raster.rio.reproject_match(
         match_raster,
@@ -31,6 +40,7 @@ def convert_fdr_formats(
     d8_fdr: Raster,
     out_format: str,
     in_format: str = None,
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     """
     Converts the D8 encoding of Flow Direction Rasters (FDR).
@@ -39,6 +49,7 @@ def convert_fdr_formats(
     :param in_format: (str, optional -> ESRI or TauDEM) a string D8 name that
         overrides the auto-recognized format from param:d8_fdr.
         Note: manually inputting param:in_format will improve performance.
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the re-encoded D8 Flow Direction Raster (FDR).
     """
     # identify the input D8 format
@@ -83,13 +94,28 @@ def convert_fdr_formats(
 
     print(f'Converted the D8 Flow Direction Raster (FDR) from {in_format} format'
     f' to {out_format}')
+
+    if out_path is not None:
+        save_raster(d8_fdr, out_path)
+
     return d8_fdr
 
 def prep_parameter_grid(
     parameter_raster: xr.DataArray,
     fdr_raster: xr.DataArray,
     out_of_bounds_value: Union[float, int],
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
+    """
+    Preps param:parameter_raster for parameter accumulation by matching the nodata boundary to param:fdr_raster. 
+        NOTE: Only this function AFTER aligning the parameter raster to the FDR raster via tools.align_raster()! 
+    :param parameter_raster: (xr.DataArray or str raster path) a parameter raster.
+    :param fdr_raster: (xr.DataArray or str raster path) a Flow Direction Raster (either D8 or D-inf).
+    :param out_of_bounds_value: (int or float) the value to give param:parameter_raster cells outside the data
+        boundary of param:fdr_raster. Note that this is automatically set within terrain_engine functions.
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
+    :returns: (xr.DataArray) the prepped parameter grid.
+    """
 
     # check that shapes match
     if not _verify_shape_match(fdr_raster, parameter_raster):
@@ -100,14 +126,10 @@ def prep_parameter_grid(
     # use a where query to replace out of bounds values
     og_nodata = parameter_raster.rio.nodata
     og_crs = _get_crs(parameter_raster)
-    out_crs = _get_crs(fdr_raster)
 
     if not _verify_alignment(parameter_raster, fdr_raster):
-        parameter_raster = align_raster(
-            parameter_raster,
-            fdr_raster,
-            resample_method='nearest',
-            )
+        raise TypeError('ERROR: param:parameter_raster and param:fdr_raster are not aligned! '
+        'Please use tools.align_raster() before applying this tool!')
 
     parameter_raster = parameter_raster.where(
         fdr_raster.values != fdr_raster.rio.nodata,
@@ -132,6 +154,10 @@ def prep_parameter_grid(
         parameter_raster,
         out_of_bounds_value,
         )
+    
+    # save raster if necessary
+    if out_path is not None:
+        save_raster(parameter_raster, out_path)
 
     return parameter_raster
 
@@ -148,7 +174,7 @@ def spatial_mask(
     Note: default behavior (inverse=False) will make it so cells NOT COVERED by mask_shp -> NoData.
     :param in_raster: (xr.DataArray or str raster path) input raster.
     :param mask_shp: (geopandas.GeoDataFrame or a str shapefile path) shapefile used for masking.
-    :param out_path: (str, default=None) defines a path to save the output raster.
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
     :param inverse: (bool, default=False) if True, cells that ARE COVERED by mask_shp -> NoData.
     :returns: (xr.DataArray) the output spatially masked raster.
     """
@@ -187,7 +213,7 @@ def value_mask(
     :param inverse_equals: (bool, default=False) is True and param:equals==True, values NOT equal to :param:thresh are masked out.
     :param in_mask_value: (int, default=None) allows included cells to be given a non-zero integer value.
     :param out_mask_value: (int, default=None) allows non-included cells to be given a non-zero integer value.
-    :param out_path: (str, default=None) defines a path to save the output raster.
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the output raster with all masked out values == nodata or param:out_mask_value.
     """
     # handle nodata / out-of-mask values
@@ -235,7 +261,7 @@ def binarize_nodata(
     :param in_raster: (xr.DataArray or str raster path) input raster.
     :param nodata_value: (float->np.nan or int) if the nodata value for param:in_raster is not in the metadata,
         set this parameter to equal the cell value storing nodata (i.e., np.nan or -999).
-    :param out_path: (str, default=None) defines a path to save the output raster.
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the output binary mask raster.
     """
     # handle nodata / out-of-mask values
@@ -273,7 +299,7 @@ def binarize_categorical_raster(
     :param categogies_dict: (dict) a dictionary assigning string names (values) to integer raster values (keys).
     :param ignore_categories: (list of integers, default=None) category cell values not include
         in the output raster.
-    :param out_path: (str, default=None) defines a path to save the output raster.
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) a N-band multi-dimensional raster as a xarray DataArray object.
     """
     cat_raster = intake_raster(cat_raster)
@@ -313,8 +339,14 @@ def binarize_categorical_raster(
 
 def d8_to_dinf(
     d8_fdr: Raster,
+    out_path: Union[str, Path],
     ) -> xr.DataArray:
-    """Converts a D8 Flow Direction Raster to D-Infinity"""
+    """
+    Converts a D8 Flow Direction Raster to D-Infinity.
+    :param d8_fdr: (xr.DataArray or str raster path) a D8 Flow Direction Raster (dtype=Int).
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
+    :returns: (xr.DataArray) the output D-Inf Flow Direction Raster/
+    """
 
     # if not taudem format, convert
     d8_fdr = intake_raster(d8_fdr)
@@ -333,6 +365,11 @@ def d8_to_dinf(
     # convert to d-infinity / radians (as floats, range 0 - 6.2)
     dinf_fdr = ((dinf_fdr - 1) * np.pi) / 4
     dinf_fdr.name = 'DInfinity_FDR'
+
+    # save if necessary
+    if out_path is not None:
+        save_raster(dinf_fdr, out_path)
+
     return dinf_fdr
 
 def find_pour_points(
@@ -449,7 +486,7 @@ def create_fcpg(
     :param ignore_nodata: (bool, default=False) by default param_accum_raster cells with nodata
         are kept as nodata. If True, the lack of parameter accumulation is ignores, and the FAC value
         if given to the cell without adjustment.
-    :param out_path: (str, default=None) defines a path to save the output raster.
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the output FCPG raster as a xarray DataArray object.
     """
     # bring in data

@@ -157,7 +157,9 @@ def parameter_accumulate(
     out_path: Union[str, Path] = None,
     **kwargs,
     ) -> xr.DataArray:
-    
+
+    #TODO: work with Matt DB on 12/6/2022 to debug
+    raise NotImplementedError
     d8_fdr = intake_raster(d8_fdr)
     parameter_raster = intake_raster(parameter_raster)
 
