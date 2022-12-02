@@ -34,12 +34,10 @@ def _taudem_prepper(
     elif isinstance(in_raster, pathlib.PathLike):
         in_raster = str(in_raster)
         
-    else:
-        # No support for raw string in cmd line tools!
-        print('ERROR: param:d8_fdr must be a xr.DataArray of a PathLike object.')
-        #TODO: Handle exceptions
-        raise TypeError
-    return in_raster
+    else: raise TypeError('ERROR: param:d8_fdr must be a xr.DataArray of a PathLike object.')
+    
+    if temp_path.exists(): return in_raster
+    else: return FileNotFoundError('ERROR: Failed to create temporary file!')
 
 def _update_taudem_dict(
     taudem_dict: TauDEMDict,
@@ -259,9 +257,11 @@ def distance_to_stream(
     d8_fdr = _taudem_prepper(d8_fdr)
 
     # get stream grid as a taudem tempfile
-    #TODO: fix this
     fac_raster = intake_raster(fac_raster)
-    stream_raster = _taudem_prepper(stream_raster)
+    fac_raster = fac_raster.fillna(0)
+    fac_raster = fac_raster.rio.write_nodata(0)
+    fac_raster = fac_raster.astype('int')
+    fac_raster = _taudem_prepper(fac_raster)
 
     if out_path is None:
         out_path = Path(
