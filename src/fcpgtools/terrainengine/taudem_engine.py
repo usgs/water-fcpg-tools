@@ -43,7 +43,7 @@ def _update_taudem_dict(
     taudem_dict: TauDEMDict,
     kwargs: dict = None,
     ) -> TauDEMDict:
-    if kwargs:
+    if len(kwargs) != 0:
         for key, value in kwargs.items():
             if key in taudem_dict.keys():
                 taudem_dict.update(key, value)
@@ -292,10 +292,13 @@ def distance_to_stream(
     _ = subprocess.run(cmd, shell=True)
 
     if not Path(taudem_dict['outRast']).exists():
-        raise FileNotFoundError('ERROR: TauDEM D8HDistTostrm failed to create an output!')
+        raise FileNotFoundError('ERROR: TauDEM D8HDistTostrm failed to create an output!')    
+
+    # update nodata values
+    out_raster = intake_raster(out_path)
+    out_raster = _replace_nodata_value(out_raster, np.nan)
 
     # clear temporary files and return the output
-    out_raster = intake_raster(out_path)
     out_raster.close()
     _clear_temp_files(prefixs=['taudem_temp_input', 'dist2stream_temp'])
 
@@ -305,7 +308,7 @@ def _ext_upslope_cmd(
     d8_fdr: str,
     parameter_raster: str,
     accum_type_str: str,
-    **kwargs,
+    kwargs: dict = None,
     ) -> xr.DataArray:
     """Back end function that makes TauDEM cmd line call for D8FlowPathExtremeUp"""
 
@@ -415,21 +418,20 @@ def get_max_upslope(
         else:
             print('WARNING: Stream mask does not align with extream upslope value output! '
             'No mask is applied.')
+    
+    # update nodata values
+    out_raster = _replace_nodata_value(out_raster, np.nan)
 
     # save if necessary
     if out_path is not None:
-        if isinstance(out_path, str): out_path = Path(out_path)
         save_raster(out_raster, out_path)
 
     out_raster.close()
     _clear_temp_files(prefixs=['taudem_temp_input', 'ext_upslope_temp'])
     return out_raster
 
-
-#TODO: Return to decay. The first function should be in tools.py.
-# The TauDEM command relies on a D-inf raster, which we also need to add to tools.py/
-def decay_raster() -> xr.DataArray:
-    raise NotImplementedError
+def _decay_accumulation_cmd() -> xr.DataArray:
+    pass
 
 def decay_accumulation(
     dinf_fdr: Raster,

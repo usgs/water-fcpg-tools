@@ -95,7 +95,7 @@ def convert_fdr_formats(
         inplace=True,
         )
     d8_fdr = d8_fdr.astype('int')
-    
+
     print(f'Converted the D8 Flow Direction Raster (FDR) from {in_format} format'
     f' to {out_format}')
 
@@ -164,6 +164,30 @@ def prep_parameter_grid(
         save_raster(parameter_raster, out_path)
 
     return parameter_raster
+
+def make_decay_raster(
+    dist2stream_raster: Raster,
+    decay_factor: Union[int, float],
+    out_path: Union[str, Path] = None,
+    ) -> xr.DataArray:
+    dist2stream_raster = intake_raster(dist2stream_raster).astype('float')
+    cell_size = dist2stream_raster.rio.resolution()[0]
+    
+    decay_array = np.exp(
+        (-1 * dist2stream_raster.values * cell_size) / (cell_size ** decay_factor)
+        )
+    decay_raster = xr.DataArray(
+        data=decay_array,
+        coords=dist2stream_raster.coords,
+        attrs=dist2stream_raster.attrs,
+        )
+    decay_raster.name = 'decay_raster'
+
+    # save if necessary
+    if out_path is not None:
+        save_raster(decay_raster, out_path)
+
+    return decay_raster
 
 # raster masking function
 def spatial_mask(
