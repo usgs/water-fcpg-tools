@@ -11,7 +11,7 @@ import xarray as xr
 from fcpgtools.types import Raster, TauDEMDict
 from fcpgtools.utilities import intake_raster, save_raster, \
     _combine_split_bands, _split_bands, update_parameter_raster, _verify_alignment, _replace_nodata_value
-from fcpgtools.tools import prep_parameter_grid, value_mask
+from fcpgtools.tools import prep_parameter_grid, value_mask, d8_to_dinf
 
 def _taudem_prepper(
     in_raster: Raster,
@@ -305,14 +305,14 @@ def distance_to_stream(
     return out_raster
 
 def _ext_upslope_cmd(
-    d8_fdr: str,
-    parameter_raster: str,
-    accum_type_str: str,
+    d8_fdr_path: str,
+    parameter_raster: xr.DataArray,
+    accum_type_str_path: str,
     kwargs: dict = None,
     ) -> xr.DataArray:
     """Back end function that makes TauDEM cmd line call for D8FlowPathExtremeUp"""
 
-    parameter_raster = _taudem_prepper(parameter_raster)
+    parameter_raster_path = _taudem_prepper(parameter_raster)
 
     # make temporary output path
     out_path = Path(
@@ -324,10 +324,10 @@ def _ext_upslope_cmd(
             )
 
     taudem_dict = {
-        'fdr': d8_fdr,
-        'param': parameter_raster,
+        'fdr': d8_fdr_path,
+        'param': parameter_raster_path,
         'outRast': str(out_path),
-        'accum_type': accum_type_str,
+        'accum_type': accum_type_str_path,
         'cores': 1,
         'mpiCall': 'mpiexec',
         'mpiArg': '-n',
@@ -430,12 +430,67 @@ def get_max_upslope(
     _clear_temp_files(prefixs=['taudem_temp_input', 'ext_upslope_temp'])
     return out_raster
 
-def _decay_accumulation_cmd() -> xr.DataArray:
-    pass
+def _decay_accumulation_cmd(
+    dinf_fdr_path: str,
+    decay_raster_path: str,
+    weights: xr.DataArray = None,
+    kwargs: dict = None,
+    ) -> xr.DataArray:
+
+    weights_path = _taudem_prepper(weights)
+
+    # make temporary output path
+    out_path = Path(
+            tempfile.TemporaryFile(
+                dir=Path.cwd(),
+                prefix='decay_accum_temp',
+                suffix='.tif',
+                ).name
+            )
+
+    # build the input dictionary
+    taudem_dict = {
+        'dinf_fdr_path': dinf_fdr_path,
+        'dm': decay_raster_path,
+        'dsca': str(out_path),
+        'cores': 1,
+        'mpiCall': 'mpiexec',
+        'mpiArg': '-n',
+        }
+
+    if weights is not None: taudem_dict['finalArg'] = f'-wg {str(weights_path)} -nc'
+    else: taudem_dict['finalArg'] = '-nc'
+
+    taudem_dict = _update_taudem_dict(taudem_dict, kwargs)
+
+    # use TauDEM via subprocess to make a decay accumulation raster
+    cmd = '{mpiCall} {mpiArg} {cores} dinfdecayaccum -ang {dinf_fdr_path} -dm {dm} -dsca {dsca} {finalArg}'.format(
+        **taudem_dict)
+    _ = subprocess.run(cmd, shell=True)
+
+    if not Path(taudem_dict['dsca']).exists():
+        raise FileNotFoundError('ERROR: TauDEM dinfdecayaccum failed to create an output!')
+
+    out_raster = intake_raster(Path(taudem_dict['dsca']))
+
+    # update nodata and convert -9999 values to nodata
+    out_raster = out_raster.where(
+        (out_raster != -9999),
+        out_raster.rio.nodata,
+        )
+    out_raster = _replace_nodata_value(
+        out_raster,
+        np.nan,
+        )
+
+    out_raster.close()
+    _clear_temp_files(prefixs=['decay_accum_temp'])
+    return out_raster
 
 def decay_accumulation(
-    dinf_fdr: Raster,
-    multiplier_raster: Raster,
+    d8_fdr: Raster,
+    decay_raster: Raster,
+    upstream_pour_points: List = None,
     parameter_raster: Raster = None,
     out_path: Union[str, Path] = None,
     **kwargs,
@@ -452,44 +507,77 @@ def decay_accumulation(
     :returns:
     """
     # prep data for taudem
+    d8_fdr = intake_raster(d8_fdr)
+    dinf_fdr = d8_to_dinf(d8_fdr)
+    
     dinf_fdr_path = _taudem_prepper(dinf_fdr)
-    multiplier_raster_path = _taudem_prepper(multiplier_raster)
+    decay_raster_path = _taudem_prepper(decay_raster)
 
-    # prep parameter raster is applicable
-    if parameter_raster is not None:
-        parameter_raster = intake_raster(parameter_raster)
-        parameter_raster = prep_parameter_grid(
-            prep_parameter_grid,
-            out_of_bounds_value=-1
-        )
-        parameter_raster_path = _taudem_prepper(parameter_raster)
+    # prep parameter raster and boundary conditions
+    weights = None
+    if parameter_raster is not None: weights = intake_raster(parameter_raster)
+    elif upstream_pour_points is not None:
+        weights = xr.zeros_like(
+            dinf_fdr,
+            dtype=np.dtype('float64'),
+            ) + 1
+    if weights is not None:
+        if upstream_pour_points is not None:
+            weights = update_parameter_raster(
+                weights,
+                d8_fdr,
+                upstream_pour_points,
+                )
+        weights = prep_parameter_grid(
+            weights,
+            dinf_fdr,
+            np.nan,
+            )
 
-    #TODO: make temporary files as necessary
-    out_write_path = str
+        # calculate decay raster and split if multi-dimensional
+        if len(weights.shape) > 2:
+            raster_bands = _split_bands(weights)
+        else:
+            raster_bands = {(0, 0): weights}
 
-    # build the input dictionary
-    taudem_dict = {
-        'dinf_fdr_path': dinf_fdr_path,
-        'dm': multiplier_raster_path,
-        'dsca': out_write_path,
-        'cores': 1,
-        'mpiCall': 'mpiexec',
-        'mpiArg': '-n',
-        }
+        # create extream upslope value rasters for each parameter raster band
+        out_dict = {}
+        for index_tuple, array in raster_bands.items():
+            i, dim_name = index_tuple
 
-    if parameter_raster is not None: taudem_dict['finalArg'] = f'-wg {str(parameter_raster_path)} -nc'
-    else: taudem_dict['finalArg'] = '-nc'
+            decay_acc_raster = _decay_accumulation_cmd(
+                dinf_fdr_path,
+                decay_raster_path,
+                array,
+                kwargs,
+                )
 
-    taudem_dict = _update_taudem_dict(taudem_dict, kwargs)
+            out_dict[(i, dim_name)] = decay_acc_raster
 
-    # use TauDEM via subprocess to make a Flow Accumulation Raster
-    try:
-        cmd = '{mpiCall} {mpiArg} {cores} dinfdecayaccum -ang {dinf_fdr_path} -dm {dm} -dsca {dsca} {finalArg}'.format(
-            **taudem_dict)
-        _ = subprocess.run(cmd, shell=True)
+        # re-combine into DataArray
+        if len(out_dict.keys()) > 1:
+            out_raster =  _combine_split_bands(out_dict)
+        else: out_raster = list(out_dict.items())[0][1] 
+        
+    else:
+        out_raster = _decay_accumulation_cmd(
+            dinf_fdr_path,
+            decay_raster_path,
+            weights=None,
+            kwargs=kwargs,
+            )
+    out_raster.name = 'decay_accumulation_raster'
 
-    except Exception:
-        #TODO: Handle exceptions
-        print('ERROR: TauDEM AreaD8 failed!')
-        traceback.print_exc()
+    # update nodata values
+    out_raster = _replace_nodata_value(out_raster, np.nan)
+
+    # save if necessary
+    if out_path is not None:
+        save_raster(out_raster, out_path)
+
+    out_raster.close()
+    _clear_temp_files(prefixs=['taudem_temp_input', 'decay_accum_temp'])
+    return out_raster
+
+
 

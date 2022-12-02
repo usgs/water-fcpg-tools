@@ -399,7 +399,7 @@ def binarize_categorical_raster(
 
 def d8_to_dinf(
     d8_fdr: Raster,
-    out_path: Union[str, Path],
+    out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     """
     Converts a D8 Flow Direction Raster to D-Infinity.
