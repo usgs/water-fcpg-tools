@@ -68,30 +68,34 @@ def convert_fdr_formats(
         )
     if in_format == out_format: return d8_fdr
 
-    # get the conversion dictionary
-    in_dict, out_dict = D8ConversionDicts[in_format], D8ConversionDicts[out_format]
+    # get the conversion dictionary mappinng
+    mapping = dict(
+        zip(
+            D8ConversionDicts[in_format].values(),
+            D8ConversionDicts[out_format].values(),
+            )
+        )
+    
+    D8ConversionDicts[in_format], D8ConversionDicts[out_format]
 
     # convert appropriately using pandas (no clean implementation in xarray)
-    #TODO: Improve this somewhat, works for now but we can likely test simpler solutions
-    #NOTE: One option is using df.map() to covert all format values at once rather than iteratively
-    for key, old_value in in_dict.items():
-        if old_value in list(np.unique(d8_fdr.values)):
-            new_value = out_dict[key]
-            if old_value != new_value:
-                df = pd.DataFrame()
-                df[0] = d8_fdr.values.ravel()
-                df[0].replace(
-                    old_value,
-                    new_value,
-                    inplace=True,
-                    )
-                d8_fdr = d8_fdr.copy(
-                    data=df[0].values.reshape(d8_fdr.shape),
-                    )
+    in_df = pd.DataFrame()
+    out_df = pd.DataFrame()
+    in_df[0] = d8_fdr.values.ravel()
+    out_df[0] = in_df[0].map(mapping)
+
+    # convert back to xarray
+    d8_fdr = d8_fdr.copy(
+        data=out_df[0].values.reshape(d8_fdr.shape),
+        )
 
     # update nodata
-    d8_fdr.rio.write_nodata(out_dict['nodata'], inplace=True)
-
+    d8_fdr.rio.write_nodata(
+        D8ConversionDicts[out_format]['nodata'],
+        inplace=True,
+        )
+    d8_fdr = d8_fdr.astype('int')
+    
     print(f'Converted the D8 Flow Direction Raster (FDR) from {in_format} format'
     f' to {out_format}')
 
@@ -249,6 +253,38 @@ def value_mask(
     if out_path is not None:
         save_raster(out_raster, out_path)
     return out_raster
+
+def stream_mask(
+    fac_raster: Raster,
+    accumulation_threshold: Union[int, float],
+    out_path: Union[str, Path] = None,
+    ) -> xr.DataArray:
+    """
+    A simplified version of tools.value_mask() that outputs np.nan for non-'stream' cells below the accumulation threshold
+    :param fac_raster: (xr.DataArray or str raster path) a single band flow accumulation (FAC) raster.
+    :param accumulation_threshold: (int or float) the flow accumulation threshold.
+    :returns: (xr.DataArray) the output raster with cells below the threshold encoded as np.nan
+    """
+    fac_raster = intake_raster(fac_raster).astype('float')
+
+    # handle input nodata
+    fac_raster = fac_raster.where(
+            (fac_raster != fac_raster.rio.nodata),
+            np.nan,
+            )
+    
+    # apply stream mask
+    stream_mask = fac_raster.where(
+            (fac_raster >= accumulation_threshold),
+            np.nan,
+            )
+    stream_mask = stream_mask.rio.write_nodata(np.nan)
+
+    # save if necessary
+    if out_path is not None:
+        save_raster(stream_mask, out_path)
+    
+    return stream_mask
 
 def binarize_nodata(
     in_raster: Raster,

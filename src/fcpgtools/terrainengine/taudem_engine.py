@@ -10,7 +10,7 @@ import numpy as np
 import xarray as xr
 from fcpgtools.types import Raster, TauDEMDict
 from fcpgtools.utilities import intake_raster, save_raster, \
-    _combine_split_bands, _split_bands, update_parameter_raster
+    _combine_split_bands, _split_bands, update_parameter_raster, _verify_alignment, _replace_nodata_value
 from fcpgtools.tools import prep_parameter_grid, value_mask
 
 def _taudem_prepper(
@@ -41,7 +41,7 @@ def _taudem_prepper(
 
 def _update_taudem_dict(
     taudem_dict: TauDEMDict,
-    kwargs: dict
+    kwargs: dict = None,
     ) -> TauDEMDict:
     if kwargs:
         for key, value in kwargs.items():
@@ -89,8 +89,8 @@ def fac_from_fdr(
     :param upstream_pour_points: (list, default=None) a list of lists each with with coordinate tuples
         as the first item [0], and updated cell values as the second [1]. This allows the FAC to be made
         with boundary conditions such as upstream basin pour points.
-    :param out_path: (str, default=None) defines a path to save the output raster.
-    :param out_dtype) (np.dtype) allows the output raster dtype to match a parameter grids.
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
+    :param out_dtype: (np.dtype) allows the output raster dtype to match a parameter grids.
     :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
     :returns: (xr.DataArray) the Flow Accumulation Cells (FAC) raster as a xarray DataArray object.
     """
@@ -187,7 +187,7 @@ def parameter_accumulate(
     :param upstream_pour_points: (list, default=None) a list of lists each with with coordinate tuples
         as the first item [0], and updated cell values as the second [1]. This allows the FAC to be made
         with boundary conditions such as upstream basin pour points.
-    :param out_path: (str, default=None) defines a path to save the output raster.
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
     :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
     :returns: (xr.DataArray) the parameter accumulation raster as a xarray DataArray object.
     """
@@ -252,7 +252,7 @@ def distance_to_stream(
     :param fdr: (xr.DataArray or path str) path to flow direction raster in TauDEM format.
     :param fac_raster: (xr.DataArray or path str) path to flow accumulation raster.
     :param accum_threshold: (int) # of upstream/accumulated cells to consider classify a stream cell.
-    :param out_path: (str, default=None) defines a path to save the output raster.
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
     :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
     :returns: (xr.DataArray) a raster with values of D8 flow distance from each cell to the nearest stream.
     """
@@ -301,10 +301,63 @@ def distance_to_stream(
 
     return out_raster
 
-#TODO: test out, make sure it works in a variety of settings
+def _ext_upslope_cmd(
+    d8_fdr: str,
+    parameter_raster: str,
+    accum_type_str: str,
+    **kwargs,
+    ) -> xr.DataArray:
+    """Back end function that makes TauDEM cmd line call for D8FlowPathExtremeUp"""
+
+    parameter_raster = _taudem_prepper(parameter_raster)
+
+    # make temporary output path
+    out_path = Path(
+            tempfile.TemporaryFile(
+                dir=Path.cwd(),
+                prefix='ext_upslope_temp',
+                suffix='.tif',
+                ).name
+            )
+
+    taudem_dict = {
+        'fdr': d8_fdr,
+        'param': parameter_raster,
+        'outRast': str(out_path),
+        'accum_type': accum_type_str,
+        'cores': 1,
+        'mpiCall': 'mpiexec',
+        'mpiArg': '-n',
+        }
+    
+    taudem_dict = _update_taudem_dict(taudem_dict, kwargs)
+
+    cmd = '{mpiCall} {mpiArg} {cores} D8FlowPathExtremeUp -p {fdr} -sa {param} -ssa {outRast} {accum_type} -nc'.format(
+        **taudem_dict)  # Create string of tauDEM shell command
+    _ = subprocess.run(cmd, shell=True)
+
+    if not Path(taudem_dict['outRast']).exists():
+        raise FileNotFoundError('ERROR: TauDEM D8FlowPathExtremeUp failed to create an output!')
+
+    out_raster = intake_raster(Path(taudem_dict['outRast']))
+
+    # update nodata and convert -9999 values to nodata
+    out_raster = out_raster.where(
+        (out_raster != -9999),
+        out_raster.rio.nodata,
+        )
+    out_raster = _replace_nodata_value(
+        out_raster,
+        np.nan,
+        )
+
+    out_raster.close()
+    _clear_temp_files(prefixs=['ext_upslope_temp'])
+    return out_raster
+
 def get_max_upslope(
     d8_fdr: Raster,
-    param_raster: Raster,
+    parameter_raster: Raster,
     stream_mask: Raster = None,
     out_path: Union[str, Path] = None,
     get_min_upslope: bool = False,
@@ -315,51 +368,61 @@ def get_max_upslope(
         from each cell in a D8 FDR raster (with TauDEM direction format).
         Note: This is a wrapper for the TauDEM's d8flowpathextremeup.
     :param d8_fdr: (xr.DataArray or path str) path to flow direction raster in TauDEM format.
-    :param param_raster: (xr.DataArray or path str) a parameter raster to find the max values from.
-    :param stream_mask: (optional, xr.DataArray or path str) a stream mask raster from tools:stream_mask().
+    :param parameter_raster: (xr.DataArray or path str) a parameter raster to find the max values from.
+    :param stream_mask: (optional, xr.DataArray or path str) a stream mask raster from tools.stream_mask().
         If provided, the output will be masked to only stream cells.
-    :param out_path: (str)
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) raster with max (or min) upstream value of the 
         parameter grid as each cell's value.
     """
     d8_fdr = _taudem_prepper(d8_fdr)
-    param_raster = _taudem_prepper(param_raster)
-
-    if out_path is None:
-        out_path = Path(
-            tempfile.TemporaryFile(
-                dir=Path.cwd(),
-                prefix='max_upslope_temp',
-                suffix='.tif',
-                ).name
-            )
-    elif isinstance(out_path, str): out_path = Path(out_path)
-
+    parameter_raster = intake_raster(parameter_raster)
     accum_type_str = '-min' if get_min_upslope else ''
+
+    # split if multi-dimensional
+    if len(parameter_raster.shape) > 2:
+        raster_bands = _split_bands(parameter_raster)
+    else:
+        raster_bands = {(0, 0): parameter_raster}
+
+    # create extream upslope value rasters for each parameter raster band
+    out_dict = {}
+    for index_tuple, array in raster_bands.items():
+        i, dim_name = index_tuple
+
+        upslope_raster = _ext_upslope_cmd(
+            d8_fdr,
+            array,
+            accum_type_str,
+            kwargs=kwargs,
+            )
+
+        out_dict[(i, dim_name)] = upslope_raster
+
+    # re-combine into DataArray
+    if len(out_dict.keys()) > 1:
+        out_raster =  _combine_split_bands(out_dict)
+    else: out_raster = list(out_dict.items())[0][1] 
+    out_raster.name = f'{accum_type_str[1:]}_upslope_values'
     
-    taudem_dict = {
-        'fdr': d8_fdr,
-        'param': param_raster,
-        'outRast': str(out_path),
-        'accum_type': accum_type_str,
-        'cores': 1,
-        'mpiCall': 'mpiexec',
-        'mpiArg': '-n',
-        }
-    
-    taudem_dict = _update_taudem_dict(taudem_dict, kwargs)
+    # apply stream mask if necessary
+    if stream_mask is not None:
+        if _verify_alignment(out_raster, stream_mask):
+            out_raster = out_raster.where(
+                (stream_mask != stream_mask.rio.nodata),
+                np.nan,
+                )
+        else:
+            print('WARNING: Stream mask does not align with extream upslope value output! '
+            'No mask is applied.')
 
-    cmd = '{mpiCall} {mpiArg} {cores} d8flowpathextremeup -p {fdr} -sa {param} -ssa {outFl} {accum_type} -nc'.format(
-        **taudem_dict)  # Create string of tauDEM shell command
-    _ = subprocess.run(cmd, shell=True)
+    # save if necessary
+    if out_path is not None:
+        if isinstance(out_path, str): out_path = Path(out_path)
+        save_raster(out_raster, out_path)
 
-    if not Path(taudem_dict['outRast']).exists():
-        raise FileNotFoundError('ERROR: TauDEM d8flowpathextremeup failed to create an output!')
-
-    out_raster = intake_raster(taudem_dict['outRast'])
     out_raster.close()
-    _clear_temp_files(prefixs=['taudem_temp_input', 'max_upslope_temp'])
-
+    _clear_temp_files(prefixs=['taudem_temp_input', 'ext_upslope_temp'])
     return out_raster
 
 
@@ -382,7 +445,7 @@ def decay_accumulation(
         Note: This input can be made with tools.d8_to_dinf().
     :param multiplier_raster: (xr.DataArray or str raster path)
     :param parameter_raster: (optional, xr.DataArray or str raster path)
-    :param out_path: (str, default=None) defines a path to save the output raster.
+    :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
     :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
     :returns:
     """
