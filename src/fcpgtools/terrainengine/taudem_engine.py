@@ -569,6 +569,11 @@ def decay_accumulation(
     out_raster.name = 'decay_accumulation_raster'
 
     # update nodata values
+    out_raster = prep_parameter_grid(
+        out_raster,
+        d8_fdr,
+        np.nan,
+        )
     out_raster = _replace_nodata_value(out_raster, np.nan)
 
     # save if necessary
