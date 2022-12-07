@@ -20,12 +20,10 @@ def _make_new_nodata(
 
 def _xarray_to_pysheds(
     array: xr.DataArray,
-    is_fdr: bool,
     ) -> PyShedsInputDict:
     """
     Converts a three dimension (i.e. value = f(x, y)) xr.DataArray into a pysheds inputs.
     :param array: (xr.DataArray) a 3-dimension array.
-    :param is_fdr: (bool) controls whether a nodata mask is writted in the grid object
     :returns: (dict) a dict storing PyShed's relevant data formats of the following form:
         {'input_array': param:array,
         'raster': pysheds.Raster(),
@@ -42,10 +40,8 @@ def _xarray_to_pysheds(
         array_np = array.values.astype(dtype=str(array.dtype)).squeeze()
 
     # make a mask for the grid object
-    if is_fdr:
-        mask = array.astype('bool')
-        mask = mask.where(array != array.rio.nodata, False).values
-    else: mask = None
+    mask = array.astype('bool')
+    mask = mask.where(array != array.rio.nodata, False).values
     
     view = ViewFinder(shape=array_np.shape,
                       affine=affine,
@@ -91,7 +87,7 @@ def fac_from_fdr(
         (d8_fdr.values != d8_fdr.rio.nodata),
         0,
         )
-    pysheds_input_dict = _xarray_to_pysheds(d8_fdr, is_fdr=True)
+    pysheds_input_dict = _xarray_to_pysheds(d8_fdr)
 
     if weights is not None or upstream_pour_points is not None:
         # add weights if necessary
@@ -106,14 +102,14 @@ def fac_from_fdr(
                 weights,
                 upstream_pour_points,
                 )
-            weights = _xarray_to_pysheds(
-                prep_parameter_grid(
-                    weights,
-                    d8_fdr,
-                    np.nan,
-                    ),
-                is_fdr=False,
-                )['raster']
+        weights = PyShedsRaster(
+            prep_parameter_grid(
+                weights,
+                d8_fdr,
+                np.nan,
+                ).values,
+            pysheds_input_dict['raster'].viewfinder,
+            )
     else: weights = None
 
     # apply accumulate function
@@ -158,8 +154,6 @@ def parameter_accumulate(
     **kwargs,
     ) -> xr.DataArray:
 
-    #TODO: work with Matt DB on 12/6/2022 to debug
-    raise NotImplementedError
     d8_fdr = intake_raster(d8_fdr)
     parameter_raster = intake_raster(parameter_raster)
 
@@ -179,20 +173,11 @@ def parameter_accumulate(
     out_dict = {}
     for index_tuple, array in raster_bands.items():
         i, dim_name = index_tuple
-        #TODO: switch to where 0s are added only for where there IS FDR data
-        param_input_dict = _xarray_to_pysheds(
-            prep_parameter_grid(
-                array,
-                d8_fdr,
-                array.rio.nodata,
-                ),
-            is_fdr=False,
-            )
 
         accumulated = fac_from_fdr(
             d8_fdr,
             upstream_pour_points=upstream_pour_points,
-            weights=param_input_dict['raster'],
+            weights=array,
             )
         out_dict[(i, dim_name)] = accumulated.copy()
 
