@@ -11,7 +11,7 @@ from fcpgtools.types import Raster, Shapefile, RasterSuffixes, ShapefileSuffixes
     PourPointValuesDict, D8ConversionDicts
 
 # CLIENT FACING I/O FUNCTIONS
-def intake_raster(
+def load_raster(
     in_raster: Raster,
     ) -> xr.DataArray:
     """Used in the first line of most functions to make sure all inputs are DataArray w/ valid nodata"""
@@ -20,7 +20,7 @@ def intake_raster(
     elif isinstance(in_raster, os.PathLike):
         return _format_nodata(rio.open_rasterio(in_raster).squeeze())
 
-def intake_shapefile(
+def load_shapefile(
     in_shapefile: Shapefile,
     ) -> gpd.GeoDataFrame:
     """Used in the first line of most functions to make sure all shapefile data is in a GeoDataFrame"""
@@ -62,7 +62,7 @@ def save_shapefile(
 def id_d8_format(
     raster: Raster,
     ) -> str:
-    raster = intake_raster(raster)
+    raster = load_raster(raster)
     uniques = np.unique(raster.values)
     if np.max(uniques) > 8: return 'esri'
     elif np.max(uniques) <= 8: return 'taudem'
@@ -70,15 +70,15 @@ def id_d8_format(
     'as either ESRI or TauDEM. Please use the param:in_format for pyfunc:convert_fdr_formats()')
 
 # CLIENT FACING UTILITY FUNTIONS
-def update_parameter_raster(
+def adjust_parameter_raster(
     parameter_raster: Raster,
     d8_fdr: Raster,
     upstream_pour_points: PourPointValuesDict,
     ) -> xr.DataArray:
 
     # pull in data
-    parameter_raster = intake_raster(parameter_raster)
-    d8_fdr = intake_raster(d8_fdr)
+    parameter_raster = load_raster(parameter_raster)
+    d8_fdr = load_raster(d8_fdr)
 
     # pull in pour point data
     pour_point_coords = upstream_pour_points['pour_point_coords']
@@ -89,7 +89,7 @@ def update_parameter_raster(
         values_list = pour_point_values[i]
 
         # get downstream coordinates
-        ds_coords = _find_cell_downstream(
+        ds_coords = find_downstream_cell(
             d8_fdr,
             coords,
             )
@@ -103,14 +103,14 @@ def update_parameter_raster(
             continue
 
         if len(parameter_raster.shape) == 2: 
-            parameter_raster = update_cell_values(
+            parameter_raster = update_raster_values(
                 in_raster=parameter_raster,
                 update_points=[(ds_coords, values_list[0])],
                 )
         else:
             dim_index_values = parameter_raster[parameter_raster.dims[0]].values
             for band_index, value in enumerate(dim_index_values):
-                parameter_raster[band_index,:,:] = update_cell_values(
+                parameter_raster[band_index,:,:] = update_raster_values(
                     in_raster=parameter_raster[band_index,:,:],
                     update_points=[(ds_coords, values_list[band_index])],
                     )
@@ -136,14 +136,14 @@ def clip(
         Note: Using this parameter assumes that coordinates match the CRS of param:in_raster.
     :returns: (xr.DataArray) the clipped raster as a xarray DataArray object.
     """
-    in_raster = intake_raster(in_raster)
+    in_raster = load_raster(in_raster)
 
     if match_raster is not None:
-        match_raster = intake_raster(match_raster)
+        match_raster = load_raster(match_raster)
         crs = match_raster.rio.crs.to_wkt()
         bbox = match_raster.rio.bounds()
     elif match_shapefile is not None:
-        match_shapefile = intake_shapefile(match_shapefile)
+        match_shapefile = load_shapefile(match_shapefile)
         crs = match_shapefile.crs.to_wkt()
         bbox = match_shapefile.geometry.total_bounds
     elif custom_bbox is not None:
@@ -180,7 +180,7 @@ def reproject_raster(
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the reprojected raster as a xarray DataArray object.
     """
-    in_raster = intake_raster(in_raster)
+    in_raster = load_raster(in_raster)
     if out_crs is not None:
         out_crs = _get_crs(out_crs)
     elif wkt_string is not None:
@@ -210,7 +210,7 @@ def reproject_shapefile(
     wkt_string: str = None,
     out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
-    in_shapefile = intake_raster(in_shapefile)
+    in_shapefile = load_raster(in_shapefile)
     if out_crs is not None:
         out_crs = _get_crs(out_crs)
     elif wkt_string is not None:
@@ -241,8 +241,8 @@ def resample(
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the resampled raster as a xarray DataArray object.
     """
-    in_raster = intake_raster(in_raster)
-    match_raster = intake_raster(match_raster)
+    in_raster = load_raster(in_raster)
+    match_raster = load_raster(match_raster)
 
     try:
         out_raster = in_raster.rio.reproject(
@@ -264,7 +264,7 @@ def resample(
 
     return out_raster
 
-def sample_raster(
+def query_point(
     raster: xr.DataArray,
     coords: Tuple[float, float],
     ) -> Union[float, int]:
@@ -309,7 +309,7 @@ def get_max_cell(
     return (max_slice.x.values.item(0),
             max_slice.y.values.item(0))
 
-def update_cell_values(
+def update_raster_values(
     in_raster: Union[xr.DataArray, str],
     update_points: List[Tuple[Tuple[float, float], Union[float, int]]],
     out_path: Union[str, Path] = None,
@@ -323,7 +323,7 @@ def update_cell_values(
     :param out_path: (str, default=None) defines a path to save the output raster.
     :returns: param:in_raster with the updated cell value as a xarray DataArray object.
     """
-    out_raster = intake_raster(in_raster)
+    out_raster = load_raster(in_raster)
 
     for update_tuple in update_points:
         _update_cell_value_(
@@ -337,6 +337,20 @@ def update_cell_values(
 
     return out_raster
 
+def change_nodata_value(
+    in_raster: xr.DataArray,
+    new_nodata: Union[float, int]
+    ) -> xr.DataArray:
+    in_raster = in_raster.where(
+        in_raster.values != in_raster.rio.nodata,
+        new_nodata,
+        )
+    in_raster = in_raster.rio.write_nodata(
+        new_nodata,
+        inplace=True,
+        )
+    return in_raster
+
 # BACK-END FACING UTILITY FUNTIONS
 def _intake_ambigous(
     in_data: Union[Raster, Shapefile],
@@ -344,9 +358,9 @@ def _intake_ambigous(
     """Somewhat less performant intake function when the input can be either a Raster or Shapefile"""
     if isinstance(in_data, os.PathLike):
         if in_data.suffix in RasterSuffixes:
-            return intake_raster(in_data)
+            return load_raster(in_data)
         elif in_data.suffix in ShapefileSuffixes:
-            return intake_shapefile(in_data)
+            return load_shapefile(in_data)
     elif isinstance(in_data, xr.DataArray) or isinstance(in_data, gpd.GeoDataFrame):
         return in_data
 
@@ -369,20 +383,6 @@ def _format_nodata(
             nodata_value,
             inplace=True,
             ) 
-    return in_raster
-
-def _replace_nodata_value(
-    in_raster: xr.DataArray,
-    new_nodata: Union[float, int]
-    ) -> xr.DataArray:
-    in_raster = in_raster.where(
-        in_raster.values != in_raster.rio.nodata,
-        new_nodata,
-        )
-    in_raster = in_raster.rio.write_nodata(
-        new_nodata,
-        inplace=True,
-        )
     return in_raster
 
 def _get_crs(
@@ -416,7 +416,7 @@ def _update_cell_value_(
     value: Union[float, int],
     ) -> xr.DataArray:
     """
-    Underlying function called in update_cell_values() to update a DataArray by x,y coordinates.
+    Underlying function called in update_raster_values() to update a DataArray by x,y coordinates.
     :param raster: (xr.DataArray) a raster as a DataArray in memory.
     :param coords: (tuple) coordinate as (lat:float, lon:float) of the cell to be updated.
     :param value: (float or int) new value to give the cell.
@@ -435,8 +435,8 @@ def _verify_shape_match(
     in_raster2: Raster,
     ) -> bool:
     # get dimension info
-    shape1 = intake_raster(in_raster1).shape
-    shape2 = intake_raster(in_raster2).shape
+    shape1 = load_raster(in_raster1).shape
+    shape2 = load_raster(in_raster2).shape
     len1 = len(shape1)
     len2 = len(shape2)
 
@@ -496,7 +496,7 @@ def _combine_split_bands(
         dim=index,
         )
 
-def _find_cell_downstream(
+def find_downstream_cell(
     d8_fdr: xr.DataArray,
     coords: Tuple[float, float],
     ) -> Tuple[float, float]:
@@ -518,7 +518,7 @@ def _find_cell_downstream(
 
     # get FDR cell value
     value = int(
-        sample_raster(
+        query_point(
             d8_fdr,
             coords,
             )

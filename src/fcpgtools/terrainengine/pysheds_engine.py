@@ -6,9 +6,9 @@ from pysheds.view import ViewFinder
 from pathlib import Path
 from typing import List, Dict, TypedDict, Union
 from fcpgtools.types import Raster, PyShedsInputDict
-from fcpgtools.utilities import intake_raster, _split_bands, _combine_split_bands, \
-    update_parameter_raster, save_raster, _verify_shape_match, _replace_nodata_value
-from fcpgtools.tools import prep_parameter_grid
+from fcpgtools.utilities import load_raster, _split_bands, _combine_split_bands, \
+    adjust_parameter_raster, save_raster, _verify_shape_match, change_nodata_value
+from fcpgtools.tools import make_fac_weights
 
 
 # UNDERLYING FUNCTIONS TO IMPORT/EXPORT DATA FROM PYSHEDS OBJECTS
@@ -74,7 +74,7 @@ def _pysheds_to_xarray(
     return array
 
 # CLIENT FACING PROTOCOL IMPLEMENTATIONS
-def fac_from_fdr(
+def accumulate_flow(
     d8_fdr: Raster, 
     weights: xr.DataArray = None,
     upstream_pour_points: List = None,
@@ -82,7 +82,7 @@ def fac_from_fdr(
     **kwargs,
     ) -> xr.DataArray:
 
-    d8_fdr = intake_raster(d8_fdr)
+    d8_fdr = load_raster(d8_fdr)
     d8_fdr = d8_fdr.where(
         (d8_fdr.values != d8_fdr.rio.nodata),
         0,
@@ -98,12 +98,12 @@ def fac_from_fdr(
                 d8_fdr,
                 dtype=np.dtype('float64'),
                 ) + 1
-            weights = update_parameter_raster(
+            weights = adjust_parameter_raster(
                 weights,
                 upstream_pour_points,
                 )
         weights = PyShedsRaster(
-            prep_parameter_grid(
+            make_fac_weights(
                 weights,
                 d8_fdr,
                 np.nan,
@@ -135,7 +135,7 @@ def fac_from_fdr(
         out_raster.rio.nodata,
         )
 
-    out_raster = _replace_nodata_value(
+    out_raster = change_nodata_value(
         out_raster,
         np.nan
         )
@@ -146,7 +146,7 @@ def fac_from_fdr(
     
     return out_raster
 
-def parameter_accumulate( 
+def accumulate_parameter( 
     d8_fdr: Raster, 
     parameter_raster: Raster,
     upstream_pour_points: List = None,
@@ -154,11 +154,11 @@ def parameter_accumulate(
     **kwargs,
     ) -> xr.DataArray:
 
-    d8_fdr = intake_raster(d8_fdr)
-    parameter_raster = intake_raster(parameter_raster)
+    d8_fdr = load_raster(d8_fdr)
+    parameter_raster = load_raster(parameter_raster)
 
-    # add any pour point accumulation via utilities.update_parameter_raster()
-    if upstream_pour_points is not None: parameter_raster = update_parameter_raster(
+    # add any pour point accumulation via utilities.adjust_parameter_raster()
+    if upstream_pour_points is not None: parameter_raster = adjust_parameter_raster(
         parameter_raster,
         upstream_pour_points,
         )
@@ -174,7 +174,7 @@ def parameter_accumulate(
     for index_tuple, array in raster_bands.items():
         i, dim_name = index_tuple
 
-        accumulated = fac_from_fdr(
+        accumulated = accumulate_flow(
             d8_fdr,
             upstream_pour_points=upstream_pour_points,
             weights=array,

@@ -63,7 +63,7 @@ class TaudemFACInputDict(TypedDict):
     mpiCall: str
     mpiArg: str
 
-class TaudemDist2StreamInputDict(TypedDict):
+class Taudemdistance_to_streamInputDict(TypedDict):
     fdr: str
     fac: str
     outRast: str
@@ -82,5 +82,5 @@ class TaudemMaxUpslopeInputDict(TypedDict):
     mpiArg: str
 
 TauDEMDict = Union[TaudemFACInputDict,
-    TaudemDist2StreamInputDict,
+    Taudemdistance_to_streamInputDict,
     TaudemMaxUpslopeInputDict,]

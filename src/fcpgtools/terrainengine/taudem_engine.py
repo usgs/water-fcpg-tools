@@ -9,9 +9,9 @@ from pathlib import Path
 import numpy as np
 import xarray as xr
 from fcpgtools.types import Raster, TauDEMDict
-from fcpgtools.utilities import intake_raster, save_raster, \
-    _combine_split_bands, _split_bands, update_parameter_raster, _verify_alignment, _replace_nodata_value
-from fcpgtools.tools import prep_parameter_grid, value_mask, d8_to_dinf
+from fcpgtools.utilities import load_raster, save_raster, \
+    _combine_split_bands, _split_bands, adjust_parameter_raster, _verify_alignment, change_nodata_value
+from fcpgtools.tools import make_fac_weights, value_mask, d8_to_dinfinity, mask_streams
 
 def _taudem_prepper(
     in_raster: Raster,
@@ -75,7 +75,7 @@ def _clear_temp_files(
         except PermissionError: pass # print('WARNING: Could not delete temp files due to a PermissionError')
     return None
 
-def fac_from_fdr(
+def accumulate_flow(
     d8_fdr: Raster,
     upstream_pour_points: List = None,
     weights: xr.DataArray = None,
@@ -107,11 +107,11 @@ def fac_from_fdr(
                 d8_fdr,
                 dtype=np.dtype('float64'),
                 ) + 1
-            weights = update_parameter_raster(
+            weights = adjust_parameter_raster(
                 weights,
                 upstream_pour_points,
                 )
-            weights = prep_parameter_grid(
+            weights = make_fac_weights(
                 weights,
                 d8_fdr,
                 -1,
@@ -150,7 +150,7 @@ def fac_from_fdr(
     if not Path(taudem_dict['outFl']).exists():
         raise FileNotFoundError('ERROR: TauDEM areaD8 failed to create an output!')
 
-    out_raster = intake_raster(Path(taudem_dict['outFl']))
+    out_raster = load_raster(Path(taudem_dict['outFl']))
     out_raster = out_raster.astype(np.float64)
 
     # convert out of bounds values to np.nan, in bounds nan to 0, and update nodata
@@ -171,7 +171,7 @@ def fac_from_fdr(
 
     return out_raster
 
-def parameter_accumulate( 
+def accumulate_parameter( 
     d8_fdr: Raster, 
     parameter_raster: Raster,
     upstream_pour_points: List = None,
@@ -191,15 +191,15 @@ def parameter_accumulate(
     :param **kwargs: can pass in optional values using "cores", "mpiCall", "mpiArg" TauDem arguments.
     :returns: (xr.DataArray) the parameter accumulation raster as a xarray DataArray object.
     """
-    d8_fdr = intake_raster(d8_fdr)
-    parameter_raster = prep_parameter_grid(
+    d8_fdr = load_raster(d8_fdr)
+    parameter_raster = make_fac_weights(
         parameter_raster=parameter_raster,
         fdr_raster=d8_fdr,
         out_of_bounds_value=-1,
         )
 
-    # add any pour point accumulation via utilities.update_parameter_raster()
-    if upstream_pour_points is not None: parameter_raster = update_parameter_raster(
+    # add any pour point accumulation via utilities.adjust_parameter_raster()
+    if upstream_pour_points is not None: parameter_raster = adjust_parameter_raster(
         parameter_raster,
         upstream_pour_points,
         )
@@ -215,7 +215,7 @@ def parameter_accumulate(
     for index_tuple, array in raster_bands.items():
         i, dim_name = index_tuple
 
-        accumulated = fac_from_fdr(
+        accumulated = accumulate_flow(
             d8_fdr,
             weights=array,
             )
@@ -226,7 +226,7 @@ def parameter_accumulate(
     if len(out_dict.keys()) > 1:
         out_raster =  _combine_split_bands(out_dict)
     else: out_raster = list(out_dict.items())[0][1] 
-    out_raster.name = 'Parameter_Accumulate'
+    out_raster.name = 'accumulate_parameter'
 
     # save if necessary and remove temp files
     if isinstance(out_path, str): out_path = Path(out_path)
@@ -258,17 +258,17 @@ def distance_to_stream(
     d8_fdr = _taudem_prepper(d8_fdr)
 
     # get stream grid as a taudem tempfile
-    fac_raster = intake_raster(fac_raster)
+    fac_raster = load_raster(fac_raster)
     fac_raster = fac_raster.fillna(0)
     fac_raster = fac_raster.rio.write_nodata(0)
     fac_raster = fac_raster.astype('int')
-    fac_raster = _taudem_prepper(fac_raster)
+    fac_path = _taudem_prepper(fac_raster)
 
     if out_path is None:
         out_path = Path(
             tempfile.TemporaryFile(
                 dir=Path.cwd(),
-                prefix='dist2stream_temp',
+                prefix='distance_to_stream_temp',
                 suffix='.tif',
                 ).name
             )
@@ -276,7 +276,7 @@ def distance_to_stream(
 
     taudem_dict = {
         'fdr': d8_fdr,
-        'fac': fac_raster,
+        'fac': fac_path,
         'outRast': str(out_path),
         'thresh': accum_threshold,
         'cores': 1,
@@ -294,12 +294,20 @@ def distance_to_stream(
         raise FileNotFoundError('ERROR: TauDEM D8HDistTostrm failed to create an output!')    
 
     # update nodata values
-    out_raster = intake_raster(out_path)
-    out_raster = _replace_nodata_value(out_raster, np.nan)
+    out_raster = load_raster(out_path)
+    out_raster = change_nodata_value(out_raster, np.nan)
+
+    # convert 0.1 (minimum) values to np.nan and convert streams to 0
+    out_raster = value_mask(out_raster, thresh=0.1)
+    streams = mask_streams(fac_raster, accum_threshold)
+    out_raster = out_raster.where(
+        (np.isnan(streams.values)),
+        0,
+        )
 
     # clear temporary files and return the output
     out_raster.close()
-    _clear_temp_files(prefixs=['taudem_temp_input', 'dist2stream_temp'])
+    _clear_temp_files(prefixs=['taudem_temp_input', 'distance_to_stream_temp'])
 
     return out_raster
 
@@ -341,14 +349,14 @@ def _ext_upslope_cmd(
     if not Path(taudem_dict['outRast']).exists():
         raise FileNotFoundError('ERROR: TauDEM D8FlowPathExtremeUp failed to create an output!')
 
-    out_raster = intake_raster(Path(taudem_dict['outRast']))
+    out_raster = load_raster(Path(taudem_dict['outRast']))
 
     # update nodata and convert -9999 values to nodata
     out_raster = out_raster.where(
         (out_raster != -9999),
         out_raster.rio.nodata,
         )
-    out_raster = _replace_nodata_value(
+    out_raster = change_nodata_value(
         out_raster,
         np.nan,
         )
@@ -357,10 +365,10 @@ def _ext_upslope_cmd(
     _clear_temp_files(prefixs=['ext_upslope_temp'])
     return out_raster
 
-def get_max_upslope(
+def extreme_upslope_values(
     d8_fdr: Raster,
     parameter_raster: Raster,
-    stream_mask: Raster = None,
+    mask_streams: Raster = None,
     out_path: Union[str, Path] = None,
     get_min_upslope: bool = False,
     **kwargs,
@@ -371,14 +379,14 @@ def get_max_upslope(
         Note: This is a wrapper for the TauDEM's d8flowpathextremeup.
     :param d8_fdr: (xr.DataArray or path str) path to flow direction raster in TauDEM format.
     :param parameter_raster: (xr.DataArray or path str) a parameter raster to find the max values from.
-    :param stream_mask: (optional, xr.DataArray or path str) a stream mask raster from tools.stream_mask().
+    :param mask_streams: (optional, xr.DataArray or path str) a stream mask raster from tools.mask_streams().
         If provided, the output will be masked to only stream cells.
     :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) raster with max (or min) upstream value of the 
         parameter grid as each cell's value.
     """
     d8_fdr = _taudem_prepper(d8_fdr)
-    parameter_raster = intake_raster(parameter_raster)
+    parameter_raster = load_raster(parameter_raster)
     accum_type_str = '-min' if get_min_upslope else ''
 
     # split if multi-dimensional
@@ -408,10 +416,10 @@ def get_max_upslope(
     out_raster.name = f'{accum_type_str[1:]}_upslope_values'
     
     # apply stream mask if necessary
-    if stream_mask is not None:
-        if _verify_alignment(out_raster, stream_mask):
+    if mask_streams is not None:
+        if _verify_alignment(out_raster, mask_streams):
             out_raster = out_raster.where(
-                (stream_mask != stream_mask.rio.nodata),
+                (mask_streams != mask_streams.rio.nodata),
                 np.nan,
                 )
         else:
@@ -419,7 +427,7 @@ def get_max_upslope(
             'No mask is applied.')
     
     # update nodata values
-    out_raster = _replace_nodata_value(out_raster, np.nan)
+    out_raster = change_nodata_value(out_raster, np.nan)
 
     # save if necessary
     if out_path is not None:
@@ -470,14 +478,14 @@ def _decay_accumulation_cmd(
     if not Path(taudem_dict['dsca']).exists():
         raise FileNotFoundError('ERROR: TauDEM dinfdecayaccum failed to create an output!')
 
-    out_raster = intake_raster(Path(taudem_dict['dsca']))
+    out_raster = load_raster(Path(taudem_dict['dsca']))
 
     # update nodata and convert -9999 values to nodata
     out_raster = out_raster.where(
         (out_raster != -9999),
         out_raster.rio.nodata,
         )
-    out_raster = _replace_nodata_value(
+    out_raster = change_nodata_value(
         out_raster,
         np.nan,
         )
@@ -498,7 +506,7 @@ def decay_accumulation(
     Creates a D-Infinity based accumulation raster (parameter or cell accumulation) while applying decay via a multiplier_raster.
         Note: This is a command line wrapper of TauDEM:DinfDecayAccum.
     :param dinf_fdr: (xr.DataArray or str raster path) path to flow direction raster in D-Infinity format.
-        Note: This input can be made with tools.d8_to_dinf().
+        Note: This input can be made with tools.d8_to_dinfinity().
     :param multiplier_raster: (xr.DataArray or str raster path)
     :param parameter_raster: (optional, xr.DataArray or str raster path)
     :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
@@ -506,15 +514,15 @@ def decay_accumulation(
     :returns:
     """
     # prep data for taudem
-    d8_fdr = intake_raster(d8_fdr)
-    dinf_fdr = d8_to_dinf(d8_fdr)
+    d8_fdr = load_raster(d8_fdr)
+    dinf_fdr = d8_to_dinfinity(d8_fdr)
     
     dinf_fdr_path = _taudem_prepper(dinf_fdr)
     decay_raster_path = _taudem_prepper(decay_raster)
 
     # prep parameter raster and boundary conditions
     weights = None
-    if parameter_raster is not None: weights = intake_raster(parameter_raster)
+    if parameter_raster is not None: weights = load_raster(parameter_raster)
     elif upstream_pour_points is not None:
         weights = xr.zeros_like(
             dinf_fdr,
@@ -522,12 +530,12 @@ def decay_accumulation(
             ) + 1
     if weights is not None:
         if upstream_pour_points is not None:
-            weights = update_parameter_raster(
+            weights = adjust_parameter_raster(
                 weights,
                 d8_fdr,
                 upstream_pour_points,
                 )
-        weights = prep_parameter_grid(
+        weights = make_fac_weights(
             weights,
             dinf_fdr,
             np.nan,
@@ -568,12 +576,12 @@ def decay_accumulation(
     out_raster.name = 'decay_accumulation_raster'
 
     # update nodata values
-    out_raster = prep_parameter_grid(
+    out_raster = make_fac_weights(
         out_raster,
         d8_fdr,
         np.nan,
         )
-    out_raster = _replace_nodata_value(out_raster, np.nan)
+    out_raster = change_nodata_value(out_raster, np.nan)
 
     # save if necessary
     if out_path is not None:

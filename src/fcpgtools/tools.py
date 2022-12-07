@@ -6,9 +6,9 @@ import pandas as pd
 import geopandas as gpd
 from rasterio.enums import Resampling
 from fcpgtools.types import Raster, FDRD8Formats, D8ConversionDicts, PourPointLocationsDict, PourPointValuesDict
-from fcpgtools.utilities import intake_raster, intake_shapefile, save_raster, clip, reproject_raster, \
-    resample, id_d8_format, _combine_split_bands, _verify_basin_coverage, get_max_cell, sample_raster, \
-    _split_bands, _verify_shape_match, _get_crs, _replace_nodata_value, _verify_alignment
+from fcpgtools.utilities import load_raster, load_shapefile, save_raster, clip, reproject_raster, \
+    resample, id_d8_format, _combine_split_bands, _verify_basin_coverage, get_max_cell, query_point, \
+    _split_bands, _verify_shape_match, _get_crs, change_nodata_value, _verify_alignment
 
 # CLIENT FACING FUNCTIONS
 def align_raster(
@@ -53,7 +53,7 @@ def convert_fdr_formats(
     :returns: (xr.DataArray) the re-encoded D8 Flow Direction Raster (FDR).
     """
     # identify the input D8 format
-    d8_fdr = intake_raster(d8_fdr)
+    d8_fdr = load_raster(d8_fdr)
     out_format = out_format.lower()
     if in_format is not None: in_format = in_format.lower()
     else:
@@ -104,7 +104,7 @@ def convert_fdr_formats(
 
     return d8_fdr
 
-def prep_parameter_grid(
+def make_fac_weights(
     parameter_raster: xr.DataArray,
     fdr_raster: xr.DataArray,
     out_of_bounds_value: Union[float, int],
@@ -154,7 +154,7 @@ def prep_parameter_grid(
         inplace=True,
         )
     parameter_raster.rio.write_crs(og_crs, inplace=True)
-    parameter_raster = _replace_nodata_value(
+    parameter_raster = change_nodata_value(
         parameter_raster,
         out_of_bounds_value,
         )
@@ -166,20 +166,20 @@ def prep_parameter_grid(
     return parameter_raster
 
 def make_decay_raster(
-    dist2stream_raster: Raster,
+    distance_to_stream_raster: Raster,
     decay_factor: Union[int, float],
     out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
-    dist2stream_raster = intake_raster(dist2stream_raster).astype('float')
-    cell_size = dist2stream_raster.rio.resolution()[0]
+    distance_to_stream_raster = load_raster(distance_to_stream_raster).astype('float')
+    cell_size = distance_to_stream_raster.rio.resolution()[0]
     
     decay_array = np.exp(
-        (-1 * dist2stream_raster.values * cell_size) / (cell_size ** decay_factor)
+        (-1 * distance_to_stream_raster.values * cell_size) / (cell_size ** decay_factor)
         )
     decay_raster = xr.DataArray(
         data=decay_array,
-        coords=dist2stream_raster.coords,
-        attrs=dist2stream_raster.attrs,
+        coords=distance_to_stream_raster.coords,
+        attrs=distance_to_stream_raster.attrs,
         )
     decay_raster.name = 'decay_raster'
 
@@ -206,8 +206,8 @@ def spatial_mask(
     :param inverse: (bool, default=False) if True, cells that ARE COVERED by mask_shp -> NoData.
     :returns: (xr.DataArray) the output spatially masked raster.
     """
-    in_raster = intake_raster(in_raster)
-    mask_shp = intake_shapefile(mask_shp)
+    in_raster = load_raster(in_raster)
+    mask_shp = load_shapefile(mask_shp)
 
     out_raster = in_raster.rio.clip(
         mask_shp.geometry.values,
@@ -245,7 +245,7 @@ def value_mask(
     :returns: (xr.DataArray) the output raster with all masked out values == nodata or param:out_mask_value.
     """
     # handle nodata / out-of-mask values
-    in_raster = intake_raster(in_raster)
+    in_raster = load_raster(in_raster)
     if out_mask_value is None: out_mask_value = in_raster.rio.nodata
     
     # build conditionals
@@ -278,7 +278,7 @@ def value_mask(
         save_raster(out_raster, out_path)
     return out_raster
 
-def stream_mask(
+def mask_streams(
     fac_raster: Raster,
     accumulation_threshold: Union[int, float],
     out_path: Union[str, Path] = None,
@@ -289,7 +289,7 @@ def stream_mask(
     :param accumulation_threshold: (int or float) the flow accumulation threshold.
     :returns: (xr.DataArray) the output raster with cells below the threshold encoded as np.nan
     """
-    fac_raster = intake_raster(fac_raster).astype('float')
+    fac_raster = load_raster(fac_raster).astype('float')
 
     # handle input nodata
     fac_raster = fac_raster.where(
@@ -298,17 +298,17 @@ def stream_mask(
             )
     
     # apply stream mask
-    stream_mask = fac_raster.where(
+    mask_streams = fac_raster.where(
             (fac_raster >= accumulation_threshold),
             np.nan,
             )
-    stream_mask = stream_mask.rio.write_nodata(np.nan)
+    mask_streams = mask_streams.rio.write_nodata(np.nan)
 
     # save if necessary
     if out_path is not None:
-        save_raster(stream_mask, out_path)
+        save_raster(mask_streams, out_path)
     
-    return stream_mask
+    return mask_streams
 
 def binarize_nodata(
     in_raster: Raster,
@@ -325,7 +325,7 @@ def binarize_nodata(
     :returns: (xr.DataArray) the output binary mask raster.
     """
     # handle nodata / out-of-mask values
-    in_raster = intake_raster(in_raster)
+    in_raster = load_raster(in_raster)
     if nodata_value is None: nodata_value = in_raster.rio.nodata
 
     # convert all values to 0 or 1
@@ -362,7 +362,7 @@ def binarize_categorical_raster(
     :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) a N-band multi-dimensional raster as a xarray DataArray object.
     """
-    cat_raster = intake_raster(cat_raster)
+    cat_raster = load_raster(cat_raster)
     cat_dtype = str(cat_raster.dtype)
     if 'int'  not in cat_dtype:
         print('ERROR: Categorical rasters must be dtype=int.')
@@ -397,7 +397,7 @@ def binarize_categorical_raster(
         save_raster(out_raster, out_path)
     return out_raster
 
-def d8_to_dinf(
+def d8_to_dinfinity(
     d8_fdr: Raster,
     out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
@@ -409,7 +409,7 @@ def d8_to_dinf(
     """
 
     # if not taudem format, convert
-    d8_fdr = intake_raster(d8_fdr)
+    d8_fdr = load_raster(d8_fdr)
     d8_fdr = convert_fdr_formats(
         d8_fdr,
         out_format='taudem',
@@ -448,8 +448,8 @@ def find_pour_points(
     :param basin_level: (str), either 'HUC4' or 'HUC12'
     :returns: (dict) a dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(x, y).
     """
-    fac_raster = intake_raster(fac_raster)
-    basins_shp = intake_shapefile(basins_shp)
+    fac_raster = load_raster(fac_raster)
+    basins_shp = load_shapefile(basins_shp)
 
     # verify that we can find the basin_id_field
     if basin_id_field is not None:
@@ -495,14 +495,14 @@ def get_pour_point_values(
     ) -> PourPointValuesDict:
     """
     Get the accumlation raster values from downstream pour points. Note: This function is intended to feed
-        into terrainengine.fac_from_fdr() or terrainengine.parameter_accumlate() param:upstream_pour_points.
+        into terrainengine.accumulate_flow() or terrainengine.parameter_accumlate() param:upstream_pour_points.
     :param pour_points_dict: (dict) a dictionary of form fcpgtools.types.PourPointValuesDict.
     :param accumulation_raster: (xr.DataArray or str raster path) a Flow Accumulation Cell raster (FAC) or a
         parameter accumulation raster.
     :returns: (list) a list of tuples (one for each pour point) storing their coordinates [0] and accumulation value [1].
     """
     # pull in the accumulation raster
-    accumulation_raster = intake_raster(accumulation_raster)
+    accumulation_raster = load_raster(accumulation_raster)
     
     # remove old values if accidentally passed in
     if 'pour_point_values' in list(pour_points_dict.keys()):
@@ -520,7 +520,7 @@ def get_pour_point_values(
         basin_values_list = []
         for band in raster_bands.values():
             basin_values_list.append(
-                sample_raster(
+                query_point(
                     band,
                     pour_point_coords,
                     )
@@ -532,7 +532,7 @@ def get_pour_point_values(
     return pour_points_dict
 
 # make FCPG raster
-def create_fcpg(
+def make_fcpg(
     param_accum_raster: Raster,
     fac_raster: Raster,
     ignore_nodata: bool = False,
@@ -550,8 +550,8 @@ def create_fcpg(
     :returns: (xr.DataArray) the output FCPG raster as a xarray DataArray object.
     """
     # bring in data
-    fac_raster = intake_raster(fac_raster)
-    param_accum_raster = intake_raster(param_accum_raster)
+    fac_raster = load_raster(fac_raster)
+    param_accum_raster = load_raster(param_accum_raster)
 
     #TODO: deal with zero values in a more clever way (upstream in the pipeline?)
     fcpg_raster = param_accum_raster / (fac_raster + 1)

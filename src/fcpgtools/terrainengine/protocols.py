@@ -9,7 +9,7 @@ class SupportsFDRtoFAC(Protocol):
     """"""
 
     @abc.abstractmethod
-    def fac_from_fdr(
+    def accumulate_flow(
             d8_fdr: Raster, 
             upstream_pour_points: List = None,
             out_path: Union[str, Path] = None,
@@ -30,7 +30,7 @@ class SupportsParameterAccumulation(Protocol):
     """"""
 
     @abc.abstractmethod
-    def parameter_accumulate( 
+    def accumulate_parameter( 
         d8_fdr: Raster, 
         parameter_raster: Raster,
         upstream_pour_points: List = None,
@@ -57,7 +57,7 @@ class SupportsMaxUpslope(Protocol):
     """"""
 
     @abc.abstractmethod
-    def get_max_upslope(
+    def extreme_upslope_values(
             fdr: Raster, 
             param_raster: Raster, 
             get_min: bool = False,
@@ -85,13 +85,13 @@ class SupportsDistanceToStream(Protocol):
     @abc.abstractmethod
     def distance_to_stream(
             fdr: Raster, 
-            stream_mask: Raster,
+            mask_streams: Raster,
             out_path: Union[str, Path] = None
         ) -> xr.DataArray:
         """
         Create a raster where cell values represent the horizantal distance to the nearest stream ALONG the flow path.
         :param fdr: (xr.DataArray or str raster path) a TauDEM encoded D8 Flow Direction Raster (FDR).
-        :param stream_mask: (xr.DataArray or str raster path) a binary raster where value=1 where for stream cells
+        :param mask_streams: (xr.DataArray or str raster path) a binary raster where value=1 where for stream cells
             as designated by meeting some flow accumulation threshold. Output of pyfunc:value_mask(thresh=int/float).
         :param out_path: (str path, default=None) defines a path to save the output raster.
         :returns: (xr.DataArray) a raster with cell value equal to the horizantal length along the flow path to the
@@ -112,8 +112,8 @@ class SupportsDecayRaster(Protocol):
         """
         Creates a decay weight raster based on distance to stream and a decay factor. The output raster
             has values ranging from 0 (total decay) to 1 (no decay) and is intended to be used in pyfunc:decay_accumulation().
-            Note: output cell value: np.exp((-1 * dist2stream_raster * cell_size) / (cell_size ** decay_constant))`
-        :param dist2stream_raster: (xr.DataArray or str raster path) a raster with cell value equal to the flow path to the
+            Note: output cell value: np.exp((-1 * distance_to_stream_raster * cell_size) / (cell_size ** decay_constant))`
+        :param distance_to_stream_raster: (xr.DataArray or str raster path) a raster with cell value equal to the flow path to the
             the nearest stream cell. This raster is output from pyfunc:calculate_dsit2stream().
         :param decay_constant: (float or int) the decay constant in the decay formula.
             Set k to 2 for "moderate" decay; greater than 2 for slower decay; or less than 2 for faster decay.
@@ -136,7 +136,7 @@ class SupportsDecayAccumulation(Protocol):
         Create a decayed accumulation raster from a D-Infinity FDR.
         In TauDEM this is "D-Infinity Decaying Accumulation" function.
         :param dinf_fdr: (xr.DataArray or str raster path) a D-Infinity Flow Direction Raster (FDR).
-        :param decay_raster: (xr.DataArray or str raster path) a dist2stream based decay raster (dtype=float, values 0-1).
+        :param decay_raster: (xr.DataArray or str raster path) a distance_to_stream based decay raster (dtype=float, values 0-1).
             Note: this is the output of pyfunc:make_decay_raster().
         :param param_raster: (xr.DataArray or str raster path, default=None) a raster to accumulate.
             if None, this function produces a D-Infinity decayed FAC.
