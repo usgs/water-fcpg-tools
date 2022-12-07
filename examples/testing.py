@@ -24,6 +24,7 @@ def main(
     multi_dimensional_test: bool = MULTI_DIMENSIONAL_TEST,
     test_pysheds: bool = True,
     test_taudem: bool = True,
+    test_pour_points: bool = True,
     ) -> bool:
     
     # get all necessary paths for in/out data
@@ -50,8 +51,8 @@ def main(
     us_basin_shp_path = in_data_dir / Path('upstream_wbd.shp')
 
     # pull data into DataArrays and GeoPandas
-    us_fdr = utilities.intake_raster(us_fdr_tif)
-    landcover = utilities.intake_raster(landcover_tif)
+    us_fdr = utilities.load_raster(us_fdr_tif)
+    landcover = utilities.load_raster(landcover_tif)
     us_basin_shp = gpd.read_file(us_basin_shp_path)
 
     # pull in precipitation data
@@ -70,7 +71,7 @@ def main(
     else:
         print('Using one dimensional precipitation data')
         precip_tif = Path(os.path.join(in_data_dir, 'validation_daymet_an_P_2017.tif'))
-        precip = utilities.intake_raster(precip_tif)
+        precip = utilities.load_raster(precip_tif)
     print('Done\n')
 
     # align precipitation raster
@@ -128,51 +129,42 @@ def main(
         print('Done\n')
 
         print('PySheds: Making a FAC from us_fdr')
-        fac_pysheds = terrainengine.pysheds_engine.fac_from_fdr(
+        fac_pysheds = terrainengine.pysheds_engine.accumulate_flow(
             us_fdr_esri,
             upstream_pour_points=None,
             out_path=None,
             )
         print('Done\n')
 
-        print('Testing utilities.update_parameter_raster()')
-        updated_fac = utilities.update_parameter_raster(
-            fac_pysheds,
-            us_fdr_esri,
-            test_update_dict,
-            )
-        if utilities.sample_raster(updated_fac,
-            utilities.get_max_cell(updated_fac),
-            ) == 999999:
-            print('Done. Raster was correctly updated.')
 
-        print('Testing getting pour points (HUC12 and HUC4 levels)')
-        huc4_pour_points = tools.find_pour_points(
-            fac_pysheds,
-            us_basin_shp,
-            basin_id_field='HUC12',
-            use_huc4=True,
-            )
+        if test_pour_points:
+            print('Testing getting pour points from pysheds accumulation (HUC12 and HUC4 levels)')
+            huc4_pour_points = tools.find_basin_pour_points(
+                fac_pysheds,
+                us_basin_shp,
+                basin_id_field='HUC12',
+                use_huc4=True,
+                )
 
-        huc12_pour_points = tools.find_pour_points(
-            fac_pysheds,
-            us_basin_shp,
-            basin_id_field='HUC12',
-            use_huc4=False,
-            )
+            huc12_pour_points = tools.find_basin_pour_points(
+                fac_pysheds,
+                us_basin_shp,
+                basin_id_field='HUC12',
+                use_huc4=False,
+                )
 
-        huc4_pp_values = tools.get_pour_point_values(
-            huc4_pour_points,
-            fac_pysheds,
-            )
+            huc4_pp_values = tools.get_pour_point_values(
+                huc4_pour_points,
+                fac_pysheds,
+                )
 
-        huc12_pp_values = tools.get_pour_point_values(
-            huc12_pour_points,
-            fac_pysheds,
-            )
+            huc12_pp_values = tools.get_pour_point_values(
+                huc12_pour_points,
+                fac_pysheds,
+                )
 
         print('PySheds: Making a daymet accumulation grid')
-        daymet_acc_pysheds = terrainengine.pysheds_engine.parameter_accumulate(
+        daymet_acc_pysheds = terrainengine.pysheds_engine.accumulate_parameter(
             us_fdr_esri,
             us_precip,
             out_path=Path(out_data_dir / Path('test_accum1.tif')),
@@ -180,7 +172,7 @@ def main(
         print('Done\n')
 
         print('PySheds: Making a landcover accumulation grid')
-        landcover_acc_pysheds = terrainengine.pysheds_engine.parameter_accumulate(
+        landcover_acc_pysheds = terrainengine.pysheds_engine.accumulate_parameter(
             us_fdr_esri,
             us_binary_landcover,
             out_path=Path(out_data_dir / Path('test_accum2.tif')),
@@ -198,74 +190,63 @@ def main(
         print('Done\n')
 
         print('TauDEM: Making a FAC from us_fdr')
-        fac_taudem = taudem_engine.fac_from_fdr(
+        fac_taudem = taudem_engine.accumulate_flow(
             d8_fdr=us_fdr_taudem, 
             upstream_pour_points=None,
             out_path=Path(Path.cwd() / 'fac.tif')
             )
         print('Done\n')
     
-        #updated_fac = utilities.update_parameter_raster(
-        #    fac_taudem,
-        #    us_fdr_taudem,
-        #    test_update_dict,
-        #    )
-        #if utilities.sample_raster(updated_fac,
-        #    utilities.get_max_cell(updated_fac),
-        #    ) == 999999:
-        #    print('Done. Raster was correctly updated.')
-#
-        #print('Testing getting pour points (HUC12 and HUC4 levels)')
-        #huc4_pour_points = tools.find_pour_points(
-        #    fac_taudem,
-        #    us_basin_shp,
-        #    basin_id_field='HUC12',
-        #    use_huc4=True,
-        #    )
-#
-        #huc12_pour_points = tools.find_pour_points(
-        #    fac_taudem,
-        #    us_basin_shp,
-        #    basin_id_field='HUC12',
-        #    use_huc4=False,
-        #    )
+        if test_pour_points:
+            print('Testing getting pour points from TauDEM accumulation (HUC12 and HUC4 levels)')
+            huc4_pour_points = tools.find_basin_pour_points(
+                fac_taudem,
+                us_basin_shp,
+                basin_id_field='HUC12',
+                use_huc4=True,
+                )
 
-        #huc4_pp_values = tools.get_pour_point_values(
-        #    huc4_pour_points,
-        #    fac_taudem,
-        #    )
-#
-        #huc12_pp_values = tools.get_pour_point_values(
-        #    huc12_pour_points,
-        #    fac_taudem,
-        #    )
-        #print('Done\n')
-#
-        #print('TauDEM: Making a daymet accumulation grid')
-        #daymet_acc_taudem = terrainengine.taudem_engine.parameter_accumulate(
-        #    us_fdr_taudem,
-        #    us_precip,
-        #    )
-        #print('Done\n')
+            huc12_pour_points = tools.find_basin_pour_points(
+                fac_taudem,
+                us_basin_shp,
+                basin_id_field='HUC12',
+                use_huc4=False,
+                )
+            huc4_pp_values = tools.get_pour_point_values(
+                huc4_pour_points,
+                fac_taudem,
+                )
 
-        #print('TauDEM: Making a landcover accumulation grid')
-        #landcover_acc_taudem = terrainengine.taudem_engine.parameter_accumulate(
-        #    us_fdr_taudem,
-        #    us_binary_landcover,
-        #    )
-        #print('Done\n')
+            huc12_pp_values = tools.get_pour_point_values(
+                huc12_pour_points,
+                fac_taudem,
+                )
+            print('Done\n')
+
+        print('TauDEM: Making a daymet accumulation grid')
+        daymet_acc_taudem = terrainengine.taudem_engine.accumulate_parameter(
+            us_fdr_taudem,
+            us_precip,
+            )
+        print('Done\n')
+        print('TauDEM: Making a landcover accumulation grid')
+        landcover_acc_taudem = terrainengine.taudem_engine.accumulate_parameter(
+            us_fdr_taudem,
+            us_binary_landcover,
+            )
+        print('Done\n')
 
         print('TauDEM: Making a distance to stream raster')
-        dist2stream_taudem = terrainengine.taudem_engine.distance_to_stream(
+        distance_to_stream_taudem = terrainengine.taudem_engine.distance_to_stream(
             us_fdr_taudem,
             fac_taudem,
             accum_threshold=100,
-            out_path=Path(Path.cwd() / 'dist2stream.tif')
+            out_path=Path(Path.cwd() / 'distance_to_stream.tif')
         )
         print('Done\n')
 
         print('Making a stream mask w/ 100 as the threshold')
-        stream_mask = tools.stream_mask(
+        mask_streams = tools.mask_streams(
             fac_taudem,
             accumulation_threshold=100,
             out_path=Path(Path.cwd() / 'streammask.tif')
@@ -273,10 +254,10 @@ def main(
         print('Done\n')
 
         print('TauDEM: Calculating extream upslope parameter values')
-        terrainengine.taudem_engine.get_max_upslope(
+        terrainengine.taudem_engine.extreme_upslope_values(
             us_fdr_taudem,
             us_precip,
-            stream_mask=None,
+            mask_streams=None,
             get_min_upslope=False,
             out_path=Path(Path.cwd() / 'max_upslope.tif')
             )
@@ -284,7 +265,7 @@ def main(
 
         print('TauDEM: Making decay grid using distance2stream raster')
         decay_raster = tools.make_decay_raster(
-            dist2stream_taudem,
+            distance_to_stream_taudem,
             decay_factor=2,
             out_path=Path(Path.cwd() / 'decay.tif'),
             )
@@ -304,4 +285,5 @@ if __name__ == '__main__':
         True,
         test_taudem=True,
         test_pysheds=False,
+        test_pour_points=False,
         )

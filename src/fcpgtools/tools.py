@@ -212,6 +212,7 @@ def spatial_mask(
     out_raster = in_raster.rio.clip(
         mask_shp.geometry.values,
         mask_shp.crs,
+        all_touched=True,
         drop=False,
         invert=inverse,
         )
@@ -432,9 +433,9 @@ def d8_to_dinfinity(
 
     return dinf_fdr
 
-def find_pour_points(
+def find_basin_pour_points(
     fac_raster: Raster, 
-    basins_shp: str = None, 
+    basins_shp: str, 
     basin_id_field: str = 'HUC12',
     use_huc4: bool = True,
     ) -> PourPointLocationsDict:
@@ -449,7 +450,7 @@ def find_pour_points(
     :returns: (dict) a dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(x, y).
     """
     fac_raster = load_raster(fac_raster)
-    basins_shp = load_shapefile(basins_shp)
+    basins_shp = load_shapefile(basins_shp).to_crs(fac_raster.rio.crs)
 
     # verify that we can find the basin_id_field
     if basin_id_field is not None:

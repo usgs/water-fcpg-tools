@@ -8,7 +8,7 @@ from typing import List, Union
 from pathlib import Path
 import numpy as np
 import xarray as xr
-from fcpgtools.types import Raster, TauDEMDict
+from fcpgtools.types import Raster, TauDEMDict, PourPointValuesDict
 from fcpgtools.utilities import load_raster, save_raster, \
     _combine_split_bands, _split_bands, adjust_parameter_raster, _verify_alignment, change_nodata_value
 from fcpgtools.tools import make_fac_weights, value_mask, d8_to_dinfinity, mask_streams
@@ -77,7 +77,7 @@ def _clear_temp_files(
 
 def accumulate_flow(
     d8_fdr: Raster,
-    upstream_pour_points: List = None,
+    upstream_pour_points: PourPointValuesDict = None,
     weights: xr.DataArray = None,
     out_path: Union[str, Path] = None,
     **kwargs,
@@ -109,6 +109,7 @@ def accumulate_flow(
                 ) + 1
             weights = adjust_parameter_raster(
                 weights,
+                d8_fdr,
                 upstream_pour_points,
                 )
             weights = make_fac_weights(
@@ -174,7 +175,7 @@ def accumulate_flow(
 def accumulate_parameter( 
     d8_fdr: Raster, 
     parameter_raster: Raster,
-    upstream_pour_points: List = None,
+    upstream_pour_points: PourPointValuesDict = None,
     out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     """
@@ -201,6 +202,7 @@ def accumulate_parameter(
     # add any pour point accumulation via utilities.adjust_parameter_raster()
     if upstream_pour_points is not None: parameter_raster = adjust_parameter_raster(
         parameter_raster,
+        d8_fdr,
         upstream_pour_points,
         )
 
@@ -497,7 +499,7 @@ def _decay_accumulation_cmd(
 def decay_accumulation(
     d8_fdr: Raster,
     decay_raster: Raster,
-    upstream_pour_points: List = None,
+    upstream_pour_points: PourPointValuesDict = None,
     parameter_raster: Raster = None,
     out_path: Union[str, Path] = None,
     **kwargs,

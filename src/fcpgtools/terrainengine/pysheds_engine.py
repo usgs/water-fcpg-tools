@@ -5,7 +5,7 @@ from pysheds.view import Raster as PyShedsRaster
 from pysheds.view import ViewFinder
 from pathlib import Path
 from typing import List, Dict, TypedDict, Union
-from fcpgtools.types import Raster, PyShedsInputDict
+from fcpgtools.types import Raster, PyShedsInputDict, PourPointValuesDict
 from fcpgtools.utilities import load_raster, _split_bands, _combine_split_bands, \
     adjust_parameter_raster, save_raster, _verify_shape_match, change_nodata_value
 from fcpgtools.tools import make_fac_weights
@@ -77,9 +77,8 @@ def _pysheds_to_xarray(
 def accumulate_flow(
     d8_fdr: Raster, 
     weights: xr.DataArray = None,
-    upstream_pour_points: List = None,
+    upstream_pour_points: PourPointValuesDict = None,
     out_path: Union[str, Path] = None,
-    **kwargs,
     ) -> xr.DataArray:
 
     d8_fdr = load_raster(d8_fdr)
@@ -100,6 +99,7 @@ def accumulate_flow(
                 ) + 1
             weights = adjust_parameter_raster(
                 weights,
+                d8_fdr,
                 upstream_pour_points,
                 )
         weights = PyShedsRaster(
@@ -149,7 +149,7 @@ def accumulate_flow(
 def accumulate_parameter( 
     d8_fdr: Raster, 
     parameter_raster: Raster,
-    upstream_pour_points: List = None,
+    upstream_pour_points: PourPointValuesDict = None,
     out_path: Union[str, Path] = None,
     **kwargs,
     ) -> xr.DataArray:
@@ -160,6 +160,7 @@ def accumulate_parameter(
     # add any pour point accumulation via utilities.adjust_parameter_raster()
     if upstream_pour_points is not None: parameter_raster = adjust_parameter_raster(
         parameter_raster,
+        d8_fdr,
         upstream_pour_points,
         )
 
