@@ -218,7 +218,6 @@ def parameter_accumulate(
         accumulated = fac_from_fdr(
             d8_fdr,
             weights=array,
-            out_dtype=array.dtype,
             )
 
         out_dict[(i, dim_name)] = accumulated
