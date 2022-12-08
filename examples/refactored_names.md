@@ -18,7 +18,6 @@ Comparison of V1 and Refactored V2 FCPGTools Functions (as of 12/7/2022)
 * `ExtremeUpslopeValue()` -> `extreme_upslope_values()`
 * `getFeatures()` -> not necessart in V2, shapefiles can be loaded into `geopandas.GeoDataFrame` objects via `load_shapefile()`.
 * `loadRaster()` -> `load_raster()`
-* `findLastFACFD()` -> not necessary in V2.
 * `queryPoint()` -> `query_point()`
 * `FindDownstreamCellTauDir()` -> `find_downstream_cell()`
 * `updateRaster()` -> `update_raster_values()`
@@ -27,6 +26,8 @@ Comparison of V1 and Refactored V2 FCPGTools Functions (as of 12/7/2022)
 * `d8todinfinity()` -> `d8_to_dinfinity()`
 * `changeNoData()` -> `change_nodata_value()`
 * `makeStreams()` -> made redundant by `mask_streams()`.
-
-
-**Changes to dealing with pour points and cascading accumulation values**
+* `makePourBasins()` and `findPourPoints()` -> `find_basin_pour_points()` which uses a basin shapefile to find outflow points. Output is of type `types.PourPointLocationsDict`.
+* `findLastFACFD()` -> `find_fac_pour_point()` Output is of type `types.PourPointLocationsDict`.
+    * Note: In V2 `find_fac_pour_point()` gets the location of the outflow point for a full FAC, which is then fed into `find_downstream_cell()` within `update_raster_values()`. 
+* `createUpdateDict()` -> `get_pour_point_values()`
+    * Note: The pour points workflow is somewhat different in V2, where the output of either `find_basin_pour_points()` or `find_fac_pour_point()` is appended with the pour point values within `get_pour_point_values()`. The output of `get_pour_point_values()` is of type `types.PourPointValuesDict`.

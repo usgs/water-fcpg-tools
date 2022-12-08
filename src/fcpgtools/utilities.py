@@ -267,15 +267,17 @@ def resample(
 def query_point(
     raster: xr.DataArray,
     coords: Tuple[float, float],
-    ) -> Union[float, int]:
+    ) -> Tuple[Tuple[float, float], Union[float, int]]:
     """
     :param raster: (xr.DataArray) a raster as a DataArray in memory.
     :param coords: (tuple) coordinate as (lat:float, lon:float) of the cell to be sampled.
     :returns: (float or int) the cell value at param:coords.
     """
-    #TODO: verify this works well
-    return raster.sel({'x': coords[0],
-        'y': coords[1]}).values.item(0)
+    selection = raster.sel(
+        {'x': coords[0], 'y': coords[1]},
+        method='nearest',
+        )
+    return ((selection.x.item(0), selection.y.item(0)), selection.values.item(0))
 
 def get_min_cell(
     raster: xr.DataArray,
@@ -326,11 +328,12 @@ def update_raster_values(
     out_raster = load_raster(in_raster)
 
     for update_tuple in update_points:
-        _update_cell_value_(
-            out_raster,
-            coords=update_tuple[0],
-            value=update_tuple[-1],
-            )
+        if update_tuple[-1] != np.nan:
+            _update_cell_value_(
+                out_raster,
+                coords=update_tuple[0],
+                value=update_tuple[-1],
+                )
 
     if out_path is not None:
         save_raster(out_raster, out_path)
@@ -425,10 +428,7 @@ def _update_cell_value_(
     if _verify_dtype(raster, value):
         raster.loc[{'x': coords[0], 'y': coords[1]}] = value
         return raster
-    else:
-        #TODO: Handle exceptions
-        print(f'ERROR: Value {value} does not match DataArray dtype = {raster.dtype}')
-        return raster
+    else: raise TypeError(f'ERROR: Value {value} does not match DataArray dtype = {raster.dtype}')
 
 def _verify_shape_match(
     in_raster1: Raster,
@@ -517,12 +517,12 @@ def find_downstream_cell(
     cell_size = np.abs(d8_fdr.rio.resolution(recalc=True)[0])
 
     # get FDR cell value
-    value = int(
-        query_point(
+    new_coords, value = query_point(
             d8_fdr,
             coords,
             )
-        )
+    value = int(value)
+
     
     # find downstream cell coordinates via hashmap and return
     dxdy_dict = {
@@ -537,7 +537,7 @@ def find_downstream_cell(
     }
     dx_dy_tuple = dxdy_dict[dir_dict[value]]
 
-    return (coords[0] + dx_dy_tuple[0], coords[1] + dx_dy_tuple[1])
+    return (new_coords[0] + dx_dy_tuple[0], new_coords[1] + dx_dy_tuple[1])
 
 def _verify_coords_coverage(
     raster: xr.DataArray,

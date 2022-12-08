@@ -6,7 +6,6 @@ from numpy import ndarray
 from pysheds.grid import Grid
 from pysheds.view import Raster as PyShedsRaster
 
-#TODO: We'll want to replace the `str` type here with some type of path object
 Raster = Union[DataArray, str, Path]
 Shapefile = Union[GeoDataFrame, str, Path]
 Engines = ('taudem', 'pysheds')

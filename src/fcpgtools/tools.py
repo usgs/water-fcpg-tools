@@ -489,7 +489,27 @@ def find_basin_pour_points(
         pour_point_locations_dict['pour_point_coords'].append(get_max_cell(sub_raster))
     
     return pour_point_locations_dict
-    
+
+def find_fac_pour_point(
+    fac_raster: Raster,
+    basin_name: Union[str, int] = None,
+    ) -> PourPointLocationsDict:
+    """
+    Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.
+    :param fac_raster: (xr.DataArray or str raster path) a Flow Accumulation Cell raster (FAC).
+    :param basin_name: (str or int, default=None) allows a name to be given to the FAC.
+    :returns: (dict) a dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(x, y).
+    """
+    # create a basic PourPointLocationsDict for the full fac_raster
+    fac_raster = load_raster(fac_raster)
+    pour_point_locations_dict = {}
+
+    if not basin_name: basin_name = 0
+    pour_point_locations_dict['pour_point_ids'] = [basin_name]
+    pour_point_locations_dict['pour_point_coords'] = [get_max_cell(fac_raster)]
+
+    return pour_point_locations_dict
+
 def get_pour_point_values(
     pour_points_dict: PourPointLocationsDict,
     accumulation_raster: Raster,
@@ -524,7 +544,7 @@ def get_pour_point_values(
                 query_point(
                     band,
                     pour_point_coords,
-                    )
+                    )[-1]
                 )
         dict_values_list.append(basin_values_list)
 
@@ -536,7 +556,6 @@ def get_pour_point_values(
 def make_fcpg(
     param_accum_raster: Raster,
     fac_raster: Raster,
-    ignore_nodata: bool = False,
     out_path: Union[str, Path] = None,
     ) -> xr.DataArray:
     """
@@ -544,9 +563,6 @@ def make_fcpg(
     raster by a Flow Accumulation Cell (FAC) raster. FCPG = param_accum / fac.
     :param param_accum_raster: (xr.DataArray or str raster path)
     :param fac_raster: (xr.DataArray or str raster path) input FAC raster.
-    :param ignore_nodata: (bool, default=False) by default param_accum_raster cells with nodata
-        are kept as nodata. If True, the lack of parameter accumulation is ignores, and the FAC value
-        if given to the cell without adjustment.
     :param out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.
     :returns: (xr.DataArray) the output FCPG raster as a xarray DataArray object.
     """
@@ -554,15 +570,12 @@ def make_fcpg(
     fac_raster = load_raster(fac_raster)
     param_accum_raster = load_raster(param_accum_raster)
 
-    #TODO: deal with zero values in a more clever way (upstream in the pipeline?)
     fcpg_raster = param_accum_raster / (fac_raster + 1)
     fcpg_raster.name = 'FCPG'
 
     # save if necessary
     if out_path is not None:
         save_raster(fcpg_raster, out_path)
-
-    #TODO: deal with nodata, replace with raw FAC scores if ignore_nodata=True
 
     return fcpg_raster
 
