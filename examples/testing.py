@@ -193,7 +193,8 @@ def main(
         fac_taudem = taudem_engine.accumulate_flow(
             d8_fdr=us_fdr_taudem, 
             upstream_pour_points=None,
-            out_path=Path(Path.cwd() / 'fac.tif')
+            out_path=Path(Path.cwd() / 'fac.tif'),
+            kwargs={'cores': 4},
             )
         print('Done\n')
     
@@ -227,12 +228,14 @@ def main(
         daymet_acc_taudem = terrainengine.taudem_engine.accumulate_parameter(
             us_fdr_taudem,
             us_precip,
+            kwargs={'cores': 4},
             )
         print('Done\n')
         print('TauDEM: Making a landcover accumulation grid')
         landcover_acc_taudem = terrainengine.taudem_engine.accumulate_parameter(
             us_fdr_taudem,
             us_binary_landcover,
+            kwargs={'cores': 4},
             )
         print('Done\n')
 
@@ -283,7 +286,7 @@ def main(
 if __name__ == '__main__':
     main(
         True,
-        test_taudem=True,
-        test_pysheds=False,
+        test_taudem=False,
+        test_pysheds=True,
         test_pour_points=False,
         )
