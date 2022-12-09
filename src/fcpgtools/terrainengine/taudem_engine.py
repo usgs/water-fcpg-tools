@@ -84,6 +84,7 @@ def accumulate_flow(
         upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],
             and updated cell values as the second [1].
             This allows the FAC to be made with boundary conditions such as upstream basin pour points.
+        weights: A grid defining the value to accumulate from each cell. Default is a grid of 1s.
         out_path: Defines a path to save the output raster.
         **kwargs: Can pass in optional TauDEM:aread8 parameter values using "cores", "mpiCall", or "mpiArg" as keys.
 
