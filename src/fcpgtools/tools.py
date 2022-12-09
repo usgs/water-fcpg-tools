@@ -69,12 +69,12 @@ def convert_fdr_formats(
         in_format = id_d8_format(d8_fdr)
     
     # check that both formats are valid before proceeding
-    if in_format not in FDRD8Formats: return print(
-        f'ERROR: param:in_format = {in_format} which is not in {FDRD8Formats}'
+    if in_format not in FDRD8Formats: raise TypeError(
+        f'param:in_format = {in_format} which is not in {FDRD8Formats}'
     )
 
-    if out_format not in FDRD8Formats: return print(
-        f'ERROR: param:out_format = {out_format} which is not in {FDRD8Formats}'
+    if out_format not in FDRD8Formats: raise TypeError(
+        f'param:out_format = {out_format} which is not in {FDRD8Formats}'
     )
 
     if in_format == out_format: return d8_fdr
@@ -141,16 +141,15 @@ def make_fac_weights(
 
     # check that shapes match
     if not _verify_shape_match(fdr_raster, parameter_raster):
-        print('ERROR: The D8 FDR raster and the parameter raster must have the same shape. '
+        raise TypeError('The D8 FDR raster and the parameter raster must have the same shape. '
         'Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).')
-        raise TypeError
 
     # use a where query to replace out of bounds values
     og_nodata = parameter_raster.rio.nodata
     og_crs = _get_crs(parameter_raster)
 
     if not _verify_alignment(parameter_raster, fdr_raster):
-        raise TypeError('ERROR: param:parameter_raster and param:fdr_raster are not aligned! '
+        raise TypeError('param:parameter_raster and param:fdr_raster are not aligned! '
         'Please use tools.align_raster() before applying this tool!')
 
     parameter_raster = parameter_raster.where(
@@ -446,12 +445,8 @@ def binarize_categorical_raster(
     cat_dtype = str(cat_raster.dtype)
     if not categories_dict: categories_dict = {}
 
-    if 'int'  not in cat_dtype:
-        print('ERROR: Categorical rasters must be dtype=int.')
-        return TypeError
-    if len(cat_raster.shape) >= 3:
-        print('ERROR: Categorical rasters must be of form f(x, y).')
-        return TypeError
+    if 'int'  not in cat_dtype: raise TypeError('Categorical rasters must be dtype=int.')
+    if len(cat_raster.shape) >= 3: raise TypeError('Categorical rasters must be of form f(x, y).')
 
     categories = [int(i) for i in list(np.unique(cat_raster.values))]
     if not ignore_categories: ignore_categories = []
@@ -555,8 +550,7 @@ def find_basin_pour_points(
     # verify that we can find the basin_id_field
     if basin_id_field is not None:
         if basin_id_field not in list(basins_shp.columns):
-            print(f'ERROR: param:basin_id_field = {basin_id_field} is not in param:basins_shp')
-            return ValueError
+            raise ValueError(f'param:basin_id_field = {basin_id_field} is not in param:basins_shp')
     
     # convert basin levels if necessary PourPointLocationsDict
     pour_point_locations_dict = {}
