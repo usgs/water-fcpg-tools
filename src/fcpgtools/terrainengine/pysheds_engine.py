@@ -4,7 +4,7 @@ from pysheds.grid import Grid
 from pysheds.view import Raster as PyShedsRaster
 from pysheds.view import ViewFinder
 from pathlib import Path
-from typing import Dict, TypedDict, Union, Optional
+from typing import Union, Optional
 from fcpgtools.types import Raster, PyShedsInputDict, PourPointValuesDict
 from fcpgtools.utilities import load_raster, _split_bands, _combine_split_bands, \
     adjust_parameter_raster, save_raster, change_nodata_value
@@ -81,8 +81,10 @@ def accumulate_flow(
 ) -> xr.DataArray:
     """Create a Flow Accumulation Cell (FAC) raster from a ESRI format D8 Flow Direction Raster.
 
+    NOTE: Replaces tools.tauFlowAccum() from V1 FCPGtools.
+
     Args:
-        d8_fdr: A TauDEM format D8 Flow Direction Raster (dtype=Int).
+        d8_fdr: A ESRI format D8 Flow Direction Raster (dtype=Int).
         upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],
             and updated cell values as the second [1].
             This allows the FAC to be made with boundary conditions such as upstream basin pour points.
@@ -166,16 +168,17 @@ def accumulate_flow(
 def accumulate_parameter( 
     d8_fdr: Raster, 
     parameter_raster: Raster,
-    upstream_pour_points: PourPointValuesDict = None,
-    out_path: Union[str, Path] = None,
+    upstream_pour_points: Optional[PourPointValuesDict] = None,
+    out_path: Optional[Union[str, Path]] = None,
     **kwargs,
-    ) -> xr.DataArray:
+) -> xr.DataArray:
     """Create a parameter accumulation raster from a ESRI format D8 Flow Direction Raster and a parameter raster.
     
     A key aspect of this function is that the output DataArray will have dimensions matching param:parameter_raster.
+    NOTE: Replaces tools.accumulateParam() from V1 FCPGtools.
 
     Args:
-        d8_fdr: A TauDEM format D8 Flow Direction Raster (dtype=Int).
+        d8_fdr: A ESRI format D8 Flow Direction Raster (dtype=Int).
         parameter_raster: A parameter raster aligned via tools.align_raster() with the us_fdr. 
             This can be multi-dimensional (i.e. f(x, y, t)), and if so, a multi-dimensional output is returned.
         upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],

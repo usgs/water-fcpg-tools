@@ -415,7 +415,8 @@ def extreme_upslope_values(
         get_min_upslope: If True, the minimum upslope value is assigned to each cell.
         **kwargs: Can pass in optional TauDEM:d8flowpathextremeup parameter values using "cores", "mpiCall", or "mpiArg" as keys.
 
-    Returns: A raster with max (or min) upstream value of the parameter grid as each cell's value.
+    Returns:
+        A raster with max (or min) upstream value of the parameter grid as each cell's value.
     """
     d8_fdr = _taudem_prepper(d8_fdr)
     parameter_raster = load_raster(parameter_raster)
