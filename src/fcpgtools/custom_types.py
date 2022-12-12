@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Union, List, Tuple, Dict, TypedDict
+from typing import Union, List, Tuple, TypedDict
 from xarray import DataArray
 from geopandas import GeoDataFrame
 from numpy import ndarray
@@ -40,29 +40,33 @@ D8ConversionDicts = {
     }
 }
 
-# create a custom type hint dictionary for pour points
-
 
 class PourPointLocationsDict(TypedDict):
-    pour_point_ids: List[Union[int, str]]
+    """Custom type hint dict for storing basin pour point locations.
 
-    # (x, y) in raster coordinates
+    Attributes: 
+        pour_point_ids: A list of basin/region ids of length N.
+        pour_point_coords: A list of (x, y) in raster coordinates of length N.
+    """
+    pour_point_ids: List[Union[int, str]]
     pour_point_coords: List[Tuple[float, float]]
 
 
 class PourPointValuesDict(PourPointLocationsDict):
-    # the lists in the list will be len==1 if a one band array is supplied
-    pour_point_values: List[List[Union[float, int]]]
+    """Custom type hint dict for storing pour point accumulation values.
 
-# create custom type hint for PyShedsInputDict
+    Attributes: 
+        pour_point_values: A list of N lists, eaching storing values associated with the
+            list's index location in PourPointLocationsDict['pour_point_ids'].
+            The length of each list is equal to the # of bands in the accumulation raster.
+    """
+    pour_point_values: List[List[Union[float, int]]]
 
 
 class PyShedsInputDict(TypedDict):
     input_array: ndarray
     raster: PyShedsRaster
     grid: Grid
-
-# create classess to add to TauDEMDict:Union[TypeDict,...]
 
 
 class TaudemFACInputDict(TypedDict):
@@ -93,6 +97,8 @@ class TaudemMaxUpslopeInputDict(TypedDict):
     mpiArg: str
 
 
-TauDEMDict = Union[TaudemFACInputDict,
-                   Taudemdistance_to_streamInputDict,
-                   TaudemMaxUpslopeInputDict, ]
+TauDEMDict = Union[
+    TaudemFACInputDict,
+    Taudemdistance_to_streamInputDict,
+    TaudemMaxUpslopeInputDict,
+]
