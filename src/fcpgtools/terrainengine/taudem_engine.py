@@ -8,7 +8,7 @@ import numpy as np
 import xarray as xr
 from fcpgtools.custom_types import Raster, TauDEMDict, PourPointValuesDict
 from fcpgtools.utilities import load_raster, save_raster, \
-    _combine_split_bands, _split_bands, adjust_parameter_raster, _verify_alignment, change_nodata_value
+    _combine_split_bands, _split_bands, adjust_parameter_raster, _verify_alignment, _change_nodata_value
 from fcpgtools.tools import make_fac_weights, value_mask, d8_to_dinfinity, mask_streams
 
 
@@ -343,7 +343,7 @@ def distance_to_stream(
 
     # update nodata values
     out_raster = load_raster(out_path)
-    out_raster = change_nodata_value(
+    out_raster = _change_nodata_value(
         out_raster,
         np.nan,
     )
@@ -415,7 +415,7 @@ def _ext_upslope_cmd(
         (out_raster != -9999),
         out_raster.rio.nodata,
     )
-    out_raster = change_nodata_value(
+    out_raster = _change_nodata_value(
         out_raster,
         np.nan,
     )
@@ -496,7 +496,7 @@ def extreme_upslope_values(
                   )
 
     # update nodata values
-    out_raster = change_nodata_value(
+    out_raster = _change_nodata_value(
         out_raster,
         np.nan,
     )
@@ -567,7 +567,7 @@ def _decay_accumulation_cmd(
         (out_raster != -9999),
         out_raster.rio.nodata,
     )
-    out_raster = change_nodata_value(
+    out_raster = _change_nodata_value(
         out_raster,
         np.nan,
     )
@@ -677,7 +677,7 @@ def decay_accumulation(
         d8_fdr,
         np.nan,
     )
-    out_raster = change_nodata_value(
+    out_raster = _change_nodata_value(
         out_raster,
         np.nan,
     )

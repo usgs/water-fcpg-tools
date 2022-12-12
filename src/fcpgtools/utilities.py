@@ -1,80 +1,19 @@
-from typing import Union, List, Tuple, Dict, Optional
 import os
-from pathlib import Path
 import xarray as xr
 import numpy as np
 import pandas as pd
-import rioxarray as rio
-from rasterio.enums import Resampling
 import geopandas as gpd
-from fcpgtools.custom_types import Raster, Shapefile, RasterSuffixes, ShapefileSuffixes, \
-    PourPointValuesDict, D8ConversionDicts
-
-# CLIENT FACING I/O FUNCTIONS
-
-
-def load_raster(
-    in_raster: Raster,
-) -> xr.DataArray:
-    """Loads a raster into a xarray.DataArray object. Can also be used to prep an existing DataArray for processing."""
-    if isinstance(in_raster, xr.DataArray):
-        return _format_nodata(in_raster.squeeze())
-    if isinstance(in_raster, str):
-        in_raster = Path(in_raster)
-        if not in_raster.exists():
-            raise FileNotFoundError(f'Input path {in_raster} is not found.')
-    return _format_nodata(rio.open_rasterio(in_raster).squeeze())
+from typing import Union, List, Tuple, Dict
+import fcpgtools.tools as tools
+from fcpgtools.custom_types import Raster, Shapefile, RasterSuffixes, \
+    ShapefileSuffixes, D8ConversionDicts
 
 
-def load_shapefile(
-    in_shapefile: Shapefile,
-) -> gpd.GeoDataFrame:
-    """Loads a shapefile into a geopandas.GeoDataFrame"""
-    if isinstance(in_shapefile, gpd.GeoDataFrame):
-        return in_shapefile
-    if isinstance(in_shapefile, str):
-        in_shapefile = Path(in_shapefile)
-        if not in_shapefile.exists():
-            raise FileNotFoundError(f'Input path {in_shapefile} is not found.')
-    return gpd.read_file(in_shapefile)
-
-
-def save_raster(
-    out_raster: xr.DataArray,
-    out_path: Union[str, Path],
-) -> None:
-    """Saves an xarray.DataArray to a .tif raster file at location param:out_path"""
-    if isinstance(out_path, str):
-        out_path = Path(out_path)
-
-    if Path.exists(out_path):
-        print(f'WARNING: Cannot overwrite {out_path}!')
-        return None
-    out_raster.rio.to_raster(out_path)
-
-
-def save_shapefile(
-    out_shapefile: gpd.GeoDataFrame,
-    out_path: Union[str, Path]
-) -> None:
-    """Saves an geopandas.GeoDataFrame to a .shp file at location param:out_path"""
-    if isinstance(out_path, str):
-        out_path = Path(out_path)
-
-    if Path.exists(out_path):
-        print(f'WARNING: Cannot overwrite {out_path}!')
-        return None
-    try:
-        out_shapefile.to_file(out_path)
-    except Exception as e:
-        print(e)
-
-
-def id_d8_format(
+def _id_d8_format(
     d8_fdr: Raster,
 ) -> str:
     """Identifies the D8 flow direction raster and returns one of the string keys in custom_types.D8ConversionDicts (i.e. 'taudem' or 'esri')"""
-    d8_fdr = load_raster(d8_fdr)
+    d8_fdr = tools.load_raster(d8_fdr)
     uniques = np.unique(d8_fdr.values)
     if np.max(uniques) > 8:
         return 'esri'
@@ -84,238 +23,37 @@ def id_d8_format(
         raise TypeError('Cant recognize D8 Flow Direction Raster format '
                         'as either ESRI or TauDEM. Please use the param:in_format for pyfunc:convert_fdr_formats()')
 
-# CLIENT FACING UTILITY FUNTIONS
 
-
-def adjust_parameter_raster(
-    parameter_raster: Raster,
-    d8_fdr: Raster,
-    upstream_pour_points: PourPointValuesDict,
+def _update_raster_values(
+    in_raster: Union[xr.DataArray, str],
+    update_points: List[Tuple[Tuple[float, float], Union[float, int]]],
 ) -> xr.DataArray:
-    """Adds values to a parameter raster's at specific pour points / coordinates for use in accumulate_parameter().
+    """Update a specific raster cell's value based on it's coordindates.
 
-    The main utility of this function is to enable cascading accumulation values from one basin or raster to another.
+    This is primarily used to add upstream accumulation values as boundary conditions before making a FAC or FCPG.
 
     Args:
-        parameter_raster: Input parameter raster to update.
-        d8_fdr: a D8 Flow Direction Raster.
-        upstream_pour_points: A dictionary with coordinates to update values at, and the values to add.
+        in_raster: Input raster.
+        update_points: A list of tuples storing cell coordinates updated values
+            of the form [((x_coord:float, y_coord:float), updated_value),...].
 
     Returns:
-        The updated parameter raster.
+        The input raster with the updated cell value.
     """
-    # pull in data
-    parameter_raster = load_raster(parameter_raster)
-    d8_fdr = load_raster(d8_fdr)
+    out_raster = tools.load_raster(in_raster)
 
-    # pull in pour point data
-    pour_point_coords = upstream_pour_points['pour_point_coords']
-    pour_point_values = upstream_pour_points['pour_point_values']
-
-    # update values iteratively
-    for i, coords in enumerate(pour_point_coords):
-        values_list = pour_point_values[i]
-
-        # get downstream coordinates
-        ds_coords = find_downstream_cell(
-            d8_fdr,
-            coords,
-        )
-
-        # verify coverage
-        if not _verify_coords_coverage(parameter_raster, ds_coords):
-            print(
-                f'WARNING: Cell downstream from pour point coords={coords} is out of bounds -> skipped!')
-            continue
-
-        if len(parameter_raster.shape) == 2:
-            parameter_raster = update_raster_values(
-                in_raster=parameter_raster,
-                update_points=[(ds_coords, values_list[0])],
+    for update_tuple in update_points:
+        if update_tuple[-1] != np.nan:
+            _update_cell_value_(
+                out_raster,
+                coords=update_tuple[0],
+                value=update_tuple[-1],
             )
-        else:
-            dim_index_values = parameter_raster[parameter_raster.dims[0]].values
-            for band_index, value in enumerate(dim_index_values):
-                parameter_raster[band_index, :, :] = update_raster_values(
-                    in_raster=parameter_raster[band_index, :, :],
-                    update_points=[(ds_coords, values_list[band_index])],
-                )
-    return parameter_raster
 
-
-def clip(
-    in_raster: Raster,
-    match_raster: Optional[Raster] = None,
-    match_shapefile: Optional[Shapefile] = None,
-    custom_bbox: Optional[List] = None,
-    out_path: Optional[Union[str, Path]] = None,
-) -> xr.DataArray:
-    """Clips a raster to the rectangular extent (aka bounding box) of another raster (or shapefile).
-
-    Args:
-        in_raster: Input raster.
-        match_raster: If defined, in_raster is clipped to match the extent of match_raster.
-        match_shapefile: A shapefile that is used to define the output extent if match_raster == None.
-        out_path: Defines a path to save the output raster.
-        custom_bbox: A list with bounding box coordinates that define the output extent if match_raster == None.
-            Note: Coordinates must be of the form [minX, minY, maxX, maxY].
-            Note: Using this parameter assumes that coordinates match the CRS of param:in_raster.
-
-    Returns:
-        The input raster clipped by the desired geometry.
-    """
-    in_raster = load_raster(in_raster)
-
-    if match_raster is not None:
-        match_raster = load_raster(match_raster)
-        crs = match_raster.rio.crs.to_wkt()
-        bbox = match_raster.rio.bounds()
-    elif match_shapefile is not None:
-        match_shapefile = load_shapefile(match_shapefile)
-        crs = match_shapefile.crs.to_wkt()
-        bbox = match_shapefile.geometry.total_bounds
-    elif custom_bbox is not None:
-        crs = in_raster.rio.crs.to_wkt()
-        bbox = custom_bbox
-
-    out_raster = in_raster.rio.clip_box(
-        minx=bbox[0],
-        miny=bbox[1],
-        maxx=bbox[2],
-        maxy=bbox[3],
-        crs=crs,
-    )
-
-    if out_path is not None:
-        save_raster(
-            out_raster,
-            out_path,
-        )
     return out_raster
 
 
-def reproject_raster(
-    in_raster: Raster,
-    out_crs: Optional[Union[Raster, Shapefile]] = None,
-    resolution: Optional[Union[float, Tuple[float, float]]] = None,
-    wkt_string: Optional[str] = None,
-    out_path: Optional[Union[str, Path]] = None,
-) -> xr.DataArray:
-    """Reprojects a raster to match another shapefile/raster's Coordinate Reference System (CRS), or a custom CRS.
-
-    Args:
-        in_raster: Input raster.
-        out_crs: A raster or shapefile with the desired CRS to reproject to.
-        resolution: Allows the output resolution to be overriden.
-        wkt_string: Allows the user to define the output CRS using a custom valid WKT string.
-        out_path: Defines a path to save the output raster.
-
-    Returns:
-        The input raster reprojected to match the desired Coordinate Reference System (CRS).
-    """
-    in_raster = load_raster(in_raster)
-    if out_crs is not None:
-        out_crs = _get_crs(out_crs)
-    elif wkt_string is not None:
-        out_crs = wkt_string
-        resolution = None
-    else:
-        raise ValueError(
-            'Must pass in either param:out_crs or param:wkt_string')
-
-    out_raster = in_raster.rio.reproject(
-        out_crs,
-        resolution=resolution,
-        nodata=in_raster.rio.nodata,
-        kwargs={'dst_nodata': in_raster.rio.nodata},
-    )
-
-    if out_path is not None:
-        save_raster(
-            out_raster,
-            out_path,
-        )
-    return out_raster
-
-
-def reproject_shapefile(
-    in_shapefile: Shapefile,
-    out_crs: Optional[Union[Raster, Shapefile]] = None,
-    wkt_string: Optional[str] = None,
-    out_path: Optional[Union[str, Path]] = None,
-) -> xr.DataArray:
-    """Reprojects a shapefile to match another shapefile/raster's Coordinate Reference System (CRS), or a custom CRS.
-
-        Args:
-            in_shapefile: Input shapefile/GeoDataFrame.
-            out_crs: A raster or shapefile with the desired CRS to reproject to.
-            wkt_string: Allows the user to define the output CRS using a custom valid WKT string.
-            out_path: Defines a path to save the output shapefile.
-
-        Returns:
-            The input shapefile reprojected to match the desired Coordinate Reference System (CRS).
-        """
-    in_shapefile = load_raster(in_shapefile)
-    if out_crs is not None:
-        out_crs = _get_crs(out_crs)
-    elif wkt_string is not None:
-        out_crs = wkt_string
-    else:
-        raise ValueError(
-            'Must pass in eitehr param:out_crs or param:wkt_string')
-
-    out_shapefile = in_shapefile.to_crs(out_crs)
-    if out_path is not None:
-        save_shapefile(
-            out_shapefile,
-            out_path,
-        )
-    return out_shapefile
-
-
-def resample(
-    in_raster: Raster,
-    match_raster: Raster,
-    method: str = 'nearest',
-    out_path: Optional[Union[str, Path]] = None,
-) -> xr.DataArray:
-    """Resamples a raster to match another raster's cell size.
-
-    Args:
-        in_raster: Input raster.
-        match_raster: A raster to match the resolution / cell size of.
-        method: A valid resampling method from rasterio.enums.Resample.
-            NOTE: Do not use any averaging resample methods when working with a categorical raster! 
-        out_path: Defines a path to save the output raster.
-
-    Returns:
-        The input raster resampled to the desired resolution / cell size.
-    """
-    in_raster = load_raster(in_raster)
-    match_raster = load_raster(match_raster)
-
-    try:
-        out_raster = in_raster.rio.reproject(
-            in_raster.rio.crs,
-            shape=(match_raster.rio.height, match_raster.rio.width),
-            resampling=getattr(Resampling, method),
-            kwargs={'dst_nodata': in_raster.rio.nodata},
-        )
-
-    except AttributeError:
-        real_methods = vars(Resampling)['_member_names_']
-        raise ValueError(
-            f'Resampling method {method} is invalid! Please select from {real_methods}')
-
-    if out_path is not None:
-        save_raster(
-            out_raster,
-            out_path,
-        )
-    return out_raster
-
-
-def query_point(
+def _query_point(
     raster: xr.DataArray,
     coords: Tuple[float, float],
 ) -> Tuple[Tuple[float, float], Union[float, int]]:
@@ -337,7 +75,7 @@ def query_point(
     return ((selection.x.item(0), selection.y.item(0)), selection.values.item(0))
 
 
-def get_min_cell(
+def _get_min_cell(
     raster: xr.DataArray,
 ) -> Tuple[float, float]:
     """Get the minimum cell (x, y ) coordinates from a single band raster."""
@@ -351,7 +89,7 @@ def get_min_cell(
             min_slice.y.values.item(0))
 
 
-def get_max_cell(
+def _get_max_cell(
     raster: xr.DataArray,
 ) -> Tuple[float, float]:
     """Get the maximum cell (x, y ) coordinates from a single band raster."""
@@ -365,43 +103,7 @@ def get_max_cell(
             max_slice.y.values.item(0))
 
 
-def update_raster_values(
-    in_raster: Union[xr.DataArray, str],
-    update_points: List[Tuple[Tuple[float, float], Union[float, int]]],
-    out_path: Optional[Union[str, Path]] = None,
-) -> xr.DataArray:
-    """Update a specific raster cell's value based on it's coordindates.
-
-    This is primarily used to add upstream accumulation values as boundary conditions before making a FAC or FCPG.
-
-    Args:
-        in_raster: Input raster.
-        update_points: A list of tuples storing cell coordinates updated values
-            of the form [((x_coord:float, y_coord:float), updated_value),...].
-        out_path: Defines a path to save the output raster.
-
-    Returns:
-        The input raster with the updated cell value.
-    """
-    out_raster = load_raster(in_raster)
-
-    for update_tuple in update_points:
-        if update_tuple[-1] != np.nan:
-            _update_cell_value_(
-                out_raster,
-                coords=update_tuple[0],
-                value=update_tuple[-1],
-            )
-
-    if out_path is not None:
-        save_raster(
-            out_raster,
-            out_path,
-        )
-    return out_raster
-
-
-def change_nodata_value(
+def _change_nodata_value(
     in_raster: xr.DataArray,
     new_nodata: Union[float, int],
 ) -> xr.DataArray:
@@ -424,8 +126,6 @@ def change_nodata_value(
     )
     return in_raster
 
-# BACK-END FACING UTILITY FUNTIONS
-
 
 def _intake_ambigous(
     in_data: Union[Raster, Shapefile],
@@ -433,9 +133,9 @@ def _intake_ambigous(
     """A somewhat less performant intake function when the input can be either a Raster or Shapefile"""
     if isinstance(in_data, os.PathLike):
         if in_data.suffix in RasterSuffixes:
-            return load_raster(in_data)
+            return tools.load_raster(in_data)
         elif in_data.suffix in ShapefileSuffixes:
-            return load_shapefile(in_data)
+            return tools.load_shapefile(in_data)
     elif isinstance(in_data, xr.DataArray) or isinstance(in_data, gpd.GeoDataFrame):
         return in_data
 
@@ -500,7 +200,7 @@ def _update_cell_value_(
     coords: Tuple[float, float],
     value: Union[float, int],
 ) -> xr.DataArray:
-    """Underlying function called in update_raster_values() to update a DataArray by x,y coordinates.
+    """Underlying function called in _update_raster_values() to update a DataArray by x,y coordinates.
 
     Args:
         raster: A raster as a DataArray in memory.
@@ -598,7 +298,7 @@ def _combine_split_bands(
     )
 
 
-def find_downstream_cell(
+def _find_downstream_cell(
     d8_fdr: xr.DataArray,
     coords: Tuple[float, float],
 ) -> Tuple[float, float]:
@@ -614,7 +314,7 @@ def find_downstream_cell(
         An output (lat:float, lon:float) representing the cell center coorindates downstream from the cell defined via :param:coords.
     """
     # identify d8 fdr format
-    d8_format = id_d8_format(d8_fdr)
+    d8_format = _id_d8_format(d8_fdr)
     dir_dict = D8ConversionDicts[d8_format]
     dir_dict = dict(zip(dir_dict.values(), dir_dict.keys()))
 
@@ -622,7 +322,7 @@ def find_downstream_cell(
     cell_size = np.abs(d8_fdr.rio.resolution(recalc=True)[0])
 
     # get FDR cell value
-    new_coords, value = query_point(
+    new_coords, value = _query_point(
         d8_fdr,
         coords,
     )
@@ -663,7 +363,7 @@ def _verify_basin_coverage(
     basin_shapefile: gpd.GeoDataFrame,
 ) -> bool:
     """Returns True if a basin shapefile/GeoDataFrame is completely covered by a raster."""
-    raster = reproject_raster(
+    raster = tools.reproject_raster(
         raster,
         basin_shapefile,
     )

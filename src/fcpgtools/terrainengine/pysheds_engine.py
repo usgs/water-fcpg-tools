@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Union, Optional
 from fcpgtools.custom_types import Raster, PyShedsInputDict, PourPointValuesDict
 from fcpgtools.utilities import load_raster, _split_bands, _combine_split_bands, \
-    adjust_parameter_raster, save_raster, change_nodata_value
+    adjust_parameter_raster, save_raster, _change_nodata_value
 from fcpgtools.tools import make_fac_weights
 
 
@@ -158,7 +158,7 @@ def accumulate_flow(
         out_raster.rio.nodata,
     )
 
-    out_raster = change_nodata_value(
+    out_raster = _change_nodata_value(
         out_raster,
         np.nan,
     )
