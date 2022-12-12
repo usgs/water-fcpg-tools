@@ -5,7 +5,7 @@ from pysheds.view import Raster as PyShedsRaster
 from pysheds.view import ViewFinder
 from pathlib import Path
 from typing import Union, Optional
-from fcpgtools.types import Raster, PyShedsInputDict, PourPointValuesDict
+from fcpgtools.custom_types import Raster, PyShedsInputDict, PourPointValuesDict
 from fcpgtools.utilities import load_raster, _split_bands, _combine_split_bands, \
     adjust_parameter_raster, save_raster, change_nodata_value
 from fcpgtools.tools import make_fac_weights
@@ -27,7 +27,7 @@ def _prep_fdr_for_pysheds(
     """
     array.rio.write_transform()
     affine = array.rio.transform()
-    
+
     # get nodata value
     nodata_val = array.rio.nodata
     array_np = array.values.astype(dtype=str(array.dtype)).squeeze()
@@ -35,7 +35,7 @@ def _prep_fdr_for_pysheds(
     # make a mask for the grid object
     mask = array.astype('bool')
     mask = mask.where(array != array.rio.nodata, False).values
-    
+
     view = ViewFinder(
         shape=array_np.shape,
         affine=affine,
@@ -47,15 +47,16 @@ def _prep_fdr_for_pysheds(
         array_np,
         view,
     )
-    
+
     # note: edits to this dictionary should be reflected in the PyShedsInputDict TypedDict instance
     out_dict = {
         'input_array': array,
         'raster': raster_obj,
         'grid': Grid().from_raster(raster_obj, affine=affine),
     }
-    
+
     return out_dict
+
 
 def _pysheds_to_xarray(
     pysheds_io_dict: PyShedsInputDict,
@@ -72,8 +73,10 @@ def _pysheds_to_xarray(
     return array
 
 # CLIENT FACING PROTOCOL IMPLEMENTATIONS
+
+
 def accumulate_flow(
-    d8_fdr: Raster, 
+    d8_fdr: Raster,
     upstream_pour_points: Optional[PourPointValuesDict] = None,
     weights: Optional[xr.DataArray] = None,
     out_path: Optional[Union[str, Path]] = None,
@@ -103,11 +106,13 @@ def accumulate_flow(
     pysheds_input_dict = _prep_fdr_for_pysheds(d8_fdr)
 
     # prep kwargs to be passed into accumulate_flow()
-    if 'kwargs' in kwargs.keys(): kwargs = kwargs['kwargs']
+    if 'kwargs' in kwargs.keys():
+        kwargs = kwargs['kwargs']
 
     # add weights if necessary
     if weights is not None or upstream_pour_points is not None:
-        if weights is not None: weights = weights
+        if weights is not None:
+            weights = weights
         elif upstream_pour_points is not None:
             weights = xr.zeros_like(
                 d8_fdr,
@@ -126,11 +131,12 @@ def accumulate_flow(
             ).values,
             pysheds_input_dict['raster'].viewfinder,
         )
-    else: weights = None
+    else:
+        weights = None
 
     # apply accumulate function
     accumulate = pysheds_input_dict['grid'].accumulation(
-        pysheds_input_dict['raster'], 
+        pysheds_input_dict['raster'],
         nodata_in=pysheds_input_dict['input_array'].rio.nodata,
         weights=weights,
         kwargs=kwargs,
@@ -165,15 +171,16 @@ def accumulate_flow(
         )
     return out_raster
 
-def accumulate_parameter( 
-    d8_fdr: Raster, 
+
+def accumulate_parameter(
+    d8_fdr: Raster,
     parameter_raster: Raster,
     upstream_pour_points: Optional[PourPointValuesDict] = None,
     out_path: Optional[Union[str, Path]] = None,
     **kwargs,
 ) -> xr.DataArray:
     """Create a parameter accumulation raster from a ESRI format D8 Flow Direction Raster and a parameter raster.
-    
+
     A key aspect of this function is that the output DataArray will have dimensions matching param:parameter_raster.
     NOTE: Replaces tools.accumulateParam() from V1 FCPGtools.
 
@@ -194,14 +201,16 @@ def accumulate_parameter(
     parameter_raster = load_raster(parameter_raster)
 
     # add any pour point accumulation via utilities.adjust_parameter_raster()
-    if upstream_pour_points is not None: parameter_raster = adjust_parameter_raster(
-        parameter_raster,
-        d8_fdr,
-        upstream_pour_points,
-    )
+    if upstream_pour_points is not None:
+        parameter_raster = adjust_parameter_raster(
+            parameter_raster,
+            d8_fdr,
+            upstream_pour_points,
+        )
 
     # prep kwargs to be passed into accumulate_flow()
-    if 'kwargs' in kwargs.keys(): kwargs = kwargs['kwargs']
+    if 'kwargs' in kwargs.keys():
+        kwargs = kwargs['kwargs']
 
     # split if multi-dimensional
     if len(parameter_raster.shape) > 2:
@@ -224,8 +233,9 @@ def accumulate_parameter(
 
     # re-combine into DataArray
     if len(out_dict.keys()) > 1:
-        out_raster =  _combine_split_bands(out_dict)
-    else: out_raster =  list(out_dict.items())[0][1] 
+        out_raster = _combine_split_bands(out_dict)
+    else:
+        out_raster = list(out_dict.items())[0][1]
 
     # save if necessary
     if out_path is not None:
@@ -233,9 +243,5 @@ def accumulate_parameter(
             out_raster,
             out_path,
         )
-    
+
     return out_raster
-
-    
-
-

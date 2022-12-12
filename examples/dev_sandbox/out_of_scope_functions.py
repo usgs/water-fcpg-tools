@@ -1,11 +1,12 @@
 import xarray as xr
 from typing import Union
-from fcpgtools.types import Raster
+from fcpgtools.custom_types import Raster
+
 
 def minimize_extent(
     in_raster: Union[xr.DataArray, str],
     nodata_value: Union[float, int] = None,
-    ) -> xr.DataArray:
+) -> xr.DataArray:
     """
     Minimizes the extent of a raster to the bounding box of all non-nodata cells.
     Useful after raster operations where extents don't match and nodata values are propageted forwards.
@@ -18,12 +19,13 @@ def minimize_extent(
     # else return the minimum extent
     raise NotImplementedError
 
+
 def change_nodata(
     in_raster: Union[xr.DataArray, str],
     nodata_value: Union[float, int],
     out_path: str = None,
     convert_dtype: bool = True,
-    ) -> xr.DataArray:
+) -> xr.DataArray:
     """
     Update a specific raster nodata value.
     :param in_raster: (xr.DataArray or str raster path) input raster.
@@ -33,15 +35,16 @@ def change_nodata(
         with in_raster's dtype, a dtype conversion is default unless False.
     :returns: param:in_raster with the updated nodata values as a xarray DataArray object.
     """
-    #NOTE: likely not needed!
+    # NOTE: likely not needed!
     raise NotImplementedError
+
 
 def change_dtype(
     in_raster: Union[xr.DataArray, str],
     out_dtype: str,
     out_path: str = None,
     allow_rounding: bool = False,
-    ) -> xr.DataArray:
+) -> xr.DataArray:
     """
     Change a rasters datatype to another valid xarray datatype.
     :param in_raster: (xr.DataArray or str path) input raster.
@@ -50,18 +53,18 @@ def change_dtype(
     :param allow_rounding: (bool, default=False) allows rounding of float -> int.
     :returns: (xr.DataArray) the raster with it's dtype changed.
     """
-    #NOTE: likely not needed!
+    # NOTE: likely not needed!
     raise NotImplementedError
 
 
-#TODO: Evaluate feasibility of implementing 
-#These are extra add ons that would be nice to implement budget permitting 
-#Prepare flow direction raster (FDR)
+# TODO: Evaluate feasibility of implementing
+# These are extra add ons that would be nice to implement budget permitting
+# Prepare flow direction raster (FDR)
 def fix_pits(
     dem: Raster,
     out_path: str = None,
     fix: bool = True,
-    ) -> xr.DataArray:
+) -> xr.DataArray:
     """
     Detect and fills single cell "pits" in a DEM raster using pysheds: .detect_pits()/.fill_pits().
     :param dem: (xr.DataArray or str raster path) the input DEM raster.
@@ -72,11 +75,12 @@ def fix_pits(
     """
     raise NotImplementedError
 
+
 def fix_depressions(
     dem: Raster,
     out_path: str = None,
     fix: bool = True,
-    ) -> xr.DataArray:
+) -> xr.DataArray:
     """
     Detect and fills multi-cell "depressions" in a DEM raster using pysheds: .detect_depressions()/.fill_depressions().
     :param dem: (xr.DataArray or str raster path) the input DEM raster.
@@ -87,11 +91,12 @@ def fix_depressions(
     """
     raise NotImplementedError
 
+
 def fix_flats(
     dem: Raster,
     out_path: str = None,
     fix: bool = True,
-    ) -> xr.DataArray:
+) -> xr.DataArray:
     """
     Detect and resolves "flats" in a DEM using pysheds: .detect_flats()/.resolve_flats().
     :param dem: (xr.DataArray or str raster path) the input DEM raster.
@@ -102,11 +107,12 @@ def fix_flats(
     """
     raise NotImplementedError
 
+
 def d8_fdr(
     dem: Raster,
     out_path: str = None,
     out_format: str = 'TauDEM',
-    ) -> xr.DataArray:
+) -> xr.DataArray:
     """
     Creates a flow direction raster from a DEM. Can either save the raster or keep in memory.
     :param dem: (xr.DataArray or str raster path) the DEM from which to make the FDR.
@@ -116,12 +122,13 @@ def d8_fdr(
     """
     raise NotImplementedError
 
+
 def batch_process(
     dataset: xr.Dataset,
     function: callable = None,
     out_path: str = None,
     *kwargs: dict,
-    ) -> xr.Dataset:
+) -> xr.Dataset:
     """
     Applies a function to each DataArray in a Dataset (should this be built into the functions themselves??)
     :param Dataset: (xr.Dataset) an xarray Dataset where all DataArrays are ready to be processed together.
@@ -131,4 +138,3 @@ def batch_process(
     :returns: (xr.Dataset) the output Dataset with each DataArray altered by param:function.
     """
     raise NotImplementedError
-

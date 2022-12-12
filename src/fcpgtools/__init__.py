@@ -4,4 +4,4 @@
 __version__ = '2.0.0'
 
 # populate package namespace
-from fcpgtools import types, utilities, tools, terrainengine
+from fcpgtools import custom_types, utilities, tools, terrainengine

@@ -5,16 +5,18 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 from rasterio.enums import Resampling
-from fcpgtools.types import Raster, FDRD8Formats, D8ConversionDicts, PourPointLocationsDict, PourPointValuesDict
+from fcpgtools.custom_types import Raster, FDRD8Formats, D8ConversionDicts, PourPointLocationsDict, PourPointValuesDict
 from fcpgtools.utilities import load_raster, load_shapefile, save_raster, \
     id_d8_format, _combine_split_bands, _verify_basin_coverage, get_max_cell, query_point, \
     _split_bands, _verify_shape_match, _get_crs, change_nodata_value, _verify_alignment
 
 # CLIENT FACING FUNCTIONS
+
+
 def align_raster(
     in_raster,
     match_raster: Raster,
-    resample_method: str = 'nearest', 
+    resample_method: str = 'nearest',
     out_path: Optional[Union[str, Path]] = None,
 ) -> xr.DataArray:
     """Aligns the projection/CRS, spatial extent, and resolution of one raster to another.
@@ -34,13 +36,14 @@ def align_raster(
         match_raster,
         resampling=getattr(Resampling, resample_method),
     )
-    
+
     if out_path is not None:
         save_raster(
             out_raster,
             out_path,
         )
     return out_raster
+
 
 def convert_fdr_formats(
     d8_fdr: Raster,
@@ -52,8 +55,8 @@ def convert_fdr_formats(
 
     Args:
         d8_fdr: The input D8 Flow Direction Raster (FDR).
-        out_format: A valid D8 flow direction format name in types.D8ConversionDicts.keys().
-        in_format:  A valid D8 flow direction format name in types.D8ConversionDicts.keys() that
+        out_format: A valid D8 flow direction format name in custom_types.D8ConversionDicts.keys().
+        in_format:  A valid D8 flow direction format name in custom_types.D8ConversionDicts.keys() that
             overrides the auto-recognized format from param:d8_fdr.
             Note: manually inputting param:in_format will improve performance.
         out_path:  Defines a path to save the output raster.
@@ -64,20 +67,24 @@ def convert_fdr_formats(
     # identify the input D8 format
     d8_fdr = load_raster(d8_fdr)
     out_format = out_format.lower()
-    if in_format is not None: in_format = in_format.lower()
+    if in_format is not None:
+        in_format = in_format.lower()
     else:
         in_format = id_d8_format(d8_fdr)
-    
+
     # check that both formats are valid before proceeding
-    if in_format not in FDRD8Formats: raise TypeError(
-        f'param:in_format = {in_format} which is not in {FDRD8Formats}'
-    )
+    if in_format not in FDRD8Formats:
+        raise TypeError(
+            f'param:in_format = {in_format} which is not in {FDRD8Formats}'
+        )
 
-    if out_format not in FDRD8Formats: raise TypeError(
-        f'param:out_format = {out_format} which is not in {FDRD8Formats}'
-    )
+    if out_format not in FDRD8Formats:
+        raise TypeError(
+            f'param:out_format = {out_format} which is not in {FDRD8Formats}'
+        )
 
-    if in_format == out_format: return d8_fdr
+    if in_format == out_format:
+        return d8_fdr
 
     # get the conversion dictionary mappinng
     mapping = dict(
@@ -86,7 +93,7 @@ def convert_fdr_formats(
             D8ConversionDicts[out_format].values(),
         )
     )
-    
+
     D8ConversionDicts[in_format], D8ConversionDicts[out_format]
 
     # convert appropriately using pandas (no clean implementation in xarray)
@@ -108,7 +115,7 @@ def convert_fdr_formats(
     d8_fdr = d8_fdr.astype('int')
 
     print(f'Converted the D8 Flow Direction Raster (FDR) from {in_format} format'
-    f' to {out_format}')
+          f' to {out_format}')
 
     if out_path is not None:
         save_raster(
@@ -118,6 +125,7 @@ def convert_fdr_formats(
 
     return d8_fdr
 
+
 def make_fac_weights(
     parameter_raster: xr.DataArray,
     fdr_raster: xr.DataArray,
@@ -125,7 +133,7 @@ def make_fac_weights(
     out_path: Optional[Union[str, Path]] = None,
 ) -> xr.DataArray:
     """Preps param:parameter_raster for parameter accumulation by matching the nodata boundary to param:fdr_raster. 
-    
+
     NOTE: Only this function AFTER aligning the parameter raster to the FDR raster via tools.align_raster()!
 
     Args: 
@@ -142,7 +150,7 @@ def make_fac_weights(
     # check that shapes match
     if not _verify_shape_match(fdr_raster, parameter_raster):
         raise TypeError('The D8 FDR raster and the parameter raster must have the same shape. '
-        'Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).')
+                        'Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).')
 
     # use a where query to replace out of bounds values
     og_nodata = parameter_raster.rio.nodata
@@ -150,7 +158,7 @@ def make_fac_weights(
 
     if not _verify_alignment(parameter_raster, fdr_raster):
         raise TypeError('param:parameter_raster and param:fdr_raster are not aligned! '
-        'Please use tools.align_raster() before applying this tool!')
+                        'Please use tools.align_raster() before applying this tool!')
 
     parameter_raster = parameter_raster.where(
         fdr_raster.values != fdr_raster.rio.nodata,
@@ -160,8 +168,8 @@ def make_fac_weights(
     # convert in-bounds nodata to 0
     if np.isin(og_nodata, parameter_raster.values):
         parameter_raster = parameter_raster.where(
-            (fdr_raster.values == fdr_raster.rio.nodata) & \
-                (parameter_raster.values != og_nodata),
+            (fdr_raster.values == fdr_raster.rio.nodata) &
+            (parameter_raster.values != og_nodata),
             0,
         )
 
@@ -176,7 +184,7 @@ def make_fac_weights(
         parameter_raster,
         out_of_bounds_value,
     )
-    
+
     # save raster if necessary
     if out_path is not None:
         save_raster(
@@ -186,13 +194,14 @@ def make_fac_weights(
 
     return parameter_raster
 
+
 def make_decay_raster(
     distance_to_stream_raster: Raster,
     decay_factor: Union[int, float],
     out_path: Optional[Union[str, Path]] = None,
 ) -> xr.DataArray:
     """Creates a decay raster based on distance to stream for use in decay_accumulate().
-    
+
     Grid cell values are computed as the inverse number of grid cells,
     :code:`np.exp((-1 * distance_to_stream * cell_size) / (cell_size ** k))`, where k is a
     constant applied to the cell size values.
@@ -202,15 +211,17 @@ def make_decay_raster(
         decay_factor: Dimensionless constant applied to decay factor denominator.
             NOTE: Set k to 2 for 'moderate' decay; greater than 2 for slower decay; or less than 2 for faster decay.
         out_path: Defines a path to save the output raster.
-    
+
     Returns:
         The output decay raster for use in decay_accumulate().
     """
-    distance_to_stream_raster = load_raster(distance_to_stream_raster).astype('float')
+    distance_to_stream_raster = load_raster(
+        distance_to_stream_raster).astype('float')
     cell_size = distance_to_stream_raster.rio.resolution()[0]
-    
+
     decay_array = np.exp(
-        (-1 * distance_to_stream_raster.values * cell_size) / (cell_size ** decay_factor)
+        (-1 * distance_to_stream_raster.values *
+         cell_size) / (cell_size ** decay_factor)
     )
 
     decay_raster = xr.DataArray(
@@ -231,6 +242,8 @@ def make_decay_raster(
     return decay_raster
 
 # raster masking function
+
+
 def spatial_mask(
     in_raster: Raster,
     mask_shp: Union[gpd.GeoDataFrame, str],
@@ -238,7 +251,7 @@ def spatial_mask(
     inverse: bool = False,
 ) -> xr.DataArray:
     """Applys a spatial mask via a shapefile to a raster, converting out of bounds values by default to nodata.
-    
+
     Primarily for masking rasters (i.e., FAC) by basin shapefiles, converting out-of-mask raster
     values to NoData. A cell value can also be used to create a mask for integer rasters. 
     Note: default behavior (inverse=False) will make it so cells NOT COVERED by mask_shp -> NoData.
@@ -248,7 +261,7 @@ def spatial_mask(
         mask_shp: Shapefile used for masking.
         out_path: Defines a path to save the output raster.
         inverse: If True, cells that ARE COVERED by mask_shp -> NoData.
-    
+
     Returns:
         The output spatially masked raster.
     """
@@ -269,6 +282,7 @@ def spatial_mask(
             out_path,
         )
     return out_raster
+
 
 def value_mask(
     in_raster: Raster,
@@ -301,27 +315,35 @@ def value_mask(
     """
     # handle nodata / out-of-mask values
     in_raster = load_raster(in_raster)
-    if out_mask_value is None: out_mask_value = in_raster.rio.nodata
-    
+    if out_mask_value is None:
+        out_mask_value = in_raster.rio.nodata
+
     # build conditionals
-    if equals and 'float' in str(in_raster.dtype): print(
-        f'WARNING: Applying an equality mask to a {in_raster.dtype} raster'
-    )
-    
-    if equals and not inverse_equals: conditional = (in_raster == thresh)
-    if equals and inverse_equals: conditional = (in_raster != thresh)
-    elif greater_than: conditional = (in_raster > thresh)
-    elif not greater_than: conditional = (in_raster < thresh)
+    if equals and 'float' in str(in_raster.dtype):
+        print(
+            f'WARNING: Applying an equality mask to a {in_raster.dtype} raster'
+        )
+
+    if equals and not inverse_equals:
+        conditional = (in_raster == thresh)
+    if equals and inverse_equals:
+        conditional = (in_raster != thresh)
+    elif greater_than:
+        conditional = (in_raster > thresh)
+    elif not greater_than:
+        conditional = (in_raster < thresh)
 
     # set dtype
-    if in_mask_value and out_mask_value is not None: dtype = 'int64'
-    else: dtype = in_raster.dtype
+    if in_mask_value and out_mask_value is not None:
+        dtype = 'int64'
+    else:
+        dtype = in_raster.dtype
 
     out_raster = in_raster.where(
         conditional,
         out_mask_value,
     )
-        
+
     if in_mask_value is not None:
         out_raster = out_raster.where(
             (out_raster.values == out_mask_value),
@@ -335,6 +357,7 @@ def value_mask(
             out_path,
         )
     return out_raster
+
 
 def mask_streams(
     fac_raster: Raster,
@@ -357,7 +380,7 @@ def mask_streams(
         (fac_raster != fac_raster.rio.nodata),
         np.nan,
     )
-    
+
     # apply stream mask
     mask_streams = fac_raster.where(
         (fac_raster >= accumulation_threshold),
@@ -371,8 +394,9 @@ def mask_streams(
             mask_streams,
             out_path,
         )
-    
+
     return mask_streams
+
 
 def binarize_nodata(
     in_raster: Raster,
@@ -380,7 +404,7 @@ def binarize_nodata(
     out_path: Optional[Union[str, Path]] = None,
 ) -> xr.DataArray:
     """Creates an output binary raster based on an input where nodata values -> 1, and valued cells -> 0.
-    
+
     Note: while param:inverse=True this can be used with pyfunc:apply_mask() to match nodata cells between rasters.
 
     Args:
@@ -394,7 +418,8 @@ def binarize_nodata(
     """
     # handle nodata / out-of-mask values
     in_raster = load_raster(in_raster)
-    if nodata_value is None: nodata_value = in_raster.rio.nodata
+    if nodata_value is None:
+        nodata_value = in_raster.rio.nodata
 
     # convert all values to 0 or 1
     nodata_binary = 1
@@ -420,8 +445,9 @@ def binarize_nodata(
         )
     return out_raster
 
+
 def binarize_categorical_raster(
-    cat_raster: Raster, 
+    cat_raster: Raster,
     categories_dict: Optional[Dict[int, str]] = None,
     ignore_categories: Optional[List] = None,
     out_path: Optional[Union[str, Path]] = None,
@@ -443,20 +469,26 @@ def binarize_categorical_raster(
     """
     cat_raster = load_raster(cat_raster)
     cat_dtype = str(cat_raster.dtype)
-    if not categories_dict: categories_dict = {}
+    if not categories_dict:
+        categories_dict = {}
 
-    if 'int'  not in cat_dtype: raise TypeError('Categorical rasters must be dtype=int.')
-    if len(cat_raster.shape) >= 3: raise TypeError('Categorical rasters must be of form f(x, y).')
+    if 'int' not in cat_dtype:
+        raise TypeError('Categorical rasters must be dtype=int.')
+    if len(cat_raster.shape) >= 3:
+        raise TypeError('Categorical rasters must be of form f(x, y).')
 
     categories = [int(i) for i in list(np.unique(cat_raster.values))]
-    if not ignore_categories: ignore_categories = []
+    if not ignore_categories:
+        ignore_categories = []
 
     combine_dict = {}
     count = 0
     for i, cat in enumerate(categories):
         if cat not in ignore_categories:
-            if cat in list(categories_dict.keys()): index = categories_dict[cat]
-            else: index = cat
+            if cat in list(categories_dict.keys()):
+                index = categories_dict[cat]
+            else:
+                index = cat
 
             out_layer = cat_raster.where(
                 cat_raster == cat,
@@ -480,6 +512,7 @@ def binarize_categorical_raster(
         )
     return out_raster
 
+
 def d8_to_dinfinity(
     d8_fdr: Raster,
     out_path: Optional[Union[str, Path]] = None,
@@ -500,7 +533,7 @@ def d8_to_dinfinity(
         d8_fdr,
         out_format='taudem',
     )
-    
+
     # replace nodata with nan and convert to float
     dinf_fdr = d8_fdr.where(
         (d8_fdr.values != d8_fdr.rio.nodata),
@@ -525,9 +558,10 @@ def d8_to_dinfinity(
 
     return dinf_fdr
 
+
 def find_basin_pour_points(
-    fac_raster: Raster, 
-    basins_shp: str, 
+    fac_raster: Raster,
+    basins_shp: str,
     basin_id_field: str = 'HUC12',
     use_huc4: bool = True,
 ) -> PourPointLocationsDict:
@@ -550,8 +584,9 @@ def find_basin_pour_points(
     # verify that we can find the basin_id_field
     if basin_id_field is not None:
         if basin_id_field not in list(basins_shp.columns):
-            raise ValueError(f'param:basin_id_field = {basin_id_field} is not in param:basins_shp')
-    
+            raise ValueError(
+                f'param:basin_id_field = {basin_id_field} is not in param:basins_shp')
+
     # convert basin levels if necessary PourPointLocationsDict
     pour_point_locations_dict = {}
     pour_point_locations_dict['pour_point_ids'] = []
@@ -561,8 +596,9 @@ def find_basin_pour_points(
         print('Using HUC4 level flow basins, converting from HUC12')
         basins_shp['HUC4'] = basins_shp[basin_id_field].str[:4]
         sub_basin_id = 'HUC4'
-    else: sub_basin_id = basin_id_field
-    
+    else:
+        sub_basin_id = basin_id_field
+
     # iterate over sub basins and fill the
     basins_shp = basins_shp.dissolve(by=sub_basin_id).reset_index()
 
@@ -572,17 +608,19 @@ def find_basin_pour_points(
         # check extents of shapefile bbox and make sure all overlap the FAC raster extent
         if not _verify_basin_coverage(fac_raster, sub_shp):
             print(f'WARNING: sub basin with {sub_basin_id} == {basin} is not'
-            ' completely enclosed by param:raster! Some relevant areas may be missing.')
-        
+                  ' completely enclosed by param:raster! Some relevant areas may be missing.')
+
         # apply spatial mask and find max accumulation value
         sub_raster = spatial_mask(
             fac_raster,
             sub_shp,
         )
         pour_point_locations_dict['pour_point_ids'].append(basin)
-        pour_point_locations_dict['pour_point_coords'].append(get_max_cell(sub_raster))
-    
+        pour_point_locations_dict['pour_point_coords'].append(
+            get_max_cell(sub_raster))
+
     return pour_point_locations_dict
+
 
 def find_fac_pour_point(
     fac_raster: Raster,
@@ -593,7 +631,7 @@ def find_fac_pour_point(
     Args:
         fac_raster: A Flow Accumulation Cell raster (FAC).
         basin_name: Allows a name to be given to the FAC.
-    
+
     Returns:
         A dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(x, y).
     """
@@ -601,11 +639,13 @@ def find_fac_pour_point(
     fac_raster = load_raster(fac_raster)
     pour_point_locations_dict = {}
 
-    if not basin_name: basin_name = 0
+    if not basin_name:
+        basin_name = 0
     pour_point_locations_dict['pour_point_ids'] = [basin_name]
     pour_point_locations_dict['pour_point_coords'] = [get_max_cell(fac_raster)]
 
     return pour_point_locations_dict
+
 
 def get_pour_point_values(
     pour_points_dict: PourPointLocationsDict,
@@ -616,7 +656,7 @@ def get_pour_point_values(
     Note: This function is intended to feed into accumulate_flow() or parameter_accumlate() param:upstream_pour_points.
 
     Args:
-        pour_points_dict: A dictionary of form fcpgtools.types.PourPointValuesDict.
+        pour_points_dict: A dictionary of form fcpgtools.custom_types.PourPointValuesDict.
         accumulation_raster: A Flow Accumulation Cell raster (FAC) or a parameter accumulation raster.
 
     Returns:
@@ -624,7 +664,7 @@ def get_pour_point_values(
     """
     # pull in the accumulation raster
     accumulation_raster = load_raster(accumulation_raster)
-    
+
     # remove old values if accidentally passed in
     if 'pour_point_values' in list(pour_points_dict.keys()):
         del pour_points_dict['pour_point_values']
@@ -648,11 +688,13 @@ def get_pour_point_values(
             )
         dict_values_list.append(basin_values_list)
 
-    # convert to types.PourPointValuesDict and return
+    # convert to custom_types.PourPointValuesDict and return
     pour_points_dict['pour_point_values'] = dict_values_list
     return pour_points_dict
 
 # make FCPG raster
+
+
 def make_fcpg(
     param_accum_raster: Raster,
     fac_raster: Raster,
@@ -683,5 +725,3 @@ def make_fcpg(
         )
 
     return fcpg_raster
-
-

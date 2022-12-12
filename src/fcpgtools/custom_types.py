@@ -6,6 +6,7 @@ from numpy import ndarray
 from pysheds.grid import Grid
 from pysheds.view import Raster as PyShedsRaster
 
+
 Raster = Union[DataArray, str, Path]
 Shapefile = Union[GeoDataFrame, str, Path]
 Engines = ('taudem', 'pysheds')
@@ -25,7 +26,7 @@ D8ConversionDicts = {
         'northeast': 2,
         'east': 1,
         'nodata': 0,
-        },
+    },
     'esri': {
         'southeast': 2,
         'south': 4,
@@ -36,31 +37,41 @@ D8ConversionDicts = {
         'northeast': 128,
         'east': 1,
         'nodata': 255,
-        }
     }
+}
 
 # create a custom type hint dictionary for pour points
+
+
 class PourPointLocationsDict(TypedDict):
     pour_point_ids: List[Union[int, str]]
-    pour_point_coords: List[Tuple[float, float]]  # (x, y) in raster coordinates 
+
+    # (x, y) in raster coordinates
+    pour_point_coords: List[Tuple[float, float]]
+
 
 class PourPointValuesDict(PourPointLocationsDict):
     # the lists in the list will be len==1 if a one band array is supplied
     pour_point_values: List[List[Union[float, int]]]
 
 # create custom type hint for PyShedsInputDict
+
+
 class PyShedsInputDict(TypedDict):
     input_array: ndarray
     raster: PyShedsRaster
     grid: Grid
 
 # create classess to add to TauDEMDict:Union[TypeDict,...]
+
+
 class TaudemFACInputDict(TypedDict):
     fdr: str
     outFl: str
     cores: int
     mpiCall: str
     mpiArg: str
+
 
 class Taudemdistance_to_streamInputDict(TypedDict):
     fdr: str
@@ -71,6 +82,7 @@ class Taudemdistance_to_streamInputDict(TypedDict):
     mpiCall: str
     mpiArg: str
 
+
 class TaudemMaxUpslopeInputDict(TypedDict):
     fdr: str
     param: str
@@ -80,6 +92,7 @@ class TaudemMaxUpslopeInputDict(TypedDict):
     mpiCall: str
     mpiArg: str
 
+
 TauDEMDict = Union[TaudemFACInputDict,
-    Taudemdistance_to_streamInputDict,
-    TaudemMaxUpslopeInputDict,]
+                   Taudemdistance_to_streamInputDict,
+                   TaudemMaxUpslopeInputDict, ]

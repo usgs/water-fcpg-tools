@@ -2,7 +2,8 @@ import abc
 from pathlib import Path
 import xarray as xr
 from typing import Protocol, Union, Optional
-from fcpgtools.types import Raster, PourPointValuesDict
+from fcpgtools.custom_types import Raster, PourPointValuesDict
+
 
 class SupportsFDRtoFAC(Protocol):
     """"""
@@ -36,15 +37,15 @@ class SupportsParameterAccumulation(Protocol):
     """"""
 
     @abc.abstractmethod
-    def accumulate_parameter( 
-        d8_fdr: Raster, 
+    def accumulate_parameter(
+        d8_fdr: Raster,
         parameter_raster: Raster,
         upstream_pour_points: Optional[PourPointValuesDict] = None,
         out_path: Optional[Union[str, Path]] = None,
         **kwargs,
-        ) -> xr.DataArray:
+    ) -> xr.DataArray:
         """Create a parameter accumulation raster from a D8 Flow Direction Raster and a parameter raster.
-    
+
         A key aspect of this function is that the output DataArray will have dimensions matching param:parameter_raster.
 
         Args:
@@ -119,7 +120,7 @@ class SupportsDistanceToStream(Protocol):
             A raster with values of D8 flow distance from each cell to the nearest stream.
         """
         raise NotImplementedError
-        
+
 
 class SupportsDecayAccumulation(Protocol):
     """"""
@@ -133,7 +134,7 @@ class SupportsDecayAccumulation(Protocol):
         **kwargs,
     ) -> xr.DataArray:
         """Creates a D-Infinity based accumulation raster (parameter or cell accumulation) while applying decay via a multiplier_raster.
-        
+
         NOTE: Replaces tools.decayAccum() from V1 FCPGtools.
 
         Args:
