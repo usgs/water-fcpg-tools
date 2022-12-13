@@ -10,19 +10,18 @@ def validate_engine(protocol):
 
         Example usage:
 
-            @validator(SupportsFACtoFDR)
+            @validate_engine(SupportsFACtoFDR)
             def my_func(engine:SupportsFACtoFDR):
                 ...
     """
 
     def validator(func, *args, **kwargs) -> callable:
-        # TODO: make it so engine is founds off kwarg not position, and always returned as the class if input was str
-        def valid_func(engine, *args, **kwargs):
+        def valid_func(engine=None, *args, **kwargs):
             if isinstance(engine, str):
                 engine = custom_types.NameToTerrainEngineDict[engine.lower()]
             if not isinstance(engine, protocol):
                 raise TypeError(f'Invalid engine provided, {func.__name__}'
                                 f'requires engine implementing {protocol.__name__} protocol')
-            func(engine, *args, **kwargs)
+            func(engine=engine, *args, **kwargs)
         return valid_func
     return validator

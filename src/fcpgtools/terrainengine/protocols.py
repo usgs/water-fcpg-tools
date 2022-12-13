@@ -1,10 +1,10 @@
 import abc
 from pathlib import Path
 import xarray as xr
-from typing import Protocol, Union, Optional
+from typing import Protocol, Union, Optional, runtime_checkable
 from fcpgtools.custom_types import Raster, PourPointValuesDict
 
-
+@runtime_checkable
 class SupportsAccumulateFlow(Protocol):
 
     @abc.abstractmethod
@@ -31,7 +31,7 @@ class SupportsAccumulateFlow(Protocol):
         """
         raise NotImplementedError
 
-
+@runtime_checkable
 class SupportsAccumulateParameter(Protocol):
 
     @abc.abstractmethod
@@ -61,7 +61,7 @@ class SupportsAccumulateParameter(Protocol):
         """
         raise NotImplementedError
 
-
+@runtime_checkable
 class SupportsExtremeUpslopeValues(Protocol):
 
     @abc.abstractmethod
@@ -90,7 +90,7 @@ class SupportsExtremeUpslopeValues(Protocol):
         """
         raise NotImplementedError
 
-
+@runtime_checkable
 class SupportsDistanceToStream(Protocol):
 
     @abc.abstractmethod
@@ -117,7 +117,7 @@ class SupportsDistanceToStream(Protocol):
         """
         raise NotImplementedError
 
-
+@runtime_checkable
 class SupportsDecayAccumulation(Protocol):
 
     @abc.abstractmethod

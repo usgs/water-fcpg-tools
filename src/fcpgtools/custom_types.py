@@ -5,6 +5,7 @@ from geopandas import GeoDataFrame
 from numpy import ndarray
 from pysheds.grid import Grid
 from pysheds.view import Raster as PyShedsRaster
+from fcpgtools.terrainengine import TauDEMEngine, PyShedsEngine
 
 
 Raster = Union[DataArray, str, Path]
@@ -42,13 +43,12 @@ D8ConversionDicts = {
 
 
 # store engines in a dictionary to support string param:engine arguments
-#TODO: get actual classes in here
+# TODO: get actual classes in here
 NameToTerrainEngineDict = {
-    'taudem': '',
-    'pysheds': '',
+    'taudem': TauDEMEngine,
+    'pysheds': PyShedsEngine,
 }
 
-TerrainEngineToNameDict = dict((v, k) for k, v in NameToTerrainEngineDict.items())
 
 class PourPointLocationsDict(TypedDict):
     """Custom type hint dict for storing basin pour point locations.

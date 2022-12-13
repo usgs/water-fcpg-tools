@@ -1043,7 +1043,15 @@ def accumulate_flow(
     """
     # reformat param:d8_fdr if necessary
     d8_fdr = utilities._match_d8_format(d8_fdr, engine)
-    raise NotImplementedError
+
+    # execute function w/ the chosen engine
+    return engine.accumulate_flow(
+        d8_fdr,
+        upstream_pour_points=upstream_pour_points,
+        weights=weights,
+        out_path=out_path,
+        **kwargs,
+    )
 
 
 @engine_validator.validate_engine(protocols.SupportsAccumulateParameter)
@@ -1075,7 +1083,15 @@ def accumulate_parameter(
     """
     # reformat param:d8_fdr if necessary
     d8_fdr = utilities._match_d8_format(d8_fdr, engine)
-    raise NotImplementedError
+
+    # execute function w/ the chosen engine
+    return engine.accumulate_parameter(
+        d8_fdr,
+        parameter_raster,
+        upstream_pour_points=upstream_pour_points,
+        out_path=out_path,
+        **kwargs,
+    )
 
 
 @engine_validator.validate_engine(protocols.SupportsExtremeUpslopeValues)
@@ -1107,7 +1123,16 @@ def extreme_upslope_values(
     """
     # reformat param:d8_fdr if necessary
     d8_fdr = utilities._match_d8_format(d8_fdr, engine)
-    raise NotImplementedError
+
+    # execute function w/ the chosen engine
+    return engine.extreme_upslope_values(
+        d8_fdr,
+        parameter_raster,
+        mask_streams=mask_streams,
+        out_path=out_path,
+        get_min_upslope=get_min_upslope,
+        **kwargs,
+    )
 
 
 @engine_validator.validate_engine(protocols.SupportsDistanceToStream)
@@ -1136,7 +1161,15 @@ def distance_to_stream(
     """
     # reformat param:d8_fdr if necessary
     d8_fdr = utilities._match_d8_format(d8_fdr, engine)
-    raise NotImplementedError
+
+    # execute function w/ the chosen engine
+    return engine.distance_to_stream(
+        d8_fdr,
+        fac_raster,
+        accum_threshold,
+        out_path=out_path,
+        **kwargs,
+    )
 
 
 @engine_validator.validate_engine(protocols.SupportsDecayAccumulation)
@@ -1170,4 +1203,13 @@ def decay_accumulation(
     """
     # reformat param:d8_fdr if necessary
     d8_fdr = utilities._match_d8_format(d8_fdr, engine)
-    raise NotImplementedError
+
+    # execute function w/ the chosen engine
+    return engine.decay_accumulation(
+        d8_fdr,
+        decay_raster,
+        upstream_pour_points=upstream_pour_points,
+        parameter_raster=parameter_raster,
+        out_path=out_path,
+        **kwargs,
+    )

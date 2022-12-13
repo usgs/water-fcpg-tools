@@ -24,8 +24,6 @@ def _id_d8_format(
         raise TypeError('Cant recognize D8 Flow Direction Raster format '
                         'as either ESRI or TauDEM. Please use the param:in_format for pyfunc:convert_fdr_formats()')
 
-# TODO: fix engine typehint
-
 
 def _match_d8_format(
     d8_fdr: Raster,
@@ -33,12 +31,19 @@ def _match_d8_format(
 ) -> xr.DataArray:
     """Matches the D8 format to the appropriate terrain engine"""
     d8_format = _id_d8_format(d8_fdr)
-    if not isinstance(NameToTerrainEngineDict[d8_format], engine):
-        d8_fdr = tools.convert_fdr_formats(
-            d8_fdr,
-            out_format=TerrainEngineToNameDict[engine],
-            in_format=d8_format,
-        )
+    try:
+        if d8_format != engine.d8_format:
+            d8_fdr = tools.convert_fdr_formats(
+                d8_fdr,
+                out_format=engine.d8_format,
+                in_format=d8_format,
+            )
+    except AttributeError:
+        raise AttributeError(
+            f'Terrain engine {engine.__name__} is missing attribute d8_format!')
+    except KeyError:
+        raise KeyError(
+            f'd8_format: {d8_format} is missing from fcpgtools.custom_types.D8ConversionDicts.keys()!')
     return d8_fdr
 
 

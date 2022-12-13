@@ -1,3 +1,4 @@
 
 # populate module namespace
-from fcpgtools.terrainengine import taudem_engine, pysheds_engine
+from fcpgtools.terrainengine.taudem_engine import TauDEMEngine
+from fcpgtools.terrainengine.pysheds_engine import PyShedsEngine
