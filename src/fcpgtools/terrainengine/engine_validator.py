@@ -1,4 +1,10 @@
-from fcpgtools import custom_types
+from fcpgtools.terrainengine.taudem_engine import TauDEMEngine
+from fcpgtools.terrainengine.pysheds_engine import PyShedsEngine
+
+NameToTerrainEngineDict = {
+    'taudem': TauDEMEngine,
+    'pysheds': PyShedsEngine,
+}
 
 
 def validate_engine(protocol):
@@ -18,7 +24,7 @@ def validate_engine(protocol):
     def validator(func, *args, **kwargs) -> callable:
         def valid_func(engine=None, *args, **kwargs):
             if isinstance(engine, str):
-                engine = custom_types.NameToTerrainEngineDict[engine.lower()]
+                engine = NameToTerrainEngineDict[engine.lower()]
             if not isinstance(engine, protocol):
                 raise TypeError(f'Invalid engine provided, {func.__name__}'
                                 f'requires engine implementing {protocol.__name__} protocol')

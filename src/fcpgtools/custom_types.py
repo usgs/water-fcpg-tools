@@ -5,7 +5,6 @@ from geopandas import GeoDataFrame
 from numpy import ndarray
 from pysheds.grid import Grid
 from pysheds.view import Raster as PyShedsRaster
-from fcpgtools.terrainengine import TauDEMEngine, PyShedsEngine
 
 
 Raster = Union[DataArray, str, Path]
@@ -39,14 +38,6 @@ D8ConversionDicts = {
         'east': 1,
         'nodata': 255,
     }
-}
-
-
-# store engines in a dictionary to support string param:engine arguments
-# TODO: get actual classes in here
-NameToTerrainEngineDict = {
-    'taudem': TauDEMEngine,
-    'pysheds': PyShedsEngine,
 }
 
 

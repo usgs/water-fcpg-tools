@@ -7,7 +7,6 @@ from typing import Union, List, Tuple, Dict
 import fcpgtools.tools as tools
 from fcpgtools.custom_types import Raster, Shapefile
 from fcpgtools.custom_types import RasterSuffixes, ShapefileSuffixes, D8ConversionDicts
-from fcpgtools.custom_types import NameToTerrainEngineDict, TerrainEngineToNameDict
 
 
 def _id_d8_format(

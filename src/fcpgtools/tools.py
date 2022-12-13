@@ -8,8 +8,15 @@ import geopandas as gpd
 from rasterio.enums import Resampling
 import fcpgtools.utilities as utilities
 from fcpgtools.terrainengine import protocols, engine_validator
+from fcpgtools.terrainengine.taudem_engine import TauDEMEngine
+from fcpgtools.terrainengine.pysheds_engine import PyShedsEngine
 from fcpgtools.custom_types import Raster, Shapefile, FDRD8Formats, D8ConversionDicts
 from fcpgtools.custom_types import PourPointLocationsDict, PourPointValuesDict
+
+NameToTerrainEngineDict = {
+    'taudem': TauDEMEngine,
+    'pysheds': PyShedsEngine,
+}
 
 
 def load_raster(
