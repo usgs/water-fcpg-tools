@@ -75,6 +75,7 @@ class TauDEMEngine:
             prefixs = [prefixs]
 
         # delete files with matching prefixes
+        could_not_delete = 0
         for file in directory.iterdir():
             try:
                 remove = False
@@ -84,7 +85,12 @@ class TauDEMEngine:
                 if remove:
                     file.unlink()
             except PermissionError:
-                print('WARNING: Could not delete temp files due to a PermissionError')
+                could_not_delete += 1
+        if could_not_delete > 0:
+            print(
+                f'WARNING: Could not delete {could_not_delete} temp files in'
+                f' {str(directory)} due to a PermissionError.')
+            del could_not_delete
 
     @staticmethod
     def accumulate_flow(
@@ -191,8 +197,10 @@ class TauDEMEngine:
         )
 
         # remove temporary files and return output
+        d8_fdr.close()
         out_raster.close()
-        TauDEMEngine._clear_temp_files(prefixs=['fac_temp'])
+        if weights is None:
+            TauDEMEngine._clear_temp_files(prefixs=['fac_temp'])
 
         return out_raster
 
@@ -277,7 +285,8 @@ class TauDEMEngine:
             )
 
         out_raster.close()
-        TauDEMEngine._clear_temp_files(prefixs=['taudem_temp_input'])
+        TauDEMEngine._clear_temp_files(
+            prefixs=['taudem_temp_input', 'fac_temp'])
 
         return out_raster
 
@@ -303,7 +312,7 @@ class TauDEMEngine:
         Returns:
             A raster with values of D8 flow distance from each cell to the nearest stream.
         """
-        d8_fdr = TauDEMEngine._taudem_prepper(d8_fdr)
+        d8_fdr_path = TauDEMEngine._taudem_prepper(d8_fdr)
 
         # get stream grid as a taudem tempfile
         fac_raster = tools.load_raster(fac_raster)
@@ -324,7 +333,7 @@ class TauDEMEngine:
             out_path = Path(out_path)
 
         taudem_dict = {
-            'fdr': d8_fdr,
+            'fdr': d8_fdr_path,
             'fac': fac_path,
             'outRast': str(out_path),
             'thresh': accum_threshold,
@@ -368,6 +377,7 @@ class TauDEMEngine:
         )
 
         # clear temporary files and return the output
+        fac_raster.close()
         out_raster.close()
         TauDEMEngine._clear_temp_files(
             prefixs=['taudem_temp_input', 'distance_to_stream_temp'])
@@ -427,7 +437,6 @@ class TauDEMEngine:
         )
 
         out_raster.close()
-        TauDEMEngine._clear_temp_files(prefixs=['ext_upslope_temp'])
         return out_raster
 
     @staticmethod
@@ -454,7 +463,7 @@ class TauDEMEngine:
         Returns:
             A raster with max (or min) upstream value of the parameter grid as each cell's value.
         """
-        d8_fdr = TauDEMEngine._taudem_prepper(d8_fdr)
+        d8_fdr_path = TauDEMEngine._taudem_prepper(d8_fdr)
         parameter_raster = tools.load_raster(parameter_raster)
         accum_type_str = '-min' if get_min_upslope else ''
 
@@ -474,7 +483,7 @@ class TauDEMEngine:
             i, dim_name = index_tuple
 
             upslope_raster = TauDEMEngine._ext_upslope_cmd(
-                d8_fdr,
+                d8_fdr_path,
                 array,
                 accum_type_str,
                 kwargs=kwargs,
@@ -514,6 +523,9 @@ class TauDEMEngine:
                 out_path,
             )
 
+        # clear temporary files and return the output
+        d8_fdr.close()
+        parameter_raster.close()
         out_raster.close()
         TauDEMEngine._clear_temp_files(
             prefixs=['taudem_temp_input', 'ext_upslope_temp'])
@@ -579,8 +591,8 @@ class TauDEMEngine:
             np.nan,
         )
 
+        weights.close()
         out_raster.close()
-        TauDEMEngine._clear_temp_files(prefixs=['decay_accum_temp'])
         return out_raster
 
     @staticmethod
@@ -696,7 +708,10 @@ class TauDEMEngine:
                 out_path,
             )
 
+        # clear temporary files and return the output
         out_raster.close()
+        decay_raster.close()
+        dinf_fdr.close()
         TauDEMEngine._clear_temp_files(
             prefixs=['taudem_temp_input', 'decay_accum_temp'])
         return out_raster
