@@ -22,12 +22,17 @@ def validate_engine(protocol):
     """
 
     def validator(func, *args, **kwargs) -> callable:
-        def valid_func(engine=None, *args, **kwargs):
+        def valid_func(*args, **kwargs):
+            engine = kwargs['engine']
             if isinstance(engine, str):
-                engine = NameToTerrainEngineDict[engine.lower()]
-            if not isinstance(engine, protocol):
+                try:
+                    kwargs['engine'] = NameToTerrainEngineDict[engine.lower()]
+                except KeyError:
+                    raise TypeError(
+                        f'{engine} is not a recognized engine.')
+            if not isinstance(kwargs['engine'], protocol):
                 raise TypeError(f'Invalid engine provided, {func.__name__}'
-                                f'requires engine implementing {protocol.__name__} protocol')
-            func(engine=engine, *args, **kwargs)
+                                f' requires engine implementing {protocol.__name__} protocol')
+            return func(*args, **kwargs)
         return valid_func
     return validator

@@ -13,7 +13,7 @@ from fcpgtools.custom_types import Raster, TauDEMDict, PourPointValuesDict
 
 class TauDEMEngine:
 
-    d8_format = 'esri'
+    d8_format = 'taudem'
 
     @staticmethod
     def _taudem_prepper(
@@ -658,7 +658,7 @@ class TauDEMEngine:
                     dinf_fdr_path,
                     decay_raster_path,
                     array,
-                    kwargs,
+                    kwargs=kwargs,
                 )
 
                 out_dict[(i, dim_name)] = decay_acc_raster

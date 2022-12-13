@@ -8,15 +8,8 @@ import geopandas as gpd
 from rasterio.enums import Resampling
 import fcpgtools.utilities as utilities
 from fcpgtools.terrainengine import protocols, engine_validator
-from fcpgtools.terrainengine.taudem_engine import TauDEMEngine
-from fcpgtools.terrainengine.pysheds_engine import PyShedsEngine
 from fcpgtools.custom_types import Raster, Shapefile, FDRD8Formats, D8ConversionDicts
 from fcpgtools.custom_types import PourPointLocationsDict, PourPointValuesDict
-
-NameToTerrainEngineDict = {
-    'taudem': TauDEMEngine,
-    'pysheds': PyShedsEngine,
-}
 
 
 def load_raster(
@@ -25,7 +18,7 @@ def load_raster(
     """Loads a raster into a xarray.DataArray object. Can also be used to prep an existing DataArray for processing."""
     if isinstance(in_raster, xr.DataArray):
         return utilities._format_nodata(in_raster.squeeze())
-    if isinstance(in_raster, str):
+    if isinstance(in_raster, str) or in_raster is None:
         in_raster = Path(in_raster)
         if not in_raster.exists():
             raise FileNotFoundError(f'Input path {in_raster} is not found.')

@@ -14,23 +14,21 @@ except ImportError as e:
     MULTI_DIMENSIONAL_TEST = False
 
 # import fcpgtools!
-import src.fcpgtools.tools as tools
-import src.fcpgtools.utilities as utilities
-import src.fcpgtools.terrainengine as terrainengine
-from src.fcpgtools.terrainengine import taudem_engine
-from src.fcpgtools.terrainengine import pysheds_engine
+import fcpgtools
+
 
 def main(
     multi_dimensional_test: bool = MULTI_DIMENSIONAL_TEST,
     test_pysheds: bool = True,
     test_taudem: bool = True,
     test_pour_points: bool = True,
-    ) -> bool:
-    
+) -> bool:
+
     # get all necessary paths for in/out data
     examples_dir = str(Path.cwd())
     if 'FCPGtools' in examples_dir:
-        examples_dir = Path(examples_dir.split('FCPGtools', 2)[0]) / Path('FCPGtools/examples')
+        examples_dir = Path(examples_dir.split('FCPGtools', 2)[
+                            0]) / Path('FCPGtools/examples')
         print(f'var:examples_dir = {examples_dir}')
     else:
         del examples_dir
@@ -51,8 +49,8 @@ def main(
     us_basin_shp_path = in_data_dir / Path('upstream_wbd.shp')
 
     # pull data into DataArrays and GeoPandas
-    us_fdr = utilities.load_raster(us_fdr_tif)
-    landcover = utilities.load_raster(landcover_tif)
+    us_fdr = fcpgtools.load_raster(us_fdr_tif)
+    landcover = fcpgtools.load_raster(landcover_tif)
     us_basin_shp = gpd.read_file(us_basin_shp_path)
 
     # pull in precipitation data
@@ -67,23 +65,24 @@ def main(
             dates=("2021-01-01", "2021-12-30"),
             variables='prcp',
             time_scale="monthly",
-            )['prcp']
+        )['prcp']
     else:
         print('Using one dimensional precipitation data')
-        precip_tif = Path(os.path.join(in_data_dir, 'validation_daymet_an_P_2017.tif'))
-        precip = utilities.load_raster(precip_tif)
+        precip_tif = Path(os.path.join(
+            in_data_dir, 'validation_daymet_an_P_2017.tif'))
+        precip = fcpgtools.load_raster(precip_tif)
     print('Done\n')
 
     # align precipitation raster
     print('Aligning precipitation raster to the upstream fdr')
-    us_precip = tools.align_raster(
+    us_precip = fcpgtools.align_raster(
         precip,
         us_fdr,
-        resample_method='bilinear', 
+        resample_method='bilinear',
         out_path=Path(os.path.join(out_data_dir, 'us_fdr_daymet.tif')),
-        )
+    )
     print('Done\n')
-    
+
     # binarize and align landcover raster
     landcover_classes = {
         1: 'evergreen forest',
@@ -96,197 +95,194 @@ def main(
         16: 'barren',
         17: 'urban',
         18: 'open water',
-        }
+    }
 
     print('Aligning landcover raster to the upstream fdr')
-    us_landcover = tools.align_raster(
+    us_landcover = fcpgtools.align_raster(
         landcover,
         us_fdr,
-        resample_method='nearest', 
+        resample_method='nearest',
         out_path=None
-        )
+    )
 
-    us_binary_landcover = tools.binarize_categorical_raster(
+    us_binary_landcover = fcpgtools.binarize_categorical_raster(
         us_landcover,
         categories_dict=landcover_classes,
-        ignore_categories=[18] # ignoring open water
-        )
+        ignore_categories=[18]  # ignoring open water
+    )
     print('Done\n')
-    
+
     test_update_dict = {
-            'pour_point_ids': ['1407'],
-            'pour_point_coords': [(-1370609.9999999995, 1648259.9999999963)],
-            'pour_point_values': [[999999]],
-            }
+        'pour_point_ids': ['1407'],
+        'pour_point_coords': [(-1370609.9999999995, 1648259.9999999963)],
+        'pour_point_values': [[999999]],
+    }
 
     # use the pysheds engine
     if test_pysheds:
-        print('Converting the FDR format to ESRI encoding')
-        us_fdr_esri = tools.convert_fdr_formats(
-            us_fdr,
-            out_format='esri',
-            )
-        print('Done\n')
 
         print('PySheds: Making a FAC from us_fdr')
-        fac_pysheds = terrainengine.pysheds_engine.accumulate_flow(
-            us_fdr_esri,
+        fac_pysheds = fcpgtools.accumulate_flow(
+            us_fdr,
+            engine='pysheds',
             upstream_pour_points=None,
             out_path=None,
-            )
+        )
         print('Done\n')
 
-
         if test_pour_points:
-            print('Testing getting pour points from pysheds accumulation (HUC12 and HUC4 levels)')
-            huc4_pour_points = tools.find_basin_pour_points(
+            print(
+                'Testing getting pour points from pysheds accumulation (HUC12 and HUC4 levels)')
+            huc4_pour_points = fcpgtools.find_basin_pour_points(
                 fac_pysheds,
                 us_basin_shp,
                 basin_id_field='HUC12',
                 use_huc4=True,
-                )
+            )
 
-            huc12_pour_points = tools.find_basin_pour_points(
+            huc12_pour_points = fcpgtools.find_basin_pour_points(
                 fac_pysheds,
                 us_basin_shp,
                 basin_id_field='HUC12',
                 use_huc4=False,
-                )
+            )
 
-            huc4_pp_values = tools.get_pour_point_values(
+            huc4_pp_values = fcpgtools.get_pour_point_values(
                 huc4_pour_points,
                 fac_pysheds,
-                )
+            )
 
-            huc12_pp_values = tools.get_pour_point_values(
+            huc12_pp_values = fcpgtools.get_pour_point_values(
                 huc12_pour_points,
                 fac_pysheds,
-                )
+            )
 
         print('PySheds: Making a daymet accumulation grid')
-        daymet_acc_pysheds = terrainengine.pysheds_engine.accumulate_parameter(
-            us_fdr_esri,
+        daymet_acc_pysheds = fcpgtools.accumulate_parameter(
+            us_fdr,
             us_precip,
+            engine='pysheds',
             out_path=Path(out_data_dir / Path('test_accum1.tif')),
-            )
+        )
         print('Done\n')
 
         print('PySheds: Making a landcover accumulation grid')
-        landcover_acc_pysheds = terrainengine.pysheds_engine.accumulate_parameter(
-            us_fdr_esri,
+        landcover_acc_pysheds = fcpgtools.accumulate_parameter(
+            us_fdr,
             us_binary_landcover,
+            engine='pysheds',
             out_path=Path(out_data_dir / Path('test_accum2.tif')),
-            )
+        )
         print('Done\n')
 
     if test_taudem:
-        # convert D8 encoding
-        print('Converting the FDR format to taudem encoding')
-        us_fdr_taudem = tools.convert_fdr_formats(
-            us_fdr,
-            out_format='taudem',
-            out_path=Path(Path.cwd() / 'fdr.tif')
-            )
-        print('Done\n')
 
         print('TauDEM: Making a FAC from us_fdr')
-        fac_taudem = taudem_engine.accumulate_flow(
-            d8_fdr=us_fdr_taudem, 
+        fac_taudem = fcpgtools.accumulate_flow(
+            d8_fdr=us_fdr,
+            engine='taudem',
             upstream_pour_points=None,
             out_path=Path(Path.cwd() / 'fac.tif'),
             kwargs={'cores': 4},
-            )
+        )
         print('Done\n')
-    
+
         if test_pour_points:
-            print('Testing getting pour points from TauDEM accumulation (HUC12 and HUC4 levels)')
-            huc4_pour_points = tools.find_basin_pour_points(
+            print(
+                'Testing getting pour points from TauDEM accumulation (HUC12 and HUC4 levels)')
+            huc4_pour_points = fcpgtools.find_basin_pour_points(
                 fac_taudem,
                 us_basin_shp,
                 basin_id_field='HUC12',
                 use_huc4=True,
-                )
+            )
 
-            huc12_pour_points = tools.find_basin_pour_points(
+            huc12_pour_points = fcpgtools.find_basin_pour_points(
                 fac_taudem,
                 us_basin_shp,
                 basin_id_field='HUC12',
                 use_huc4=False,
-                )
-            huc4_pp_values = tools.get_pour_point_values(
+            )
+            huc4_pp_values = fcpgtools.get_pour_point_values(
                 huc4_pour_points,
                 fac_taudem,
-                )
+            )
 
-            huc12_pp_values = tools.get_pour_point_values(
+            huc12_pp_values = fcpgtools.get_pour_point_values(
                 huc12_pour_points,
                 fac_taudem,
-                )
+            )
             print('Done\n')
 
         print('TauDEM: Making a daymet accumulation grid')
-        daymet_acc_taudem = terrainengine.taudem_engine.accumulate_parameter(
-            us_fdr_taudem,
+        daymet_acc_taudem = fcpgtools.accumulate_parameter(
+            us_fdr,
             us_precip,
+            engine='taudem',
             kwargs={'cores': 4},
-            )
+        )
         print('Done\n')
         print('TauDEM: Making a landcover accumulation grid')
-        landcover_acc_taudem = terrainengine.taudem_engine.accumulate_parameter(
-            us_fdr_taudem,
+        landcover_acc_taudem = fcpgtools.accumulate_parameter(
+            us_fdr,
             us_binary_landcover,
+            engine='taudem',
             kwargs={'cores': 4},
-            )
+        )
         print('Done\n')
 
         print('TauDEM: Making a distance to stream raster')
-        distance_to_stream_taudem = terrainengine.taudem_engine.distance_to_stream(
-            us_fdr_taudem,
+        distance_to_stream_taudem = fcpgtools.distance_to_stream(
+            us_fdr,
             fac_taudem,
+            engine='taudem',
             accum_threshold=100,
             out_path=Path(Path.cwd() / 'distance_to_stream.tif')
         )
         print('Done\n')
 
         print('Making a stream mask w/ 100 as the threshold')
-        mask_streams = tools.mask_streams(
+        mask_streams = fcpgtools.mask_streams(
             fac_taudem,
             accumulation_threshold=100,
             out_path=Path(Path.cwd() / 'streammask.tif')
-            )
+        )
         print('Done\n')
 
         print('TauDEM: Calculating extream upslope parameter values')
-        terrainengine.taudem_engine.extreme_upslope_values(
-            us_fdr_taudem,
+        fcpgtools.extreme_upslope_values(
+            us_fdr,
             us_precip,
+            engine='taudem',
             mask_streams=None,
             get_min_upslope=False,
             out_path=Path(Path.cwd() / 'max_upslope.tif')
-            )
+        )
         print('Done\n')
 
         print('TauDEM: Making decay grid using distance2stream raster')
-        decay_raster = tools.make_decay_raster(
+        decay_raster = fcpgtools.make_decay_raster(
             distance_to_stream_taudem,
             decay_factor=2,
             out_path=Path(Path.cwd() / 'decay.tif'),
-            )
+        )
         print('Done\n')
 
         print('TauDEM: Making a precipitation decay accumulation raster')
-        terrainengine.taudem_engine.decay_accumulation(
-            us_fdr_taudem,
+        fcpgtools.decay_accumulation(
+            us_fdr,
             decay_raster,
+            engine='taudem',
             upstream_pour_points=None,
             parameter_raster=us_precip,
             out_path=Path(Path.cwd() / 'decay_accumulation.tif'),
-            )
+        )
+
 
 if __name__ == '__main__':
     main(
         True,
-        test_taudem=False,
-        test_pysheds=True,
+        test_taudem=True,
+        test_pysheds=False,
         test_pour_points=False,
-        )
+    )
