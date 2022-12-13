@@ -41,6 +41,15 @@ D8ConversionDicts = {
 }
 
 
+# store engines in a dictionary to support string param:engine arguments
+#TODO: get actual classes in here
+NameToTerrainEngineDict = {
+    'taudem': '',
+    'pysheds': '',
+}
+
+TerrainEngineToNameDict = dict((v, k) for k, v in NameToTerrainEngineDict.items())
+
 class PourPointLocationsDict(TypedDict):
     """Custom type hint dict for storing basin pour point locations.
 

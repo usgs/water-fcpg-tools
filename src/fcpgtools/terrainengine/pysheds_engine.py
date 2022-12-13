@@ -5,10 +5,9 @@ from pysheds.view import Raster as PyShedsRaster
 from pysheds.view import ViewFinder
 from pathlib import Path
 from typing import Union, Optional
+import fcpgtools.tools as tools
+import fcpgtools.utilities as utilities
 from fcpgtools.custom_types import Raster, PyShedsInputDict, PourPointValuesDict
-from fcpgtools.utilities import load_raster, _split_bands, _combine_split_bands, \
-    adjust_parameter_raster, save_raster, _change_nodata_value
-from fcpgtools.tools import make_fac_weights
 
 
 # UNDERLYING FUNCTIONS TO IMPORT/EXPORT DATA FROM PYSHEDS OBJECTS
@@ -98,7 +97,7 @@ def accumulate_flow(
     Returns:
         The output Flow Accumulation Cells (FAC) raster.
     """
-    d8_fdr = load_raster(d8_fdr)
+    d8_fdr = tools.load_raster(d8_fdr)
     d8_fdr = d8_fdr.where(
         (d8_fdr.values != d8_fdr.rio.nodata),
         0,
@@ -118,13 +117,13 @@ def accumulate_flow(
                 d8_fdr,
                 dtype=np.dtype('float64'),
             ) + 1
-            weights = adjust_parameter_raster(
+            weights = tools.adjust_parameter_raster(
                 weights,
                 d8_fdr,
                 upstream_pour_points,
             )
         weights = PyShedsRaster(
-            make_fac_weights(
+            tools.make_fac_weights(
                 weights,
                 d8_fdr,
                 np.nan,
@@ -158,14 +157,14 @@ def accumulate_flow(
         out_raster.rio.nodata,
     )
 
-    out_raster = _change_nodata_value(
+    out_raster = utilities._change_nodata_value(
         out_raster,
         np.nan,
     )
 
     # save if necessary
     if out_path is not None:
-        save_raster(
+        tools.save_raster(
             out_raster,
             out_path,
         )
@@ -197,12 +196,12 @@ def accumulate_parameter(
     Returns:
         The output parameter accumulation raster.
     """
-    d8_fdr = load_raster(d8_fdr)
-    parameter_raster = load_raster(parameter_raster)
+    d8_fdr = tools.load_raster(d8_fdr)
+    parameter_raster = tools.load_raster(parameter_raster)
 
-    # add any pour point accumulation via utilities.adjust_parameter_raster()
+    # add any pour point accumulation via utilities.tools.adjust_parameter_raster()
     if upstream_pour_points is not None:
-        parameter_raster = adjust_parameter_raster(
+        parameter_raster = tools.adjust_parameter_raster(
             parameter_raster,
             d8_fdr,
             upstream_pour_points,
@@ -214,7 +213,7 @@ def accumulate_parameter(
 
     # split if multi-dimensional
     if len(parameter_raster.shape) > 2:
-        raster_bands = _split_bands(parameter_raster)
+        raster_bands = utilities._split_bands(parameter_raster)
     else:
         raster_bands = {(0, 0): parameter_raster}
 
@@ -233,13 +232,13 @@ def accumulate_parameter(
 
     # re-combine into DataArray
     if len(out_dict.keys()) > 1:
-        out_raster = _combine_split_bands(out_dict)
+        out_raster = utilities._combine_split_bands(out_dict)
     else:
         out_raster = list(out_dict.items())[0][1]
 
     # save if necessary
     if out_path is not None:
-        save_raster(
+        tools.save_raster(
             out_raster,
             out_path,
         )

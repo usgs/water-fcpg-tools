@@ -5,8 +5,9 @@ import pandas as pd
 import geopandas as gpd
 from typing import Union, List, Tuple, Dict
 import fcpgtools.tools as tools
-from fcpgtools.custom_types import Raster, Shapefile, RasterSuffixes, \
-    ShapefileSuffixes, D8ConversionDicts
+from fcpgtools.custom_types import Raster, Shapefile
+from fcpgtools.custom_types import RasterSuffixes, ShapefileSuffixes, D8ConversionDicts
+from fcpgtools.custom_types import NameToTerrainEngineDict, TerrainEngineToNameDict
 
 
 def _id_d8_format(
@@ -22,6 +23,23 @@ def _id_d8_format(
     else:
         raise TypeError('Cant recognize D8 Flow Direction Raster format '
                         'as either ESRI or TauDEM. Please use the param:in_format for pyfunc:convert_fdr_formats()')
+
+# TODO: fix engine typehint
+
+
+def _match_d8_format(
+    d8_fdr: Raster,
+    engine: object,
+) -> xr.DataArray:
+    """Matches the D8 format to the appropriate terrain engine"""
+    d8_format = _id_d8_format(d8_fdr)
+    if not isinstance(NameToTerrainEngineDict[d8_format], engine):
+        d8_fdr = tools.convert_fdr_formats(
+            d8_fdr,
+            out_format=TerrainEngineToNameDict[engine],
+            in_format=d8_format,
+        )
+    return d8_fdr
 
 
 def _update_raster_values(
@@ -348,7 +366,7 @@ def _verify_coords_coverage(
     raster: xr.DataArray,
     coords: Tuple[float, float],
 ) -> bool:
-    """Returns True if an x, y coordinate is in the bounds of a raster"""
+    """Returns True if an x, y coordinate is in the bounds of a raster."""
     bbox = list(raster.rio.bounds())
 
     # check if x, y coordaintes are within bounds

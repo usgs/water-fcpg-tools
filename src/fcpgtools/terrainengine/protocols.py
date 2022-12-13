@@ -5,8 +5,7 @@ from typing import Protocol, Union, Optional
 from fcpgtools.custom_types import Raster, PourPointValuesDict
 
 
-class SupportsFDRtoFAC(Protocol):
-    """"""
+class SupportsAccumulateFlow(Protocol):
 
     @abc.abstractmethod
     def accumulate_flow(
@@ -33,8 +32,7 @@ class SupportsFDRtoFAC(Protocol):
         raise NotImplementedError
 
 
-class SupportsParameterAccumulation(Protocol):
-    """"""
+class SupportsAccumulateParameter(Protocol):
 
     @abc.abstractmethod
     def accumulate_parameter(
@@ -64,8 +62,7 @@ class SupportsParameterAccumulation(Protocol):
         raise NotImplementedError
 
 
-class SupportsMaxUpslope(Protocol):
-    """"""
+class SupportsExtremeUpslopeValues(Protocol):
 
     @abc.abstractmethod
     def extreme_upslope_values(
@@ -95,7 +92,6 @@ class SupportsMaxUpslope(Protocol):
 
 
 class SupportsDistanceToStream(Protocol):
-    """"""
 
     @abc.abstractmethod
     def distance_to_stream(
@@ -123,7 +119,7 @@ class SupportsDistanceToStream(Protocol):
 
 
 class SupportsDecayAccumulation(Protocol):
-    """"""
+
     @abc.abstractmethod
     def decay_accumulation(
         d8_fdr: Raster,
