@@ -60,7 +60,7 @@ Version 2.0 of `FCPGtools` is a ground-up refactor and rebuild of Version 1.0. B
 
 **Please reference our markdown [`refactored_names`](examples/refactored_names.md) document for a complete mapping of Version 1.1 to Version 2.0 function names.**
 
-# Addendum
+
 ## Disclaimers
 Any use of trade, firm, or product names is for descriptive purposes only and does not imply endorsement by the U.S. Government.
 
