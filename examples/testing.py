@@ -281,8 +281,8 @@ def main(
 
 if __name__ == '__main__':
     main(
-        True,
+        MULTI_DIMENSIONAL_TEST,
         test_taudem=True,
-        test_pysheds=False,
-        test_pour_points=False,
+        test_pysheds=True,
+        test_pour_points=True,
     )
