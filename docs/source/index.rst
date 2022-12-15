@@ -4,7 +4,10 @@
    :maxdepth: 2
    :caption: Contents:
 
+   getting_started
    functions
+   cookbook
+   migrating_from_v1
    publications
    z_references
 
