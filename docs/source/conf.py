@@ -15,20 +15,31 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
-sys.path.insert(0, os.path.abspath('../FCPGtools'))
-import sphinx_rtd_theme
-#print(sys.path)
+sys.path.insert(0, os.path.abspath('../src/fcpgtools'))
 
 # -- Project information -----------------------------------------------------
 
+# TODO: What order should V2 authors be in?
 project = 'Flow-Conditioned Parameter Grid Tools'
-copyright = 'Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea'
-author = 'Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea'
+author = (
+    'Theodore Barnhart, '
+    'Xavier Nogueira, '
+    'Roy Sando, '
+    'Seth Siefken, '
+    'Peter McCarthy, '
+    'Al Rea, '
+    'Paul Tomasula, '
+    'and Anthony Aufdenkampe'
+)
+
+copyright = f'2022, {author}'
+
 
 # The short X.Y version
-version = '1.0.9'
+version = '2.0.0'
+
 # The full version, including alpha/beta/rc tags
-release = '1.0.9'
+release = '2.0.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -42,34 +53,42 @@ release = '1.0.9'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'sphinx_rtd_theme',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'numpydoc',
-    'sphinx_rtd_theme',
     'sphinxcontrib.bibtex',
 ]
 
+# Napoleon settings
+napoleon_google_docstring = True
+
 autodoc_mock_imports = [
-        'rasterio',
-        'numpy',
-        'sys',
-        'os',
-        'pandas',
-        'subprocess',
-        'glob',
-        'shutil',
-        'traceback',
-        'urllib',
-        'datetime',
-        'multiprocessing',
-        'json',
-        'io',
-        'matplotlib',
-        'geopandas',
-        'time',
-        'netCDF4',
+    'xarray',
+    'rioxarray',
+    'rasterio',
+    'numpy',
+    'pandas',
+    'geopandas',
+    'pysheds',
+    'sys',
+    'os',
+    'abc',
+    'json',
+    'io',
+    'gc',
+    'pathlib',
+    'typing',
+    'tempfile',
+    'traceback',
+    'datetime',
+    'subprocess',
+    'multiprocessing',
 ]
+
+# The master toctree document.
+master_doc = 'index'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -79,9 +98,6 @@ templates_path = ['_templates']
 #
 # source_suffix = ['.rst', '.md']
 source_suffix = '.rst'
-
-# The master toctree document.
-master_doc = 'index'
 
 add_module_names = False
 
@@ -98,7 +114,7 @@ language = None
 exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'github-dark'
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -159,9 +175,13 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, 'Flow-ConditionedParameterGridTools.tex', 'Flow-Conditioned Parameter Grid Tools Documentation',
-     'Theodore Barnhart, Roy Sando, Seth Siefkin, Peter McCarthy, and Al Rea', 'manual'),
+latex_documents = [(
+    master_doc,
+    'Flow-ConditionedParameterGridTools.tex',
+    'Flow-Conditioned Parameter Grid Tools Documentation',
+    author,
+    'manual',
+),
 ]
 
 
@@ -169,9 +189,13 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'flow-conditionedparametergridtools', 'Flow-Conditioned Parameter Grid Tools Documentation',
-     [author], 1)
+man_pages = [(
+    master_doc,
+    'flow-conditionedparametergridtools',
+    'Flow-Conditioned Parameter Grid Tools Documentation',
+    [author],
+    1,
+),
 ]
 
 
@@ -180,10 +204,15 @@ man_pages = [
 # Grouping the document tree into Texinfo files. List of tuples
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
-texinfo_documents = [
-    (master_doc, 'Flow-ConditionedParameterGridTools', 'Flow-Conditioned Parameter Grid Tools Documentation',
-     author, 'Flow-ConditionedParameterGridTools', 'One line description of project.',
-     'Miscellaneous'),
+texinfo_documents = [(
+    master_doc,
+    'Flow-ConditionedParameterGridTools',
+    'Flow-Conditioned Parameter Grid Tools Documentation',
+    author,
+    'Flow-ConditionedParameterGridTools',
+    'One line description of project.',
+    'Miscellaneous',
+),
 ]
 
 
