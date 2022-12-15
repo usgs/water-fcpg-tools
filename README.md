@@ -58,6 +58,7 @@ Version 2.0 of `FCPGtools` is a ground-up refactor and rebuild of Version 1.0. B
     * Where necessary users can set `param:engine` to [`taudem`](https://hydrology.usu.edu/taudem/taudem5/) (default) or [`pysheds`](https://github.com/mdbartos/pysheds).
     * Note that the `pysheds` terrain engine is signifcantly more performant, however it currently only supports `accumulate_flow()` and `accumulate_parameter()`.
 
+**Please reference our markdown [`refactored_names`](examples/refactored_names.md) document for a complete mapping of Version 1.1 to Version 2.0 function names.**
 
 # Addendum
 ## Disclaimers
