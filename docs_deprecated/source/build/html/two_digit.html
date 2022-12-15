@@ -1,0 +1,298 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Cascade Two-Digit Hydrologic Regions &mdash; Flow-Conditioned Parameter Grid Tools 1.0.3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Detect Missing FCPGs" href="detect_missing.html" />
+    <link rel="prev" title="Cascade Four-Digit Hydrologic Regions" href="four_digit.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Flow-Conditioned Parameter Grid Tools
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="cookbook.html">Cookbook</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="cookbook.html#input-data">Input Data</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="make_TauDEM_files.html">Generate TauDEM Files From An ESRI Flow Direction Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="batch_fcpgs_hpc.html">Batch FCPG Creation on an HPC</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="cascade_fcpg.html">Cascade FCPG results between geospatial tiles</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="four_digit.html">Cascade Four-Digit Hydrologic Regions</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Cascade Two-Digit Hydrologic Regions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="detect_missing.html">Detect Missing FCPGs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications and Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Flow-Conditioned Parameter Grid Tools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="cookbook.html">Cookbook</a> &raquo;</li>
+        
+          <li><a href="cascade_fcpg.html">Cascade FCPG results between geospatial tiles</a> &raquo;</li>
+        
+      <li>Cascade Two-Digit Hydrologic Regions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/two_digit.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="cascade-two-digit-hydrologic-regions">
+<h1>Cascade Two-Digit Hydrologic Regions<a class="headerlink" href="#cascade-two-digit-hydrologic-regions" title="Permalink to this headline">¶</a></h1>
+<p>This script provides an example work flow of how to cascade the last (maximum) accumulated area value from an upstream region, e.g. Region 14 – Upper Colorado, to the first cell of a downstream region, e.g. Region 15 – Lower Colorado. For this example, it is assumed that the user is working with ESRI-produced flow direction grids. Because of the differences in the encoding of flow directions calculated with ESRI tools and flow directions calculated with TauDEM, the FCPG tools require flow direction data to be converted to TauDEM encoding if they are not already. The process creates a json file containing the value to be cascaded, creates a weighting grid of ones for the downstream region, inserts the upstream value into the weighting grid at the correct location, and accumulates the weighting grid using the downstream flow direction grid to produce an adjusted flow accumulation grid for the downstream region. This process can be repeated for each parameter grid and then used with <code class="xref py py-func docutils literal notranslate"><span class="pre">make_fcpg()</span></code> to create FCPGs corrected for upstream regions.</p>
+<section id="example-huc-2-cascading-work-flow">
+<h2>Example HUC-2 Cascading Work Flow<a class="headerlink" href="#example-huc-2-cascading-work-flow" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-Python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FCPGtools</span> <span class="k">as</span> <span class="nn">fcpg</span> <span class="c1"># Import the tools. </span>
+
+<span class="c1"># Define the file input and output paths and the upstream region.</span>
+<span class="n">upstreamFDRflesri</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Upstream flow direction grid in ESRI format.</span>
+<span class="n">downstreamFDRflesri</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Downstream flow direction grid in ESRI format.</span>
+<span class="n">upstreamFACfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Upstream flow accumulation grid from TauDEM.</span>
+<span class="n">upstreamFDRfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Upstream flow direction grid in TauDEM format.</span>
+<span class="n">downstreamFACfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Downstream flow accumuation grid from TauDEM.</span>
+<span class="n">downstreamFDRfltau</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Downstream flow direction grid in TauDEM format.</span>
+<span class="n">region</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Hydrologic region to make the update dictionary for.</span>
+<span class="n">updateDict</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to the update dictionary to create.</span>
+<span class="n">downstreamFACWeight</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to the downstream FAC weighting grid. This is where the upstream value will be inserted.</span>
+<span class="n">downstreamAdjFAC</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Path to output the adjusted FAC weighting grid.</span>
+<span class="n">cores</span> <span class="o">=</span> <span class="mi">8</span> <span class="c1">#Number of cores to use for fcpg.adjustFAC() function</span>
+
+<span class="c1"># convert ESRI flow directions to TauDEM flow directions.</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">tauDrainDir</span><span class="p">(</span><span class="n">upstreamFDRflesri</span><span class="p">,</span> <span class="n">upstreamFDRfltau</span><span class="p">)</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">tauDrainDir</span><span class="p">(</span><span class="n">downstreamFDRflesri</span><span class="p">,</span> <span class="n">downstreamFDRfltau</span><span class="p">)</span>
+
+<span class="c1"># Accumulate upstream FDR grid.</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">tauFlowAccum</span><span class="p">(</span><span class="n">upstreamFDRfltau</span><span class="p">,</span> <span class="n">upstreamFACfltau</span><span class="p">)</span>
+
+<span class="c1"># Create the update dictionary to move data between HUC2 regions.</span>
+<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">w</span> <span class="o">=</span> <span class="n">fcpg</span><span class="o">.</span><span class="n">findLastFACFD</span><span class="p">(</span><span class="n">upstreamFACfltau</span><span class="p">,</span> <span class="n">upstreamFACfltau</span><span class="p">)</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">createUpdateDict</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">region</span><span class="p">,</span><span class="n">updateDict</span><span class="p">)</span>
+
+<span class="c1"># Make a grid of ones based on the downstream grid.</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">makeFACweight</span><span class="p">(</span><span class="n">downstreamFDRfltau</span><span class="p">,</span><span class="n">downstreamFACWeight</span><span class="p">)</span>
+
+<span class="c1"># Create the updated flow accumulation grid with information from the upstream HUC inserted into the source grid.</span>
+<span class="n">fcpg</span><span class="o">.</span><span class="n">adjustFAC</span><span class="p">(</span><span class="n">downstreamFDRfltau</span><span class="p">,</span><span class="n">downstreamFACWeight</span><span class="p">,</span>
+              <span class="n">updateDict</span><span class="p">,</span><span class="n">downstreamFDRfltau</span><span class="p">,</span><span class="n">downstreamAdjFAC</span><span class="p">,</span><span class="n">cores</span><span class="o">=</span><span class="n">cores</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="detect_missing.html" class="btn btn-neutral float-right" title="Detect Missing FCPGs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="four_digit.html" class="btn btn-neutral float-left" title="Cascade Four-Digit Hydrologic Regions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Theodore Barnhart, Roy Sando, Seth Siefken, Peter McCarthy, and Al Rea
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
