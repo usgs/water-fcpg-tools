@@ -45,6 +45,7 @@ dependencies:
   - sphinxcontrib-bibtex
   - numpydoc
   - sphinx_rtd_theme
+  - myst-parser
 
   # Package management
   - conda

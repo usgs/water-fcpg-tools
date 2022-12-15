@@ -4,7 +4,6 @@
    :maxdepth: 2
    :caption: Contents:
 
-   cookbook
    functions
    publications
    z_references

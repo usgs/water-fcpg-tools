@@ -59,6 +59,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinxcontrib.bibtex',
+    'myst_parser',
 ]
 
 # Napoleon settings
@@ -97,7 +98,10 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
 
 add_module_names = False
 
