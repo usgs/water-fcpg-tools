@@ -1,5 +1,6 @@
 from fcpgtools.terrainengine.taudem_engine import TauDEMEngine
 from fcpgtools.terrainengine.pysheds_engine import PyShedsEngine
+import functools
 
 NameToTerrainEngineDict = {
     'taudem': TauDEMEngine,
@@ -22,7 +23,9 @@ def validate_engine(protocol):
     """
 
     def validator(func, *args, **kwargs) -> callable:
-        def valid_func(*args, **kwargs):
+
+        @functools.wraps(func)
+        def valid_func(*args, **kwargs) -> callable:
             engine = kwargs['engine']
             if isinstance(engine, str):
                 try:
