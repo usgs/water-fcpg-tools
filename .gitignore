@@ -25,6 +25,9 @@
 
 # Sphinx documentation
 docs/_build/
+docs/_static/
+docs/_sources/
+docs/_modules/
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -34,5 +37,6 @@ docs/_build/
 examples/temp/*
 
 # Test output data files
+examples/*.tif
 examples/out_data/*
 
