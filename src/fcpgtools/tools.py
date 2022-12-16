@@ -1028,7 +1028,6 @@ def accumulate_flow(
 ) -> xr.DataArray:
     """Create a Flow Accumulation Cell (FAC) raster from a D8 Flow Direction Raster.
 
-    :meta public:
     Args:
         d8_fdr: A  D8 Flow Direction Raster (dtype=Int).
         engine: A terrain engine class that supports flow accumulation.
@@ -1068,7 +1067,6 @@ def accumulate_parameter(
 
     A key aspect of this function is that the output DataArray will have dimensions matching param:parameter_raster.
 
-    :meta public:
     Args:
         d8_fdr: A D8 Flow Direction Raster (dtype=Int).
         parameter_raster: A parameter raster aligned via tools.align_raster() with the us_fdr. 
@@ -1110,7 +1108,6 @@ def extreme_upslope_values(
 
     NOTE: Replaces tools.ExtremeUpslopeValue() from V1 FCPGtools.
 
-    :meta public:
     Args:
         d8_fdr: A flow direction raster .
         parameter_raster: A parameter raster to find the max values from.
@@ -1151,7 +1148,6 @@ def distance_to_stream(
 
     NOTE: Replaces tools.dist2stream() from V1 FCPGtools.
 
-    :meta public:
     Args:
         d8_fdr: A D8 Flow Direction Raster (dtype=Int).
         fac_raster: A Flow Accumulation Cell (FAC) raster output from accumulate_flow().
@@ -1190,7 +1186,6 @@ def decay_accumulation(
 
     NOTE: Replaces tools.decayAccum() from V1 FCPGtools.
 
-    :meta public:
     Args:
         dinf_fdr: A flow direction raster in D-Infinity format. This input can be made with tools.d8_to_dinfinity().
         decay_raster: A decay 'multiplier' raster calculated from distance to stream via tools.make_decay_raster().
