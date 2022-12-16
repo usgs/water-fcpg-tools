@@ -41,10 +41,9 @@ reference our [updated documentation site](TODO:LINK DOCUMENTATION SITE).
 
 ### Pour Points / Cascade Functions
 * `findLastFACFD()` -> **`find_fac_pour_point()`** Output is of type 
-* `makePourBasins()` and **`findPourPoints()`** -> `find_basin_pour_points()` 
+* `makePourBasins()` and `findPourPoints()` -> **`find_basin_pour_points()`**  
 which uses a basin shapefile to find outflow points. 
-    * Output is of type 
-`custom_types.PourPointLocationsDict`.
+    * Output is of type `custom_types.PourPointLocationsDict`.
     * Note: In V2 `find_fac_pour_point()` gets the location of the outflow 
     point for a full FAC, which is then fed into `_find_downstream_cell()` 
     within `_update_raster_values()`. 

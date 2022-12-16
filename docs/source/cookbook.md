@@ -59,10 +59,34 @@ precip_fcpg = fcpgtools.make_fcpg(
     fac_raster=flow_accum,
     out_path=out_fcpg_path,
 )
+
+# plot the output (works in a notebook environment)
+precip_fcpg.plot()
 ```
 
 # Example 2 - Cascade accumulated precipitation from one basin to another
 Here we **continue from example 1** by cascading downslope precipitation accumulation raster (`precip_accum`) from one basin to a another. This can be thought of as updating the boundary conditions of a basins precipitation accumulation.
+
+```python
+
+# get  downstream FDR data path
+downstream_fdr_path = in_data_dir / Path('validation_downstream_fdr.tif')
+
+# get upstream and downstream precipitation data paths
+# NOTE: this is for explanatory purposes only, downstream basin precipitation data is not stored in this repo!
+downstream_precip_data_path = in_data_dir / Path('downstream_daymet_P_2017.tif')
+
+# align the downstream parameter grid with the FDR
+aligned_us_precip = fcpgtools.align_raster(
+   parameter_raster=downstream_precip_data_path,
+   d8_fdr=downstream_fdr_path,
+   resample_method='bilinear',
+)
+
+# 
+
+```
+
 
 
 # Example 3 - Accumulate land cover
