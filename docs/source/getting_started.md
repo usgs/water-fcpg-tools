@@ -1,7 +1,7 @@
 Getting Started
 ================
 ## Installation
-`FCPGtools` can be installed from [`PyPI`](TODO: ADD LINK HERE) or [`conda-forge`](TODO: ADD LINK HERE) via the command line.
+`FCPGtools` can be installed from [`PyPI`](TODO:ADD LINK HERE) or [`conda-forge`](TODO:ADD LINK HERE) via the command line.
 
 To install begin by activating your chosen Python >= 3.7 environment, and the running one of the following commands:
 
