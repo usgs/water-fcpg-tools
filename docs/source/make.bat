@@ -5,7 +5,7 @@ pushd %~dp0
 REM Command file for Sphinx documentation
 
 if "%SPHINXBUILD%" == "" (
-	set SPHINXBUILD=sphinx-build
+	set SPHINXBUILD="C:\Users\xrnogueira\Miniconda3\envs\fcpgtools\Scripts\sphinx-build.exe"
 )
 set SOURCEDIR=source
 set BUILDDIR=build
