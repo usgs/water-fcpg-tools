@@ -282,7 +282,7 @@ def main(
 if __name__ == '__main__':
     main(
         MULTI_DIMENSIONAL_TEST,
-        test_taudem=True,
-        test_pysheds=True,
-        test_pour_points=True,
+        test_taudem=False,
+        test_pysheds=False,
+        test_pour_points=False,
     )
