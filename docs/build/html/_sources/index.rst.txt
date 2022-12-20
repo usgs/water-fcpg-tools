@@ -1,4 +1,5 @@
-.. include:: ../README.rst
+FCPGtools Documentation Site
+============================
 
 .. toctree::
    :maxdepth: 2
@@ -8,13 +9,11 @@
    functions
    cookbook
    migrating_from_v1
+   custom_types
    publications
    z_references
 
 
-Indices and tables
-==================
-
+Site Index
+-----------
 * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

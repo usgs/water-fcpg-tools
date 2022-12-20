@@ -21,8 +21,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Publications and Projects" href="publications.html" />
-    <link rel="prev" title="Cookbook" href="cookbook.html" /> 
+    <link rel="next" title="Custom Types and Formats" href="custom_types.html" />
+    <link rel="prev" title="Cookbook/Examples" href="cookbook.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,15 +47,14 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html#input-data">Input Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html#example-1-make-a-basic-precipitation-fcpg">Example 1 - Make a basic precipitation FCPG</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html#example-2-cascade-accumulated-precipitation-from-one-basin-to-another">Example 2 - Cascade accumulated precipitation from one basin to another</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html#example-3-accumulate-land-cover">Example 3 - Accumulate land cover</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html#example-4-use-taudem-to-make-a-decayed-accumulation-raster">Example 4 - Use <code class="docutils literal notranslate"><span class="pre">TauDEM</span></code> to make a decayed accumulation raster</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#comparison-of-version-1-1-to-version-2-0-fcpgtools-functions">Comparison of Version 1.1 to Version 2.0 <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Functions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#refactored-functions">Refactored Functions</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook/Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#new-in-version-2-0">New in Version 2.0</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#key-updates">Key Updates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-the-engine-parameter">Using the <code class="docutils literal notranslate"><span class="pre">engine</span></code> parameter</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mapping-of-version-1-1-to-version-2-0-fcpgtools-functions">Mapping of Version 1.1 to Version 2.0 <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Functions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#i-o-functions">I/O Functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#key-use-case-functions">Key Use-Case Functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pour-points-cascade-functions">Pour Points / Cascade Functions</a></li>
@@ -66,6 +65,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="custom_types.html">Custom Types and Formats</a></li>
 <li class="toctree-l1"><a class="reference internal" href="publications.html">Publications and Projects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
 </ul>
@@ -96,43 +96,45 @@
              
   <section class="tex2jax_ignore mathjax_ignore" id="migrating-to-fcpgtools-version-2-0">
 <h1>Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0<a class="headerlink" href="#migrating-to-fcpgtools-version-2-0" title="Permalink to this heading"></a></h1>
-<p>Version 2.0 of <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> is a ground-up refactor and rebuild of Version 1.0.
-Backwards compatibility is broken, and many work-flows have been significantly
-streamlined. We strongly suggest that any users accustomed to Version 1.0
-reference our [updated documentation site](TODO:LINK DOCUMENTATION SITE).</p>
-<p><strong>A non-exhaustive list of key updates is below:</strong></p>
+<section id="new-in-version-2-0">
+<h2>New in Version 2.0<a class="headerlink" href="#new-in-version-2-0" title="Permalink to this heading"></a></h2>
+<p>Version 2.0 of <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> is a complete rebuild of Version 1.0. Backwards compatibility is not preserved, and many workflows have been significantly streamlined. We strongly recommend that users who are familiar with Version 1.0 refer to our <a class="reference external" href="https://usgs.github.io/water-fcpg-tools/index.html">updated documentation site</a>.</p>
+<section id="key-updates">
+<h3>Key Updates<a class="headerlink" href="#key-updates" title="Permalink to this heading"></a></h3>
 <ul class="simple">
-<li><p>All functions output an in-memory <a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray"><code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code></a> object, allowing for functions to be strung together into performance oriented pipelines.</p>
+<li><p>All functions output an in-memory <a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray"><code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code></a> object, allowing for functions to be strung together into performance-oriented pipelines.</p>
 <ul>
-<li><p><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray"><code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code></a> objects have a variety of powerful features and optimizations. For more information please reference the library’s <a class="reference external" href="https://docs.xarray.dev/en/stable/getting-started-guide/why-xarray.html">documentation</a>.</p></li>
+<li><p><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray"><code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code></a> objects have a variety of powerful features and optimizations. For more information, please reference the library’s <a class="reference external" href="https://docs.xarray.dev/en/stable/getting-started-guide/why-xarray.html">documentation</a>.</p></li>
 <li><p>Rasters can still be saved to a local GeoTIFF file by providing a valid <code class="docutils literal notranslate"><span class="pre">.tif</span></code> path to <code class="docutils literal notranslate"><span class="pre">param:out_path</span></code>.</p></li>
 </ul>
 </li>
 <li><p>All functions can now accept either local string paths, local <a class="reference external" href="https://docs.python.org/3/library/pathlib.html"><code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a> objects, or in-memory <a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray"><code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code></a> objects.</p></li>
 <li><p>Multi-band parameter grids are now supported!</p>
 <ul>
-<li><p>Example: Passing a 12-month precipitation raster (where each month is a raster band) into [<code class="docutils literal notranslate"><span class="pre">fcpgtools.accumulate_parameter()</span></code>](TODO:ADD LINK TO FUNTION DOCS HERE) will output a 12-band <a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray"><code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code></a> object.</p></li>
+<li><p>For example, passing a 12-month precipitation raster (where each month is a raster band) into <a class="reference external" href="https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_parameter"><code class="docutils literal notranslate"><span class="pre">fcpgtools.accumulate_parameter()</span></code></a> will output a 12-band <a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray"><code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code></a> object.</p></li>
 </ul>
 </li>
-<li><p>Flow Direction Raster format conversion (i.e. ESRI -&gt; TauDEM) is now automated behind-the-scenes.</p></li>
-<li><p>Support for multiple “terrain engines” gives users optionality and increases dependency deprecation resiliancy.</p>
+<li><p>Conversion of flow direction raster (FDR) formats (i.e. ESRI -&gt; TauDEM) is now automated behind-the-scenes.</p></li>
+<li><p>Support for multiple “terrain engines” gives users additional optionality and increases the resiliance to dependency deprecation (see <span class="xref myst">below</span>).</p>
 <ul>
 <li><p>Where necessary users can set <code class="docutils literal notranslate"><span class="pre">param:engine</span></code> to <a class="reference external" href="https://hydrology.usu.edu/taudem/taudem5/"><code class="docutils literal notranslate"><span class="pre">taudem</span></code></a> (default) or <a class="reference external" href="https://github.com/mdbartos/pysheds"><code class="docutils literal notranslate"><span class="pre">pysheds</span></code></a>.</p></li>
-<li><p>Note that the <code class="docutils literal notranslate"><span class="pre">pysheds</span></code> terrain engine is signifcantly more performant, however it currently only supports [<code class="docutils literal notranslate"><span class="pre">accumulate_flow()</span></code>](TODO:ADD LINK TO FUNTION DOCS HERE) and [<code class="docutils literal notranslate"><span class="pre">accumulate_parameter()</span></code>](TODO:ADD LINK TO FUNTION DOCS HERE).</p></li>
+<li><p>Note that the <code class="docutils literal notranslate"><span class="pre">pysheds</span></code> terrain engine is signifcantly more performant, but currently only supports <a class="reference external" href="https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_flow"><code class="docutils literal notranslate"><span class="pre">accumulate_flow()</span></code></a> and <a class="reference external" href="https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_parameter"><code class="docutils literal notranslate"><span class="pre">accumulate_parameter()</span></code></a>.</p></li>
 </ul>
 </li>
 </ul>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="comparison-of-version-1-1-to-version-2-0-fcpgtools-functions">
-<h1>Comparison of Version 1.1 to Version 2.0 <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Functions<a class="headerlink" href="#comparison-of-version-1-1-to-version-2-0-fcpgtools-functions" title="Permalink to this heading"></a></h1>
-<section id="refactored-functions">
-<h2>Refactored Functions<a class="headerlink" href="#refactored-functions" title="Permalink to this heading"></a></h2>
+<section id="using-the-engine-parameter">
+<h3>Using the <code class="docutils literal notranslate"><span class="pre">engine</span></code> parameter<a class="headerlink" href="#using-the-engine-parameter" title="Permalink to this heading"></a></h3>
+<p>As mentioned above, some functions now require a “terrain engine” to be specified through the <code class="docutils literal notranslate"><span class="pre">param:engine</span></code> parameter (i.e., <a class="reference external" href="https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_flow"><code class="docutils literal notranslate"><span class="pre">accumulate_flow()</span></code></a>). Under the hood, we use a <a class="reference external" href="https://peps.python.org/pep-0544/">Python Protocols</a>-based implementation that will raise an error if the specified terrain engine does not support the function being called. All of these functions have a valid default terrain engine, so an error will only be raised if the user chooses to override the default in a unsupported way. While this may seem redundant, it enables more “terrain engines” to be incorporated in the future (i.e. <a class="reference external" href="https://www.whiteboxgeo.com/manual/wbw-user-manual/book/introduction.html"><code class="docutils literal notranslate"><span class="pre">WhiteBox</span></code></a>) without altering the user experience in any way, other than the number of valid <code class="docutils literal notranslate"><span class="pre">engine</span></code> string arguments.</p>
+</section>
+</section>
+<section id="mapping-of-version-1-1-to-version-2-0-fcpgtools-functions">
+<h2>Mapping of Version 1.1 to Version 2.0 <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Functions<a class="headerlink" href="#mapping-of-version-1-1-to-version-2-0-fcpgtools-functions" title="Permalink to this heading"></a></h2>
 <section id="i-o-functions">
 <h3>I/O Functions<a class="headerlink" href="#i-o-functions" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">loadRaster()</span></code> -&gt; <strong><code class="docutils literal notranslate"><span class="pre">load_raster()</span></code></strong></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">getFeatures()</span></code> -&gt; not necessary in V2, shapefiles can be loaded into
-<code class="docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code> objects via <strong><code class="docutils literal notranslate"><span class="pre">load_shapefile()</span></code></strong>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">getFeatures()</span></code> -&gt; <strong><code class="docutils literal notranslate"><span class="pre">load_shapefile()</span></code></strong></p></li>
 </ul>
 </section>
 <section id="key-use-case-functions">
@@ -147,18 +149,16 @@ reference our [updated documentation site](TODO:LINK DOCUMENTATION SITE).</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">makeDecayGrid()</span></code> -&gt; <strong><code class="docutils literal notranslate"><span class="pre">make_decay_raster()</span></code></strong></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">decayAccum()</span></code> -&gt; <strong><code class="docutils literal notranslate"><span class="pre">decay_accumulation()</span></code></strong></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ExtremeUpslopeValue()</span></code> -&gt; <strong><code class="docutils literal notranslate"><span class="pre">extreme_upslope_values()</span></code></strong></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">makeStreams()</span></code> -&gt; made redundant by <strong><code class="docutils literal notranslate"><span class="pre">mask_streams()</span></code></strong>.</p></li>
 </ul>
 </section>
 <section id="pour-points-cascade-functions">
 <h3>Pour Points / Cascade Functions<a class="headerlink" href="#pour-points-cascade-functions" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">findLastFACFD()</span></code> -&gt; <strong><code class="docutils literal notranslate"><span class="pre">find_fac_pour_point()</span></code></strong> Output is of type</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">makePourBasins()</span></code> and <strong><code class="docutils literal notranslate"><span class="pre">findPourPoints()</span></code></strong> -&gt; <code class="docutils literal notranslate"><span class="pre">find_basin_pour_points()</span></code>
+<li><p><code class="docutils literal notranslate"><span class="pre">makePourBasins()</span></code> and <code class="docutils literal notranslate"><span class="pre">findPourPoints()</span></code> -&gt; <strong><code class="docutils literal notranslate"><span class="pre">find_basin_pour_points()</span></code></strong><br />
 which uses a basin shapefile to find outflow points.</p>
 <ul>
-<li><p>Output is of type
-<code class="docutils literal notranslate"><span class="pre">custom_types.PourPointLocationsDict</span></code>.</p></li>
+<li><p>Output is of type <code class="docutils literal notranslate"><span class="pre">custom_types.PourPointLocationsDict</span></code>.</p></li>
 <li><p>Note: In V2 <code class="docutils literal notranslate"><span class="pre">find_fac_pour_point()</span></code> gets the location of the outflow
 point for a full FAC, which is then fed into <code class="docutils literal notranslate"><span class="pre">_find_downstream_cell()</span></code>
 within <code class="docutils literal notranslate"><span class="pre">_update_raster_values()</span></code>.</p></li>
@@ -205,6 +205,7 @@ is appended with the pour point values within <code class="docutils literal notr
 <li><p><code class="docutils literal notranslate"><span class="pre">resampleParam_batch()</span></code>, <code class="docutils literal notranslate"><span class="pre">accumulateParam_batch()</span></code>, and <code class="docutils literal notranslate"><span class="pre">make_fcpg_batch()</span></code>
 are made redundant in V2 by utilizing f(x, y, t) rasters via <code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code>
 objects.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">makeStreams()</span></code> -&gt; made redundant by <code class="docutils literal notranslate"><span class="pre">mask_streams()</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cat2bin()</span></code> and <code class="docutils literal notranslate"><span class="pre">binarizeCat()</span></code> are combined into <code class="docutils literal notranslate"><span class="pre">binarize_categorical_raster()</span></code>
 by utilizing f(x, y, t) rasters via <code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> objects.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">parsebool()</span></code> -&gt; not necessary in V2.</p></li>
@@ -218,8 +219,8 @@ by utilizing f(x, y, t) rasters via <code class="docutils literal notranslate"><
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cookbook.html" class="btn btn-neutral float-left" title="Cookbook" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="publications.html" class="btn btn-neutral float-right" title="Publications and Projects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cookbook.html" class="btn btn-neutral float-left" title="Cookbook/Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="custom_types.html" class="btn btn-neutral float-right" title="Custom Types and Formats" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

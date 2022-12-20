@@ -44,14 +44,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../functions.html">Function Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cookbook.html">Cookbook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cookbook.html#input-data">Input Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cookbook.html#example-1-make-a-basic-precipitation-fcpg">Example 1 - Make a basic precipitation FCPG</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cookbook.html#example-2-cascade-accumulated-precipitation-from-one-basin-to-another">Example 2 - Cascade accumulated precipitation from one basin to another</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cookbook.html#example-3-accumulate-land-cover">Example 3 - Accumulate land cover</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cookbook.html#example-4-use-taudem-to-make-a-decayed-accumulation-raster">Example 4 - Use <code class="docutils literal notranslate"><span class="pre">TauDEM</span></code> to make a decayed accumulation raster</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cookbook.html">Cookbook/Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../migrating_from_v1.html#comparison-of-version-1-1-to-version-2-0-fcpgtools-functions">Comparison of Version 1.1 to Version 2.0 <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_types.html">Custom Types and Formats</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications and Projects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../z_references.html">References</a></li>
 </ul>
@@ -947,7 +942,7 @@
 <span class="sd">        basin_id_field: Default behavior is for each GeoDataFrame row to be a unique basin.</span>
 <span class="sd">            However, if one wants to use a higher level basin id that is shared acrcoss rows,</span>
 <span class="sd">            this should be set to the column header storing the higher level basin id.</span>
-<span class="sd">        basin_level: Either &#39;HUC4&#39; or &#39;HUC12&#39;.</span>
+<span class="sd">        use_huc4: Either &#39;HUC4&#39; or &#39;HUC12&#39;.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(x, y).</span>
@@ -1100,10 +1095,10 @@
     <span class="k">return</span> <span class="n">fcpg_raster</span></div>
 
 
-<span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsAccumulateFlow</span><span class="p">)</span>
+<div class="viewcode-block" id="accumulate_flow"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.accumulate_flow">[docs]</a><span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsAccumulateFlow</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">accumulate_flow</span><span class="p">(</span>
     <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
-    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsAccumulateFlow</span><span class="p">,</span>
+    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsAccumulateFlow</span> <span class="o">=</span> <span class="s1">&#39;pysheds&#39;</span><span class="p">,</span>
     <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PourPointValuesDict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">weights</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1134,14 +1129,14 @@
         <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
         <span class="n">out_path</span><span class="o">=</span><span class="n">out_path</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
 
 
-<span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsAccumulateParameter</span><span class="p">)</span>
+<div class="viewcode-block" id="accumulate_parameter"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.accumulate_parameter">[docs]</a><span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsAccumulateParameter</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">accumulate_parameter</span><span class="p">(</span>
     <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
     <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
-    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsAccumulateParameter</span><span class="p">,</span>
+    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsAccumulateParameter</span> <span class="o">=</span> <span class="s1">&#39;pysheds&#39;</span><span class="p">,</span>
     <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PourPointValuesDict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -1174,14 +1169,14 @@
         <span class="n">upstream_pour_points</span><span class="o">=</span><span class="n">upstream_pour_points</span><span class="p">,</span>
         <span class="n">out_path</span><span class="o">=</span><span class="n">out_path</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
 
 
-<span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsExtremeUpslopeValues</span><span class="p">)</span>
+<div class="viewcode-block" id="extreme_upslope_values"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.extreme_upslope_values">[docs]</a><span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsExtremeUpslopeValues</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">extreme_upslope_values</span><span class="p">(</span>
     <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
     <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
-    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsExtremeUpslopeValues</span><span class="p">,</span>
+    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsExtremeUpslopeValues</span> <span class="o">=</span> <span class="s1">&#39;taudem&#39;</span><span class="p">,</span>
     <span class="n">mask_streams</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Raster</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">get_min_upslope</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -1215,15 +1210,15 @@
         <span class="n">out_path</span><span class="o">=</span><span class="n">out_path</span><span class="p">,</span>
         <span class="n">get_min_upslope</span><span class="o">=</span><span class="n">get_min_upslope</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
 
 
-<span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsDistanceToStream</span><span class="p">)</span>
+<div class="viewcode-block" id="distance_to_stream"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.distance_to_stream">[docs]</a><span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsDistanceToStream</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">distance_to_stream</span><span class="p">(</span>
     <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
     <span class="n">fac_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
     <span class="n">accum_threshold</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsDistanceToStream</span><span class="p">,</span>
+    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsDistanceToStream</span> <span class="o">=</span> <span class="s1">&#39;taudem&#39;</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
@@ -1252,14 +1247,14 @@
         <span class="n">accum_threshold</span><span class="p">,</span>
         <span class="n">out_path</span><span class="o">=</span><span class="n">out_path</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
 
 
-<span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsDecayAccumulation</span><span class="p">)</span>
+<div class="viewcode-block" id="decay_accumulation"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.decay_accumulation">[docs]</a><span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsDecayAccumulation</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">decay_accumulation</span><span class="p">(</span>
     <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
     <span class="n">decay_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
-    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsDecayAccumulation</span><span class="p">,</span>
+    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsDecayAccumulation</span> <span class="o">=</span> <span class="s1">&#39;taudem&#39;</span><span class="p">,</span>
     <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PourPointValuesDict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Raster</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1295,7 +1290,7 @@
         <span class="n">parameter_raster</span><span class="o">=</span><span class="n">parameter_raster</span><span class="p">,</span>
         <span class="n">out_path</span><span class="o">=</span><span class="n">out_path</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
 </pre></div>
 
            </div>

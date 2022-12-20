@@ -44,14 +44,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html#input-data">Input Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html#example-1-make-a-basic-precipitation-fcpg">Example 1 - Make a basic precipitation FCPG</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html#example-2-cascade-accumulated-precipitation-from-one-basin-to-another">Example 2 - Cascade accumulated precipitation from one basin to another</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html#example-3-accumulate-land-cover">Example 3 - Accumulate land cover</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html#example-4-use-taudem-to-make-a-decayed-accumulation-raster">Example 4 - Use <code class="docutils literal notranslate"><span class="pre">TauDEM</span></code> to make a decayed accumulation raster</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook/Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a></li>
-<li class="toctree-l1"><a class="reference internal" href="migrating_from_v1.html#comparison-of-version-1-1-to-version-2-0-fcpgtools-functions">Comparison of Version 1.1 to Version 2.0 <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_types.html">Custom Types and Formats</a></li>
 <li class="toctree-l1"><a class="reference internal" href="publications.html">Publications and Projects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
 </ul>
@@ -87,6 +82,7 @@
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#L"><strong>L</strong></a>
@@ -99,10 +95,14 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="functions.html#fcpgtools.tools.adjust_parameter_raster">adjust_parameter_raster() (in module fcpgtools.tools)</a>
+      <li><a href="functions.html#fcpgtools.tools.accumulate_flow">accumulate_flow() (in module fcpgtools.tools)</a>
+</li>
+      <li><a href="functions.html#fcpgtools.tools.accumulate_parameter">accumulate_parameter() (in module fcpgtools.tools)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="functions.html#fcpgtools.tools.adjust_parameter_raster">adjust_parameter_raster() (in module fcpgtools.tools)</a>
+</li>
       <li><a href="functions.html#fcpgtools.tools.align_raster">align_raster() (in module fcpgtools.tools)</a>
 </li>
   </ul></td>
@@ -136,6 +136,20 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="functions.html#fcpgtools.tools.d8_to_dinfinity">d8_to_dinfinity() (in module fcpgtools.tools)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="functions.html#fcpgtools.tools.decay_accumulation">decay_accumulation() (in module fcpgtools.tools)</a>
+</li>
+      <li><a href="functions.html#fcpgtools.tools.distance_to_stream">distance_to_stream() (in module fcpgtools.tools)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="functions.html#fcpgtools.tools.extreme_upslope_values">extreme_upslope_values() (in module fcpgtools.tools)</a>
 </li>
   </ul></td>
 </tr></table>
