@@ -42,7 +42,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
@@ -67,7 +67,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="#" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">FCPGtools Documentation Site</li>
+      <li class="breadcrumb-item active"><cite>FCPGtools</cite> Documentation Site</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -78,9 +78,59 @@
            <div itemprop="articleBody">
              
   <section id="fcpgtools-documentation-site">
-<h1>FCPGtools Documentation Site<a class="headerlink" href="#fcpgtools-documentation-site" title="Permalink to this heading"></a></h1>
+<h1><cite>FCPGtools</cite> Documentation Site<a class="headerlink" href="#fcpgtools-documentation-site" title="Permalink to this heading"></a></h1>
+<p>The Flow-Conditioned Parameter Grid (FCPG) tools is a Python 3 library that
+enables users to quickly create FCPGs, as well other gridded output datasets,
+for use in statistical, machine learning, and physical hydrologic modeling.
+These tools use a Flow Direction Raster (FDR) and gridded parameter datasets,
+such as precipitation, slope, or land use, to generate seamless gridded outputs.
+Each cell in these outputs stores value that statistically summarizes all
+upstream parameter values.</p>
+<p>More specifically, a FCPG is a pre-processing method that stores the <strong>upstream
+average of a parameter datasets for each grid cells in a landscape</strong>.
+These tools allow you to store the upstream maximum and minimum parameter values,
+or to generate a FCPG with a decay factor that modifies the downstream
+accumulation calculation of the parameter.</p>
+<p>For example, you could use these tools to calculate the average upstream
+precipitation value for each grid cell in a raster, or the maximum and minimum
+upstream slope values using a hillslope raster as the input parameter grid.</p>
+<a class="reference internal image-reference" href="_images/flow_chart_image.png"><img alt="_images/flow_chart_image.png" src="_images/flow_chart_image.png" style="width: 600px;" /></a>
+<p>These types of gridded outputs are useful in a variety of hydrologic modeling
+applications and can serve as powerful predictive features in machine learning
+training datasets. This software package has previously been used to generate a
+seamless dataset of common basin characteristics for the contiguous United States,
+including mean upstream elevation, slope, minimum and maximum monthly temperature,
+annual precipitation, land cover class, and latitude.</p>
+<section id="use-and-citation">
+<h2>Use and Citation<a class="headerlink" href="#use-and-citation" title="Permalink to this heading"></a></h2>
+<p>The FCPG Tools are part of the public domain as they are produced by
+employees of the U.S. Government in collaboration with private sector contractors.
+If you use these tools in your work, we request that you cite the latest
+release of the code using the provided citation. This helps us ensure that the
+contributions of the team behind the FCPG Tools are properly recognized, and
+will help justify the continued maintenance of this library.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Version 2.0</strong> was released in December, 2022.</dt><dd><ul>
+<li><p>#TODO:INSERT UPDATED CITATION HERE!</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><strong>Version 1.1</strong> was released in September, 2022.</p></li>
+<li><dl class="simple">
+<dt><strong>Version 1.0</strong> (IP-112996) was approved on September 3, 2020.</dt><dd><ul>
+<li><p>Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: <a class="reference external" href="https://doi.org/10.5066/P9W8UZ47">https://doi.org/10.5066/P9W8UZ47</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>If you encounter and issues with this software, please bring it to our attention
+by filling out a
+<a class="reference external" href="https://code.usgs.gov/StreamStats/FCPGtools/-/issues/new?issuable_template=new_project">GitLab Issues Form</a>.</p>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation">Installation</a></li>
@@ -136,6 +186,7 @@
 <li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
 </ul>
 </div>
+</section>
 <section id="site-index">
 <h2>Site Index<a class="headerlink" href="#site-index" title="Permalink to this heading"></a></h2>
 <ul class="simple">

@@ -26,3 +26,8 @@ flow_accumulation_grid = fcpgtools.accumulate_flow(
     d8_fdr=path_to_fdr,
 ) -> xarray.DataArray
 ```
+
+Note that is you are accustomed to Version 1.0 of `FCPGtools`, you may want to 
+start by referencing our 
+[Migrating to `FCPGtools` Version 2.0](https://usgs.github.io/water-fcpg-tools/migrating_from_v1.html) 
+page.
