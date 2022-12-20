@@ -864,7 +864,7 @@ def find_basin_pour_points(
         basin_id_field: Default behavior is for each GeoDataFrame row to be a unique basin.
             However, if one wants to use a higher level basin id that is shared acrcoss rows,
             this should be set to the column header storing the higher level basin id.
-        basin_level: Either 'HUC4' or 'HUC12'.
+        use_huc4: Either 'HUC4' or 'HUC12'.
 
     Returns:
         A dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(x, y).
@@ -1020,7 +1020,7 @@ def make_fcpg(
 @engine_validator.validate_engine(protocols.SupportsAccumulateFlow)
 def accumulate_flow(
     d8_fdr: Raster,
-    engine: protocols.SupportsAccumulateFlow,
+    engine: protocols.SupportsAccumulateFlow = 'pysheds',
     upstream_pour_points: Optional[PourPointValuesDict] = None,
     weights: Optional[xr.DataArray] = None,
     out_path: Optional[Union[str, Path]] = None,
@@ -1058,7 +1058,7 @@ def accumulate_flow(
 def accumulate_parameter(
     d8_fdr: Raster,
     parameter_raster: Raster,
-    engine: protocols.SupportsAccumulateParameter,
+    engine: protocols.SupportsAccumulateParameter = 'pysheds',
     upstream_pour_points: Optional[PourPointValuesDict] = None,
     out_path: Optional[Union[str, Path]] = None,
     **kwargs,
@@ -1098,7 +1098,7 @@ def accumulate_parameter(
 def extreme_upslope_values(
     d8_fdr: Raster,
     parameter_raster: Raster,
-    engine: protocols.SupportsExtremeUpslopeValues,
+    engine: protocols.SupportsExtremeUpslopeValues = 'taudem',
     mask_streams: Optional[Raster] = None,
     out_path: Optional[Union[str, Path]] = None,
     get_min_upslope: bool = False,
@@ -1140,7 +1140,7 @@ def distance_to_stream(
     d8_fdr: Raster,
     fac_raster: Raster,
     accum_threshold: int,
-    engine: protocols.SupportsDistanceToStream,
+    engine: protocols.SupportsDistanceToStream = 'taudem',
     out_path: Optional[Union[str, Path]] = None,
     **kwargs,
 ) -> xr.DataArray:
@@ -1176,7 +1176,7 @@ def distance_to_stream(
 def decay_accumulation(
     d8_fdr: Raster,
     decay_raster: Raster,
-    engine: protocols.SupportsDecayAccumulation,
+    engine: protocols.SupportsDecayAccumulation = 'taudem',
     upstream_pour_points: Optional[PourPointValuesDict] = None,
     parameter_raster: Optional[Raster] = None,
     out_path: Optional[Union[str, Path]] = None,
