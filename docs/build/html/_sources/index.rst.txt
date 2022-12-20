@@ -6,7 +6,7 @@ enables users to quickly create FCPGs, as well other gridded output datasets,
 for use in statistical, machine learning, and physical hydrologic modeling. 
 These tools use a Flow Direction Raster (FDR) and gridded parameter datasets, 
 such as precipitation, slope, or land use, to generate seamless gridded outputs. 
-Each cell in these outputs stores value that statistically summarizes all 
+Each cell in these outputs stores a value that statistically summarizes all 
 upstream parameter values.
 
 More specifically, a FCPG is a pre-processing method that stores the **upstream 
