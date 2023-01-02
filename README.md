@@ -2,7 +2,7 @@ Flow-Conditioned Parameter Grid (FCPG) Tools Documentation
 ===============================================================
 
 
-**For detailed documentation please reference our [ReadTheDocs site](#TODO: add link here)!** 
+**For detailed documentation please reference our [ReadTheDocs site](https://usgs.github.io/water-fcpg-tools/)!** 
 
 Please log any issues or feature requests using [this form](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/issues/new?issuable_template=bug).
 

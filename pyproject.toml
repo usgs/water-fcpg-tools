@@ -1,14 +1,52 @@
 [tool.poetry]
+
+# base attributes
 name = "fcpgtools"
-version = "0.2.0"
-description = "Tools to create flow-conditioned parameter grids (FCPGs) from flow direction grids and input parameter datasets. Documentation: https://usgs.github.io/water-fcpg-tools/."
-authors = ["Theodore Barnhart <tbarnhart@usgs.gov>", "Paul Tomasula <ptomasula@limno.com>", Xavier R Nogueira <xrnogueira@limno.com>"]
+version = "2.0.0"
+description = "Tools to create Flow-Conditioned Parameter Grids (FCPGs) from Flow Direction Rasters (FDRs) and arbitrary rasterized parameter data."
+authors = [
+    "Theodore Barnhart <tbarnhart@usgs.gov>", 
+    "Xavier R Nogueira <xrnogueira@limno.com>"
+]
+
+# links to information
+repository = "https://github.com/usgs/water-fcpg-tools"
+homepage = "https://usgs.github.io/water-fcpg-tools/"
 readme = "README.md"
 
+# package/modules to include
+packages = [
+    { include = "src/fcpgtools" , branch = "develop"},
+]
+
+# PyPi classifiers and keywords
+classifiers = [
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Development Status :: 5 - Production/Stable",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "License :: OSI Approved :: MIT License",
+]
+
+keywords = [
+    "hydrology",
+    "terrain",
+    "machine-learning",
+    "raster",
+    "flow-statistics",
+]
+
+# specify dependencies
 [tool.poetry.dependencies]
 python = "^3.7"
 
-
+# specify poetry build system
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

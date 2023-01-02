@@ -87,7 +87,7 @@ def _query_point(
         raster: A raster as a DataArray in memory.
         coords: Coordinates as Tuple(lat:float, lon:float) of the cell to be sampled.
 
-    Returns:
+    Returns:long_lat_tuple
         The cell value at param:coords.
     """
     selection = raster.sel(
@@ -114,7 +114,7 @@ def _get_min_cell(
 def _get_max_cell(
     raster: xr.DataArray,
 ) -> Tuple[float, float]:
-    """Get the maximum cell (x, y ) coordinates from a single band raster."""
+    """Get the maximum cell (x, y) coordinates from a single band raster."""
     xmax_index = raster.argmax(dim=['x', 'y'])['x'].data.item(0)
     ymax_index = raster.argmax(dim=['x', 'y'])['y'].data.item(0)
 
