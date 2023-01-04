@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fcpgtools.tools &mdash; Flow-Conditioned Parameter Grid Tools 2.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> Flow-Conditioned Parameter Grid Tools
+          </a>
+              <div class="version">
+                2.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../functions.html">Function Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cookbook.html">Cookbook/Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_types.html">Custom Types and Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications and Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../z_references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Flow-Conditioned Parameter Grid Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">fcpgtools.tools</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for fcpgtools.tools</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">rioxarray</span> <span class="k">as</span> <span class="nn">rio</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">from</span> <span class="nn">rasterio.enums</span> <span class="kn">import</span> <span class="n">Resampling</span>
+<span class="kn">import</span> <span class="nn">fcpgtools.utilities</span> <span class="k">as</span> <span class="nn">utilities</span>
+<span class="kn">from</span> <span class="nn">fcpgtools.terrainengine</span> <span class="kn">import</span> <span class="n">protocols</span><span class="p">,</span> <span class="n">engine_validator</span>
+<span class="kn">from</span> <span class="nn">fcpgtools.custom_types</span> <span class="kn">import</span> <span class="n">Raster</span><span class="p">,</span> <span class="n">Shapefile</span><span class="p">,</span> <span class="n">FDRD8Formats</span><span class="p">,</span> <span class="n">D8ConversionDicts</span>
+<span class="kn">from</span> <span class="nn">fcpgtools.custom_types</span> <span class="kn">import</span> <span class="n">PourPointLocationsDict</span><span class="p">,</span> <span class="n">PourPointValuesDict</span>
+
+
+<div class="viewcode-block" id="load_raster"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.load_raster">[docs]</a><span class="k">def</span> <span class="nf">load_raster</span><span class="p">(</span>
+    <span class="n">in_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Loads a raster into a xarray.DataArray object. Can also be used to prep an existing DataArray for processing.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_raster</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_format_nodata</span><span class="p">(</span><span class="n">in_raster</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_raster</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">in_raster</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">in_raster</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">in_raster</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Input path </span><span class="si">{</span><span class="n">in_raster</span><span class="si">}</span><span class="s1"> is not found.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_format_nodata</span><span class="p">(</span><span class="n">rio</span><span class="o">.</span><span class="n">open_rasterio</span><span class="p">(</span><span class="n">in_raster</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="load_shapefile"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.load_shapefile">[docs]</a><span class="k">def</span> <span class="nf">load_shapefile</span><span class="p">(</span>
+    <span class="n">in_shapefile</span><span class="p">:</span> <span class="n">Shapefile</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Loads a shapefile into a geopandas.GeoDataFrame&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_shapefile</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">in_shapefile</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_shapefile</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">in_shapefile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">in_shapefile</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">in_shapefile</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Input path </span><span class="si">{</span><span class="n">in_shapefile</span><span class="si">}</span><span class="s1"> is not found.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">in_shapefile</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="save_raster"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.save_raster">[docs]</a><span class="k">def</span> <span class="nf">save_raster</span><span class="p">(</span>
+    <span class="n">out_raster</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Saves an xarray.DataArray to a .tif raster file at location param:out_path&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">Path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">out_path</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WARNING: Cannot overwrite </span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s1">!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">out_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">to_raster</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="save_shapefile"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.save_shapefile">[docs]</a><span class="k">def</span> <span class="nf">save_shapefile</span><span class="p">(</span>
+    <span class="n">out_shapefile</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Saves an geopandas.GeoDataFrame to a .shp file at location param:out_path&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">Path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">out_path</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WARNING: Cannot overwrite </span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s1">!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">out_shapefile</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="align_raster"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.align_raster">[docs]</a><span class="k">def</span> <span class="nf">align_raster</span><span class="p">(</span>
+    <span class="n">in_raster</span><span class="p">,</span>
+    <span class="n">match_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">resample_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;nearest&#39;</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Aligns the projection/CRS, spatial extent, and resolution of one raster to another.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        in_raster: Input raster that needs to be aligned.</span>
+<span class="sd">        match_raster: Raster to align to.</span>
+<span class="sd">        resample_method: A valid resampling method from rasterio.enums.Resample (default=&#39;nearest&#39;).</span>
+<span class="sd">            NOTE: Do not use any averaging resample methods when working with a categorical raster!</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The output aligned raster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">out_raster</span> <span class="o">=</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">reproject_match</span><span class="p">(</span>
+        <span class="n">match_raster</span><span class="p">,</span>
+        <span class="n">resampling</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">Resampling</span><span class="p">,</span> <span class="n">resample_method</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_raster</span></div>
+
+
+<div class="viewcode-block" id="clip"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.clip">[docs]</a><span class="k">def</span> <span class="nf">clip</span><span class="p">(</span>
+    <span class="n">in_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">match_raster</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Raster</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">match_shapefile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Shapefile</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">custom_bbox</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Clips a raster to the rectangular extent (aka bounding box) of another raster (or shapefile).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        in_raster: Input raster.</span>
+<span class="sd">        match_raster: If defined, in_raster is clipped to match the extent of match_raster.</span>
+<span class="sd">        match_shapefile: A shapefile that is used to define the output extent if match_raster == None.</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+<span class="sd">        custom_bbox: A list with bounding box coordinates that define the output extent if match_raster == None.</span>
+<span class="sd">            Note: Coordinates must be of the form [minX, minY, maxX, maxY].</span>
+<span class="sd">            Note: Using this parameter assumes that coordinates match the CRS of param:in_raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The input raster clipped by the desired geometry.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">in_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">in_raster</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">match_raster</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">match_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">match_raster</span><span class="p">)</span>
+        <span class="n">crs</span> <span class="o">=</span> <span class="n">match_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_wkt</span><span class="p">()</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="n">match_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">bounds</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">match_shapefile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">match_shapefile</span> <span class="o">=</span> <span class="n">load_shapefile</span><span class="p">(</span><span class="n">match_shapefile</span><span class="p">)</span>
+        <span class="n">crs</span> <span class="o">=</span> <span class="n">match_shapefile</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_wkt</span><span class="p">()</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="n">match_shapefile</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">total_bounds</span>
+    <span class="k">elif</span> <span class="n">custom_bbox</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">crs</span> <span class="o">=</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_wkt</span><span class="p">()</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="n">custom_bbox</span>
+
+    <span class="n">out_raster</span> <span class="o">=</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">clip_box</span><span class="p">(</span>
+        <span class="n">minx</span><span class="o">=</span><span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">miny</span><span class="o">=</span><span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">maxx</span><span class="o">=</span><span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">maxy</span><span class="o">=</span><span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="n">crs</span><span class="o">=</span><span class="n">crs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_raster</span></div>
+
+
+<div class="viewcode-block" id="reproject_raster"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.reproject_raster">[docs]</a><span class="k">def</span> <span class="nf">reproject_raster</span><span class="p">(</span>
+    <span class="n">in_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">out_crs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Raster</span><span class="p">,</span> <span class="n">Shapefile</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">wkt_string</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Reprojects a raster to match another shapefile/raster&#39;s Coordinate Reference System (CRS), or a custom CRS.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        in_raster: Input raster.</span>
+<span class="sd">        out_crs: A raster or shapefile with the desired CRS to reproject to.</span>
+<span class="sd">        resolution: Allows the output resolution to be overriden.</span>
+<span class="sd">        wkt_string: Allows the user to define the output CRS using a custom valid WKT string.</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The input raster reprojected to match the desired Coordinate Reference System (CRS).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">in_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">in_raster</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">out_crs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">out_crs</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_get_crs</span><span class="p">(</span><span class="n">out_crs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">wkt_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">out_crs</span> <span class="o">=</span> <span class="n">wkt_string</span>
+        <span class="n">resolution</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Must pass in either param:out_crs or param:wkt_string&#39;</span><span class="p">)</span>
+
+    <span class="n">out_raster</span> <span class="o">=</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">reproject</span><span class="p">(</span>
+        <span class="n">out_crs</span><span class="p">,</span>
+        <span class="n">resolution</span><span class="o">=</span><span class="n">resolution</span><span class="p">,</span>
+        <span class="n">nodata</span><span class="o">=</span><span class="n">in_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span>
+        <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dst_nodata&#39;</span><span class="p">:</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span><span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_raster</span></div>
+
+
+<div class="viewcode-block" id="reproject_shapefile"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.reproject_shapefile">[docs]</a><span class="k">def</span> <span class="nf">reproject_shapefile</span><span class="p">(</span>
+    <span class="n">in_shapefile</span><span class="p">:</span> <span class="n">Shapefile</span><span class="p">,</span>
+    <span class="n">out_crs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Raster</span><span class="p">,</span> <span class="n">Shapefile</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">wkt_string</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Reprojects a shapefile to match another shapefile/raster&#39;s Coordinate Reference System (CRS), or a custom CRS.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        in_shapefile: Input shapefile/GeoDataFrame.</span>
+<span class="sd">        out_crs: A raster or shapefile with the desired CRS to reproject to.</span>
+<span class="sd">        wkt_string: Allows the user to define the output CRS using a custom valid WKT string.</span>
+<span class="sd">        out_path: Defines a path to save the output shapefile.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The input shapefile reprojected to match the desired Coordinate Reference System (CRS).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">in_shapefile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">in_shapefile</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">out_crs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">out_crs</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_get_crs</span><span class="p">(</span><span class="n">out_crs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">wkt_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">out_crs</span> <span class="o">=</span> <span class="n">wkt_string</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Must pass in eitehr param:out_crs or param:wkt_string&#39;</span><span class="p">)</span>
+
+    <span class="n">out_shapefile</span> <span class="o">=</span> <span class="n">in_shapefile</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">out_crs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_shapefile</span><span class="p">(</span>
+            <span class="n">out_shapefile</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_shapefile</span></div>
+
+
+<div class="viewcode-block" id="resample"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.resample">[docs]</a><span class="k">def</span> <span class="nf">resample</span><span class="p">(</span>
+    <span class="n">in_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">match_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;nearest&#39;</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Resamples a raster to match another raster&#39;s cell size.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        in_raster: Input raster.</span>
+<span class="sd">        match_raster: A raster to match the resolution / cell size of.</span>
+<span class="sd">        method: A valid resampling method from rasterio.enums.Resample.</span>
+<span class="sd">            NOTE: Do not use any averaging resample methods when working with a categorical raster! </span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The input raster resampled to the desired resolution / cell size.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">in_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">in_raster</span><span class="p">)</span>
+    <span class="n">match_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">match_raster</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">reproject</span><span class="p">(</span>
+            <span class="n">in_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">match_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">match_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">width</span><span class="p">),</span>
+            <span class="n">resampling</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">Resampling</span><span class="p">,</span> <span class="n">method</span><span class="p">),</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dst_nodata&#39;</span><span class="p">:</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span><span class="p">},</span>
+        <span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="n">real_methods</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">Resampling</span><span class="p">)[</span><span class="s1">&#39;_member_names_&#39;</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Resampling method </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s1"> is invalid! Please select from </span><span class="si">{</span><span class="n">real_methods</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_raster</span></div>
+
+
+<div class="viewcode-block" id="convert_fdr_formats"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.convert_fdr_formats">[docs]</a><span class="k">def</span> <span class="nf">convert_fdr_formats</span><span class="p">(</span>
+    <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">out_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">in_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Converts the D8 encoding of Flow Direction Rasters (FDR).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        d8_fdr: The input D8 Flow Direction Raster (FDR).</span>
+<span class="sd">        out_format: A valid D8 flow direction format name in custom_types.D8ConversionDicts.keys().</span>
+<span class="sd">        in_format:  A valid D8 flow direction format name in custom_types.D8ConversionDicts.keys() that</span>
+<span class="sd">            overrides the auto-recognized format from param:d8_fdr.</span>
+<span class="sd">            Note: manually inputting param:in_format will improve performance.</span>
+<span class="sd">        out_path:  Defines a path to save the output raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The re-encoded D8 Flow Direction Raster (FDR).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># identify the input D8 format</span>
+    <span class="n">d8_fdr</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">)</span>
+    <span class="n">out_format</span> <span class="o">=</span> <span class="n">out_format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">in_format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">in_format</span> <span class="o">=</span> <span class="n">in_format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">in_format</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_id_d8_format</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">)</span>
+
+    <span class="c1"># check that both formats are valid before proceeding</span>
+    <span class="k">if</span> <span class="n">in_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">FDRD8Formats</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;param:in_format = </span><span class="si">{</span><span class="n">in_format</span><span class="si">}</span><span class="s1"> which is not in </span><span class="si">{</span><span class="n">FDRD8Formats</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">out_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">FDRD8Formats</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;param:out_format = </span><span class="si">{</span><span class="n">out_format</span><span class="si">}</span><span class="s1"> which is not in </span><span class="si">{</span><span class="n">FDRD8Formats</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">in_format</span> <span class="o">==</span> <span class="n">out_format</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">d8_fdr</span>
+
+    <span class="c1"># get the conversion dictionary mappinng</span>
+    <span class="n">mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span>
+            <span class="n">D8ConversionDicts</span><span class="p">[</span><span class="n">in_format</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+            <span class="n">D8ConversionDicts</span><span class="p">[</span><span class="n">out_format</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">D8ConversionDicts</span><span class="p">[</span><span class="n">in_format</span><span class="p">],</span> <span class="n">D8ConversionDicts</span><span class="p">[</span><span class="n">out_format</span><span class="p">]</span>
+
+    <span class="c1"># convert appropriately using pandas (no clean implementation in xarray)</span>
+    <span class="n">in_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">out_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">in_df</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">d8_fdr</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">out_df</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">in_df</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span>
+
+    <span class="c1"># convert back to xarray</span>
+    <span class="n">d8_fdr</span> <span class="o">=</span> <span class="n">d8_fdr</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">out_df</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">d8_fdr</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># update nodata</span>
+    <span class="n">d8_fdr</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_nodata</span><span class="p">(</span>
+        <span class="n">D8ConversionDicts</span><span class="p">[</span><span class="n">out_format</span><span class="p">][</span><span class="s1">&#39;nodata&#39;</span><span class="p">],</span>
+        <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">d8_fdr</span> <span class="o">=</span> <span class="n">d8_fdr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Converted the D8 Flow Direction Raster (FDR) from </span><span class="si">{</span><span class="n">in_format</span><span class="si">}</span><span class="s1"> format&#39;</span>
+          <span class="sa">f</span><span class="s1">&#39; to </span><span class="si">{</span><span class="n">out_format</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">d8_fdr</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">d8_fdr</span></div>
+
+
+<div class="viewcode-block" id="make_fac_weights"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.make_fac_weights">[docs]</a><span class="k">def</span> <span class="nf">make_fac_weights</span><span class="p">(</span>
+    <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span>
+    <span class="n">fdr_raster</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span>
+    <span class="n">out_of_bounds_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Preps param:parameter_raster for parameter accumulation by matching the nodata boundary to param:fdr_raster. </span>
+
+<span class="sd">    NOTE: Only this function AFTER aligning the parameter raster to the FDR raster via tools.align_raster()!</span>
+
+<span class="sd">    Args: </span>
+<span class="sd">        parameter_raster: A parameter raster.</span>
+<span class="sd">        fdr_raster: A Flow Direction Raster (either D8 or D-inf).</span>
+<span class="sd">        out_of_bounds_value: The value to give param:parameter_raster cells outside the data</span>
+<span class="sd">            boundary of param:fdr_raster. Note that this is automatically set within terrain_engine functions.</span>
+<span class="sd">        out_path:  defines a path to save the output raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The prepped parameter grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># check that shapes match</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_verify_shape_match</span><span class="p">(</span><span class="n">fdr_raster</span><span class="p">,</span> <span class="n">parameter_raster</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The D8 FDR raster and the parameter raster must have the same shape. &#39;</span>
+                        <span class="s1">&#39;Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).&#39;</span><span class="p">)</span>
+
+    <span class="c1"># use a where query to replace out of bounds values</span>
+    <span class="n">og_nodata</span> <span class="o">=</span> <span class="n">parameter_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span>
+    <span class="n">og_crs</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_get_crs</span><span class="p">(</span><span class="n">parameter_raster</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_verify_alignment</span><span class="p">(</span><span class="n">parameter_raster</span><span class="p">,</span> <span class="n">fdr_raster</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;param:parameter_raster and param:fdr_raster are not aligned! &#39;</span>
+                        <span class="s1">&#39;Please use tools.align_raster() before applying this tool!&#39;</span><span class="p">)</span>
+
+    <span class="n">parameter_raster</span> <span class="o">=</span> <span class="n">parameter_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">fdr_raster</span><span class="o">.</span><span class="n">values</span> <span class="o">!=</span> <span class="n">fdr_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span>
+        <span class="n">out_of_bounds_value</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># convert in-bounds nodata to 0</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">og_nodata</span><span class="p">,</span> <span class="n">parameter_raster</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+        <span class="n">parameter_raster</span> <span class="o">=</span> <span class="n">parameter_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">fdr_raster</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">fdr_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span> <span class="o">&amp;</span>
+            <span class="p">(</span><span class="n">parameter_raster</span><span class="o">.</span><span class="n">values</span> <span class="o">!=</span> <span class="n">og_nodata</span><span class="p">),</span>
+            <span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># update nodata and crs</span>
+    <span class="n">parameter_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_nodata</span><span class="p">(</span>
+        <span class="n">og_nodata</span><span class="p">,</span>
+        <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">parameter_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_crs</span><span class="p">(</span><span class="n">og_crs</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">parameter_raster</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_change_nodata_value</span><span class="p">(</span>
+        <span class="n">parameter_raster</span><span class="p">,</span>
+        <span class="n">out_of_bounds_value</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># save raster if necessary</span>
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">parameter_raster</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parameter_raster</span></div>
+
+
+<div class="viewcode-block" id="adjust_parameter_raster"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.adjust_parameter_raster">[docs]</a><span class="k">def</span> <span class="nf">adjust_parameter_raster</span><span class="p">(</span>
+    <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">PourPointValuesDict</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Adds values to a parameter raster&#39;s at specific pour points / coordinates for use in accumulate_parameter().</span>
+
+<span class="sd">    The main utility of this function is to enable cascading accumulation values from one basin or raster to another.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        parameter_raster: Input parameter raster to update.</span>
+<span class="sd">        d8_fdr: a D8 Flow Direction Raster.</span>
+<span class="sd">        upstream_pour_points: A dictionary with coordinates to update values at, and the values to add.</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The updated parameter raster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pull in data</span>
+    <span class="n">parameter_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">parameter_raster</span><span class="p">)</span>
+    <span class="n">d8_fdr</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">)</span>
+
+    <span class="c1"># pull in pour point data</span>
+    <span class="n">pour_point_coords</span> <span class="o">=</span> <span class="n">upstream_pour_points</span><span class="p">[</span><span class="s1">&#39;pour_point_coords&#39;</span><span class="p">]</span>
+    <span class="n">pour_point_values</span> <span class="o">=</span> <span class="n">upstream_pour_points</span><span class="p">[</span><span class="s1">&#39;pour_point_values&#39;</span><span class="p">]</span>
+
+    <span class="c1"># update values iteratively</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coords</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pour_point_coords</span><span class="p">):</span>
+        <span class="n">values_list</span> <span class="o">=</span> <span class="n">pour_point_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># get downstream coordinates</span>
+        <span class="n">ds_coords</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_find_downstream_cell</span><span class="p">(</span>
+            <span class="n">d8_fdr</span><span class="p">,</span>
+            <span class="n">coords</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># verify coverage</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_verify_coords_coverage</span><span class="p">(</span><span class="n">parameter_raster</span><span class="p">,</span> <span class="n">ds_coords</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;WARNING: Cell downstream from pour point coords=</span><span class="si">{</span><span class="n">coords</span><span class="si">}</span><span class="s1"> is out of bounds -&gt; skipped!&#39;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameter_raster</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">parameter_raster</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_update_raster_values</span><span class="p">(</span>
+                <span class="n">in_raster</span><span class="o">=</span><span class="n">parameter_raster</span><span class="p">,</span>
+                <span class="n">update_points</span><span class="o">=</span><span class="p">[(</span><span class="n">ds_coords</span><span class="p">,</span> <span class="n">values_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dim_index_values</span> <span class="o">=</span> <span class="n">parameter_raster</span><span class="p">[</span><span class="n">parameter_raster</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+            <span class="k">for</span> <span class="n">band_index</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dim_index_values</span><span class="p">):</span>
+                <span class="n">parameter_raster</span><span class="p">[</span><span class="n">band_index</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_update_raster_values</span><span class="p">(</span>
+                    <span class="n">in_raster</span><span class="o">=</span><span class="n">parameter_raster</span><span class="p">[</span><span class="n">band_index</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+                    <span class="n">update_points</span><span class="o">=</span><span class="p">[(</span><span class="n">ds_coords</span><span class="p">,</span> <span class="n">values_list</span><span class="p">[</span><span class="n">band_index</span><span class="p">])],</span>
+                <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">parameter_raster</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parameter_raster</span></div>
+
+
+<div class="viewcode-block" id="make_decay_raster"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.make_decay_raster">[docs]</a><span class="k">def</span> <span class="nf">make_decay_raster</span><span class="p">(</span>
+    <span class="n">distance_to_stream_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">decay_factor</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Creates a decay raster based on distance to stream for use in decay_accumulate().</span>
+
+<span class="sd">    Grid cell values are computed as the inverse number of grid cells,</span>
+<span class="sd">    :code:`np.exp((-1 * distance_to_stream * cell_size) / (cell_size ** k))`, where k is a</span>
+<span class="sd">    constant applied to the cell size values.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        distance_to_stream_raster: A distance to stream raster output from distance_to_stream().</span>
+<span class="sd">        decay_factor: Dimensionless constant applied to decay factor denominator.</span>
+<span class="sd">            NOTE: Set k to 2 for &#39;moderate&#39; decay; greater than 2 for slower decay; or less than 2 for faster decay.</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The output decay raster for use in decay_accumulate().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">distance_to_stream_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span>
+        <span class="n">distance_to_stream_raster</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)</span>
+    <span class="n">cell_size</span> <span class="o">=</span> <span class="n">distance_to_stream_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">resolution</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">decay_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+        <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">distance_to_stream_raster</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span>
+         <span class="n">cell_size</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">cell_size</span> <span class="o">**</span> <span class="n">decay_factor</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">decay_raster</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">decay_array</span><span class="p">,</span>
+        <span class="n">coords</span><span class="o">=</span><span class="n">distance_to_stream_raster</span><span class="o">.</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">attrs</span><span class="o">=</span><span class="n">distance_to_stream_raster</span><span class="o">.</span><span class="n">attrs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">decay_raster</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;decay_raster&#39;</span>
+
+    <span class="c1"># save if necessary</span>
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">decay_raster</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">decay_raster</span></div>
+
+
+<div class="viewcode-block" id="spatial_mask"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.spatial_mask">[docs]</a><span class="k">def</span> <span class="nf">spatial_mask</span><span class="p">(</span>
+    <span class="n">in_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">mask_shp</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">inverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Applys a spatial mask via a shapefile to a raster, converting out of bounds values by default to nodata.</span>
+
+<span class="sd">    Primarily for masking rasters (i.e., FAC) by basin shapefiles, converting out-of-mask raster</span>
+<span class="sd">    values to NoData. A cell value can also be used to create a mask for integer rasters. </span>
+<span class="sd">    Note: default behavior (inverse=False) will make it so cells NOT COVERED by mask_shp -&gt; NoData.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        in_raster: Input raster.</span>
+<span class="sd">        mask_shp: Shapefile used for masking.</span>
+<span class="sd">        inverse: If True, cells that ARE COVERED by mask_shp -&gt; NoData.</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The output spatially masked raster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">in_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">in_raster</span><span class="p">)</span>
+    <span class="n">mask_shp</span> <span class="o">=</span> <span class="n">load_shapefile</span><span class="p">(</span><span class="n">mask_shp</span><span class="p">)</span>
+
+    <span class="n">out_raster</span> <span class="o">=</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
+        <span class="n">mask_shp</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="n">mask_shp</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>
+        <span class="n">all_touched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">invert</span><span class="o">=</span><span class="n">inverse</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_raster</span></div>
+
+
+<div class="viewcode-block" id="value_mask"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.value_mask">[docs]</a><span class="k">def</span> <span class="nf">value_mask</span><span class="p">(</span>
+    <span class="n">in_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">thresh</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">greater_than</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">equals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">inverse_equals</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">in_mask_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_mask_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;&quot;Mask a raster via a value threshold.</span>
+
+<span class="sd">    Primary use case is to identify high acumulation zones / stream cells.</span>
+<span class="sd">    Cells included in the mask are given a value of 1, all other cells are given a value of 0 (unless out_mask_value!=None).</span>
+<span class="sd">    Note: this function generalizes V1:pyfunc:makeStreams() functionality.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        in_raster: Input raster.</span>
+<span class="sd">        thresh:  The threshold to apply the value mask with.</span>
+<span class="sd">        greater_than: If False, only values less than param:thresh are included in the mask.</span>
+<span class="sd">        equals:  Only cells matching the value of param:equals are included in the mask.</span>
+<span class="sd">        inverse_equals: Is True and param:equals==True, values NOT equal to :param:thresh are masked out.</span>
+<span class="sd">        in_mask_value: Allows included cells to be given a non-zero integer value.</span>
+<span class="sd">        out_mask_value: Allows non-included cells to be given a non-zero integer value.</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The output raster with all masked out values == nodata or param:out_mask_value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># handle nodata / out-of-mask values</span>
+    <span class="n">in_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">in_raster</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">out_mask_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">out_mask_value</span> <span class="o">=</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span>
+
+    <span class="c1"># build conditionals</span>
+    <span class="k">if</span> <span class="n">equals</span> <span class="ow">and</span> <span class="s1">&#39;float&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">in_raster</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;WARNING: Applying an equality mask to a </span><span class="si">{</span><span class="n">in_raster</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s1"> raster&#39;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">equals</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">inverse_equals</span><span class="p">:</span>
+        <span class="n">conditional</span> <span class="o">=</span> <span class="p">(</span><span class="n">in_raster</span> <span class="o">==</span> <span class="n">thresh</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">equals</span> <span class="ow">and</span> <span class="n">inverse_equals</span><span class="p">:</span>
+        <span class="n">conditional</span> <span class="o">=</span> <span class="p">(</span><span class="n">in_raster</span> <span class="o">!=</span> <span class="n">thresh</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">greater_than</span><span class="p">:</span>
+        <span class="n">conditional</span> <span class="o">=</span> <span class="p">(</span><span class="n">in_raster</span> <span class="o">&gt;</span> <span class="n">thresh</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">greater_than</span><span class="p">:</span>
+        <span class="n">conditional</span> <span class="o">=</span> <span class="p">(</span><span class="n">in_raster</span> <span class="o">&lt;</span> <span class="n">thresh</span><span class="p">)</span>
+
+    <span class="c1"># set dtype</span>
+    <span class="k">if</span> <span class="n">in_mask_value</span> <span class="ow">and</span> <span class="n">out_mask_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;int64&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">dtype</span>
+
+    <span class="n">out_raster</span> <span class="o">=</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">conditional</span><span class="p">,</span>
+        <span class="n">out_mask_value</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">in_mask_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">out_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">out_raster</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">out_mask_value</span><span class="p">),</span>
+            <span class="n">in_mask_value</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">out_raster</span> <span class="o">=</span> <span class="n">out_raster</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_raster</span></div>
+
+
+<div class="viewcode-block" id="mask_streams"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.mask_streams">[docs]</a><span class="k">def</span> <span class="nf">mask_streams</span><span class="p">(</span>
+    <span class="n">fac_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">accumulation_threshold</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A simplified version of tools.value_mask() that outputs np.nan for non-&#39;stream&#39; cells below the accumulation threshold.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fac_raster: A single band flow accumulation (FAC) raster.</span>
+<span class="sd">        accumulation_threshold: The flow accumulation threshold.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The output raster with cells below the threshold encoded as np.nan</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fac_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">fac_raster</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)</span>
+
+    <span class="c1"># handle input nodata</span>
+    <span class="n">fac_raster</span> <span class="o">=</span> <span class="n">fac_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">fac_raster</span> <span class="o">!=</span> <span class="n">fac_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># apply stream mask</span>
+    <span class="n">mask_streams</span> <span class="o">=</span> <span class="n">fac_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">fac_raster</span> <span class="o">&gt;=</span> <span class="n">accumulation_threshold</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">mask_streams</span> <span class="o">=</span> <span class="n">mask_streams</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_nodata</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+    <span class="c1"># save if necessary</span>
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">mask_streams</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mask_streams</span></div>
+
+
+<div class="viewcode-block" id="binarize_nodata"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.binarize_nodata">[docs]</a><span class="k">def</span> <span class="nf">binarize_nodata</span><span class="p">(</span>
+    <span class="n">in_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">nodata_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Creates an output binary raster based on an input where nodata values -&gt; 1, and valued cells -&gt; 0.</span>
+
+<span class="sd">    Note: while param:inverse=True this can be used with pyfunc:apply_mask() to match nodata cells between rasters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        in_raster: Input raster.</span>
+<span class="sd">        nodata_value: If the nodata value for param:in_raster is not in the metadata,</span>
+<span class="sd">            set this parameter to equal the cell value storing nodata (i.e., np.nan or -999).</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The output binary mask raster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># handle nodata / out-of-mask values</span>
+    <span class="n">in_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">in_raster</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nodata_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nodata_value</span> <span class="o">=</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span>
+
+    <span class="c1"># convert all values to 0 or 1</span>
+    <span class="n">nodata_binary</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">out_raster</span> <span class="o">=</span> <span class="n">in_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">in_raster</span><span class="o">.</span><span class="n">isnull</span><span class="p">(),</span>
+        <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">in_raster</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="n">out_raster</span> <span class="o">=</span> <span class="n">out_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">out_raster</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;uint8&#39;</span><span class="p">)</span>
+
+    <span class="n">out_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_nodata</span><span class="p">(</span>
+        <span class="n">nodata_binary</span><span class="p">,</span>
+        <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_raster</span></div>
+
+
+<div class="viewcode-block" id="binarize_categorical_raster"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.binarize_categorical_raster">[docs]</a><span class="k">def</span> <span class="nf">binarize_categorical_raster</span><span class="p">(</span>
+    <span class="n">cat_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">categories_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">ignore_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Converts a single band categorical raster into a binary multi-band binary raster.</span>
+
+<span class="sd">    Each output band represent a unique category, where 1 encodes cells belonging the the category,</span>
+<span class="sd">    and 0 encodes cells belonging to any other category. This function is used to prep a categorical</span>
+<span class="sd">    raster for parameter_accumulate().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cat_raster: A categorical (dtype=int) raster with N unique categories (i.e., land cover classes).</span>
+<span class="sd">        categogies_dict: A dictionary assigning string names (values) to integer raster values (keys).</span>
+<span class="sd">        ignore_categories: Category cell values not include in the output raster.</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A N-band multi-dimensional raster as a xarray DataArray object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cat_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">cat_raster</span><span class="p">)</span>
+    <span class="n">cat_dtype</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cat_raster</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">categories_dict</span><span class="p">:</span>
+        <span class="n">categories_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="s1">&#39;int&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cat_dtype</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Categorical rasters must be dtype=int.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cat_raster</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Categorical rasters must be of form f(x, y).&#39;</span><span class="p">)</span>
+
+    <span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cat_raster</span><span class="o">.</span><span class="n">values</span><span class="p">))]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_categories</span><span class="p">:</span>
+        <span class="n">ignore_categories</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">combine_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">categories</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cat</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ignore_categories</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cat</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">categories_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">categories_dict</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">cat</span>
+
+            <span class="n">out_layer</span> <span class="o">=</span> <span class="n">cat_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="n">cat_raster</span> <span class="o">==</span> <span class="n">cat</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">cat_dtype</span><span class="p">)</span>
+
+            <span class="n">out_layer</span> <span class="o">=</span> <span class="n">out_layer</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="n">out_layer</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;uint8&#39;</span><span class="p">)</span>
+
+            <span class="n">combine_dict</span><span class="p">[(</span><span class="n">count</span><span class="p">,</span> <span class="n">index</span><span class="p">)]</span> <span class="o">=</span> <span class="n">out_layer</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">out_raster</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_combine_split_bands</span><span class="p">(</span><span class="n">combine_dict</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_raster</span></div>
+
+
+<div class="viewcode-block" id="d8_to_dinfinity"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.d8_to_dinfinity">[docs]</a><span class="k">def</span> <span class="nf">d8_to_dinfinity</span><span class="p">(</span>
+    <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Converts a D8 Flow Direction Raster to D-Infinity.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        d8_fdr: A D8 Flow Direction Raster (dtype=int).</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The output D-Inf Flow Direction Raster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># if not taudem format, convert</span>
+    <span class="n">d8_fdr</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">)</span>
+    <span class="n">d8_fdr</span> <span class="o">=</span> <span class="n">convert_fdr_formats</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">,</span>
+        <span class="n">out_format</span><span class="o">=</span><span class="s1">&#39;taudem&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># replace nodata with nan and convert to float</span>
+    <span class="n">dinf_fdr</span> <span class="o">=</span> <span class="n">d8_fdr</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">d8_fdr</span><span class="o">.</span><span class="n">values</span> <span class="o">!=</span> <span class="n">d8_fdr</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+
+    <span class="n">dinf_fdr</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_nodata</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># convert to d-infinity / radians (as floats, range 0 - 6.2)</span>
+    <span class="n">dinf_fdr</span> <span class="o">=</span> <span class="p">((</span><span class="n">dinf_fdr</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
+    <span class="n">dinf_fdr</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;DInfinity_FDR&#39;</span>
+
+    <span class="c1"># save if necessary</span>
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">dinf_fdr</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dinf_fdr</span></div>
+
+
+<div class="viewcode-block" id="find_basin_pour_points"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.find_basin_pour_points">[docs]</a><span class="k">def</span> <span class="nf">find_basin_pour_points</span><span class="p">(</span>
+    <span class="n">fac_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">basins_shp</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">basin_id_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;HUC12&#39;</span><span class="p">,</span>
+    <span class="n">use_huc4</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PourPointLocationsDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fac_raster: A Flow Accumulation Cell raster (FAC).</span>
+<span class="sd">        basins_shp: A .shp shapefile containing basin geometries.</span>
+<span class="sd">        basin_id_field: Default behavior is for each GeoDataFrame row to be a unique basin.</span>
+<span class="sd">            However, if one wants to use a higher level basin id that is shared acrcoss rows,</span>
+<span class="sd">            this should be set to the column header storing the higher level basin id.</span>
+<span class="sd">        use_huc4: Either &#39;HUC4&#39; or &#39;HUC12&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(x, y).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fac_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">fac_raster</span><span class="p">)</span>
+    <span class="n">basins_shp</span> <span class="o">=</span> <span class="n">load_shapefile</span><span class="p">(</span><span class="n">basins_shp</span><span class="p">)</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">fac_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+
+    <span class="c1"># verify that we can find the basin_id_field</span>
+    <span class="k">if</span> <span class="n">basin_id_field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">basin_id_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">basins_shp</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;param:basin_id_field = </span><span class="si">{</span><span class="n">basin_id_field</span><span class="si">}</span><span class="s1"> is not in param:basins_shp&#39;</span><span class="p">)</span>
+
+    <span class="c1"># convert basin levels if necessary PourPointLocationsDict</span>
+    <span class="n">pour_point_locations_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pour_point_locations_dict</span><span class="p">[</span><span class="s1">&#39;pour_point_ids&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">pour_point_locations_dict</span><span class="p">[</span><span class="s1">&#39;pour_point_coords&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">use_huc4</span> <span class="ow">and</span> <span class="n">basin_id_field</span> <span class="o">==</span> <span class="s1">&#39;HUC12&#39;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Using HUC4 level flow basins, converting from HUC12&#39;</span><span class="p">)</span>
+        <span class="n">basins_shp</span><span class="p">[</span><span class="s1">&#39;HUC4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">basins_shp</span><span class="p">[</span><span class="n">basin_id_field</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">sub_basin_id</span> <span class="o">=</span> <span class="s1">&#39;HUC4&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sub_basin_id</span> <span class="o">=</span> <span class="n">basin_id_field</span>
+
+    <span class="c1"># iterate over sub basins and fill the</span>
+    <span class="n">basins_shp</span> <span class="o">=</span> <span class="n">basins_shp</span><span class="o">.</span><span class="n">dissolve</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">sub_basin_id</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">basin</span> <span class="ow">in</span> <span class="n">basins_shp</span><span class="p">[</span><span class="n">sub_basin_id</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+        <span class="n">sub_shp</span> <span class="o">=</span> <span class="n">basins_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">basins_shp</span><span class="p">[</span><span class="n">sub_basin_id</span><span class="p">]</span> <span class="o">==</span> <span class="n">basin</span><span class="p">]</span>
+
+        <span class="c1"># check extents of shapefile bbox and make sure all overlap the FAC raster extent</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_verify_basin_coverage</span><span class="p">(</span><span class="n">fac_raster</span><span class="p">,</span> <span class="n">sub_shp</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WARNING: sub basin with </span><span class="si">{</span><span class="n">sub_basin_id</span><span class="si">}</span><span class="s1"> == </span><span class="si">{</span><span class="n">basin</span><span class="si">}</span><span class="s1"> is not&#39;</span>
+                  <span class="s1">&#39; completely enclosed by param:raster! Some relevant areas may be missing.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># apply spatial mask and find max accumulation value</span>
+        <span class="n">sub_raster</span> <span class="o">=</span> <span class="n">spatial_mask</span><span class="p">(</span>
+            <span class="n">fac_raster</span><span class="p">,</span>
+            <span class="n">sub_shp</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">pour_point_locations_dict</span><span class="p">[</span><span class="s1">&#39;pour_point_ids&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">basin</span><span class="p">)</span>
+        <span class="n">pour_point_locations_dict</span><span class="p">[</span><span class="s1">&#39;pour_point_coords&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">utilities</span><span class="o">.</span><span class="n">_get_max_cell</span><span class="p">(</span><span class="n">sub_raster</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">pour_point_locations_dict</span></div>
+
+
+<div class="viewcode-block" id="find_fac_pour_point"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.find_fac_pour_point">[docs]</a><span class="k">def</span> <span class="nf">find_fac_pour_point</span><span class="p">(</span>
+    <span class="n">fac_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">basin_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PourPointLocationsDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fac_raster: A Flow Accumulation Cell raster (FAC).</span>
+<span class="sd">        basin_name: Allows a name to be given to the FAC.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(x, y).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># create a basic PourPointLocationsDict for the full fac_raster</span>
+    <span class="n">fac_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">fac_raster</span><span class="p">)</span>
+    <span class="n">pour_point_locations_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">basin_name</span><span class="p">:</span>
+        <span class="n">basin_name</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">pour_point_locations_dict</span><span class="p">[</span><span class="s1">&#39;pour_point_ids&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">basin_name</span><span class="p">]</span>
+    <span class="n">pour_point_locations_dict</span><span class="p">[</span><span class="s1">&#39;pour_point_coords&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">utilities</span><span class="o">.</span><span class="n">_get_max_cell</span><span class="p">(</span><span class="n">fac_raster</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">pour_point_locations_dict</span></div>
+
+
+<div class="viewcode-block" id="get_pour_point_values"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.get_pour_point_values">[docs]</a><span class="k">def</span> <span class="nf">get_pour_point_values</span><span class="p">(</span>
+    <span class="n">pour_points_dict</span><span class="p">:</span> <span class="n">PourPointLocationsDict</span><span class="p">,</span>
+    <span class="n">accumulation_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PourPointValuesDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Get the accumlation raster values from downstream pour points.</span>
+
+<span class="sd">    Note: This function is intended to feed into accumulate_flow() or parameter_accumlate() param:upstream_pour_points.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pour_points_dict: A dictionary of form fcpgtools.custom_types.PourPointValuesDict.</span>
+<span class="sd">        accumulation_raster: A Flow Accumulation Cell raster (FAC) or a parameter accumulation raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of tuples (one for each pour point) storing their coordinates [0] and accumulation value [1].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pull in the accumulation raster</span>
+    <span class="n">accumulation_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">accumulation_raster</span><span class="p">)</span>
+
+    <span class="c1"># remove old values if accidentally passed in</span>
+    <span class="k">if</span> <span class="s1">&#39;pour_point_values&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">pour_points_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">del</span> <span class="n">pour_points_dict</span><span class="p">[</span><span class="s1">&#39;pour_point_values&#39;</span><span class="p">]</span>
+
+    <span class="c1"># split bands if necessary</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">accumulation_raster</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">raster_bands</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_split_bands</span><span class="p">(</span><span class="n">accumulation_raster</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">raster_bands</span> <span class="o">=</span> <span class="p">{(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="n">accumulation_raster</span><span class="p">}</span>
+
+    <span class="c1"># iterate over all basins and bands, extract values</span>
+    <span class="n">dict_values_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">pour_point_coords</span> <span class="ow">in</span> <span class="n">pour_points_dict</span><span class="p">[</span><span class="s1">&#39;pour_point_coords&#39;</span><span class="p">]:</span>
+        <span class="n">basin_values_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">raster_bands</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">basin_values_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">utilities</span><span class="o">.</span><span class="n">_query_point</span><span class="p">(</span>
+                    <span class="n">band</span><span class="p">,</span>
+                    <span class="n">pour_point_coords</span><span class="p">,</span>
+                <span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="n">dict_values_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">basin_values_list</span><span class="p">)</span>
+
+    <span class="c1"># convert to custom_types.PourPointValuesDict and return</span>
+    <span class="n">pour_points_dict</span><span class="p">[</span><span class="s1">&#39;pour_point_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_values_list</span>
+    <span class="k">return</span> <span class="n">pour_points_dict</span></div>
+
+
+<div class="viewcode-block" id="make_fcpg"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.make_fcpg">[docs]</a><span class="k">def</span> <span class="nf">make_fcpg</span><span class="p">(</span>
+    <span class="n">param_accum_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">fac_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Creates a Flow Conditioned Parameter Grid raster by dividing a paramater accumulation raster by a Flow Accumulation Cell (FAC) raster.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        param_accum_raster: (xr.DataArray or str raster path)</span>
+<span class="sd">        fac_raster: (xr.DataArray or str raster path) input FAC raster.</span>
+<span class="sd">        out_path: (str or pathlib.Path, default=None) defines a path to save the output raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The output FCPG raster as a xarray DataArray object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># bring in data</span>
+    <span class="n">fac_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">fac_raster</span><span class="p">)</span>
+    <span class="n">param_accum_raster</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">param_accum_raster</span><span class="p">)</span>
+
+    <span class="n">fcpg_raster</span> <span class="o">=</span> <span class="n">param_accum_raster</span> <span class="o">/</span> <span class="p">(</span><span class="n">fac_raster</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">fcpg_raster</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;FCPG&#39;</span>
+
+    <span class="c1"># save if necessary</span>
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_raster</span><span class="p">(</span>
+            <span class="n">fcpg_raster</span><span class="p">,</span>
+            <span class="n">out_path</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fcpg_raster</span></div>
+
+
+<div class="viewcode-block" id="accumulate_flow"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.accumulate_flow">[docs]</a><span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsAccumulateFlow</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">accumulate_flow</span><span class="p">(</span>
+    <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsAccumulateFlow</span> <span class="o">=</span> <span class="s1">&#39;pysheds&#39;</span><span class="p">,</span>
+    <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PourPointValuesDict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">weights</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create a Flow Accumulation Cell (FAC) raster from a D8 Flow Direction Raster.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        d8_fdr: A  D8 Flow Direction Raster (dtype=Int).</span>
+<span class="sd">        engine: A terrain engine class that supports flow accumulation.</span>
+<span class="sd">        upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],</span>
+<span class="sd">            and updated cell values as the second [1].</span>
+<span class="sd">            This allows the FAC to be made with boundary conditions such as upstream basin pour points.</span>
+<span class="sd">        weights: A grid defining the value to accumulate from each cell. Default is a grid of 1s.</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+<span class="sd">        **kwargs: keyword arguments, specific options depend on the engine being used.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The output Flow Accumulation Cells (FAC) raster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># reformat param:d8_fdr if necessary</span>
+    <span class="n">d8_fdr</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_match_d8_format</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+
+    <span class="c1"># execute function w/ the chosen engine</span>
+    <span class="k">return</span> <span class="n">engine</span><span class="o">.</span><span class="n">accumulate_flow</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">,</span>
+        <span class="n">upstream_pour_points</span><span class="o">=</span><span class="n">upstream_pour_points</span><span class="p">,</span>
+        <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="o">=</span><span class="n">out_path</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="accumulate_parameter"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.accumulate_parameter">[docs]</a><span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsAccumulateParameter</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">accumulate_parameter</span><span class="p">(</span>
+    <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsAccumulateParameter</span> <span class="o">=</span> <span class="s1">&#39;pysheds&#39;</span><span class="p">,</span>
+    <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PourPointValuesDict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create a parameter accumulation raster from a D8 Flow Direction Raster and a parameter raster.</span>
+
+<span class="sd">    A key aspect of this function is that the output DataArray will have dimensions matching param:parameter_raster.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        d8_fdr: A D8 Flow Direction Raster (dtype=Int).</span>
+<span class="sd">        parameter_raster: A parameter raster aligned via tools.align_raster() with the us_fdr. </span>
+<span class="sd">            This can be multi-dimensional (i.e. f(x, y, t)), and if so, a multi-dimensional output is returned.</span>
+<span class="sd">        engine: A terrain engine class that supports parameter accumulation.</span>
+<span class="sd">        upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],</span>
+<span class="sd">            and updated cell values as the second [1].</span>
+<span class="sd">            This allows the FAC to be made with boundary conditions such as upstream basin pour points.</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+<span class="sd">        **kwargs: keyword arguments, specific options depend on the engine being used.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The output parameter accumulation raster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># reformat param:d8_fdr if necessary</span>
+    <span class="n">d8_fdr</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_match_d8_format</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+
+    <span class="c1"># execute function w/ the chosen engine</span>
+    <span class="k">return</span> <span class="n">engine</span><span class="o">.</span><span class="n">accumulate_parameter</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">,</span>
+        <span class="n">parameter_raster</span><span class="p">,</span>
+        <span class="n">upstream_pour_points</span><span class="o">=</span><span class="n">upstream_pour_points</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="o">=</span><span class="n">out_path</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="extreme_upslope_values"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.extreme_upslope_values">[docs]</a><span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsExtremeUpslopeValues</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">extreme_upslope_values</span><span class="p">(</span>
+    <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsExtremeUpslopeValues</span> <span class="o">=</span> <span class="s1">&#39;taudem&#39;</span><span class="p">,</span>
+    <span class="n">mask_streams</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Raster</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">get_min_upslope</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Finds the max (or min if get_min_upslope=True) value of a parameter grid upstream from each cell in a D8 FDR raster.</span>
+
+<span class="sd">    NOTE: Replaces tools.ExtremeUpslopeValue() from V1 FCPGtools.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        d8_fdr: A flow direction raster .</span>
+<span class="sd">        parameter_raster: A parameter raster to find the max values from.</span>
+<span class="sd">        engine: A terrain engine class that supports finding extreme upslope values.</span>
+<span class="sd">        mask_streams: A stream mask raster from tools.mask_streams().</span>
+<span class="sd">            If provided, the output will be masked to only stream cells.</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+<span class="sd">        get_min_upslope: If True, the minimum upslope value is assigned to each cell.</span>
+<span class="sd">        **kwargs: keyword arguments, specific options depend on the engine being used.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A raster with max (or min) upstream value of the parameter grid as each cell&#39;s value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># reformat param:d8_fdr if necessary</span>
+    <span class="n">d8_fdr</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_match_d8_format</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+
+    <span class="c1"># execute function w/ the chosen engine</span>
+    <span class="k">return</span> <span class="n">engine</span><span class="o">.</span><span class="n">extreme_upslope_values</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">,</span>
+        <span class="n">parameter_raster</span><span class="p">,</span>
+        <span class="n">mask_streams</span><span class="o">=</span><span class="n">mask_streams</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="o">=</span><span class="n">out_path</span><span class="p">,</span>
+        <span class="n">get_min_upslope</span><span class="o">=</span><span class="n">get_min_upslope</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="distance_to_stream"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.distance_to_stream">[docs]</a><span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsDistanceToStream</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">distance_to_stream</span><span class="p">(</span>
+    <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">fac_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">accum_threshold</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsDistanceToStream</span> <span class="o">=</span> <span class="s1">&#39;taudem&#39;</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates distance each cell is from a stream (as defined by a cell accumulation threshold).</span>
+
+<span class="sd">    NOTE: Replaces tools.dist2stream() from V1 FCPGtools.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        d8_fdr: A D8 Flow Direction Raster (dtype=Int).</span>
+<span class="sd">        fac_raster: A Flow Accumulation Cell (FAC) raster output from accumulate_flow().</span>
+<span class="sd">        accum_threshold: The # of upstream/accumulated cells to consider a cell a stream.</span>
+<span class="sd">        engine: A terrain engine class that supports calculating distance to stream.</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+<span class="sd">        **kwargs: keyword arguments, specific options depend on the engine being used.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A raster with values of D8 flow distance from each cell to the nearest stream.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># reformat param:d8_fdr if necessary</span>
+    <span class="n">d8_fdr</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_match_d8_format</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+
+    <span class="c1"># execute function w/ the chosen engine</span>
+    <span class="k">return</span> <span class="n">engine</span><span class="o">.</span><span class="n">distance_to_stream</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">,</span>
+        <span class="n">fac_raster</span><span class="p">,</span>
+        <span class="n">accum_threshold</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="o">=</span><span class="n">out_path</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="decay_accumulation"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.decay_accumulation">[docs]</a><span class="nd">@engine_validator</span><span class="o">.</span><span class="n">validate_engine</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">SupportsDecayAccumulation</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">decay_accumulation</span><span class="p">(</span>
+    <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">decay_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">engine</span><span class="p">:</span> <span class="n">protocols</span><span class="o">.</span><span class="n">SupportsDecayAccumulation</span> <span class="o">=</span> <span class="s1">&#39;taudem&#39;</span><span class="p">,</span>
+    <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PourPointValuesDict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Raster</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Creates a D-Infinity based accumulation raster (parameter or cell accumulation) while applying decay via a multiplier_raster.</span>
+
+<span class="sd">    NOTE: Replaces tools.decayAccum() from V1 FCPGtools.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dinf_fdr: A flow direction raster in D-Infinity format. This input can be made with tools.d8_to_dinfinity().</span>
+<span class="sd">        decay_raster: A decay &#39;multiplier&#39; raster calculated from distance to stream via tools.make_decay_raster().</span>
+<span class="sd">        engine: A terrain engine class that supports decayed accumulation.</span>
+<span class="sd">        upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],</span>
+<span class="sd">            and updated cell values as the second [1].</span>
+<span class="sd">            This allows the FAC to be made with boundary conditions such as upstream basin pour points.</span>
+<span class="sd">        parameter_raster: A parameter raster aligned via tools.align_raster() with the us_fdr. </span>
+<span class="sd">            This can be multi-dimensional (i.e. f(x, y, t)), and if so, a multi-dimensional output is returned.</span>
+<span class="sd">        out_path: Defines a path to save the output raster.</span>
+<span class="sd">        **kwargs: keyword arguments, specific options depend on the engine being used.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The output decayed accumulation raster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># reformat param:d8_fdr if necessary</span>
+    <span class="n">d8_fdr</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_match_d8_format</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+
+    <span class="c1"># execute function w/ the chosen engine</span>
+    <span class="k">return</span> <span class="n">engine</span><span class="o">.</span><span class="n">decay_accumulation</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">,</span>
+        <span class="n">decay_raster</span><span class="p">,</span>
+        <span class="n">upstream_pour_points</span><span class="o">=</span><span class="n">upstream_pour_points</span><span class="p">,</span>
+        <span class="n">parameter_raster</span><span class="o">=</span><span class="n">parameter_raster</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="o">=</span><span class="n">out_path</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Theodore Barnhart, Xavier Nogueira, Roy Sando, Seth Siefken, Peter McCarthy, Al Rea, Paul Tomasula, and Anthony Aufdenkampe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

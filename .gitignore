@@ -17,25 +17,26 @@
 
 # Distribution / packaging
 .Python
-build/
-
 
 # Byte-compiled / optimized / DLL files
 *.pyc
 
 # Unit test / coverage reports
 
-
 # Sphinx documentation
 docs/_build/
+docs/_static/
+docs/_sources/
+docs/_modules/
 
 # Jupyter Notebook
 .ipynb_checkpoints
 .virtual_documents/
 
-
 # Temporary files
-examples/temp/
+examples/temp/*
 
-# Specific files
+# Test output data files
+examples/*.tif
+examples/out_data/*
 

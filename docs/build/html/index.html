@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FCPGtools Documentation Site &mdash; Flow-Conditioned Parameter Grid Tools 2.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting Started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> Flow-Conditioned Parameter Grid Tools
+          </a>
+              <div class="version">
+                2.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook/Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_types.html">Custom Types and Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications and Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Flow-Conditioned Parameter Grid Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active"><cite>FCPGtools</cite> Documentation Site</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fcpgtools-documentation-site">
+<h1><cite>FCPGtools</cite> Documentation Site<a class="headerlink" href="#fcpgtools-documentation-site" title="Permalink to this heading"></a></h1>
+<p>The Flow-Conditioned Parameter Grid (FCPG) tools is a Python 3 library that
+enables users to quickly create FCPGs, as well other gridded output datasets,
+for use in statistical, machine learning, and physical hydrologic modeling.
+These tools use a Flow Direction Raster (FDR) and gridded parameter datasets,
+such as precipitation, slope, or land use, to generate seamless gridded outputs.
+Each cell in these outputs stores a value that statistically summarizes all
+upstream parameter values.</p>
+<p>More specifically, a FCPG is a pre-processing method that stores the <strong>upstream
+average of a parameter datasets for each grid cells in a landscape</strong>.
+These tools allow you to store the upstream maximum and minimum parameter values,
+or to generate a FCPG with a decay factor that modifies the downstream
+accumulation calculation of the parameter.</p>
+<p>For example, you could use these tools to calculate the average upstream
+precipitation value for each grid cell in a raster, or the maximum and minimum
+upstream slope values using a hillslope raster as the input parameter grid.</p>
+<a class="reference internal image-reference" href="_images/flow_chart_image.png"><img alt="_images/flow_chart_image.png" src="_images/flow_chart_image.png" style="width: 600px;" /></a>
+<p>These types of gridded outputs are useful in a variety of hydrologic modeling
+applications and can serve as powerful predictive features in machine learning
+training datasets. This software package has previously been used to generate a
+seamless dataset of common basin characteristics for the contiguous United States,
+including mean upstream elevation, slope, minimum and maximum monthly temperature,
+annual precipitation, land cover class, and latitude.</p>
+<section id="use-and-citation">
+<h2>Use and Citation<a class="headerlink" href="#use-and-citation" title="Permalink to this heading"></a></h2>
+<p>The FCPG Tools are part of the public domain as they are produced by
+employees of the U.S. Government in collaboration with private sector contractors.
+If you use these tools in your work, we request that you cite the latest
+release of the code using the provided citation. This helps us ensure that the
+contributions of the team behind the FCPG Tools are properly recognized, and
+will help justify the continued maintenance of this library.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Version 2.0</strong> was released in December, 2022.</dt><dd><ul>
+<li><p>#TODO:INSERT UPDATED CITATION HERE!</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><strong>Version 1.1</strong> was released in September, 2022.</p></li>
+<li><dl class="simple">
+<dt><strong>Version 1.0</strong> (IP-112996) was approved on September 3, 2020.</dt><dd><ul>
+<li><p>Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: <a class="reference external" href="https://doi.org/10.5066/P9W8UZ47">https://doi.org/10.5066/P9W8UZ47</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>If you encounter and issues with this software, please bring it to our attention
+by filling out a
+<a class="reference external" href="https://code.usgs.gov/StreamStats/FCPGtools/-/issues/new?issuable_template=new_project">GitLab Issues Form</a>.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#using-fcpgtools">Using FCPGtools</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.accumulate_flow"><code class="docutils literal notranslate"><span class="pre">accumulate_flow()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.accumulate_parameter"><code class="docutils literal notranslate"><span class="pre">accumulate_parameter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.adjust_parameter_raster"><code class="docutils literal notranslate"><span class="pre">adjust_parameter_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.align_raster"><code class="docutils literal notranslate"><span class="pre">align_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.binarize_categorical_raster"><code class="docutils literal notranslate"><span class="pre">binarize_categorical_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.binarize_nodata"><code class="docutils literal notranslate"><span class="pre">binarize_nodata()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.clip"><code class="docutils literal notranslate"><span class="pre">clip()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.convert_fdr_formats"><code class="docutils literal notranslate"><span class="pre">convert_fdr_formats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.d8_to_dinfinity"><code class="docutils literal notranslate"><span class="pre">d8_to_dinfinity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.decay_accumulation"><code class="docutils literal notranslate"><span class="pre">decay_accumulation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.distance_to_stream"><code class="docutils literal notranslate"><span class="pre">distance_to_stream()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.extreme_upslope_values"><code class="docutils literal notranslate"><span class="pre">extreme_upslope_values()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.find_basin_pour_points"><code class="docutils literal notranslate"><span class="pre">find_basin_pour_points()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.find_fac_pour_point"><code class="docutils literal notranslate"><span class="pre">find_fac_pour_point()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.get_pour_point_values"><code class="docutils literal notranslate"><span class="pre">get_pour_point_values()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.load_raster"><code class="docutils literal notranslate"><span class="pre">load_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.load_shapefile"><code class="docutils literal notranslate"><span class="pre">load_shapefile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.make_decay_raster"><code class="docutils literal notranslate"><span class="pre">make_decay_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.make_fac_weights"><code class="docutils literal notranslate"><span class="pre">make_fac_weights()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.make_fcpg"><code class="docutils literal notranslate"><span class="pre">make_fcpg()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.mask_streams"><code class="docutils literal notranslate"><span class="pre">mask_streams()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.reproject_raster"><code class="docutils literal notranslate"><span class="pre">reproject_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.reproject_shapefile"><code class="docutils literal notranslate"><span class="pre">reproject_shapefile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.resample"><code class="docutils literal notranslate"><span class="pre">resample()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.save_raster"><code class="docutils literal notranslate"><span class="pre">save_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.save_shapefile"><code class="docutils literal notranslate"><span class="pre">save_shapefile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.spatial_mask"><code class="docutils literal notranslate"><span class="pre">spatial_mask()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#fcpgtools.tools.value_mask"><code class="docutils literal notranslate"><span class="pre">value_mask()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook/Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#input-data">Input Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#example-1-make-a-basic-precipitation-fcpg">Example 1 - Make a basic precipitation FCPG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#example-2-cascade-accumulated-precipitation-from-one-basin-to-another">Example 2 - Cascade accumulated precipitation from one basin to another</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#example-3-accumulate-land-cover">Example 3 - Accumulate land cover</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#example-4-use-taudem-to-make-a-decayed-accumulation-raster">Example 4 - Use <code class="docutils literal notranslate"><span class="pre">TauDEM</span></code> to make a decayed accumulation raster</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrating_from_v1.html#new-in-version-2-0">New in Version 2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating_from_v1.html#mapping-of-version-1-1-to-version-2-0-fcpgtools-functions">Mapping of Version 1.1 to Version 2.0 <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="custom_types.html">Custom Types and Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications and Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
+</ul>
+</div>
+</section>
+<section id="site-index">
+<h2>Site Index<a class="headerlink" href="#site-index" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Theodore Barnhart, Xavier Nogueira, Roy Sando, Seth Siefken, Peter McCarthy, Al Rea, Paul Tomasula, and Anthony Aufdenkampe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

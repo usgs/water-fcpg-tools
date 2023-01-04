@@ -3,7 +3,7 @@
 Function Documentation
 ======================
 
-.. automodule:: tools
+.. automodule:: fcpgtools.tools
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Function Documentation &mdash; Flow-Conditioned Parameter Grid Tools 2.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Cookbook/Examples" href="cookbook.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Flow-Conditioned Parameter Grid Tools
+          </a>
+              <div class="version">
+                2.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Function Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.accumulate_flow"><code class="docutils literal notranslate"><span class="pre">accumulate_flow()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.accumulate_parameter"><code class="docutils literal notranslate"><span class="pre">accumulate_parameter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.adjust_parameter_raster"><code class="docutils literal notranslate"><span class="pre">adjust_parameter_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.align_raster"><code class="docutils literal notranslate"><span class="pre">align_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.binarize_categorical_raster"><code class="docutils literal notranslate"><span class="pre">binarize_categorical_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.binarize_nodata"><code class="docutils literal notranslate"><span class="pre">binarize_nodata()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.clip"><code class="docutils literal notranslate"><span class="pre">clip()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.convert_fdr_formats"><code class="docutils literal notranslate"><span class="pre">convert_fdr_formats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.d8_to_dinfinity"><code class="docutils literal notranslate"><span class="pre">d8_to_dinfinity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.decay_accumulation"><code class="docutils literal notranslate"><span class="pre">decay_accumulation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.distance_to_stream"><code class="docutils literal notranslate"><span class="pre">distance_to_stream()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.extreme_upslope_values"><code class="docutils literal notranslate"><span class="pre">extreme_upslope_values()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.find_basin_pour_points"><code class="docutils literal notranslate"><span class="pre">find_basin_pour_points()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.find_fac_pour_point"><code class="docutils literal notranslate"><span class="pre">find_fac_pour_point()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.get_pour_point_values"><code class="docutils literal notranslate"><span class="pre">get_pour_point_values()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.load_raster"><code class="docutils literal notranslate"><span class="pre">load_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.load_shapefile"><code class="docutils literal notranslate"><span class="pre">load_shapefile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.make_decay_raster"><code class="docutils literal notranslate"><span class="pre">make_decay_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.make_fac_weights"><code class="docutils literal notranslate"><span class="pre">make_fac_weights()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.make_fcpg"><code class="docutils literal notranslate"><span class="pre">make_fcpg()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.mask_streams"><code class="docutils literal notranslate"><span class="pre">mask_streams()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.reproject_raster"><code class="docutils literal notranslate"><span class="pre">reproject_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.reproject_shapefile"><code class="docutils literal notranslate"><span class="pre">reproject_shapefile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.resample"><code class="docutils literal notranslate"><span class="pre">resample()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.save_raster"><code class="docutils literal notranslate"><span class="pre">save_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.save_shapefile"><code class="docutils literal notranslate"><span class="pre">save_shapefile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.spatial_mask"><code class="docutils literal notranslate"><span class="pre">spatial_mask()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcpgtools.tools.value_mask"><code class="docutils literal notranslate"><span class="pre">value_mask()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook/Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_types.html">Custom Types and Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications and Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Flow-Conditioned Parameter Grid Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Function Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/functions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-fcpgtools.tools">
+<span id="function-documentation"></span><span id="function-label"></span><h1>Function Documentation<a class="headerlink" href="#module-fcpgtools.tools" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.accumulate_flow">
+<span class="sig-name descname"><span class="pre">accumulate_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d8_fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsAccumulateFlow</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pysheds'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstream_pour_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">PourPointValuesDict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#accumulate_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.accumulate_flow" title="Permalink to this definition"></a></dt>
+<dd><p>Create a Flow Accumulation Cell (FAC) raster from a D8 Flow Direction Raster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d8_fdr</strong> – A  D8 Flow Direction Raster (dtype=Int).</p></li>
+<li><p><strong>engine</strong> – A terrain engine class that supports flow accumulation.</p></li>
+<li><p><strong>upstream_pour_points</strong> – A list of lists each with with coordinate tuples as the first item [0],
+and updated cell values as the second [1].
+This allows the FAC to be made with boundary conditions such as upstream basin pour points.</p></li>
+<li><p><strong>weights</strong> – A grid defining the value to accumulate from each cell. Default is a grid of 1s.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments, specific options depend on the engine being used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output Flow Accumulation Cells (FAC) raster.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.accumulate_parameter">
+<span class="sig-name descname"><span class="pre">accumulate_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d8_fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsAccumulateParameter</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pysheds'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstream_pour_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">PourPointValuesDict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#accumulate_parameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.accumulate_parameter" title="Permalink to this definition"></a></dt>
+<dd><p>Create a parameter accumulation raster from a D8 Flow Direction Raster and a parameter raster.</p>
+<p>A key aspect of this function is that the output DataArray will have dimensions matching param:parameter_raster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d8_fdr</strong> – A D8 Flow Direction Raster (dtype=Int).</p></li>
+<li><p><strong>parameter_raster</strong> – A parameter raster aligned via tools.align_raster() with the us_fdr.
+This can be multi-dimensional (i.e. f(x, y, t)), and if so, a multi-dimensional output is returned.</p></li>
+<li><p><strong>engine</strong> – A terrain engine class that supports parameter accumulation.</p></li>
+<li><p><strong>upstream_pour_points</strong> – A list of lists each with with coordinate tuples as the first item [0],
+and updated cell values as the second [1].
+This allows the FAC to be made with boundary conditions such as upstream basin pour points.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments, specific options depend on the engine being used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output parameter accumulation raster.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.adjust_parameter_raster">
+<span class="sig-name descname"><span class="pre">adjust_parameter_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d8_fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstream_pour_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PourPointValuesDict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#adjust_parameter_raster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.adjust_parameter_raster" title="Permalink to this definition"></a></dt>
+<dd><p>Adds values to a parameter raster’s at specific pour points / coordinates for use in accumulate_parameter().</p>
+<p>The main utility of this function is to enable cascading accumulation values from one basin or raster to another.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameter_raster</strong> – Input parameter raster to update.</p></li>
+<li><p><strong>d8_fdr</strong> – a D8 Flow Direction Raster.</p></li>
+<li><p><strong>upstream_pour_points</strong> – A dictionary with coordinates to update values at, and the values to add.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The updated parameter raster.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.align_raster">
+<span class="sig-name descname"><span class="pre">align_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_raster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resample_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'nearest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#align_raster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.align_raster" title="Permalink to this definition"></a></dt>
+<dd><p>Aligns the projection/CRS, spatial extent, and resolution of one raster to another.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_raster</strong> – Input raster that needs to be aligned.</p></li>
+<li><p><strong>match_raster</strong> – Raster to align to.</p></li>
+<li><p><strong>resample_method</strong> – A valid resampling method from rasterio.enums.Resample (default=’nearest’).
+NOTE: Do not use any averaging resample methods when working with a categorical raster!</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output aligned raster.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.binarize_categorical_raster">
+<span class="sig-name descname"><span class="pre">binarize_categorical_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cat_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_categories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#binarize_categorical_raster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.binarize_categorical_raster" title="Permalink to this definition"></a></dt>
+<dd><p>Converts a single band categorical raster into a binary multi-band binary raster.</p>
+<p>Each output band represent a unique category, where 1 encodes cells belonging the the category,
+and 0 encodes cells belonging to any other category. This function is used to prep a categorical
+raster for parameter_accumulate().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cat_raster</strong> – A categorical (dtype=int) raster with N unique categories (i.e., land cover classes).</p></li>
+<li><p><strong>categogies_dict</strong> – A dictionary assigning string names (values) to integer raster values (keys).</p></li>
+<li><p><strong>ignore_categories</strong> – Category cell values not include in the output raster.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A N-band multi-dimensional raster as a xarray DataArray object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.binarize_nodata">
+<span class="sig-name descname"><span class="pre">binarize_nodata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#binarize_nodata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.binarize_nodata" title="Permalink to this definition"></a></dt>
+<dd><p>Creates an output binary raster based on an input where nodata values -&gt; 1, and valued cells -&gt; 0.</p>
+<p>Note: while param:inverse=True this can be used with pyfunc:apply_mask() to match nodata cells between rasters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_raster</strong> – Input raster.</p></li>
+<li><p><strong>nodata_value</strong> – If the nodata value for param:in_raster is not in the metadata,
+set this parameter to equal the cell value storing nodata (i.e., np.nan or -999).</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output binary mask raster.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.clip">
+<span class="sig-name descname"><span class="pre">clip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_shapefile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">geopandas.GeoDataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#clip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.clip" title="Permalink to this definition"></a></dt>
+<dd><p>Clips a raster to the rectangular extent (aka bounding box) of another raster (or shapefile).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_raster</strong> – Input raster.</p></li>
+<li><p><strong>match_raster</strong> – If defined, in_raster is clipped to match the extent of match_raster.</p></li>
+<li><p><strong>match_shapefile</strong> – A shapefile that is used to define the output extent if match_raster == None.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+<li><p><strong>custom_bbox</strong> – A list with bounding box coordinates that define the output extent if match_raster == None.
+Note: Coordinates must be of the form [minX, minY, maxX, maxY].
+Note: Using this parameter assumes that coordinates match the CRS of param:in_raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The input raster clipped by the desired geometry.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.convert_fdr_formats">
+<span class="sig-name descname"><span class="pre">convert_fdr_formats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d8_fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#convert_fdr_formats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.convert_fdr_formats" title="Permalink to this definition"></a></dt>
+<dd><p>Converts the D8 encoding of Flow Direction Rasters (FDR).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d8_fdr</strong> – The input D8 Flow Direction Raster (FDR).</p></li>
+<li><p><strong>out_format</strong> – A valid D8 flow direction format name in custom_types.D8ConversionDicts.keys().</p></li>
+<li><p><strong>in_format</strong> – A valid D8 flow direction format name in custom_types.D8ConversionDicts.keys() that
+overrides the auto-recognized format from param:d8_fdr.
+Note: manually inputting param:in_format will improve performance.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The re-encoded D8 Flow Direction Raster (FDR).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.d8_to_dinfinity">
+<span class="sig-name descname"><span class="pre">d8_to_dinfinity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d8_fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#d8_to_dinfinity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.d8_to_dinfinity" title="Permalink to this definition"></a></dt>
+<dd><p>Converts a D8 Flow Direction Raster to D-Infinity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d8_fdr</strong> – A D8 Flow Direction Raster (dtype=int).</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output D-Inf Flow Direction Raster.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.decay_accumulation">
+<span class="sig-name descname"><span class="pre">decay_accumulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d8_fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsDecayAccumulation</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'taudem'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstream_pour_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">PourPointValuesDict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#decay_accumulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.decay_accumulation" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a D-Infinity based accumulation raster (parameter or cell accumulation) while applying decay via a multiplier_raster.</p>
+<p>NOTE: Replaces tools.decayAccum() from V1 FCPGtools.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dinf_fdr</strong> – A flow direction raster in D-Infinity format. This input can be made with tools.d8_to_dinfinity().</p></li>
+<li><p><strong>decay_raster</strong> – A decay ‘multiplier’ raster calculated from distance to stream via tools.make_decay_raster().</p></li>
+<li><p><strong>engine</strong> – A terrain engine class that supports decayed accumulation.</p></li>
+<li><p><strong>upstream_pour_points</strong> – A list of lists each with with coordinate tuples as the first item [0],
+and updated cell values as the second [1].
+This allows the FAC to be made with boundary conditions such as upstream basin pour points.</p></li>
+<li><p><strong>parameter_raster</strong> – A parameter raster aligned via tools.align_raster() with the us_fdr.
+This can be multi-dimensional (i.e. f(x, y, t)), and if so, a multi-dimensional output is returned.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments, specific options depend on the engine being used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output decayed accumulation raster.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.distance_to_stream">
+<span class="sig-name descname"><span class="pre">distance_to_stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d8_fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fac_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsDistanceToStream</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'taudem'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#distance_to_stream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.distance_to_stream" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates distance each cell is from a stream (as defined by a cell accumulation threshold).</p>
+<p>NOTE: Replaces tools.dist2stream() from V1 FCPGtools.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d8_fdr</strong> – A D8 Flow Direction Raster (dtype=Int).</p></li>
+<li><p><strong>fac_raster</strong> – A Flow Accumulation Cell (FAC) raster output from accumulate_flow().</p></li>
+<li><p><strong>accum_threshold</strong> – The # of upstream/accumulated cells to consider a cell a stream.</p></li>
+<li><p><strong>engine</strong> – A terrain engine class that supports calculating distance to stream.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments, specific options depend on the engine being used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A raster with values of D8 flow distance from each cell to the nearest stream.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.extreme_upslope_values">
+<span class="sig-name descname"><span class="pre">extreme_upslope_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d8_fdr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsExtremeUpslopeValues</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'taudem'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_streams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_min_upslope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#extreme_upslope_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.extreme_upslope_values" title="Permalink to this definition"></a></dt>
+<dd><p>Finds the max (or min if get_min_upslope=True) value of a parameter grid upstream from each cell in a D8 FDR raster.</p>
+<p>NOTE: Replaces tools.ExtremeUpslopeValue() from V1 FCPGtools.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d8_fdr</strong> – A flow direction raster .</p></li>
+<li><p><strong>parameter_raster</strong> – A parameter raster to find the max values from.</p></li>
+<li><p><strong>engine</strong> – A terrain engine class that supports finding extreme upslope values.</p></li>
+<li><p><strong>mask_streams</strong> – A stream mask raster from tools.mask_streams().
+If provided, the output will be masked to only stream cells.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+<li><p><strong>get_min_upslope</strong> – If True, the minimum upslope value is assigned to each cell.</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments, specific options depend on the engine being used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A raster with max (or min) upstream value of the parameter grid as each cell’s value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.find_basin_pour_points">
+<span class="sig-name descname"><span class="pre">find_basin_pour_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fac_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basins_shp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_id_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HUC12'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_huc4</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PourPointLocationsDict</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#find_basin_pour_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.find_basin_pour_points" title="Permalink to this definition"></a></dt>
+<dd><p>Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fac_raster</strong> – A Flow Accumulation Cell raster (FAC).</p></li>
+<li><p><strong>basins_shp</strong> – A .shp shapefile containing basin geometries.</p></li>
+<li><p><strong>basin_id_field</strong> – Default behavior is for each GeoDataFrame row to be a unique basin.
+However, if one wants to use a higher level basin id that is shared acrcoss rows,
+this should be set to the column header storing the higher level basin id.</p></li>
+<li><p><strong>use_huc4</strong> – Either ‘HUC4’ or ‘HUC12’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(x, y).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.find_fac_pour_point">
+<span class="sig-name descname"><span class="pre">find_fac_pour_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fac_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PourPointLocationsDict</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#find_fac_pour_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.find_fac_pour_point" title="Permalink to this definition"></a></dt>
+<dd><p>Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fac_raster</strong> – A Flow Accumulation Cell raster (FAC).</p></li>
+<li><p><strong>basin_name</strong> – Allows a name to be given to the FAC.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with keys (i.e., basin IDs) storing coordinates as a tuple(x, y).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.get_pour_point_values">
+<span class="sig-name descname"><span class="pre">get_pour_point_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pour_points_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PourPointLocationsDict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accumulation_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PourPointValuesDict</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#get_pour_point_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.get_pour_point_values" title="Permalink to this definition"></a></dt>
+<dd><p>Get the accumlation raster values from downstream pour points.</p>
+<p>Note: This function is intended to feed into accumulate_flow() or parameter_accumlate() param:upstream_pour_points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pour_points_dict</strong> – A dictionary of form fcpgtools.custom_types.PourPointValuesDict.</p></li>
+<li><p><strong>accumulation_raster</strong> – A Flow Accumulation Cell raster (FAC) or a parameter accumulation raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of tuples (one for each pour point) storing their coordinates [0] and accumulation value [1].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.load_raster">
+<span class="sig-name descname"><span class="pre">load_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#load_raster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.load_raster" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a raster into a xarray.DataArray object. Can also be used to prep an existing DataArray for processing.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.load_shapefile">
+<span class="sig-name descname"><span class="pre">load_shapefile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shapefile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">geopandas.GeoDataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">geopandas.GeoDataFrame</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#load_shapefile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.load_shapefile" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a shapefile into a geopandas.GeoDataFrame</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.make_decay_raster">
+<span class="sig-name descname"><span class="pre">make_decay_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance_to_stream_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#make_decay_raster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.make_decay_raster" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a decay raster based on distance to stream for use in decay_accumulate().</p>
+<p>Grid cell values are computed as the inverse number of grid cells,
+<code class="code docutils literal notranslate"><span class="pre">np.exp((-1</span> <span class="pre">*</span> <span class="pre">distance_to_stream</span> <span class="pre">*</span> <span class="pre">cell_size)</span> <span class="pre">/</span> <span class="pre">(cell_size</span> <span class="pre">**</span> <span class="pre">k))</span></code>, where k is a
+constant applied to the cell size values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distance_to_stream_raster</strong> – A distance to stream raster output from distance_to_stream().</p></li>
+<li><p><strong>decay_factor</strong> – Dimensionless constant applied to decay factor denominator.
+NOTE: Set k to 2 for ‘moderate’ decay; greater than 2 for slower decay; or less than 2 for faster decay.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output decay raster for use in decay_accumulate().</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.make_fac_weights">
+<span class="sig-name descname"><span class="pre">make_fac_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">xarray.DataArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fdr_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">xarray.DataArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_of_bounds_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#make_fac_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.make_fac_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Preps param:parameter_raster for parameter accumulation by matching the nodata boundary to param:fdr_raster.</p>
+<p>NOTE: Only this function AFTER aligning the parameter raster to the FDR raster via tools.align_raster()!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameter_raster</strong> – A parameter raster.</p></li>
+<li><p><strong>fdr_raster</strong> – A Flow Direction Raster (either D8 or D-inf).</p></li>
+<li><p><strong>out_of_bounds_value</strong> – The value to give param:parameter_raster cells outside the data
+boundary of param:fdr_raster. Note that this is automatically set within terrain_engine functions.</p></li>
+<li><p><strong>out_path</strong> – defines a path to save the output raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The prepped parameter grid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.make_fcpg">
+<span class="sig-name descname"><span class="pre">make_fcpg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_accum_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fac_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#make_fcpg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.make_fcpg" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a Flow Conditioned Parameter Grid raster by dividing a paramater accumulation raster by a Flow Accumulation Cell (FAC) raster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_accum_raster</strong> – (xr.DataArray or str raster path)</p></li>
+<li><p><strong>fac_raster</strong> – (xr.DataArray or str raster path) input FAC raster.</p></li>
+<li><p><strong>out_path</strong> – (str or pathlib.Path, default=None) defines a path to save the output raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output FCPG raster as a xarray DataArray object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.mask_streams">
+<span class="sig-name descname"><span class="pre">mask_streams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fac_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accumulation_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#mask_streams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.mask_streams" title="Permalink to this definition"></a></dt>
+<dd><p>A simplified version of tools.value_mask() that outputs np.nan for non-‘stream’ cells below the accumulation threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fac_raster</strong> – A single band flow accumulation (FAC) raster.</p></li>
+<li><p><strong>accumulation_threshold</strong> – The flow accumulation threshold.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output raster with cells below the threshold encoded as np.nan</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.reproject_raster">
+<span class="sig-name descname"><span class="pre">reproject_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_crs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">geopandas.GeoDataFrame</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wkt_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#reproject_raster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.reproject_raster" title="Permalink to this definition"></a></dt>
+<dd><p>Reprojects a raster to match another shapefile/raster’s Coordinate Reference System (CRS), or a custom CRS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_raster</strong> – Input raster.</p></li>
+<li><p><strong>out_crs</strong> – A raster or shapefile with the desired CRS to reproject to.</p></li>
+<li><p><strong>resolution</strong> – Allows the output resolution to be overriden.</p></li>
+<li><p><strong>wkt_string</strong> – Allows the user to define the output CRS using a custom valid WKT string.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The input raster reprojected to match the desired Coordinate Reference System (CRS).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.reproject_shapefile">
+<span class="sig-name descname"><span class="pre">reproject_shapefile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shapefile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">geopandas.GeoDataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_crs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">geopandas.GeoDataFrame</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wkt_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#reproject_shapefile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.reproject_shapefile" title="Permalink to this definition"></a></dt>
+<dd><p>Reprojects a shapefile to match another shapefile/raster’s Coordinate Reference System (CRS), or a custom CRS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_shapefile</strong> – Input shapefile/GeoDataFrame.</p></li>
+<li><p><strong>out_crs</strong> – A raster or shapefile with the desired CRS to reproject to.</p></li>
+<li><p><strong>wkt_string</strong> – Allows the user to define the output CRS using a custom valid WKT string.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output shapefile.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The input shapefile reprojected to match the desired Coordinate Reference System (CRS).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.resample">
+<span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'nearest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#resample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.resample" title="Permalink to this definition"></a></dt>
+<dd><p>Resamples a raster to match another raster’s cell size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_raster</strong> – Input raster.</p></li>
+<li><p><strong>match_raster</strong> – A raster to match the resolution / cell size of.</p></li>
+<li><p><strong>method</strong> – A valid resampling method from rasterio.enums.Resample.
+NOTE: Do not use any averaging resample methods when working with a categorical raster!</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The input raster resampled to the desired resolution / cell size.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.save_raster">
+<span class="sig-name descname"><span class="pre">save_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">xarray.DataArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#save_raster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.save_raster" title="Permalink to this definition"></a></dt>
+<dd><p>Saves an xarray.DataArray to a .tif raster file at location param:out_path</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.save_shapefile">
+<span class="sig-name descname"><span class="pre">save_shapefile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_shapefile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">geopandas.GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#save_shapefile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.save_shapefile" title="Permalink to this definition"></a></dt>
+<dd><p>Saves an geopandas.GeoDataFrame to a .shp file at location param:out_path</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.spatial_mask">
+<span class="sig-name descname"><span class="pre">spatial_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_shp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">geopandas.GeoDataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#spatial_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.spatial_mask" title="Permalink to this definition"></a></dt>
+<dd><p>Applys a spatial mask via a shapefile to a raster, converting out of bounds values by default to nodata.</p>
+<p>Primarily for masking rasters (i.e., FAC) by basin shapefiles, converting out-of-mask raster
+values to NoData. A cell value can also be used to create a mask for integer rasters.
+Note: default behavior (inverse=False) will make it so cells NOT COVERED by mask_shp -&gt; NoData.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_raster</strong> – Input raster.</p></li>
+<li><p><strong>mask_shp</strong> – Shapefile used for masking.</p></li>
+<li><p><strong>inverse</strong> – If True, cells that ARE COVERED by mask_shp -&gt; NoData.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output spatially masked raster.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fcpgtools.tools.value_mask">
+<span class="sig-name descname"><span class="pre">value_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_raster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">xarray.DataArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">greater_than</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse_equals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_mask_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_mask_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">xarray.DataArray</span></span></span><a class="reference internal" href="_modules/fcpgtools/tools.html#value_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fcpgtools.tools.value_mask" title="Permalink to this definition"></a></dt>
+<dd><p>“Mask a raster via a value threshold.</p>
+<p>Primary use case is to identify high acumulation zones / stream cells.
+Cells included in the mask are given a value of 1, all other cells are given a value of 0 (unless out_mask_value!=None).
+Note: this function generalizes V1:pyfunc:makeStreams() functionality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_raster</strong> – Input raster.</p></li>
+<li><p><strong>thresh</strong> – The threshold to apply the value mask with.</p></li>
+<li><p><strong>greater_than</strong> – If False, only values less than param:thresh are included in the mask.</p></li>
+<li><p><strong>equals</strong> – Only cells matching the value of param:equals are included in the mask.</p></li>
+<li><p><strong>inverse_equals</strong> – Is True and param:equals==True, values NOT equal to :param:thresh are masked out.</p></li>
+<li><p><strong>in_mask_value</strong> – Allows included cells to be given a non-zero integer value.</p></li>
+<li><p><strong>out_mask_value</strong> – Allows non-included cells to be given a non-zero integer value.</p></li>
+<li><p><strong>out_path</strong> – Defines a path to save the output raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>out_mask_value.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>The output raster with all masked out values == nodata or param</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cookbook.html" class="btn btn-neutral float-right" title="Cookbook/Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Theodore Barnhart, Xavier Nogueira, Roy Sando, Seth Siefken, Peter McCarthy, Al Rea, Paul Tomasula, and Anthony Aufdenkampe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
