@@ -1,4 +1,4 @@
-name: fcpgtools
+name: fcpgtools_dev
 channels:
   - conda-forge
   - default
