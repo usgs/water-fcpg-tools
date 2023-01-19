@@ -16,16 +16,15 @@ readme = "README.md"
 
 # package/modules to include
 packages = [
-    { include = "src/fcpgtools" , branch = "develop"},
+    { include = "fcpgtools", from = "src"},
 ]
 
 # PyPi classifiers and keywords
 classifiers = [
     "Natural Language :: English",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Operating System :: POSIX :: Linux",
     "Operating System :: Microsoft :: Windows",
     "Development Status :: 5 - Production/Stable",
@@ -44,9 +43,30 @@ keywords = [
 
 # specify dependencies
 [tool.poetry.dependencies]
-python = "^3.7"
+python = ">=3.9"
 
 # specify poetry build system
+xarray = "^2023.1.0"
+rasterio = "^1.3.4"
+geopandas = "^0.12.2"
+descartes = "^1.1.0"
+rioxarray = "^0.13.3"
+pysheds = "^0.3.3"
+
+[tool.poetry.group.dev.dependencies]
+llvmlite = "^0.39.1"
+jupyterlab = "*"
+ipympl = "*"
+nodejs = "*"
+pydaymet = "*"
+python-lsp-server = "*"
+pylsp-mypy = "*"
+sphinx = "*"
+sphinxcontrib-bibtex = "*"
+numpydoc = "*"
+sphinx_rtd_theme = "*"
+myst-parser = "*"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
