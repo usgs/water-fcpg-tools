@@ -1,0 +1,56 @@
+name: fcpgtools_dev
+channels:
+  - conda-forge
+  - nodefaults
+
+dependencies:
+  - python =3.9 # 3.10 caused conflicts with taudem on conda-forge
+  - xarray
+  - llvmlite =^0.39.1
+
+  # geospatial I/O & processing
+  - rasterio =1.2
+  - rioxarray
+  - geopandas >=0.12.1
+  - descartes =1.1
+
+  # terrain analysis engines
+  # taudem not available via conda-forge for osx-64; https://anaconda.org/conda-forge/taudem
+  - taudem =5.3.8  # Limits to older versions of gdal =3.1.4; rasterio =1.2.1
+  - pysheds
+
+  # Interactivity & Visualization (optional, but required for examples)
+  - jupyterlab  # also installs ipython & jupyter nbclassic
+  - ipympl  # jupyter-matplotlib, also installs matplotlib
+  - nodejs    # required for many JupyterLab extensions
+  - pydaymet  # data source for demo notebook
+
+# Dev tools: Language Server Protocol (LSP) (Optional), for:
+  # code navigation + hover suggestions + linters + autocompletion + rename
+  - python-lsp-server # LSP extension for Python (pylsp), including:
+    # Rope for Completions and renaming
+    # Pyflakes linter to detect various errors
+    # McCabe linter for complexity checking
+    # pycodestyle linter for style checking
+    # pydocstyle linter for docstring style checking (disabled by default)
+    # autopep8 for code formatting
+    # YAPF for code formatting (preferred over autopep8)
+    # flake8 for error checking (disabled by default)
+    # pylint for code linting (disabled by default)
+  - pylsp-mypy # MyPy type checking for Python >=3.7.
+  - jupyterlab-lsp # Provides both server extension and lab extension
+
+  # Documentation build / update (optional)
+  - sphinx
+  - sphinxcontrib-bibtex
+  - numpydoc
+  - sphinx_rtd_theme
+  - myst-parser
+
+  # Package management
+  - conda
+  - conda-build
+  - conda-libmamba-solver  # Faster env solver, https://conda.github.io/conda-libmamba-solver/
+  - pip
+   # PIP install requirements only if it is not  possible with conda
+   # https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment
