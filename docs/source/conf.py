@@ -24,22 +24,23 @@ project = 'Flow-Conditioned Parameter Grid Tools'
 author = (
     'Theodore Barnhart, '
     'Xavier Nogueira, '
-    'Roy Sando, '
     'Seth Siefken, '
-    'Peter McCarthy, '
-    'Al Rea, '
+    'August Raleigh Schultz, '
+    'Anthony Aufdenkampe, '
     'Paul Tomasula, '
-    'and Anthony Aufdenkampe'
+    'Roy Sando, '
+    'Peter McCarthy, '
+    'and Al Rea.'
 )
 
 copyright = f'2022, {author}'
 
 
 # The short X.Y version
-version = '2.0.0'
+version = '2.0'
 
 # The full version, including alpha/beta/rc tags
-release = '2.0.0'
+release = '2.0.1'
 
 
 # -- General configuration ---------------------------------------------------
