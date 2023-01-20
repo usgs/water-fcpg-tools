@@ -8,17 +8,24 @@ Please log any issues or feature requests using [this form](https://code.usgs.go
 
 # Getting Started
 ## Installation
-`FCPGtools` can be installed from [`PyPI`](TODO: ADD LINK HERE) or [`conda-forge`](TODO: ADD LINK HERE) via the command line.
+`FCPGtools` can be installed from [`PyPI`](https://pypi.org/project/fcpgtools/) into a virtual environment containing [`GDAL`](https://anaconda.org/conda-forge/gdal), and for full functionality, [`TauDEM`](https://anaconda.org/conda-forge/taudem) as well.
 
-To install begin by activating your chosen Python >= 3.7 environment, and the running one of the following commands:
+**We strongly encourage the following installation workflow:**
 
-```
-pip install fcpgtools
-```
+1. Install the Anaconda Python Distribution or Miniconda
+    * [Anaconda Individual Edition](https://www.anaconda.com/products/distribution) - includes `conda`, a complete Python (and R) data science stack, and the helpful Anaconda Navigator GUI.
+    * A lighter-weight alternative is to [install Miniconda](https://docs.conda.io/en/latest/miniconda.html).
+2. Use the `conda` command line to clone our `fcpgtools_base` virtual environment that contains non-Python dependencies from the [`environment.yml`](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/environment.yml) file available in our repo. Either clone the repo, or just download the .yml file locally, and run the following commands:
 
-```
-conda install -c conda-forge fcpgtools
-```
+    ```
+    conda env create -f {PATH}/environment.yml
+    ```
+3. Activate the `fcpgtools_base` environment, and pip install `fcpgtools`.
+    ```
+    pip install fcpgtools
+    ```
+
+
 
 ## Using FCPGtools
 Version 2.0 of `FCPGtools` has a "flat" architecture, meaning all functions can be accessed by importing the main `fcpgtools` module as shown in a simple example below:
@@ -37,8 +44,8 @@ flow_accumulation_grid = fcpgtools.accumulate_flow(
 Please refer to our documentation's [Cookbook](https://usgs.github.io/water-fcpg-tools/cookbook.html) page for more intricate examples of usage.
 
 # Citation
-* **Version 2.0** was released in December, 2022.
-    * #TODO: INSERT UPDATED CITATION HERE!
+* **Version 2.0** was released in January, 2023.
+    * Barnhart, T.B., Nogueira, X.R., Siefken, S.A., Schultz, A.R., Aufenkampe, A., Tomasula, P., 2023, Flow-Conditioned Parameter Grid Tools Version 2.0.
 * **Version 1.1** was released in September, 2022.
 * **Version 1.0** (IP-112996) was approved on September 3, 2020.
     * Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: https://doi.org/10.5066/P9W8UZ47.
