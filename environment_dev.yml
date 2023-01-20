@@ -1,8 +1,7 @@
 name: fcpgtools_dev
 channels:
   - conda-forge
-  - default
-  # - nodefaults
+  - nodefaults
 
 dependencies:
   - python =3.9 # 3.10 caused conflicts with taudem on conda-forge
