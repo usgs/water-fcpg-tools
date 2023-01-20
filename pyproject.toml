@@ -2,15 +2,15 @@
 
 # base attributes
 name = "fcpgtools"
-version = "2.0.0"
+version = "2.0.1"
 description = "Tools to create Flow-Conditioned Parameter Grids (FCPGs) from Flow Direction Rasters (FDRs) and arbitrary rasterized parameter data."
 authors = [
-    "Theodore Barnhart <tbarnhart@usgs.gov>, 
-    Xavier R Nogueira <xrnogueira@limno.com>, 
-    Seth Siefken <ssiefken@usgs.gov>, 
-    August Raleigh Schultz <arschultz@usgs.gov>, 
-    Anthony Aufdenkampe <aaufdenkampe@limno.com>, 
-    Paul Tomasula <ptomasula@limno.com>", 
+    "Theodore Barnhart <tbarnhart@usgs.gov>", 
+    "Xavier R Nogueira <xrnogueira@limno.com>", 
+    "Seth Siefken <ssiefken@usgs.gov>", 
+    "August Raleigh Schultz <arschultz@usgs.gov>", 
+    "Anthony Aufdenkampe <aaufdenkampe@limno.com>", 
+    "Paul Tomasula <ptomasula@limno.com>",
 ]
 
 maintainers = [
