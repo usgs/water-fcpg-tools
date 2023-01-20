@@ -5,8 +5,13 @@ import pandas as pd
 import geopandas as gpd
 from typing import Union, List, Tuple, Dict
 import fcpgtools.tools as tools
-from fcpgtools.custom_types import Raster, Shapefile
-from fcpgtools.custom_types import RasterSuffixes, ShapefileSuffixes, D8ConversionDicts
+from fcpgtools.custom_types import (
+    Raster, 
+    Shapefile,
+    RasterSuffixes, 
+    ShapefileSuffixes,
+    D8ConversionDicts,
+)
 
 
 def _id_d8_format(
@@ -66,7 +71,7 @@ def _update_raster_values(
 
     for update_tuple in update_points:
         if update_tuple[-1] != np.nan:
-            _update_cell_value_(
+            _update_cell_value(
                 out_raster,
                 coords=update_tuple[0],
                 value=update_tuple[-1],
@@ -217,7 +222,7 @@ def _verify_dtype(
         return True
 
 
-def _update_cell_value_(
+def _update_cell_value(
     raster: xr.DataArray,
     coords: Tuple[float, float],
     value: Union[float, int],

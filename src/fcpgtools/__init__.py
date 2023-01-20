@@ -1,9 +1,62 @@
-#!/usr/bin/env python
-# -- coding: utf-8 --
+__version__ = '2.0.1'
 
-__version__ = '2.0.0'
-
-# populate package namespace
-from fcpgtools import custom_types
-from fcpgtools import utilities, terrainengine
-from fcpgtools.tools import *
+from fcpgtools.tools import (
+    accumulate_flow,
+    accumulate_parameter,
+    adjust_parameter_raster,
+    align_raster,
+    binarize_categorical_raster,
+    binarize_nodata,
+    clip,
+    convert_fdr_formats,
+    d8_to_dinfinity,
+    decay_accumulation,
+    distance_to_stream,
+    extreme_upslope_values,
+    find_basin_pour_points,
+    find_fac_pour_point,
+    get_pour_point_values,
+    load_raster,
+    load_shapefile,
+    make_decay_raster,
+    make_fac_weights,
+    make_fcpg,
+    mask_streams,
+    reproject_raster,
+    reproject_shapefile,
+    resample,
+    save_raster,
+    save_shapefile,
+    spatial_mask,
+    value_mask,
+)
+__all__ = [
+    'accumulate_flow',
+    'accumulate_parameter',
+    'adjust_parameter_raster',
+    'align_raster',
+    'binarize_categorical_raster',
+    'binarize_nodata',
+    'clip',
+    'convert_fdr_formats',
+    'd8_to_dinfinity',
+    'decay_accumulation',
+    'distance_to_stream',
+    'extreme_upslope_values',
+    'find_basin_pour_points',
+    'find_fac_pour_point',
+    'get_pour_point_values',
+    'load_raster',
+    'load_shapefile',
+    'make_decay_raster',
+    'make_fac_weights',
+    'make_fcpg',
+    'mask_streams',
+    'reproject_raster',
+    'reproject_shapefile',
+    'resample',
+    'save_raster',
+    'save_shapefile',
+    'spatial_mask',
+    'value_mask',
+]

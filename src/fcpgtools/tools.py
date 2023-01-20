@@ -11,7 +11,6 @@ from fcpgtools.terrainengine import protocols, engine_validator
 from fcpgtools.custom_types import Raster, Shapefile, FDRD8Formats, D8ConversionDicts
 from fcpgtools.custom_types import PourPointLocationsDict, PourPointValuesDict
 
-
 def load_raster(
     in_raster: Raster,
 ) -> xr.DataArray:
