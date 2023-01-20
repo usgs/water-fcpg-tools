@@ -1,12 +1,12 @@
 name: fcpgtools_dev
 channels:
   - conda-forge
-  - default
-  # - nodefaults
+  - nodefaults
 
 dependencies:
   - python =3.9 # 3.10 caused conflicts with taudem on conda-forge
   - xarray
+  - llvmlite =^0.39.1
 
   # geospatial I/O & processing
   - rasterio =1.2

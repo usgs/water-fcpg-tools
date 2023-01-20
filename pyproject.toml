@@ -5,12 +5,21 @@ name = "fcpgtools"
 version = "2.0.0"
 description = "Tools to create Flow-Conditioned Parameter Grids (FCPGs) from Flow Direction Rasters (FDRs) and arbitrary rasterized parameter data."
 authors = [
-    "Theodore Barnhart <tbarnhart@usgs.gov>", 
-    "Xavier R Nogueira <xrnogueira@limno.com>"
+    "Theodore Barnhart <tbarnhart@usgs.gov>, 
+    Xavier R Nogueira <xrnogueira@limno.com>, 
+    Seth Siefken <ssiefken@usgs.gov>, 
+    August Raleigh Schultz <arschultz@usgs.gov>, 
+    Anthony Aufdenkampe <aaufdenkampe@limno.com>, 
+    Paul Tomasula <ptomasula@limno.com>", 
+]
+
+maintainers = [
+    "Xavier R Nogueira <xrnogueira@limno.com>",
+    "Theodore Barnhart <tbarnhart@usgs.gov>",
 ]
 
 # links to information
-repository = "https://github.com/usgs/water-fcpg-tools"
+repository = "https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools"
 homepage = "https://usgs.github.io/water-fcpg-tools/"
 readme = "README.md"
 
