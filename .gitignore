@@ -38,5 +38,7 @@ examples/temp/*
 
 # Test output data files
 examples/*.tif
-examples/out_data/*
+examples/data_out/
 
+*.whl
+*.gz
