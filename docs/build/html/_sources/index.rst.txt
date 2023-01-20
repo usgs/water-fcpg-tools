@@ -40,7 +40,7 @@ contributions of the team behind the FCPG Tools are properly recognized, and
 will help justify the continued maintenance of this library.
 
 * **Version 2.0** was released in December, 2022.
-    * #TODO:INSERT UPDATED CITATION HERE!
+    * Barnhart, T.B., Nogueira, X.R., Siefken, S.A., Schultz, A.R., Aufenkampe, A., Tomasula, P., 2023, Flow-Conditioned Parameter Grid Tools Version 2.0.
 * **Version 1.1** was released in September, 2022.
 * **Version 1.0** (IP-112996) was approved on September 3, 2020.
     * Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: https://doi.org/10.5066/P9W8UZ47.

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Getting Started &mdash; Flow-Conditioned Parameter Grid Tools 2.0.0 documentation</title>
+  <title>Getting Started &mdash; Flow-Conditioned Parameter Grid Tools 2.0.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
@@ -33,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> Flow-Conditioned Parameter Grid Tools
           </a>
               <div class="version">
-                2.0.0
+                2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -86,14 +86,29 @@
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> can be installed from [<code class="docutils literal notranslate"><span class="pre">PyPI</span></code>](TODO:ADD LINK HERE) or [<code class="docutils literal notranslate"><span class="pre">conda-forge</span></code>](TODO:ADD LINK HERE) via the command line.</p>
-<p>To install begin by activating your chosen Python &gt;= 3.7 environment, and the running one of the following commands:</p>
+<p><code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> can be installed from <a class="reference external" href="https://pypi.org/project/fcpgtools/"><code class="docutils literal notranslate"><span class="pre">PyPI</span></code></a> into a virtual environment containing <a class="reference external" href="https://anaconda.org/conda-forge/gdal"><code class="docutils literal notranslate"><span class="pre">GDAL</span></code></a>, and for full functionality, <a class="reference external" href="https://anaconda.org/conda-forge/taudem"><code class="docutils literal notranslate"><span class="pre">TauDEM</span></code></a> as well.</p>
+<p><strong>We strongly encourage the following installation workflow:</strong></p>
+<ol class="arabic">
+<li><p>Install the Anaconda Python Distribution or Miniconda</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.anaconda.com/products/distribution">Anaconda Individual Edition</a> - includes <code class="docutils literal notranslate"><span class="pre">conda</span></code>, a complete Python (and R) data science stack, and the helpful Anaconda Navigator GUI.</p></li>
+<li><p>A lighter-weight alternative is to <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">install Miniconda</a>.</p></li>
+</ul>
+</li>
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">conda</span></code> command line to clone our lightweight <code class="docutils literal notranslate"><span class="pre">fcpgtools_base</span></code> virtual environment that contains non-Python dependencies from the <a class="reference external" href="https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/environment.yml"><code class="docutils literal notranslate"><span class="pre">environment.yml</span></code></a> file available in our repo. Either clone the repo, or just download the .yml file locally, and run the following commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">env</span> <span class="n">create</span> <span class="o">-</span><span class="n">f</span> <span class="p">{</span><span class="n">PATH</span><span class="p">}</span><span class="o">/</span><span class="n">environment</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Note:</strong> We also provide a more robust <a class="reference external" href="https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/environment_dev.yml"><code class="docutils literal notranslate"><span class="pre">environment_dev.yml</span></code></a> virtual environment for developers containing all libraries relevant to making contributions as well as running our <a class="reference external" href="https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/examples">example notebooks</a>.</p></li>
+</ul>
+</li>
+<li><p>Activate the <code class="docutils literal notranslate"><span class="pre">fcpgtools_base</span></code> environment, and pip install <code class="docutils literal notranslate"><span class="pre">fcpgtools</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">fcpgtools</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">fcpgtools</span>
-</pre></div>
-</div>
+</li>
+</ol>
 </section>
 <section id="using-fcpgtools">
 <h2>Using FCPGtools<a class="headerlink" href="#using-fcpgtools" title="Permalink to this heading"></a></h2>
@@ -126,7 +141,7 @@ page.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Theodore Barnhart, Xavier Nogueira, Roy Sando, Seth Siefken, Peter McCarthy, Al Rea, Paul Tomasula, and Anthony Aufdenkampe.</p>
+    <p>&#169; Copyright 2022, Theodore Barnhart, Xavier Nogueira, Seth Siefken, August Raleigh Schultz, Anthony Aufdenkampe, Paul Tomasula, Roy Sando, Peter McCarthy, and Al Rea..</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

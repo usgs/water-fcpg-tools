@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>fcpgtools.tools &mdash; Flow-Conditioned Parameter Grid Tools 2.0.0 documentation</title>
+  <title>fcpgtools.tools &mdash; Flow-Conditioned Parameter Grid Tools 2.0.1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
@@ -30,7 +30,7 @@
             <a href="../../index.html" class="icon icon-home"> Flow-Conditioned Parameter Grid Tools
           </a>
               <div class="version">
-                2.0.0
+                2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -93,7 +93,7 @@
 <div class="viewcode-block" id="load_raster"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.load_raster">[docs]</a><span class="k">def</span> <span class="nf">load_raster</span><span class="p">(</span>
     <span class="n">in_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Loads a raster into a xarray.DataArray object. Can also be used to prep an existing DataArray for processing.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads a raster into a xarray.DataArray object. Can also be used to prep an existing DataArray for processing.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_raster</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_format_nodata</span><span class="p">(</span><span class="n">in_raster</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_raster</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">in_raster</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -106,7 +106,7 @@
 <div class="viewcode-block" id="load_shapefile"><a class="viewcode-back" href="../../functions.html#fcpgtools.tools.load_shapefile">[docs]</a><span class="k">def</span> <span class="nf">load_shapefile</span><span class="p">(</span>
     <span class="n">in_shapefile</span><span class="p">:</span> <span class="n">Shapefile</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Loads a shapefile into a geopandas.GeoDataFrame&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads a shapefile into a geopandas.GeoDataFrame&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_shapefile</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">in_shapefile</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_shapefile</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -120,7 +120,7 @@
     <span class="n">out_raster</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Saves an xarray.DataArray to a .tif raster file at location param:out_path&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Saves an xarray.DataArray to a .tif raster file at location param:out_path&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
 
@@ -134,7 +134,7 @@
     <span class="n">out_shapefile</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Saves an geopandas.GeoDataFrame to a .shp file at location param:out_path&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Saves an geopandas.GeoDataFrame to a .shp file at location param:out_path&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
 
@@ -153,7 +153,7 @@
     <span class="n">resample_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;nearest&#39;</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Aligns the projection/CRS, spatial extent, and resolution of one raster to another.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aligns the projection/CRS, spatial extent, and resolution of one raster to another.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        in_raster: Input raster that needs to be aligned.</span>
@@ -186,7 +186,7 @@
     <span class="n">custom_bbox</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Clips a raster to the rectangular extent (aka bounding box) of another raster (or shapefile).</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clips a raster to the rectangular extent (aka bounding box) of another raster (or shapefile).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        in_raster: Input raster.</span>
@@ -237,7 +237,7 @@
     <span class="n">wkt_string</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Reprojects a raster to match another shapefile/raster&#39;s Coordinate Reference System (CRS), or a custom CRS.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reprojects a raster to match another shapefile/raster&#39;s Coordinate Reference System (CRS), or a custom CRS.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        in_raster: Input raster.</span>
@@ -280,7 +280,7 @@
     <span class="n">wkt_string</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Reprojects a shapefile to match another shapefile/raster&#39;s Coordinate Reference System (CRS), or a custom CRS.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reprojects a shapefile to match another shapefile/raster&#39;s Coordinate Reference System (CRS), or a custom CRS.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        in_shapefile: Input shapefile/GeoDataFrame.</span>
@@ -315,7 +315,7 @@
     <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;nearest&#39;</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Resamples a raster to match another raster&#39;s cell size.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resamples a raster to match another raster&#39;s cell size.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        in_raster: Input raster.</span>
@@ -357,7 +357,7 @@
     <span class="n">in_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Converts the D8 encoding of Flow Direction Rasters (FDR).</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts the D8 encoding of Flow Direction Rasters (FDR).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        d8_fdr: The input D8 Flow Direction Raster (FDR).</span>
@@ -438,7 +438,7 @@
     <span class="n">out_of_bounds_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Preps param:parameter_raster for parameter accumulation by matching the nodata boundary to param:fdr_raster. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Preps param:parameter_raster for parameter accumulation by matching the nodata boundary to param:fdr_raster. </span>
 
 <span class="sd">    NOTE: Only this function AFTER aligning the parameter raster to the FDR raster via tools.align_raster()!</span>
 
@@ -507,7 +507,7 @@
     <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">PourPointValuesDict</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Adds values to a parameter raster&#39;s at specific pour points / coordinates for use in accumulate_parameter().</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds values to a parameter raster&#39;s at specific pour points / coordinates for use in accumulate_parameter().</span>
 
 <span class="sd">    The main utility of this function is to enable cascading accumulation values from one basin or raster to another.</span>
 
@@ -571,7 +571,7 @@
     <span class="n">decay_factor</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Creates a decay raster based on distance to stream for use in decay_accumulate().</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a decay raster based on distance to stream for use in decay_accumulate().</span>
 
 <span class="sd">    Grid cell values are computed as the inverse number of grid cells,</span>
 <span class="sd">    :code:`np.exp((-1 * distance_to_stream * cell_size) / (cell_size ** k))`, where k is a</span>
@@ -619,7 +619,7 @@
     <span class="n">inverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Applys a spatial mask via a shapefile to a raster, converting out of bounds values by default to nodata.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applys a spatial mask via a shapefile to a raster, converting out of bounds values by default to nodata.</span>
 
 <span class="sd">    Primarily for masking rasters (i.e., FAC) by basin shapefiles, converting out-of-mask raster</span>
 <span class="sd">    values to NoData. A cell value can also be used to create a mask for integer rasters. </span>
@@ -663,7 +663,7 @@
     <span class="n">out_mask_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;&quot;Mask a raster via a value threshold.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;Mask a raster via a value threshold.</span>
 
 <span class="sd">    Primary use case is to identify high acumulation zones / stream cells.</span>
 <span class="sd">    Cells included in the mask are given a value of 1, all other cells are given a value of 0 (unless out_mask_value!=None).</span>
@@ -733,7 +733,7 @@
     <span class="n">accumulation_threshold</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A simplified version of tools.value_mask() that outputs np.nan for non-&#39;stream&#39; cells below the accumulation threshold.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simplified version of tools.value_mask() that outputs np.nan for non-&#39;stream&#39; cells below the accumulation threshold.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        fac_raster: A single band flow accumulation (FAC) raster.</span>
@@ -772,7 +772,7 @@
     <span class="n">nodata_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Creates an output binary raster based on an input where nodata values -&gt; 1, and valued cells -&gt; 0.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates an output binary raster based on an input where nodata values -&gt; 1, and valued cells -&gt; 0.</span>
 
 <span class="sd">    Note: while param:inverse=True this can be used with pyfunc:apply_mask() to match nodata cells between rasters.</span>
 
@@ -821,7 +821,7 @@
     <span class="n">ignore_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Converts a single band categorical raster into a binary multi-band binary raster.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a single band categorical raster into a binary multi-band binary raster.</span>
 
 <span class="sd">    Each output band represent a unique category, where 1 encodes cells belonging the the category,</span>
 <span class="sd">    and 0 encodes cells belonging to any other category. This function is used to prep a categorical</span>
@@ -886,7 +886,7 @@
     <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Converts a D8 Flow Direction Raster to D-Infinity.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a D8 Flow Direction Raster to D-Infinity.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        d8_fdr: A D8 Flow Direction Raster (dtype=int).</span>
@@ -934,7 +934,7 @@
     <span class="n">basin_id_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;HUC12&#39;</span><span class="p">,</span>
     <span class="n">use_huc4</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PourPointLocationsDict</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        fac_raster: A Flow Accumulation Cell raster (FAC).</span>
@@ -995,7 +995,7 @@
     <span class="n">fac_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
     <span class="n">basin_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PourPointLocationsDict</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find pour points (aka outflow cells) in a FAC raster by basin using a shapefile.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        fac_raster: A Flow Accumulation Cell raster (FAC).</span>
@@ -1021,7 +1021,7 @@
     <span class="n">pour_points_dict</span><span class="p">:</span> <span class="n">PourPointLocationsDict</span><span class="p">,</span>
     <span class="n">accumulation_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PourPointValuesDict</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Get the accumlation raster values from downstream pour points.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the accumlation raster values from downstream pour points.</span>
 
 <span class="sd">    Note: This function is intended to feed into accumulate_flow() or parameter_accumlate() param:upstream_pour_points.</span>
 
@@ -1068,7 +1068,7 @@
     <span class="n">fac_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Creates a Flow Conditioned Parameter Grid raster by dividing a paramater accumulation raster by a Flow Accumulation Cell (FAC) raster.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a Flow Conditioned Parameter Grid raster by dividing a paramater accumulation raster by a Flow Accumulation Cell (FAC) raster.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        param_accum_raster: (xr.DataArray or str raster path)</span>
@@ -1104,7 +1104,7 @@
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Create a Flow Accumulation Cell (FAC) raster from a D8 Flow Direction Raster.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a Flow Accumulation Cell (FAC) raster from a D8 Flow Direction Raster.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        d8_fdr: A  D8 Flow Direction Raster (dtype=Int).</span>
@@ -1141,7 +1141,7 @@
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Create a parameter accumulation raster from a D8 Flow Direction Raster and a parameter raster.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a parameter accumulation raster from a D8 Flow Direction Raster and a parameter raster.</span>
 
 <span class="sd">    A key aspect of this function is that the output DataArray will have dimensions matching param:parameter_raster.</span>
 
@@ -1182,7 +1182,7 @@
     <span class="n">get_min_upslope</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Finds the max (or min if get_min_upslope=True) value of a parameter grid upstream from each cell in a D8 FDR raster.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Finds the max (or min if get_min_upslope=True) value of a parameter grid upstream from each cell in a D8 FDR raster.</span>
 
 <span class="sd">    NOTE: Replaces tools.ExtremeUpslopeValue() from V1 FCPGtools.</span>
 
@@ -1222,7 +1222,7 @@
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Calculates distance each cell is from a stream (as defined by a cell accumulation threshold).</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates distance each cell is from a stream (as defined by a cell accumulation threshold).</span>
 
 <span class="sd">    NOTE: Replaces tools.dist2stream() from V1 FCPGtools.</span>
 
@@ -1260,7 +1260,7 @@
     <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Creates a D-Infinity based accumulation raster (parameter or cell accumulation) while applying decay via a multiplier_raster.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a D-Infinity based accumulation raster (parameter or cell accumulation) while applying decay via a multiplier_raster.</span>
 
 <span class="sd">    NOTE: Replaces tools.decayAccum() from V1 FCPGtools.</span>
 
@@ -1300,7 +1300,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Theodore Barnhart, Xavier Nogueira, Roy Sando, Seth Siefken, Peter McCarthy, Al Rea, Paul Tomasula, and Anthony Aufdenkampe.</p>
+    <p>&#169; Copyright 2022, Theodore Barnhart, Xavier Nogueira, Seth Siefken, August Raleigh Schultz, Anthony Aufdenkampe, Paul Tomasula, Roy Sando, Peter McCarthy, and Al Rea..</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

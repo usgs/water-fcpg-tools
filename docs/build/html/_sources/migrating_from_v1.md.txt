@@ -2,7 +2,7 @@ Migrating to `FCPGtools` Version 2.0
 ===================================
 
 ## New in Version 2.0
-Version 2.0 of `FCPGtools` is a complete rebuild of Version 1.0. Backwards compatibility is not preserved, and many workflows have been significantly streamlined. We strongly recommend that users who are familiar with Version 1.0 refer to our [updated documentation site](https://usgs.github.io/water-fcpg-tools/index.html).
+Version 2.0 of `FCPGtools` is a complete rebuild of Version 1.0. Backwards compatibility is not preserved, and many workflows have been significantly streamlined. We strongly recommend that users who are familiar with Version 1.0 refer to our [updated function documentation](https://usgs.github.io/water-fcpg-tools/functions.html).
 
 ### Key Updates
 * All functions output an in-memory [`xarray.DataArray`](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray) object, allowing for functions to be strung together into performance-oriented pipelines.
