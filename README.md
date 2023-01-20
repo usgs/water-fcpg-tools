@@ -15,11 +15,12 @@ Please log any issues or feature requests using [this form](https://code.usgs.go
 1. Install the Anaconda Python Distribution or Miniconda
     * [Anaconda Individual Edition](https://www.anaconda.com/products/distribution) - includes `conda`, a complete Python (and R) data science stack, and the helpful Anaconda Navigator GUI.
     * A lighter-weight alternative is to [install Miniconda](https://docs.conda.io/en/latest/miniconda.html).
-2. Use the `conda` command line to clone our `fcpgtools_base` virtual environment that contains non-Python dependencies from the [`environment.yml`](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/environment.yml) file available in our repo. Either clone the repo, or just download the .yml file locally, and run the following commands:
+2. Use the `conda` command line to clone our lightweight `fcpgtools_base` virtual environment that contains non-Python dependencies from the [`environment.yml`](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/environment.yml) file available in our repo. Either clone the repo, or just download the .yml file locally, and run the following commands:
 
     ```
     conda env create -f {PATH}/environment.yml
     ```
+    * **Note:** We also provide a more robust [`environment_dev.yml`](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/environment_dev.yml) virtual environment for developers containing all libraries relevant to making contributions as well as running our [example notebooks](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/examples).
 3. Activate the `fcpgtools_base` environment, and pip install `fcpgtools`.
     ```
     pip install fcpgtools
