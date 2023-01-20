@@ -1,12 +1,44 @@
-data
-*.err
-*.log
-.ipynb_checkpoints
-*.pyc
-scratch
-figures
-*.mxd
-*.csv
-test_output
+# *** OS stuff ***
+## Windows
+.~*
+~$*
+
+## MacOS
+.DS_Store
+*alias
+*.webloc
+
+# Editors & IDEs
 .vscode
+.vs
 .idea
+.spyderproject
+.spyproject
+
+# Distribution / packaging
+.Python
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+
+# Unit test / coverage reports
+
+# Sphinx documentation
+docs/_build/
+docs/_static/
+docs/_sources/
+docs/_modules/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+.virtual_documents/
+
+# Temporary files
+examples/temp/*
+
+# Test output data files
+examples/*.tif
+examples/data_out/
+
+*.whl
+*.gz

@@ -1,0 +1,81 @@
+[tool.poetry]
+
+# base attributes
+name = "fcpgtools"
+version = "2.0.1"
+description = "Tools to create Flow-Conditioned Parameter Grids (FCPGs) from Flow Direction Rasters (FDRs) and arbitrary rasterized parameter data."
+authors = [
+    "Theodore Barnhart <tbarnhart@usgs.gov>", 
+    "Xavier R Nogueira <xrnogueira@limno.com>", 
+    "Seth Siefken <ssiefken@usgs.gov>", 
+    "August Raleigh Schultz <arschultz@usgs.gov>", 
+    "Anthony Aufdenkampe <aaufdenkampe@limno.com>", 
+    "Paul Tomasula <ptomasula@limno.com>",
+]
+
+maintainers = [
+    "Xavier R Nogueira <xrnogueira@limno.com>",
+    "Theodore Barnhart <tbarnhart@usgs.gov>",
+]
+
+# links to information
+repository = "https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools"
+homepage = "https://usgs.github.io/water-fcpg-tools/"
+readme = "README.md"
+
+# package/modules to include
+packages = [
+    { include = "fcpgtools", from = "src"},
+]
+
+# PyPi classifiers and keywords
+classifiers = [
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Development Status :: 5 - Production/Stable",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "License :: OSI Approved :: MIT License",
+]
+
+keywords = [
+    "hydrology",
+    "terrain",
+    "machine-learning",
+    "raster",
+    "flow-statistics",
+]
+
+# specify dependencies
+[tool.poetry.dependencies]
+python = ">=3.9"
+
+# specify poetry build system
+xarray = "^2023.1.0"
+rasterio = "^1.3.4"
+geopandas = "^0.12.2"
+descartes = "^1.1.0"
+rioxarray = "^0.13.3"
+pysheds = "^0.3.3"
+
+[tool.poetry.group.dev.dependencies]
+llvmlite = "^0.39.1"
+jupyterlab = "*"
+ipympl = "*"
+nodejs = "*"
+pydaymet = "*"
+python-lsp-server = "*"
+pylsp-mypy = "*"
+sphinx = "*"
+sphinxcontrib-bibtex = "*"
+numpydoc = "*"
+sphinx_rtd_theme = "*"
+myst-parser = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,8 +1,0 @@
-rasterio
-numpy
-pandas
-glob2
-urllib3
-matplotlib
-geopandas
-descartes
