@@ -40,3 +40,5 @@ examples/temp/*
 examples/*.tif
 examples/out_data/*
 
+*.whl
+*.gz
