@@ -7,12 +7,18 @@ from pathlib import Path
 from typing import Union, Optional
 import fcpgtools.tools as tools
 import fcpgtools.utilities as utilities
+import fcpgtools.custom_types as custom_types
 from fcpgtools.custom_types import Raster, PyShedsInputDict, PourPointValuesDict
 
 
 class PyShedsEngine:
 
     d8_format = 'esri'
+
+    function_kwargs = {
+        'accumulate_flow': custom_types.PyShedsFACkwargsDict.__annotations__,
+        'accumulate_parameter': custom_types.PyShedsFACkwargsDict.__annotations__,
+    }
 
     @staticmethod
     def _prep_fdr_for_pysheds(

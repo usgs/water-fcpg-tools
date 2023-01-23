@@ -8,12 +8,21 @@ import numpy as np
 import xarray as xr
 import fcpgtools.tools as tools
 import fcpgtools.utilities as utilities
+import fcpgtools.custom_types as custom_types
 from fcpgtools.custom_types import Raster, TauDEMDict, PourPointValuesDict
 
 
 class TauDEMEngine:
 
     d8_format = 'taudem'
+
+    function_kwargs = {
+        'accumulate_flow': custom_types.TaudemFACInputDict.__annotations__,
+        'accumulate_parameter': custom_types.TaudemFACInputDict.__annotations__,
+        'distance_to_stream': custom_types.TaudemDistance_to_streamInputDict.__annotations__,
+        'extreme_upslope_values': custom_types.TaudemMaxUpslopeInputDict.__annotations__,
+        'decay_accumulation': custom_types.TaudemFACInputDict.__annotations__,
+    }
 
     @staticmethod
     def _taudem_prepper(

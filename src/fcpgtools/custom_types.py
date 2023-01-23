@@ -69,6 +69,17 @@ class PyShedsInputDict(TypedDict):
     grid: Grid
 
 
+class PyShedsFACkwargsDict(TypedDict):
+    fdir: PyShedsRaster
+    weights: PyShedsRaster
+    dirmap: Tuple[int, int, int, int, int, int, int, int]
+    efficiency: PyShedsRaster
+    nodata_out: Union[int, float]
+    routing: str
+    cycle_size: int
+    algorithm: str
+
+
 class TaudemFACInputDict(TypedDict):
     fdr: str
     outFl: str
@@ -77,7 +88,7 @@ class TaudemFACInputDict(TypedDict):
     mpiArg: str
 
 
-class Taudemdistance_to_streamInputDict(TypedDict):
+class TaudemDistance_to_streamInputDict(TypedDict):
     fdr: str
     fac: str
     outRast: str
@@ -99,6 +110,6 @@ class TaudemMaxUpslopeInputDict(TypedDict):
 
 TauDEMDict = Union[
     TaudemFACInputDict,
-    Taudemdistance_to_streamInputDict,
+    TaudemDistance_to_streamInputDict,
     TaudemMaxUpslopeInputDict,
 ]

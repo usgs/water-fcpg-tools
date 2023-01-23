@@ -11,6 +11,7 @@ from fcpgtools.terrainengine import protocols, engine_validator
 from fcpgtools.custom_types import Raster, Shapefile, FDRD8Formats, D8ConversionDicts
 from fcpgtools.custom_types import PourPointLocationsDict, PourPointValuesDict
 
+
 def load_raster(
     in_raster: Raster,
 ) -> xr.DataArray:
@@ -1014,6 +1015,42 @@ def make_fcpg(
         )
 
     return fcpg_raster
+
+
+def check_function_kwargs(
+    function: callable,
+    engine: str,
+) -> Dict[str, Union[str, int, float]]:
+    """Provides a dictionary of allowed kwargs keywords + input types for a function.
+
+    NOTE: This function will raise a ValueError if a non-terrain_engine
+        function is provided as the input.
+
+    Args:
+        function: A function belonging to a terrain_engine class.
+        engine: The name of the engine being used.
+
+    Returns:
+        A dictionary with allowed kwargs as keys, and allowed input types as values.
+    """
+
+    engine = engine.lower()
+    if engine not in engine_validator.NameToTerrainEngineDict.keys():
+        raise ValueError(
+            f'engine:{engine} is not a valid engine! Please choose from '
+            f'{list(engine_validator.NameToTerrainEngineDict.keys())}'
+        )
+    else:
+        engine_class = engine_validator.NameToTerrainEngineDict[engine]
+        kwargs_dict = engine_class.function_kwargs
+
+    if function.__name__ not in kwargs_dict.keys():
+        raise ValueError(
+            f'Function:{function.__name__} does not take kwargs or is not '
+            f'valid for terrain_engine={engine}!'
+        )
+    else:
+        return kwargs_dict[function.__name__]
 
 
 @engine_validator.validate_engine(protocols.SupportsAccumulateFlow)
