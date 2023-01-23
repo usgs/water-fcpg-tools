@@ -18,6 +18,14 @@ Getting Started
     ```
     pip install fcpgtools
     ```
+4. (optional) pip install optional libraries required to run our demo notebook ([`examples/v2_fcpgtools_demo.ipynb`](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/examples/v2_fcpgtools_demo.ipynb)), and to leverage in-line function completion/type-hints.
+    ```
+    pip install jupyterlab
+    pip install ipympl
+    pip install python-lsp-server
+    pip install jupyterlab-lsp
+    pip install pydaymet
+    ```
 
 ## Using FCPGtools
 Version 2.0 of `FCPGtools` has a "flat" architecture, meaning all functions can be accessed by importing the main `fcpgtools` module as shown in a simple example below:
