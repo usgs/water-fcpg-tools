@@ -1652,6 +1652,11 @@ def findLastFACFD(facfl, fl=None):
     # convert the column, row coordinates to map coordinates
     x, y = src.xy(cx, cy)
 
+    if isinstance(x, list):
+        x = x[0]
+    if isinstance(y, list):
+        y = y[0]
+
     w = meta['transform'][0]  # get the cell size of the grid
 
     return float(x), float(y), float(d), float(w)
