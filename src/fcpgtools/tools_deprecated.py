@@ -1522,16 +1522,20 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins=False):
         newx, newy = rs.transform.xy(out_transform, cx,
                                      cy)  # convert the row, column locations to coordinates given the new affine
 
+        # convert newx and newy to lists if not already
+        if not isinstance(newx, list):
+            newx = [newx]
+        if not isinstance(newy, list):
+            newy = [newy]
+
         # zip the coordinates to points, when moved downstream, only one of these should land on a no data pixel
-        points = [(nx, ny) for nx, ny in zip([newx], [newy])]
+        points = [(nx, ny) for nx, ny in zip(newx, newy)]
 
         # test if a point lands on a noData pixel.
         # print(len(points))
         i = 0  # initialize counter
         print(points)
         for point in points:
-            if isinstance(point, list):
-                point = point[0]
             x, y = point
             d = queryPoint(x, y, upfdrfl)
             newx, newy = FindDownstreamCellTauDir(
