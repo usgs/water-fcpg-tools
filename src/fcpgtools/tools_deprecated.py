@@ -273,6 +273,8 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast=None, outNoDataAccu
                 'dtype': 'float32',
                 'zlevel': 9,
                 'interleave': 'band',
+                'blockxsize': 256,
+                'blockysize': 256,
                 'profile': 'GeoTIFF',
                 'tiled': True,
                 'sparse_ok': True,
@@ -302,6 +304,8 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast=None, outNoDataAccu
                 'compress': 'LZW',
                 'zlevel': 9,
                 'interleave': 'band',
+                'blockxsize': 256,
+                'blockysize': 256,
                 'profile': 'GeoTIFF',
                 'tiled': True,
                 'sparse_ok': True,
@@ -507,17 +511,25 @@ def make_fcpg(accumParam, fac, outRast, noDataRast=None, minAccum=None, ESRIFAC=
     gc.collect()
 
     # Update raster profile
-    profile.update({'dtype': dataCPG.dtype,
-                    'compress': 'LZW',
-                    'zlevel': 9,
-                    'interleave': 'band',
-                    'profile': 'GeoTIFF',
-                    'tiled': True,
-                    'sparse_ok': True,
-                    'num_threads': 'ALL_CPUS',
-                    'nodata': outNoData,
-                    'bigtiff': 'IF_SAFER'})
-
+    profile.update(
+        {
+            'dtype': dataCPG.dtype,
+            'count': 1,
+            'driver': 'GTiff',
+            'compress': 'LZW',
+            'zlevel': 9,
+            'interleave': 'band',
+            'blockxsize': 256,
+            'blockysize': 256,
+            'profile': 'GeoTIFF',
+            'tiled': True,
+            'sparse_ok': True,
+            'num_threads': 'ALL_CPUS',
+            'nodata': outNoData,
+            'bigtiff': 'IF_SAFER',
+        }
+    )
+    print(profile)
     if verbose:
         print("Saving CPG raster {0}".format(datetime.datetime.now()))
 
@@ -736,6 +748,8 @@ def makeDecayGrid(d2strm, k, outRast, verbose=False):
         'compress': 'LZW',
         'zlevel': 9,
         'interleave': 'band',
+        'blockxsize': 256,
+        'blockysize': 256,
         'profile': 'GeoTIFF',
         'tiled': True,
         'sparse_ok': True,
@@ -806,6 +820,8 @@ def applyMult(inRast, mult, outRast, verbose=False):
                     'compress': 'LZW',
                     'zlevel': 9,
                     'interleave': 'band',
+                    'blockxsize': 256,
+                    'blockysize': 256,
                     'profile': 'GeoTIFF',
                     'tiled': True,
                     'sparse_ok': True,
@@ -1002,6 +1018,8 @@ def maskStreams(inRast, streamRast, outRast, verbose=False):
         'compress': 'LZW',
         'zlevel': 9,
         'interleave': 'band',
+        'blockxsize': 256,
+        'blockysize': 256,
         'profile': 'GeoTIFF',
         'tiled': True,
         'sparse_ok': True,
@@ -1201,6 +1219,8 @@ def cat2bin(inCat, outWorkspace, par=True, verbose=False):
                     'compress': 'LZW',
                     'zlevel': 9,
                     'interleave': 'band',
+                    'blockxsize': 256,
+                    'blockysize': 256,
                     'profile': 'GeoTIFF',
                     'tiled': True,
                     'sparse_ok': True,
@@ -2209,6 +2229,8 @@ def d8todinfinity(inRast, outRast, updateDict={
     'compress': 'LZW',
     'zlevel': 9,
     'interleave': 'band',
+    'blockxsize': 256,
+    'blockysize': 256,
     'profile': 'GeoTIFF',
     'tiled': True,
     'sparse_ok': True,
@@ -2264,6 +2286,8 @@ def changeNoData(inRast, newNoData, updateDict={
     'compress': 'LZW',
     'zlevel': 9,
     'interleave': 'band',
+    'blockxsize': 256,
+    'blockysize': 256,
     'profile': 'GeoTIFF',
     'tiled': True,
     'sparse_ok': True,
@@ -2318,6 +2342,8 @@ def makeStreams(fac, strPath, thresh=900, updateDict={
     'zlevel': 9,
     'interleave': 'band',
     'profile': 'GeoTIFF',
+    'blockxsize': 256,
+    'blockysize': 256,
     'tiled': True,
     'sparse_ok': True,
     'num_threads': 'ALL_CPUS',
