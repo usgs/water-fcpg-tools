@@ -1534,7 +1534,6 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins=False):
         # test if a point lands on a noData pixel.
         # print(len(points))
         i = 0  # initialize counter
-        print(points)
         for point in points:
             x, y = point
             d = queryPoint(x, y, upfdrfl)
