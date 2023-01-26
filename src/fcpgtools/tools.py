@@ -8,7 +8,13 @@ import geopandas as gpd
 from rasterio.enums import Resampling
 import fcpgtools.utilities as utilities
 from fcpgtools.terrainengine import protocols, engine_validator
-from fcpgtools.custom_types import Raster, Shapefile, D8ConversionDicts
+from fcpgtools.custom_types import (
+    Raster,
+    RasterSuffixes,
+    Shapefile,
+    ShapefileSuffixes,
+    D8ConversionDicts,
+)
 from fcpgtools.custom_types import PourPointLocationsDict, PourPointValuesDict
 
 
@@ -22,7 +28,13 @@ def load_raster(
         in_raster = Path(in_raster)
         if not in_raster.exists():
             raise FileNotFoundError(f'Input path {in_raster} is not found.')
-    return utilities._format_nodata(rio.open_rasterio(in_raster).squeeze())
+    if in_raster.suffix == '.tif':
+        return utilities._format_nodata(rio.open_rasterio(in_raster).squeeze())
+    else:
+        raise ValueError(
+            f'{in_raster.suffix} is not a supported raster type. '
+            f'Please choose from {RasterSuffixes}.'
+        )
 
 
 def load_shapefile(
@@ -35,7 +47,13 @@ def load_shapefile(
         in_shapefile = Path(in_shapefile)
         if not in_shapefile.exists():
             raise FileNotFoundError(f'Input path {in_shapefile} is not found.')
-    return gpd.read_file(in_shapefile)
+    if in_shapefile.suffix == '.shp':
+        return gpd.read_file(in_shapefile)
+    else:
+        raise ValueError(
+            f'{in_shapefile.suffix} is not a supported shapefile type. '
+            f'Please choose from {ShapefileSuffixes}.'
+        )
 
 
 def save_raster(
