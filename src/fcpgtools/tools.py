@@ -8,7 +8,7 @@ import geopandas as gpd
 from rasterio.enums import Resampling
 import fcpgtools.utilities as utilities
 from fcpgtools.terrainengine import protocols, engine_validator
-from fcpgtools.custom_types import Raster, Shapefile, FDRD8Formats, D8ConversionDicts
+from fcpgtools.custom_types import Raster, Shapefile, D8ConversionDicts
 from fcpgtools.custom_types import PourPointLocationsDict, PourPointValuesDict
 
 
@@ -301,14 +301,15 @@ def convert_fdr_formats(
         in_format = utilities._id_d8_format(d8_fdr)
 
     # check that both formats are valid before proceeding
-    if in_format not in FDRD8Formats:
+    d8_formats = list(D8ConversionDicts.keys())
+    if in_format not in d8_formats:
         raise TypeError(
-            f'param:in_format = {in_format} which is not in {FDRD8Formats}'
+            f'param:in_format = {in_format} which is not in {d8_formats}'
         )
 
-    if out_format not in FDRD8Formats:
+    if out_format not in d8_formats:
         raise TypeError(
-            f'param:out_format = {out_format} which is not in {FDRD8Formats}'
+            f'param:out_format = {out_format} which is not in {d8_formats}'
         )
 
     if in_format == out_format:

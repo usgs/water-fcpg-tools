@@ -9,10 +9,8 @@ from pysheds.view import Raster as PyShedsRaster
 
 Raster = Union[DataArray, str, Path]
 Shapefile = Union[GeoDataFrame, str, Path]
-Engines = ('taudem', 'pysheds')
 RasterSuffixes = ('.tif')
 ShapefileSuffixes = ('.shp')
-FDRD8Formats = ('esri', 'taudem')
 
 # create D8 conversion dictionaries
 D8ConversionDicts = {
