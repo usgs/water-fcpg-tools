@@ -88,7 +88,7 @@ def save_shapefile(
 
 
 def align_raster(
-    in_raster,
+    in_raster: Raster,
     match_raster: Raster,
     resample_method: str = 'nearest',
     out_path: Optional[Union[str, Path]] = None,
@@ -105,6 +105,7 @@ def align_raster(
     Returns:
         The output aligned raster.
     """
+    in_raster = load_raster(in_raster)
 
     out_raster = in_raster.rio.reproject_match(
         match_raster,
@@ -374,8 +375,8 @@ def convert_fdr_formats(
 
 
 def make_fac_weights(
-    parameter_raster: xr.DataArray,
-    fdr_raster: xr.DataArray,
+    parameter_raster: Raster,
+    fdr_raster: Raster,
     out_of_bounds_value: Union[float, int],
     out_path: Optional[Union[str, Path]] = None,
 ) -> xr.DataArray:
@@ -393,6 +394,9 @@ def make_fac_weights(
     Returns:
         The prepped parameter grid.
     """
+    # intake rasters
+    parameter_raster = load_raster(parameter_raster)
+    fdr_raster = load_raster(fdr_raster)
 
     # check that shapes match
     if not utilities._verify_shape_match(fdr_raster, parameter_raster):
