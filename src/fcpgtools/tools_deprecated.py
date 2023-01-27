@@ -1,3 +1,4 @@
+from rasterio.mask import mask
 import datetime
 import gc
 import io
@@ -6,6 +7,7 @@ import json
 import os
 import subprocess
 import traceback
+import warnings
 from multiprocessing import Pool as processPool
 
 import numpy as np
@@ -16,10 +18,24 @@ try:
 except NameError:
     to_unicode = str
 
-# Imports for cascade tools
-from rasterio.mask import mask
+
+def deprecated(
+    function: callable,
+    *args,
+    **kwargs,
+) -> callable:
+    warnings.warn(
+        message=(
+            f'{function.__name__} is deprecated! '
+            f'Reference out FCPGtools V1 -> V2 conversion guide here: '
+            'https://usgs.github.io/water-fcpg-tools/build/html/migrating_from_v1.html'
+        ),
+        category=DeprecationWarning,
+    )
+    return function(*args, **kwargs)
 
 
+@deprecated
 def parsebool(b):
     '''Parse a boolean argument from the command line.
 
@@ -38,6 +54,7 @@ def parsebool(b):
     return b == "True"
 
 
+@deprecated
 def tauDrainDir(inRast, outRast, band=1, updateDict={
     'compress': 'LZW',
     'zlevel': 9,
@@ -108,6 +125,7 @@ def tauDrainDir(inRast, outRast, band=1, updateDict={
             print("TauDEM drainage direction written to: {0}".format(outRast))
 
 
+@deprecated
 def ESRIDrainDir(inRast, outRast, band=1, updateDict={
     'compress': 'LZW',
     'zlevel': 9,
@@ -179,6 +197,7 @@ def ESRIDrainDir(inRast, outRast, band=1, updateDict={
             print("ESRI drainage direction written to: {0}".format(outRast))
 
 
+@deprecated
 def accumulateParam(paramRast, fdr, accumRast, outNoDataRast=None, outNoDataAccum=None, zeroNoDataRast=None, cores=1,
                     mpiCall='mpiexec', mpiArg='-n', verbose=False):
     """Accumulate a parameter grid using TauDEM AreaD8 :cite:`TauDEM`.
@@ -386,6 +405,7 @@ def accumulateParam(paramRast, fdr, accumRast, outNoDataRast=None, outNoDataAccu
         traceback.print_exc()
 
 
+@deprecated
 def make_fcpg(accumParam, fac, outRast, noDataRast=None, minAccum=None, ESRIFAC=False, verbose=False):
     """Create a flow-conditioned parameter grid using accumulated parameter and area rasters. See also :py:func:`make_fcpg_batch`.
 
@@ -539,6 +559,7 @@ def make_fcpg(accumParam, fac, outRast, noDataRast=None, minAccum=None, ESRIFAC=
             print("CPG file written to: {0}".format(outRast))
 
 
+@deprecated
 def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, forceProj=False,
                   forceProj4="\"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0"
                              " +ellps=GRS80 +datum=NAD83 +units=m +no_defs\"", verbose=False):
@@ -684,7 +705,7 @@ def resampleParam(inParam, fdr, outParam, resampleMethod="bilinear", cores=1, fo
 
 
 # Tools for decayed accumulation CPGs
-
+@deprecated
 def makeDecayGrid(d2strm, k, outRast, verbose=False):
     """Create a decay raster where grid cell values are computed as the inverse number of grid cells,
     :code:`np.exp((-1 * decayGrid * xsize) / (xsize ** k))`, where decayGrid is the distance from the d2strm
@@ -766,6 +787,7 @@ def makeDecayGrid(d2strm, k, outRast, verbose=False):
             print("Decay raster written to: {0}".format(outRast))
 
 
+@deprecated
 def applyMult(inRast, mult, outRast, verbose=False):
     """Multiply input raster by mult.
 
@@ -837,6 +859,7 @@ def applyMult(inRast, mult, outRast, verbose=False):
             print("Raster written to: {0}".format(outRast))
 
 
+@deprecated
 def decayAccum(ang, mult, outRast, paramRast=None, cores=1, mpiCall='mpiexec', mpiArg='-n', verbose=False):
     """Decay the accumulation of a parameter raster.
 
@@ -919,6 +942,7 @@ def decayAccum(ang, mult, outRast, paramRast=None, cores=1, mpiCall='mpiexec', m
             traceback.print_exc()
 
 
+@deprecated
 def dist2stream(fdr, fac, thresh, outRast, cores=1, mpiCall='mpiexec', mpiArg='-n', verbose=False):
     """Compute distance to streams.
 
@@ -972,6 +996,7 @@ def dist2stream(fdr, fac, thresh, outRast, cores=1, mpiCall='mpiexec', mpiArg='-
         traceback.print_exc()
 
 
+@deprecated
 def maskStreams(inRast, streamRast, outRast, verbose=False):
     """Mask areas not on the stream network.
 
@@ -1035,6 +1060,7 @@ def maskStreams(inRast, streamRast, outRast, verbose=False):
             print("CPG file written to: {0}".format(outRast))
 
 
+@deprecated
 def resampleParam_batch(inParams, fdr, outWorkspace, resampleMethod="bilinear", cores=1, appStr="rprj", forceProj=False,
                         forceProj4="\"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs\"",
                         verbose=False):
@@ -1084,6 +1110,7 @@ def resampleParam_batch(inParams, fdr, outWorkspace, resampleMethod="bilinear", 
     return fileList
 
 
+@deprecated
 def accumulateParam_batch(paramRasts, fdr, outWorkspace, cores=1, appStr="accum", mpiCall='mpiexec', mpiArg='-n',
                           verbose=False):
     """Batch version of :py:func:`accumulateParam`.
@@ -1133,6 +1160,7 @@ def accumulateParam_batch(paramRasts, fdr, outWorkspace, cores=1, appStr="accum"
     return fileList
 
 
+@deprecated
 def make_fcpg_batch(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG", ESRIFAC=False, verbose=False):
     """Batch version of :py:func:`make_fcpg`.
 
@@ -1175,6 +1203,7 @@ def make_fcpg_batch(accumParams, fac, outWorkspace, minAccum=None, appStr="FCPG"
     return fileList
 
 
+@deprecated
 def cat2bin(inCat, outWorkspace, par=True, verbose=False):
     """Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the
     supplied raster, zero for areas where that class is not present, 1 for areas where that class is present,
@@ -1253,6 +1282,7 @@ def cat2bin(inCat, outWorkspace, par=True, verbose=False):
     return fileList
 
 
+@deprecated
 def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile, verbose=False):
     '''Turn a categorical raster (e.g. land cover type) into a set of binary rasters, one for each category in the
     upplied raster, zero for areas where that class is not present, 1 for areas where that class is present, and -1 for
@@ -1302,6 +1332,7 @@ def binarizeCat(val, data, nodata, outWorkspace, baseName, ext, profile, verbose
     return catRaster  # Return the path to the raster created
 
 
+@deprecated
 def tauFlowAccum(fdr, accumRast, cores=1, mpiCall='mpiexec', mpiArg='-n', verbose=False):
     """Wrapper for TauDEM AreaD8 :cite:`TauDEM` to produce a flow accumulation grid.
 
@@ -1351,6 +1382,7 @@ def tauFlowAccum(fdr, accumRast, cores=1, mpiCall='mpiexec', mpiArg='-n', verbos
         traceback.print_exc()
 
 
+@deprecated
 def ExtremeUpslopeValue(fdr, param, output, accum_type="MAX", cores=1, fac=None, thresh=None, mpiCall='mpiexec',
                         mpiArg='-n', verbose=False):
     '''
@@ -1436,6 +1468,7 @@ def ExtremeUpslopeValue(fdr, param, output, accum_type="MAX", cores=1, fac=None,
     return None
 
 
+@deprecated
 def getFeatures(gdf):
     """Helper function to parse features from a GeoPandas GeoDataframe in such a manner that Rasterio can handle them.
 
@@ -1454,6 +1487,7 @@ def getFeatures(gdf):
     return [json.loads(gdf.to_json())['features'][0]['geometry']]
 
 
+@deprecated
 def getHUC4(HUC12):
     """Helper function to return HUC4 representation from a HUC12 identifier.
 
@@ -1470,6 +1504,7 @@ def getHUC4(HUC12):
     return HUC12[:4]
 
 
+@deprecated
 def makePourBasins(wbd, fromHUC4, toHUC4, HUC12Key='HUC12', ToHUCKey='ToHUC'):
     """Make geodataframe of HUC12 basins flowing from HUC4 to toHUC4.
 
@@ -1499,6 +1534,7 @@ def makePourBasins(wbd, fromHUC4, toHUC4, HUC12Key='HUC12', ToHUCKey='ToHUC'):
     return wbd.loc[(wbd.HUC4 == fromHUC4) & (wbd.ToHUC4 == toHUC4)].copy()
 
 
+@deprecated
 def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins=False):
     """Finds unique pour points between two HUC4s.
 
@@ -1597,6 +1633,7 @@ def findPourPoints(pourBasins, upfacfl, upfdrfl, plotBasins=False):
     return finalPoints
 
 
+@deprecated
 def loadRaster(fl, returnMeta=False, band=1):
     """Helper function to load raster data and metadata.
 
@@ -1629,6 +1666,7 @@ def loadRaster(fl, returnMeta=False, band=1):
         print("Error - Unable to open %s" % (fl))
 
 
+@deprecated
 def findLastFACFD(facfl, fl=None):
     """Find the coordinate of the greatest cell in facfl, return the value from fl at that point.
 
@@ -1682,6 +1720,7 @@ def findLastFACFD(facfl, fl=None):
     return float(x), float(y), float(d), float(w)
 
 
+@deprecated
 def queryPoint(x, y, grd):
     """Query grid based on a supplied point.
 
@@ -1706,6 +1745,7 @@ def queryPoint(x, y, grd):
             return i[0]
 
 
+@deprecated
 def FindDownstreamCellTauDir(d, x, y, w):
     """Find downstream cell given the flow direction of a reference cell using TauDEM flow directions.
 
@@ -1763,6 +1803,7 @@ def FindDownstreamCellTauDir(d, x, y, w):
     return float(newX), float(newY)
 
 
+@deprecated
 def saveJSON(dictionary, outfl):
     """Save dictionary to JSON file.
 
@@ -1787,6 +1828,7 @@ def saveJSON(dictionary, outfl):
     return None
 
 
+@deprecated
 def loadJSON(infl):
     """Load dictionary stored in a JSON file.
 
@@ -1807,6 +1849,7 @@ def loadJSON(infl):
     return dictionary
 
 
+@deprecated
 def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict=True, verbose=False, outletX=None, outletY=None):
     """Create a dictionary for updating downstream FAC and parameter grids using values pulled from the next grid upstream.
 
@@ -1901,6 +1944,7 @@ def createUpdateDict(x, y, upstreamFACmax, fromHUC, outfl, replaceDict=True, ver
     return updateDict
 
 
+@deprecated
 def updateRaster(x, y, val, grd, outgrd, scaleFactor=None):
     """Insert value into grid at location specified by x,y; writes new raster to output grid.
 
@@ -1969,6 +2013,7 @@ def updateRaster(x, y, val, grd, outgrd, scaleFactor=None):
     return None
 
 
+@deprecated
 def makeFACweight(ingrd, outWeight):
     """Make FAC weighting grid of ones based on the extents of the input grid. No-data cells are persisted.
 
@@ -2010,6 +2055,7 @@ def makeFACweight(ingrd, outWeight):
     return None
 
 
+@deprecated
 def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstreamFDRFl, adjFACFl, cores=1,
               mpiCall='mpiexec', mpiArg='-n', verbose=False, scaleFactor=None, moveDownstream=False):
     """Generate an updated flow accumulation grid (FAC) given an update dictionary produced by :py:func:`createUpdateDict`.
@@ -2106,6 +2152,7 @@ def adjustFAC(facWeighttemplate, downstreamFACweightFl, updateDictFl, downstream
                     cores=cores)  # run a parameter accumulation on the weighting grid.
 
 
+@deprecated
 def updateDict(ud, upHUC, varName, val):
     """Update dictionary created using :py:func:`createUpdateDict` with a parameter value.
 
@@ -2143,6 +2190,7 @@ def updateDict(ud, upHUC, varName, val):
     saveJSON(UD, ud)  # write out file
 
 
+@deprecated
 def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbose=False, scaleFactor=None,
                 moveDownstream=False):
     """Generate an updated parameter grid given an update dictionary from :py:func:`createUpdateDict`.
@@ -2224,6 +2272,7 @@ def adjustParam(updatedParam, downstreamParamFL, updateDictFl, adjParamFl, verbo
                              downstreamParamFL, adjParamFl, scaleFactor=scaleFactor)  # update with lists
 
 
+@deprecated
 def d8todinfinity(inRast, outRast, updateDict={
     'dtype': 'float32',
     'compress': 'LZW',
@@ -2282,6 +2331,7 @@ def d8todinfinity(inRast, outRast, updateDict={
             print("TauDEM drainage direction written to: {0}".format(outRast))
 
 
+@deprecated
 def changeNoData(inRast, newNoData, updateDict={
     'compress': 'LZW',
     'zlevel': 9,
@@ -2336,6 +2386,7 @@ def changeNoData(inRast, newNoData, updateDict={
             print("Raster written to: {0}".format(inRast))
 
 
+@deprecated
 def makeStreams(fac, strPath, thresh=900, updateDict={
     'nodata': 99,
     'compress': 'LZW',
