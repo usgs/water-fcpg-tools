@@ -127,7 +127,7 @@ class TauDEMEngine:
         """
         d8_fdr_path = TauDEMEngine._taudem_prepper(d8_fdr)
 
-        # get tempoarary files for necessary inputs
+        # get temporary files for necessary inputs
         if upstream_pour_points is None and weights is None:
             weight_path = ''
             wg = ''
@@ -486,7 +486,7 @@ class TauDEMEngine:
         else:
             raster_bands = {(0, 0): parameter_raster}
 
-        # create extream upslope value rasters for each parameter raster band
+        # create extreme upslope value rasters for each parameter raster band
         out_dict = {}
         for index_tuple, array in raster_bands.items():
             i, dim_name = index_tuple
@@ -515,7 +515,7 @@ class TauDEMEngine:
                     np.nan,
                 )
             else:
-                print('WARNING: Stream mask does not align with extream upslope value output! '
+                print('WARNING: Stream mask does not align with extreme upslope value output! '
                       'No mask is applied.'
                       )
 
@@ -670,7 +670,7 @@ class TauDEMEngine:
             else:
                 raster_bands = {(0, 0): weights}
 
-            # create extream upslope value rasters for each parameter raster band
+            # create extreme upslope value rasters for each parameter raster band
             out_dict = {}
             for index_tuple, array in raster_bands.items():
                 i, dim_name = index_tuple
