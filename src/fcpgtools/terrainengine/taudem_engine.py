@@ -191,7 +191,9 @@ class TauDEMEngine:
 
         if not Path(taudem_dict['outFl']).exists():
             raise FileNotFoundError(
-                'TauDEM areaD8 failed to create an output!')
+                'TauDEM areaD8 failed to create an output! '
+                'Make sure TauDEM is in your virtual environment.'
+            )
 
         out_raster = tools.load_raster(Path(taudem_dict['outFl']))
         out_raster = out_raster.astype(np.float64)
