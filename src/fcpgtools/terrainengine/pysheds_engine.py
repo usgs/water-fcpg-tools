@@ -119,7 +119,7 @@ class PyShedsEngine:
         # add weights if necessary
         if weights is not None or upstream_pour_points is not None:
             if weights is not None:
-                weights = weights
+                pass
             elif upstream_pour_points is not None:
                 weights = xr.zeros_like(
                     d8_fdr,
