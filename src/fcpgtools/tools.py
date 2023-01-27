@@ -1,4 +1,5 @@
 from typing import Union, Dict, List, Tuple, Optional
+import warnings
 from pathlib import Path
 import xarray as xr
 import rioxarray as rio
@@ -65,7 +66,10 @@ def save_raster(
         out_path = Path(out_path)
 
     if Path.exists(out_path):
-        print(f'WARNING: Cannot overwrite {out_path}!')
+        warnings.warn(
+            message=f'Cannot overwrite {out_path}! Saving raster failed.',
+            category=UserWarning,
+        )
         return None
     out_raster.rio.to_raster(out_path)
 
@@ -79,12 +83,18 @@ def save_shapefile(
         out_path = Path(out_path)
 
     if Path.exists(out_path):
-        print(f'WARNING: Cannot overwrite {out_path}!')
+        warnings.warn(
+            message=f'Cannot overwrite {out_path}! Saving shapefile failed.',
+            category=UserWarning,
+        )
         return None
     try:
         out_shapefile.to_file(out_path)
     except Exception as e:
-        print(e)
+        warnings.warn(
+            message=str(e),
+            category=UserWarning,
+        )
 
 
 def align_raster(
@@ -362,9 +372,6 @@ def convert_fdr_formats(
     )
     d8_fdr = d8_fdr.astype('int')
 
-    print(f'Converted the D8 Flow Direction Raster (FDR) from {in_format} format'
-          f' to {out_format}')
-
     if out_path is not None:
         save_raster(
             d8_fdr,
@@ -485,8 +492,13 @@ def adjust_parameter_raster(
 
         # verify coverage
         if not utilities._verify_coords_coverage(parameter_raster, ds_coords):
-            print(
-                f'WARNING: Cell downstream from pour point coords={coords} is out of bounds -> skipped!')
+            warnings.warn(
+                message=(
+                    f'Cell downstream from pour point coords={coords} '
+                    f'is out of bounds -> skipped!'
+                ),
+                category=UserWarning
+            )
             continue
 
         if len(parameter_raster.shape) == 2:
@@ -496,7 +508,7 @@ def adjust_parameter_raster(
             )
         else:
             dim_index_values = parameter_raster[parameter_raster.dims[0]].values
-            for band_index, value in enumerate(dim_index_values):
+            for band_index, _value in enumerate(dim_index_values):
                 parameter_raster[band_index, :, :] = utilities._update_raster_values(
                     in_raster=parameter_raster[band_index, :, :],
                     update_points=[(ds_coords, values_list[band_index])],
@@ -634,8 +646,12 @@ def value_mask(
 
     # build conditionals
     if equals and 'float' in str(in_raster.dtype):
-        print(
-            f'WARNING: Applying an equality mask to a {in_raster.dtype} raster'
+        warnings.warn(
+            message=(
+                f'Applying an equality mask to a {in_raster.dtype} raster. '
+                f'This is ill-advised!'
+            ),
+            category=UserWarning,
         )
 
     if equals and not inverse_equals:
@@ -797,25 +813,26 @@ def binarize_categorical_raster(
 
     combine_dict = {}
     count = 0
-    for i, cat in enumerate(categories):
-        if cat not in ignore_categories:
-            if cat in list(categories_dict.keys()):
-                index = categories_dict[cat]
-            else:
-                index = cat
+    for cat in categories:
+        if cat in ignore_categories:
+            continue
+        if cat in list(categories_dict.keys()):
+            index = categories_dict[cat]
+        else:
+            index = cat
 
-            out_layer = cat_raster.where(
-                cat_raster == cat,
-                0,
-            ).astype(cat_dtype)
+        out_layer = cat_raster.where(
+            cat_raster == cat,
+            0,
+        ).astype(cat_dtype)
 
-            out_layer = out_layer.where(
-                out_layer == 0,
-                1,
-            ).astype('uint8')
+        out_layer = out_layer.where(
+            out_layer == 0,
+            1,
+        ).astype('uint8')
 
-            combine_dict[(count, index)] = out_layer
-            count += 1
+        combine_dict[(count, index)] = out_layer
+        count += 1
 
     out_raster = utilities._combine_split_bands(combine_dict)
 
@@ -899,7 +916,8 @@ def find_basin_pour_points(
     if basin_id_field is not None:
         if basin_id_field not in list(basins_shp.columns):
             raise ValueError(
-                f'param:basin_id_field = {basin_id_field} is not in param:basins_shp')
+                f'param:basin_id_field = {basin_id_field} is not in param:basins_shp'
+            )
 
     # convert basin levels if necessary PourPointLocationsDict
     pour_point_locations_dict = {}
@@ -907,7 +925,6 @@ def find_basin_pour_points(
     pour_point_locations_dict['pour_point_coords'] = []
 
     if use_huc4 and basin_id_field == 'HUC12':
-        print('Using HUC4 level flow basins, converting from HUC12')
         basins_shp['HUC4'] = basins_shp[basin_id_field].str[:4]
         sub_basin_id = 'HUC4'
     else:
@@ -921,8 +938,13 @@ def find_basin_pour_points(
 
         # check extents of shapefile bbox and make sure all overlap the FAC raster extent
         if not utilities._verify_basin_coverage(fac_raster, sub_shp):
-            print(f'WARNING: sub basin with {sub_basin_id} == {basin} is not'
-                  ' completely enclosed by param:raster! Some relevant areas may be missing.')
+            warnings.warn(
+                message=(
+                    f'Sub basin with {sub_basin_id} == {basin} is not'
+                    ' completely enclosed by param:raster! Some relevant areas may be missing.'
+                ),
+                category=UserWarning,
+            )
 
         # apply spatial mask and find max accumulation value
         sub_raster = spatial_mask(
