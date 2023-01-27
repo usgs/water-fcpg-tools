@@ -1,5 +1,6 @@
 import tempfile
 import subprocess
+import warnings
 import pathlib
 import tempfile
 from typing import List, Dict, Union, Optional
@@ -96,9 +97,13 @@ class TauDEMEngine:
             except PermissionError:
                 could_not_delete += 1
         if could_not_delete > 0:
-            print(
-                f'WARNING: Could not delete {could_not_delete} temp files in'
-                f' {str(directory)} due to a PermissionError.')
+            warnings.warn(
+                message=(
+                    f'Could not delete {could_not_delete} temp files in'
+                    f' {str(directory)} due to a PermissionError.'
+                ),
+                category=UserWarning,
+            )
             del could_not_delete
 
     @staticmethod
@@ -132,9 +137,7 @@ class TauDEMEngine:
             weight_path = ''
             wg = ''
         else:
-            if weights is not None:
-                weights = weights
-            else:
+            if weights is None:
                 weights = xr.zeros_like(
                     d8_fdr,
                     dtype=np.dtype('float64'),
@@ -515,9 +518,13 @@ class TauDEMEngine:
                     np.nan,
                 )
             else:
-                print('WARNING: Stream mask does not align with extreme upslope value output! '
-                      'No mask is applied.'
-                      )
+                warnings.warn(
+                    message=(
+                        'Stream mask does not align with extreme upslope value output! '
+                        'No mask is applied.'
+                    ),
+                    category=UserWarning,
+                )
 
         # update nodata values
         out_raster = utilities._change_nodata_value(
