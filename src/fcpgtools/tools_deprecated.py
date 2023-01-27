@@ -1,6 +1,7 @@
 from rasterio.mask import mask
 import datetime
 import gc
+import functools
 import io
 # Imports for reading and writing json files
 import json
@@ -20,20 +21,22 @@ except NameError:
 
 
 def deprecated(
-    function: callable,
+    func: callable,
     *args,
     **kwargs,
 ) -> callable:
     warnings.warn(
         message=(
-            f'{function.__name__} is deprecated! '
+            f'{func.__name__} is deprecated! '
             f'Reference out FCPGtools V1 -> V2 conversion guide here: '
             'https://usgs.github.io/water-fcpg-tools/build/html/migrating_from_v1.html'
         ),
         category=DeprecationWarning,
     )
-    return function(*args, **kwargs)
-
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
 
 @deprecated
 def parsebool(b):
