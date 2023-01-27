@@ -21,7 +21,7 @@ from fcpgtools.custom_types import PourPointLocationsDict, PourPointValuesDict
 def load_raster(
     in_raster: Raster,
 ) -> xr.DataArray:
-    """Loads a raster into a xarray.DataArray object. Can also be used to prep an existing DataArray for processing."""
+    """Loads a raster into a xarray.DataArray object."""
     if isinstance(in_raster, xr.DataArray):
         return utilities._format_nodata(in_raster.squeeze())
     if isinstance(in_raster, str) or in_raster is None:
@@ -183,7 +183,7 @@ def reproject_raster(
     Args:
         in_raster: Input raster.
         out_crs: A raster or shapefile with the desired CRS to reproject to.
-        resolution: Allows the output resolution to be overriden.
+        resolution: Allows the output resolution to be overridden.
         wkt_string: Allows the user to define the output CRS using a custom valid WKT string.
         out_path: Defines a path to save the output raster.
 
@@ -239,7 +239,7 @@ def reproject_shapefile(
         out_crs = wkt_string
     else:
         raise ValueError(
-            'Must pass in eitehr param:out_crs or param:wkt_string')
+            'Must pass in either param:out_crs or param:wkt_string')
 
     out_shapefile = in_shapefile.to_crs(out_crs)
     if out_path is not None:
@@ -334,7 +334,7 @@ def convert_fdr_formats(
     if in_format == out_format:
         return d8_fdr
 
-    # get the conversion dictionary mappinng
+    # get the conversion dictionary mapping
     mapping = dict(
         zip(
             D8ConversionDicts[in_format].values(),
@@ -564,7 +564,7 @@ def spatial_mask(
     inverse: bool = False,
     out_path: Optional[Union[str, Path]] = None,
 ) -> xr.DataArray:
-    """Applys a spatial mask via a shapefile to a raster, converting out of bounds values by default to nodata.
+    """Applies a spatial mask via a shapefile to a raster, converting out of bounds values by default to nodata.
 
     Primarily for masking rasters (i.e., FAC) by basin shapefiles, converting out-of-mask raster
     values to NoData. A cell value can also be used to create a mask for integer rasters. 
@@ -610,7 +610,7 @@ def value_mask(
 ) -> xr.DataArray:
     """"Mask a raster via a value threshold.
 
-    Primary use case is to identify high acumulation zones / stream cells.
+    Primary use case is to identify high accumulation zones / stream cells.
     Cells included in the mask are given a value of 1, all other cells are given a value of 0 (unless out_mask_value!=None).
     Note: this function generalizes V1:pyfunc:makeStreams() functionality.
 
@@ -774,7 +774,7 @@ def binarize_categorical_raster(
 
     Args:
         cat_raster: A categorical (dtype=int) raster with N unique categories (i.e., land cover classes).
-        categogies_dict: A dictionary assigning string names (values) to integer raster values (keys).
+        categories_dict: A dictionary assigning string names (values) to integer raster values (keys).
         ignore_categories: Category cell values not include in the output raster.
         out_path: Defines a path to save the output raster.
 
@@ -885,7 +885,7 @@ def find_basin_pour_points(
         fac_raster: A Flow Accumulation Cell raster (FAC).
         basins_shp: A .shp shapefile containing basin geometries.
         basin_id_field: Default behavior is for each GeoDataFrame row to be a unique basin.
-            However, if one wants to use a higher level basin id that is shared acrcoss rows,
+            However, if one wants to use a higher level basin id that is shared across rows,
             this should be set to the column header storing the higher level basin id.
         use_huc4: Either 'HUC4' or 'HUC12'.
 
@@ -966,9 +966,9 @@ def get_pour_point_values(
     pour_points_dict: PourPointLocationsDict,
     accumulation_raster: Raster,
 ) -> PourPointValuesDict:
-    """Get the accumlation raster values from downstream pour points.
+    """Get the accumulation raster values from downstream pour points.
 
-    Note: This function is intended to feed into accumulate_flow() or parameter_accumlate() param:upstream_pour_points.
+    Note: This function is intended to feed into accumulate_flow() or parameter_accumulate() param:upstream_pour_points.
 
     Args:
         pour_points_dict: A dictionary of form fcpgtools.custom_types.PourPointValuesDict.
@@ -1013,7 +1013,7 @@ def make_fcpg(
     fac_raster: Raster,
     out_path: Optional[Union[str, Path]] = None,
 ) -> xr.DataArray:
-    """Creates a Flow Conditioned Parameter Grid raster by dividing a paramater accumulation raster by a Flow Accumulation Cell (FAC) raster.
+    """Creates a Flow Conditioned Parameter Grid raster by dividing a parameter accumulation raster by a Flow Accumulation Cell (FAC) raster.
 
     Args:
         param_accum_raster: (xr.DataArray or str raster path)
