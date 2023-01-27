@@ -59,6 +59,7 @@ by filling out a
    cookbook
    migrating_from_v1
    custom_types
+   contributions
    publications
    z_references
 
