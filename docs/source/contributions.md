@@ -9,10 +9,17 @@ Contribution Guide
 ### Supporting additional file types
 To support a new input file type, update either the `custom_types.RasterSuffixes` or `custom_types.ShapefileSuffixes` tuple with the relevant file suffix (i.e., `.nc`). Then add an `elif` statement under `tools.load_raster()` or `tools.load_shapefile()` to handle the new extension type. Similarly, to support saving to new file type, add an `elif` statement to `tools.save_raster()` or `tools.save_shapefile()`.
 
-### Supporting more functions with an existing `terrain_engine`
-Our `terrain_engine` implementation is based on `terrain_engine/protocols.py` which stores a class that inherits from `typing.Protocol` and contains an [abstract base method](https://docs.python.org/3/library/abc.html) that raises a `NotImplementedError`. This class (i.e. `SupportsAccumulateFlow`) must have the `@runtime_checkable` decorator. The abstract base method defines the arguments, their data types, and the data type of the output using type hints.
+### Adding a new `terrain_engine` or expanding a `terrain_engine`'s functionality
+The TerrainEngine geospatial methods are specified as [python Protocols](https://peps.python.org/pep-0544/) in the `terrain_engine/protocols.py`. These Protocols define the abstract signature of the various geospatial methods to be implemented in separate classes using python geospatial libraries to perform the necessary geospatial operations.
 
-### Adding a new `terrain_engine`
+
+To add additional TerrainEngines the developer should define a new class and implement the protocols (or a subset) defined in terrain_engine/protocols.py.
+
+
+To add additional geospatial functions the developer should first define a new protocol in the terrain_engine/protocols.py file. That protocol will define the abstract signature of the new geospatial method (including function name, arguments, and return type). Once a protocol is defined, a concrete implementation of the protocol can be developed in any of the various TerrainEngines.
+
+
+Note a future refactoring should consider leverage a plugin architecture for easier integration of third party TerrainEngines.
 
 ### Adding a new D8 Flow Direction Raster (FDR) format
 To support a new D8 Flow Direction Raster (FDR) format, simply add a key-value mapping in `custom_types.D8ConversionDicts` where the key is the new formats name **in lower case**, and the value is a dictionary mapping each cardinal direction + nodata to an integer value.
