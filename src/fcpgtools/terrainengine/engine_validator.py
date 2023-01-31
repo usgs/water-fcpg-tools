@@ -1,12 +1,5 @@
-from fcpgtools.terrainengine.taudem_engine import TauDEMEngine
-from fcpgtools.terrainengine.pysheds_engine import PyShedsEngine
 import functools
-
-NameToTerrainEngineDict = {
-    'taudem': TauDEMEngine,
-    'pysheds': PyShedsEngine,
-}
-
+from fcpgtools.terrainengine import factory
 
 def validate_engine(protocol):
     """decorator verify `engine` argument of function matches required protocol
@@ -29,7 +22,7 @@ def validate_engine(protocol):
             engine = kwargs['engine']
             if isinstance(engine, str):
                 try:
-                    kwargs['engine'] = NameToTerrainEngineDict[engine.lower()]
+                    kwargs['engine'] = factory[engine.lower()]
                 except KeyError:
                     raise TypeError(
                         f'{engine} is not a recognized engine.')

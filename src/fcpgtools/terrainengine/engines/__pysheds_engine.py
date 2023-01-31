@@ -10,6 +10,9 @@ import fcpgtools.utilities as utilities
 import fcpgtools.custom_types as custom_types
 from fcpgtools.custom_types import Raster, PyShedsInputDict, PourPointValuesDict
 
+engine_name = 'pysheds'
+def initialize():
+    return PyShedsEngine()
 
 class PyShedsEngine:
 
