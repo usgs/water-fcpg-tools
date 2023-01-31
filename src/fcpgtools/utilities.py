@@ -55,7 +55,7 @@ def _update_raster_values(
     in_raster: Union[xr.DataArray, str],
     update_points: List[Tuple[Tuple[float, float], Union[float, int]]],
 ) -> xr.DataArray:
-    """Update a specific raster cell's value based on it's coordindates.
+    """Update a specific raster cell's value based on it's coordinates.
 
     This is primarily used to add upstream accumulation values as boundary conditions before making a FAC or FCPG.
 
@@ -154,7 +154,7 @@ def _change_nodata_value(
     return in_raster
 
 
-def _intake_ambigous(
+def _intake_ambiguous(
     in_data: Union[Raster, Shapefile],
 ) -> Union[xr.DataArray, gpd.GeoDataFrame]:
     """A somewhat less performant intake function when the input can be either a Raster or Shapefile"""
@@ -194,7 +194,7 @@ def _get_crs(
     out_crs: Union[Raster, Shapefile],
 ) -> str:
     """Gets the Coordinate Reference System of a raster or a shapefile as a WKT string."""
-    crs_data = _intake_ambigous(out_crs)
+    crs_data = _intake_ambiguous(out_crs)
 
     if isinstance(crs_data, xr.DataArray):
         return crs_data.rio.crs.to_wkt()
@@ -338,7 +338,8 @@ def _find_downstream_cell(
         coords: The input (lat:float, lon:float) to find the next cell downstream from.
 
     Returns:
-        An output (lat:float, lon:float) representing the cell center coorindates downstream from the cell defined via :param:coords.
+        An output (lat:float, lon:float) representing the cell center coordinates 
+            downstream from the cell defined via :param:coords.
     """
     # identify d8 fdr format
     d8_format = _id_d8_format(d8_fdr)
@@ -378,7 +379,7 @@ def _verify_coords_coverage(
     """Returns True if an x, y coordinate is in the bounds of a raster."""
     bbox = list(raster.rio.bounds())
 
-    # check if x, y coordaintes are within bounds
+    # check if x, y coordinates are within bounds
     if coords[0] > bbox[0] and coords[0] < bbox[2]:
         if coords[1] > bbox[1] and coords[1] < bbox[3]:
             return True

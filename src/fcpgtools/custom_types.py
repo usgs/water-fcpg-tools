@@ -54,7 +54,7 @@ class PourPointValuesDict(PourPointLocationsDict):
     """Custom type hint dict for storing pour point accumulation values.
 
     Attributes: 
-        pour_point_values: A list of N lists, eaching storing values associated with the
+        pour_point_values: A list of N lists, each storing values associated with the
             list's index location in PourPointLocationsDict['pour_point_ids'].
             The length of each list is equal to the # of bands in the accumulation raster.
     """
