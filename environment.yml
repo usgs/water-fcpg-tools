@@ -6,6 +6,5 @@ channels:
 dependencies:
   - python =3.9 # 3.10 caused conflicts with taudem on conda-forge
   - poetry
-  - taudem =5.3.8  # Limits to older versions of gdal =3.1.4; rasterio =1.2.1
-  - gdal =3.1.4
+  - taudem =5.3.8  # Limits to older versions of gdal =3.1.4
   - pip
