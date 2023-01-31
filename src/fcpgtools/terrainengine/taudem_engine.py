@@ -96,6 +96,8 @@ class TauDEMEngine:
                     file.unlink()
             except PermissionError:
                 could_not_delete.append(file)
+        
+        could_not_delete = [f for f in could_not_delete if f.exists()]
         if len(could_not_delete) > 0:
             warnings.warn(
                 message=(
@@ -215,6 +217,8 @@ class TauDEMEngine:
         out_raster.close()
         if weights is None:
             TauDEMEngine._clear_temp_files(prefixs=['fac_temp'])
+        else:
+            weights.close()
 
         return out_raster
 
@@ -289,7 +293,7 @@ class TauDEMEngine:
             out_raster = list(out_dict.items())[0][1]
         out_raster.name = 'accumulate_parameter'
 
-        # save if necessary and remove temp files
+        # save if necessary
         if isinstance(out_path, str):
             out_path = Path(out_path)
         if out_path is not None:
@@ -298,7 +302,13 @@ class TauDEMEngine:
                 out_path,
             )
 
+        # remove temporary files and return output
+        d8_fdr.close()
+        accumulated.close()
+        array.close()
+        parameter_raster.close()
         out_raster.close()
+
         TauDEMEngine._clear_temp_files(
             prefixs=['taudem_temp_input', 'fac_temp']
         )
@@ -392,8 +402,11 @@ class TauDEMEngine:
         )
 
         # clear temporary files and return the output
+        d8_fdr.close()
         fac_raster.close()
+        streams.close()
         out_raster.close()
+
         TauDEMEngine._clear_temp_files(
             prefixs=['taudem_temp_input', 'distance_to_stream_temp'])
 
@@ -544,8 +557,11 @@ class TauDEMEngine:
 
         # clear temporary files and return the output
         d8_fdr.close()
+        upslope_raster.close()
+        array.close()
         parameter_raster.close()
         out_raster.close()
+
         TauDEMEngine._clear_temp_files(
             prefixs=['taudem_temp_input', 'ext_upslope_temp']
         )
@@ -611,8 +627,10 @@ class TauDEMEngine:
             np.nan,
         )
 
-        weights.close()
         out_raster.close()
+        if weights is not None:
+            weights.close()
+        
         return out_raster
 
     @staticmethod
@@ -731,7 +749,16 @@ class TauDEMEngine:
         # clear temporary files and return the output
         out_raster.close()
         decay_raster.close()
+        array.close()
+        decay_acc_raster.close()
         dinf_fdr.close()
+        d8_fdr.close()
+
+        if weights is not None:
+            weights.close()
+        if parameter_raster is not None:
+            parameter_raster.close()
+
         TauDEMEngine._clear_temp_files(
             prefixs=['taudem_temp_input', 'decay_accum_temp']
         )
