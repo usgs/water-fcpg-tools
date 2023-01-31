@@ -85,7 +85,7 @@ class TauDEMEngine:
             prefixs = [prefixs]
 
         # delete files with matching prefixes
-        could_not_delete = 0
+        could_not_delete = []
         for file in directory.iterdir():
             try:
                 remove = False
@@ -95,11 +95,11 @@ class TauDEMEngine:
                 if remove:
                     file.unlink()
             except PermissionError:
-                could_not_delete += 1
-        if could_not_delete > 0:
+                could_not_delete.append(file)
+        if len(could_not_delete) > 0:
             warnings.warn(
                 message=(
-                    f'Could not delete {could_not_delete} temp files in'
+                    f'Could not delete {len(could_not_delete)} temp files in'
                     f' {str(directory)} due to a PermissionError.'
                 ),
                 category=UserWarning,
@@ -300,7 +300,8 @@ class TauDEMEngine:
 
         out_raster.close()
         TauDEMEngine._clear_temp_files(
-            prefixs=['taudem_temp_input', 'fac_temp'])
+            prefixs=['taudem_temp_input', 'fac_temp']
+        )
 
         return out_raster
 
@@ -546,7 +547,8 @@ class TauDEMEngine:
         parameter_raster.close()
         out_raster.close()
         TauDEMEngine._clear_temp_files(
-            prefixs=['taudem_temp_input', 'ext_upslope_temp'])
+            prefixs=['taudem_temp_input', 'ext_upslope_temp']
+        )
         return out_raster
 
     @staticmethod
@@ -731,5 +733,6 @@ class TauDEMEngine:
         decay_raster.close()
         dinf_fdr.close()
         TauDEMEngine._clear_temp_files(
-            prefixs=['taudem_temp_input', 'decay_accum_temp'])
+            prefixs=['taudem_temp_input', 'decay_accum_temp']
+        )
         return out_raster
