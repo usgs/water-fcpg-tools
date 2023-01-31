@@ -71,7 +71,21 @@ def save_raster(
             category=UserWarning,
         )
         return None
-    out_raster.rio.to_raster(out_path)
+
+    try:
+        if out_path.suffix == '.tif':
+            out_raster.rio.to_raster(out_path)
+        else:
+            raise ValueError(
+                f'{out_raster.suffix} is not a supported raster output file type. '
+                f'Please choose from {RasterSuffixes}.'
+            )
+    except Exception as e:
+        warnings.warn(
+            message=f'Could not save shapefile due to {e}',
+            category=UserWarning,
+        )
+
 
 
 def save_shapefile(
@@ -88,13 +102,21 @@ def save_shapefile(
             category=UserWarning,
         )
         return None
+    
     try:
-        out_shapefile.to_file(out_path)
+        if out_path.suffix == '.shp':
+            out_shapefile.to_file(out_path)
+        else:
+            raise ValueError(
+                f'{out_path.suffix} is not a supported output shapefile type. '
+                f'Please choose from {ShapefileSuffixes}.'
+            )
     except Exception as e:
         warnings.warn(
-            message=str(e),
+            message=f'Could not save shapefile due to {e}',
             category=UserWarning,
         )
+
 
 
 def align_raster(
