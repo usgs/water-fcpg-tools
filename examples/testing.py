@@ -35,7 +35,7 @@ def main(
         print('ERROR: Cant find /FCPGtools/examples!')
 
     # get all necessary paths for in/out data
-    in_data_dir = examples_dir / Path('in_data')
+    in_data_dir = examples_dir / Path('data')
     print(f'Variable in_data_dir accesses {in_data_dir}')
     out_data_dir = examples_dir / Path('out_data')
     print(f'Variable in_data_dir accesses {out_data_dir}')
@@ -182,7 +182,7 @@ def main(
             d8_fdr=us_fdr,
             engine='taudem',
             upstream_pour_points=None,
-            out_path=Path(Path.cwd() / 'fac.tif'),
+            #out_path=Path(Path.cwd() / 'fac.tif'),
             kwargs={'cores': 4},
         )
         print('Done\n')
@@ -237,7 +237,7 @@ def main(
             fac_taudem,
             engine='taudem',
             accum_threshold=100,
-            out_path=Path(Path.cwd() / 'distance_to_stream.tif')
+            #out_path=Path(Path.cwd() / 'distance_to_stream.tif'),
         )
         print('Done\n')
 
@@ -245,7 +245,7 @@ def main(
         mask_streams = fcpgtools.mask_streams(
             fac_taudem,
             accumulation_threshold=100,
-            out_path=Path(Path.cwd() / 'streammask.tif')
+            #out_path=Path(Path.cwd() / 'streammask.tif'),
         )
         print('Done\n')
 
@@ -256,7 +256,7 @@ def main(
             engine='taudem',
             mask_streams=None,
             get_min_upslope=False,
-            out_path=Path(Path.cwd() / 'max_upslope.tif')
+            #out_path=Path(Path.cwd() / 'max_upslope.tif'),
         )
         print('Done\n')
 
@@ -264,7 +264,7 @@ def main(
         decay_raster = fcpgtools.make_decay_raster(
             distance_to_stream_taudem,
             decay_factor=2,
-            out_path=Path(Path.cwd() / 'decay.tif'),
+            #out_path=Path(Path.cwd() / 'decay.tif'),
         )
         print('Done\n')
 
@@ -275,14 +275,14 @@ def main(
             engine='taudem',
             upstream_pour_points=None,
             parameter_raster=us_precip,
-            out_path=Path(Path.cwd() / 'decay_accumulation.tif'),
+            #out_path=Path(Path.cwd() / 'decay_accumulation.tif'),
         )
 
 
 if __name__ == '__main__':
     main(
         MULTI_DIMENSIONAL_TEST,
-        test_taudem=False,
+        test_taudem=True,
         test_pysheds=False,
         test_pour_points=False,
     )
