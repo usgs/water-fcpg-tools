@@ -29,11 +29,11 @@ To support a new D8 Flow Direction Raster (FDR) format, simply add a key-value m
 2. Search the entire directory to find references to the version number, and increment appropriately.
 3. Make a merge-request on GitLab to merge your feature or develop branch into the master branch. Once successful, switch to the master branch.
 4. Using the `conda` terminal, navigate to `/FCPGtools` containing the `pyproject.toml` and `poetry.lock` files.
-5. Run the following commands in sequence to resolve the environment dependencies, build a local wheel file including whatever updates to `fcpgtools` were added, and then install the updated copy of `fcpgtools` into your environment:
+5. Run the following commands in sequence to resolve the environment dependencies, install the updated copy of `fcpgtools` into your environment, then build a local wheel file for distribution:
     ```
     poetry lock
-    poetry build
     poetry install
+    poetry build
     ```
     * NOTE: The reason we use `poetry install` last is to make sure there are no issues installing the packaged wheel into our recommended virtual environment.
 6. Use `poetry publish -u {YOUR-PyPI-USERNAME} -p {YOUR-PyPI-PASSWORD}` to publish the package to our [`PyPI` distribution](https://pypi.org/project/fcpgtools/).
