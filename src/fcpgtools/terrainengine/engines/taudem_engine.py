@@ -13,7 +13,7 @@ import fcpgtools.custom_types as custom_types
 from fcpgtools.custom_types import Raster, TauDEMDict, PourPointValuesDict
 
 engine_name = 'taudem'
-def initialize():
+def initialize(*args, **kwargs):
     return TauDEMEngine
 
 class TauDEMEngine:

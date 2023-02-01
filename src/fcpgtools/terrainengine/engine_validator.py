@@ -21,11 +21,7 @@ def validate_engine(protocol):
         def valid_func(*args, **kwargs) -> callable:
             engine = kwargs['engine']
             if isinstance(engine, str):
-                try:
-                    kwargs['engine'] = factory[engine.lower()]
-                except KeyError:
-                    raise TypeError(
-                        f'{engine} is not a recognized engine.')
+                kwargs['engine'] = factory.create(kwargs)
             if not isinstance(kwargs['engine'], protocol):
                 raise TypeError(f'Invalid engine provided, {func.__name__}'
                                 f' requires engine implementing {protocol.__name__} protocol')
