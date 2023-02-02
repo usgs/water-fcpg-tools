@@ -1,4 +1,5 @@
 import os
+import warnings
 import xarray as xr
 import numpy as np
 import pandas as pd
@@ -25,8 +26,11 @@ def _id_d8_format(
     elif np.nanmax(uniques) <= 8:
         return 'taudem'
     else:
-        raise TypeError('Cant recognize D8 Flow Direction Raster format '
-                        'as either ESRI or TauDEM. Please use the param:in_format for pyfunc:convert_fdr_formats()')
+        raise TypeError(
+            'Cant recognize D8 Flow Direction Raster format '
+            'as either ESRI or TauDEM. Please use the param:in_format for '
+            'pyfunc:convert_fdr_formats()'
+        )
 
 
 def _match_d8_format(
@@ -48,6 +52,15 @@ def _match_d8_format(
     except KeyError:
         raise KeyError(
             f'd8_format: {d8_format} is missing from fcpgtools.custom_types.D8ConversionDicts.keys()!')
+    except TypeError:
+        warnings.warn(
+            message=(
+                f'Could not ID the D8 format automatically! '
+                f'Please make sure its in {engine.d8_format} format '
+                f'for param:engine={engine.__name__}.'    
+            ),
+            category=UserWarning,
+        )
     return d8_fdr
 
 
