@@ -29,6 +29,10 @@ def load_raster(
         in_raster = Path(in_raster)
         if not in_raster.exists():
             raise FileNotFoundError(f'Input path {in_raster} is not found.')
+    if not isinstance(in_raster, Path):
+        raise TypeError(
+            f'param:in_raster must be of type {Raster}!'
+        )
     if in_raster.suffix == '.tif':
         return utilities._format_nodata(rio.open_rasterio(in_raster).squeeze())
     else:
@@ -48,6 +52,10 @@ def load_shapefile(
         in_shapefile = Path(in_shapefile)
         if not in_shapefile.exists():
             raise FileNotFoundError(f'Input path {in_shapefile} is not found.')
+    if not isinstance(in_shapefile, Path):
+        raise TypeError(
+            f'param:in_shapefile must be of type {Shapefile}!'
+        )
     if in_shapefile.suffix == '.shp':
         return gpd.read_file(in_shapefile)
     else:
