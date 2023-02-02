@@ -20,9 +20,9 @@ def _id_d8_format(
     """Identifies the D8 flow direction raster and returns one of the string keys in custom_types.D8ConversionDicts (i.e. 'taudem' or 'esri')"""
     d8_fdr = tools.load_raster(d8_fdr)
     uniques = np.unique(d8_fdr.values)
-    if np.max(uniques) > 8:
+    if np.nanmax(uniques) > 8:
         return 'esri'
-    elif np.max(uniques) <= 8:
+    elif np.nanmax(uniques) <= 8:
         return 'taudem'
     else:
         raise TypeError('Cant recognize D8 Flow Direction Raster format '
