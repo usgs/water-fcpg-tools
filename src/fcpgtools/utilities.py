@@ -7,9 +7,9 @@ import geopandas as gpd
 from typing import Union, List, Tuple, Dict
 import fcpgtools.tools as tools
 from fcpgtools.custom_types import (
-    Raster, 
+    Raster,
     Shapefile,
-    RasterSuffixes, 
+    RasterSuffixes,
     ShapefileSuffixes,
     D8ConversionDicts,
 )
@@ -33,12 +33,46 @@ def _id_d8_format(
         )
 
 
+def _remove_unexpected_d8_values(
+    d8_fdr: xr.DataArray,
+    d8_format: str,
+) -> xr.DataArray:
+    """Removes unexpected values from a D8 format. Most often nodata"""
+    d8_values = D8ConversionDicts[d8_format].values()
+    unexpected = [i for i in np.unique(d8_fdr.values) if i not in d8_values]
+
+    if len(unexpected) > 0:
+        # replace the values w/ pandas (no clean xarray implementation)
+        df = pd.DataFrame()
+        df[0] = d8_fdr.values.ravel()
+        df[0].loc[
+            (~df[0].isin(d8_values))
+        ] = D8ConversionDicts[d8_format]['nodata']
+
+        # write back to xarray
+        d8_fdr = d8_fdr.copy(
+            data=df[0].values.reshape(d8_fdr.shape),
+        )
+
+        # update nodata value if necessary
+        d8_fdr.rio.write_nodata(
+            D8ConversionDicts[d8_format]['nodata'],
+            inplace=True,
+        )
+        d8_fdr = d8_fdr.astype('int')
+    return d8_fdr
+
+
 def _match_d8_format(
     d8_fdr: Raster,
     engine: object,
 ) -> xr.DataArray:
     """Matches the D8 format to the appropriate terrain engine"""
     d8_format = _id_d8_format(d8_fdr)
+
+    # get rid of any unexpected values
+    d8_fdr = _remove_unexpected_d8_values(d8_fdr, d8_format)
+
     try:
         if d8_format != engine.d8_format:
             d8_fdr = tools.convert_fdr_formats(
@@ -57,7 +91,7 @@ def _match_d8_format(
             message=(
                 f'Could not ID the D8 format automatically! '
                 f'Please make sure its in {engine.d8_format} format '
-                f'for param:engine={engine.__name__}.'    
+                f'for param:engine={engine.__name__}.'
             ),
             category=UserWarning,
         )

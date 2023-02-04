@@ -369,6 +369,12 @@ def convert_fdr_formats(
             f'param:out_format = {out_format} which is not in {d8_formats}'
         )
 
+    # remove unexpected d8 values
+    d8_fdr = utilities._remove_unexpected_d8_values(
+        d8_fdr,
+        in_format,
+    )
+
     if in_format == out_format:
         return d8_fdr
 
@@ -380,15 +386,14 @@ def convert_fdr_formats(
         )
     )
 
-    D8ConversionDicts[in_format], D8ConversionDicts[out_format]
-
-    # convert appropriately using pandas (no clean implementation in xarray)
+    # get values in pandas (no clean implementation in xarray)
     in_df = pd.DataFrame()
     out_df = pd.DataFrame()
     in_df[0] = d8_fdr.values.ravel()
+
+    # apply the mapping and convert back to xarray
     out_df[0] = in_df[0].map(mapping)
 
-    # convert back to xarray
     d8_fdr = d8_fdr.copy(
         data=out_df[0].values.reshape(d8_fdr.shape),
     )
