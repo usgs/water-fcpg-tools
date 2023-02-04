@@ -42,12 +42,19 @@ def _remove_unexpected_d8_values(
     unexpected = [i for i in np.unique(d8_fdr.values) if i not in d8_values]
 
     if len(unexpected) > 0:
+        nodata = D8ConversionDicts[d8_format]['nodata']
+        warnings.warn(
+            message=(
+                f'Found unexpected values in the input {d8_format} D8-FDR: '
+                f'{unexpected}. Converting to nodata={nodata}.'
+            ),
+            category=UserWarning,
+        )
+
         # replace the values w/ pandas (no clean xarray implementation)
         df = pd.DataFrame()
         df[0] = d8_fdr.values.ravel()
-        df[0].loc[
-            (~df[0].isin(d8_values))
-        ] = D8ConversionDicts[d8_format]['nodata']
+        df[0].loc[(~df[0].isin(d8_values))] = nodata
 
         # write back to xarray
         d8_fdr = d8_fdr.copy(
@@ -56,7 +63,7 @@ def _remove_unexpected_d8_values(
 
         # update nodata value if necessary
         d8_fdr.rio.write_nodata(
-            D8ConversionDicts[d8_format]['nodata'],
+            nodata,
             inplace=True,
         )
         d8_fdr = d8_fdr.astype('int')
