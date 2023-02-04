@@ -3,7 +3,13 @@ Getting Started
 ## Installation
 `FCPGtools` can be installed from [`PyPI`](https://pypi.org/project/fcpgtools/) into a virtual environment containing [`GDAL`](https://anaconda.org/conda-forge/gdal), and for full functionality, [`TauDEM`](https://anaconda.org/conda-forge/taudem) as well.
 
-**We strongly encourage the following installation workflow:**
+**`pysheds` only quick-start:** If you are planning to only use functions supported by the `pysheds` "terrain engine" you install `fcpgtools` into your virtual environment of choice using `pip`:
+```
+pip install fcpgtools
+```
+
+
+**For full functionality we strongly encourage the following installation workflow:**
 
 1. Install the Anaconda Python Distribution or Miniconda
     * [Anaconda Individual Edition](https://www.anaconda.com/products/distribution) - includes `conda`, a complete Python (and R) data science stack, and the helpful Anaconda Navigator GUI.
@@ -26,6 +32,8 @@ Getting Started
     pip install jupyterlab-lsp
     pip install pydaymet
     ```
+
+**Caution:** Unfortunately `TauDEM` installs old versions of `GDAL` and [`PROJ`](https://proj.org/), which has the potential to cause conflict with libraries that require newer versions said dependencies. 
 
 ## Using FCPGtools
 Version 2.0 of `FCPGtools` has a "flat" architecture, meaning all functions can be accessed by importing the main `fcpgtools` module as shown in a simple example below:
