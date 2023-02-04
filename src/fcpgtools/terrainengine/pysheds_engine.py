@@ -106,10 +106,13 @@ class PyShedsEngine:
             The output Flow Accumulation Cells (FAC) raster.
         """
         d8_fdr = tools.load_raster(d8_fdr)
+
+        # convert nodata values to 0 for pysheds
         d8_fdr = d8_fdr.where(
             (d8_fdr.values != d8_fdr.rio.nodata),
             0,
         )
+        d8_fdr.rio.write_nodata(0, inplace=True)
         pysheds_input_dict = PyShedsEngine._prep_fdr_for_pysheds(d8_fdr)
 
         # prep kwargs to be passed into accumulate_flow()

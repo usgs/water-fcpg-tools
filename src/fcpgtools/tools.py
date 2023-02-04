@@ -463,22 +463,13 @@ def make_fac_weights(
     # convert in-bounds nodata to 0
     if np.isin(og_nodata, parameter_raster.values):
         parameter_raster = parameter_raster.where(
-            (fdr_raster.values == fdr_raster.rio.nodata) &
             (parameter_raster.values != og_nodata),
             0,
         )
 
     # update nodata and crs
-    parameter_raster.rio.write_nodata(
-        og_nodata,
-        inplace=True,
-    )
-
     parameter_raster.rio.write_crs(og_crs, inplace=True)
-    parameter_raster = utilities._change_nodata_value(
-        parameter_raster,
-        out_of_bounds_value,
-    )
+    parameter_raster.rio.write_nodata(out_of_bounds_value, inplace=True)
 
     # save raster if necessary
     if out_path is not None:
