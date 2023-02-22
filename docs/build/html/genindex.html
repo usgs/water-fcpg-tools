@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; Flow-Conditioned Parameter Grid Tools 2.0.1 documentation</title>
+  <title>Index &mdash; Flow-Conditioned Parameter Grid Tools 2.0.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
@@ -43,10 +43,12 @@
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook/Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook and Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Function API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_types.html">Custom Types and Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terrain_engine.html">Terrain Engine Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributions.html">Contributing Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="publications.html">Publications and Projects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
 </ul>
@@ -87,8 +89,10 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
  | <a href="#V"><strong>V</strong></a>
  
 </div>
@@ -96,9 +100,25 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="functions.html#fcpgtools.tools.accumulate_flow">accumulate_flow() (in module fcpgtools.tools)</a>
+
+      <ul>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.pysheds_engine.PyShedsEngine.accumulate_flow">(PyShedsEngine static method)</a>
 </li>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsAccumulateFlow.accumulate_flow">(SupportsAccumulateFlow method)</a>
+</li>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine.accumulate_flow">(TauDEMEngine static method)</a>
+</li>
+      </ul></li>
       <li><a href="functions.html#fcpgtools.tools.accumulate_parameter">accumulate_parameter() (in module fcpgtools.tools)</a>
+
+      <ul>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.pysheds_engine.PyShedsEngine.accumulate_parameter">(PyShedsEngine static method)</a>
 </li>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsAccumulateParameter.accumulate_parameter">(SupportsAccumulateParameter method)</a>
+</li>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine.accumulate_parameter">(TauDEMEngine static method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="functions.html#fcpgtools.tools.adjust_parameter_raster">adjust_parameter_raster() (in module fcpgtools.tools)</a>
@@ -123,10 +143,12 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="functions.html#fcpgtools.tools.clip">clip() (in module fcpgtools.tools)</a>
+      <li><a href="functions.html#fcpgtools.tools.check_function_kwargs">check_function_kwargs() (in module fcpgtools.tools)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="functions.html#fcpgtools.tools.clip">clip() (in module fcpgtools.tools)</a>
+</li>
       <li><a href="functions.html#fcpgtools.tools.convert_fdr_formats">convert_fdr_formats() (in module fcpgtools.tools)</a>
 </li>
   </ul></td>
@@ -135,14 +157,32 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="terrain_engine.html#fcpgtools.terrainengine.pysheds_engine.PyShedsEngine.d8_format">d8_format (PyShedsEngine attribute)</a>
+
+      <ul>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine.d8_format">(TauDEMEngine attribute)</a>
+</li>
+      </ul></li>
       <li><a href="functions.html#fcpgtools.tools.d8_to_dinfinity">d8_to_dinfinity() (in module fcpgtools.tools)</a>
 </li>
+      <li><a href="functions.html#fcpgtools.tools.decay_accumulation">decay_accumulation() (in module fcpgtools.tools)</a>
+
+      <ul>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsDecayAccumulation.decay_accumulation">(SupportsDecayAccumulation method)</a>
+</li>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine.decay_accumulation">(TauDEMEngine static method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="functions.html#fcpgtools.tools.decay_accumulation">decay_accumulation() (in module fcpgtools.tools)</a>
-</li>
       <li><a href="functions.html#fcpgtools.tools.distance_to_stream">distance_to_stream() (in module fcpgtools.tools)</a>
+
+      <ul>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsDistanceToStream.distance_to_stream">(SupportsDistanceToStream method)</a>
 </li>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine.distance_to_stream">(TauDEMEngine static method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -150,12 +190,48 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="functions.html#fcpgtools.tools.extreme_upslope_values">extreme_upslope_values() (in module fcpgtools.tools)</a>
+
+      <ul>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsExtremeUpslopeValues.extreme_upslope_values">(SupportsExtremeUpslopeValues method)</a>
 </li>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine.extreme_upslope_values">(TauDEMEngine static method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    fcpgtools.terrainengine.engine_validator
+
+      <ul>
+        <li><a href="terrain_engine.html#module-fcpgtools.terrainengine.engine_validator">module</a>
+</li>
+      </ul></li>
+      <li>
+    fcpgtools.terrainengine.protocols
+
+      <ul>
+        <li><a href="terrain_engine.html#module-fcpgtools.terrainengine.protocols">module</a>
+</li>
+      </ul></li>
+      <li>
+    fcpgtools.terrainengine.pysheds_engine
+
+      <ul>
+        <li><a href="terrain_engine.html#module-fcpgtools.terrainengine.pysheds_engine">module</a>
+</li>
+      </ul></li>
+      <li>
+    fcpgtools.terrainengine.taudem_engine
+
+      <ul>
+        <li><a href="terrain_engine.html#module-fcpgtools.terrainengine.taudem_engine">module</a>
+</li>
+      </ul></li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     fcpgtools.tools
@@ -164,12 +240,16 @@
         <li><a href="functions.html#module-fcpgtools.tools">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="functions.html#fcpgtools.tools.find_basin_pour_points">find_basin_pour_points() (in module fcpgtools.tools)</a>
 </li>
       <li><a href="functions.html#fcpgtools.tools.find_fac_pour_point">find_fac_pour_point() (in module fcpgtools.tools)</a>
 </li>
+      <li><a href="terrain_engine.html#fcpgtools.terrainengine.pysheds_engine.PyShedsEngine.function_kwargs">function_kwargs (PyShedsEngine attribute)</a>
+
+      <ul>
+        <li><a href="terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine.function_kwargs">(TauDEMEngine attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -202,17 +282,31 @@
 </li>
       <li><a href="functions.html#fcpgtools.tools.make_fcpg">make_fcpg() (in module fcpgtools.tools)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="functions.html#fcpgtools.tools.mask_streams">mask_streams() (in module fcpgtools.tools)</a>
 </li>
       <li>
     module
 
       <ul>
+        <li><a href="terrain_engine.html#module-fcpgtools.terrainengine.engine_validator">fcpgtools.terrainengine.engine_validator</a>
+</li>
+        <li><a href="terrain_engine.html#module-fcpgtools.terrainengine.protocols">fcpgtools.terrainengine.protocols</a>
+</li>
+        <li><a href="terrain_engine.html#module-fcpgtools.terrainengine.pysheds_engine">fcpgtools.terrainengine.pysheds_engine</a>
+</li>
+        <li><a href="terrain_engine.html#module-fcpgtools.terrainengine.taudem_engine">fcpgtools.terrainengine.taudem_engine</a>
+</li>
         <li><a href="functions.html#module-fcpgtools.tools">fcpgtools.tools</a>
 </li>
       </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="terrain_engine.html#fcpgtools.terrainengine.pysheds_engine.PyShedsEngine">PyShedsEngine (class in fcpgtools.terrainengine.pysheds_engine)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -235,17 +329,39 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="functions.html#fcpgtools.tools.save_raster">save_raster() (in module fcpgtools.tools)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="functions.html#fcpgtools.tools.save_shapefile">save_shapefile() (in module fcpgtools.tools)</a>
 </li>
       <li><a href="functions.html#fcpgtools.tools.spatial_mask">spatial_mask() (in module fcpgtools.tools)</a>
+</li>
+      <li><a href="terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsAccumulateFlow">SupportsAccumulateFlow (class in fcpgtools.terrainengine.protocols)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsAccumulateParameter">SupportsAccumulateParameter (class in fcpgtools.terrainengine.protocols)</a>
+</li>
+      <li><a href="terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsDecayAccumulation">SupportsDecayAccumulation (class in fcpgtools.terrainengine.protocols)</a>
+</li>
+      <li><a href="terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsDistanceToStream">SupportsDistanceToStream (class in fcpgtools.terrainengine.protocols)</a>
+</li>
+      <li><a href="terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsExtremeUpslopeValues">SupportsExtremeUpslopeValues (class in fcpgtools.terrainengine.protocols)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine">TauDEMEngine (class in fcpgtools.terrainengine.taudem_engine)</a>
 </li>
   </ul></td>
 </tr></table>
 
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="terrain_engine.html#fcpgtools.terrainengine.engine_validator.validate_engine">validate_engine() (in module fcpgtools.terrainengine.engine_validator)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="functions.html#fcpgtools.tools.value_mask">value_mask() (in module fcpgtools.tools)</a>
 </li>

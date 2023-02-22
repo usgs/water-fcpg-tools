@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Custom Types and Formats &mdash; Flow-Conditioned Parameter Grid Tools 2.0.1 documentation</title>
+  <title>Custom Types and Formats &mdash; Flow-Conditioned Parameter Grid Tools 2.0.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
@@ -21,8 +21,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Publications and Projects" href="publications.html" />
-    <link rel="prev" title="Migrating to FCPGtools Version 2.0" href="migrating_from_v1.html" /> 
+    <link rel="next" title="Terrain Engine Reference" href="terrain_engine.html" />
+    <link rel="prev" title="Function API Reference" href="functions.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,10 +46,12 @@
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook/Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook and Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Function API Reference</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Custom Types and Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terrain_engine.html">Terrain Engine Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributions.html">Contributing Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="publications.html">Publications and Projects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
 </ul>
@@ -81,9 +83,18 @@
   <section id="custom-types-and-formats">
 <h1>Custom Types and Formats<a class="headerlink" href="#custom-types-and-formats" title="Permalink to this heading"></a></h1>
 <p>Version 2.0 of <cite>FCPGtools</cite> utilizes <cite>custom_types.py</cite> to enable specific
-function input/output typehints, encode Flow Direction Raster (FDR) formats,
+function input/output type-hints, encode Flow Direction Raster (FDR) formats,
 and define the <cite>TauDEM</cite> terrain engine’s command line arguments.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Custom types for and statics.</span>
+
+<span class="sd">This module contains custom types (i.e. &quot;Raster&quot;) that are used repeatably </span>
+<span class="sd">in FCPGtools function as well as supported file formats (i.e. &quot;RasterSuffixes).</span>
+<span class="sd">Additionally, this module contains &quot;D8ConversionDicts&quot; which stores all </span>
+<span class="sd">supported D8 Flow Direction Raster (FDR) integer encodings.</span>
+<span class="sd">Finally, kwargs and command line input dicts (for TauDEM) are type-specified </span>
+<span class="sd">as typing.TypedDict classes.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypedDict</span>
 <span class="kn">from</span> <span class="nn">xarray</span> <span class="kn">import</span> <span class="n">DataArray</span>
 <span class="kn">from</span> <span class="nn">geopandas</span> <span class="kn">import</span> <span class="n">GeoDataFrame</span>
@@ -94,10 +105,8 @@ and define the <cite>TauDEM</cite> terrain engine’s command line arguments.</p
 
 <span class="n">Raster</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">DataArray</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span>
 <span class="n">Shapefile</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span>
-<span class="n">Engines</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;taudem&#39;</span><span class="p">,</span> <span class="s1">&#39;pysheds&#39;</span><span class="p">)</span>
 <span class="n">RasterSuffixes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;.tif&#39;</span><span class="p">)</span>
 <span class="n">ShapefileSuffixes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;.shp&#39;</span><span class="p">)</span>
-<span class="n">FDRD8Formats</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;esri&#39;</span><span class="p">,</span> <span class="s1">&#39;taudem&#39;</span><span class="p">)</span>
 
 <span class="c1"># create D8 conversion dictionaries</span>
 <span class="n">D8ConversionDicts</span> <span class="o">=</span> <span class="p">{</span>
@@ -141,7 +150,7 @@ and define the <cite>TauDEM</cite> terrain engine’s command line arguments.</p
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom type hint dict for storing pour point accumulation values.</span>
 
 <span class="sd">    Attributes: </span>
-<span class="sd">        pour_point_values: A list of N lists, eaching storing values associated with the</span>
+<span class="sd">        pour_point_values: A list of N lists, each storing values associated with the</span>
 <span class="sd">            list&#39;s index location in PourPointLocationsDict[&#39;pour_point_ids&#39;].</span>
 <span class="sd">            The length of each list is equal to the # of bands in the accumulation raster.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -154,6 +163,17 @@ and define the <cite>TauDEM</cite> terrain engine’s command line arguments.</p
     <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span>
 
 
+<span class="k">class</span> <span class="nc">PyShedsFACkwargsDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">fdir</span><span class="p">:</span> <span class="n">PyShedsRaster</span>
+    <span class="n">weights</span><span class="p">:</span> <span class="n">PyShedsRaster</span>
+    <span class="n">dirmap</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+    <span class="n">efficiency</span><span class="p">:</span> <span class="n">PyShedsRaster</span>
+    <span class="n">nodata_out</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+    <span class="n">routing</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">cycle_size</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">algorithm</span><span class="p">:</span> <span class="nb">str</span>
+
+
 <span class="k">class</span> <span class="nc">TaudemFACInputDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
     <span class="n">fdr</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">outFl</span><span class="p">:</span> <span class="nb">str</span>
@@ -162,7 +182,7 @@ and define the <cite>TauDEM</cite> terrain engine’s command line arguments.</p
     <span class="n">mpiArg</span><span class="p">:</span> <span class="nb">str</span>
 
 
-<span class="k">class</span> <span class="nc">Taudemdistance_to_streamInputDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">TaudemDistance_to_streamInputDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
     <span class="n">fdr</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">fac</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">outRast</span><span class="p">:</span> <span class="nb">str</span>
@@ -184,7 +204,7 @@ and define the <cite>TauDEM</cite> terrain engine’s command line arguments.</p
 
 <span class="n">TauDEMDict</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
     <span class="n">TaudemFACInputDict</span><span class="p">,</span>
-    <span class="n">Taudemdistance_to_streamInputDict</span><span class="p">,</span>
+    <span class="n">TaudemDistance_to_streamInputDict</span><span class="p">,</span>
     <span class="n">TaudemMaxUpslopeInputDict</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
@@ -195,8 +215,8 @@ and define the <cite>TauDEM</cite> terrain engine’s command line arguments.</p
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="migrating_from_v1.html" class="btn btn-neutral float-left" title="Migrating to FCPGtools Version 2.0" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="publications.html" class="btn btn-neutral float-right" title="Publications and Projects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="functions.html" class="btn btn-neutral float-left" title="Function API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="terrain_engine.html" class="btn btn-neutral float-right" title="Terrain Engine Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

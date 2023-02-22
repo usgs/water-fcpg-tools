@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Migrating to FCPGtools Version 2.0 &mdash; Flow-Conditioned Parameter Grid Tools 2.0.1 documentation</title>
+  <title>Migrating to FCPGtools Version 2.0 &mdash; Flow-Conditioned Parameter Grid Tools 2.0.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
@@ -21,8 +21,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Custom Types and Formats" href="custom_types.html" />
-    <link rel="prev" title="Cookbook/Examples" href="cookbook.html" /> 
+    <link rel="next" title="Function API Reference" href="functions.html" />
+    <link rel="prev" title="Cookbook and Examples" href="cookbook.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,8 +46,7 @@
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook/Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook and Examples</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#new-in-version-2-0">New in Version 2.0</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#key-updates">Key Updates</a></li>
@@ -58,14 +57,17 @@
 <li class="toctree-l3"><a class="reference internal" href="#i-o-functions">I/O Functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#key-use-case-functions">Key Use-Case Functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pour-points-cascade-functions">Pour Points / Cascade Functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#functions-made-redundant-but-still-accesible">Functions made redundant but still accesible</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#functions-made-redundant-but-still-accessible">Functions made redundant but still accessible</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#functions-moved-to-fcpgtools-utilities-wrapped-into-higher-level-functions">Functions moved to <code class="docutils literal notranslate"><span class="pre">fcpgtools.utilities</span></code> (wrapped into higher level functions)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#completely-removed-functions-no-longer-necessary-for-use-cases">Completely removed functions (no longer necessary for use-cases)</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Function API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_types.html">Custom Types and Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terrain_engine.html">Terrain Engine Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributions.html">Contributing Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="publications.html">Publications and Projects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
 </ul>
@@ -115,10 +117,10 @@
 </ul>
 </li>
 <li><p>Conversion of flow direction raster (FDR) formats (i.e. ESRI -&gt; TauDEM) is now automated behind-the-scenes.</p></li>
-<li><p>Support for multiple “terrain engines” gives users additional optionality and increases the resiliance to dependency deprecation (see <span class="xref myst">below</span>).</p>
+<li><p>Support for multiple “terrain engines” gives users additional optionality and increases the resilience to dependency deprecation (see <span class="xref myst">below</span>).</p>
 <ul>
 <li><p>Where necessary users can set <code class="docutils literal notranslate"><span class="pre">param:engine</span></code> to <a class="reference external" href="https://hydrology.usu.edu/taudem/taudem5/"><code class="docutils literal notranslate"><span class="pre">taudem</span></code></a> (default) or <a class="reference external" href="https://github.com/mdbartos/pysheds"><code class="docutils literal notranslate"><span class="pre">pysheds</span></code></a>.</p></li>
-<li><p>Note that the <code class="docutils literal notranslate"><span class="pre">pysheds</span></code> terrain engine is signifcantly more performant, but currently only supports <a class="reference external" href="https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_flow"><code class="docutils literal notranslate"><span class="pre">accumulate_flow()</span></code></a> and <a class="reference external" href="https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_parameter"><code class="docutils literal notranslate"><span class="pre">accumulate_parameter()</span></code></a>.</p></li>
+<li><p>Note that the <code class="docutils literal notranslate"><span class="pre">pysheds</span></code> terrain engine is significantly more performant, but currently only supports <a class="reference external" href="https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_flow"><code class="docutils literal notranslate"><span class="pre">accumulate_flow()</span></code></a> and <a class="reference external" href="https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_parameter"><code class="docutils literal notranslate"><span class="pre">accumulate_parameter()</span></code></a>.</p></li>
 </ul>
 </li>
 </ul>
@@ -175,8 +177,8 @@ is appended with the pour point values within <code class="docutils literal notr
 </ul>
 </section>
 <hr class="docutils" />
-<section id="functions-made-redundant-but-still-accesible">
-<h3>Functions made redundant but still accesible<a class="headerlink" href="#functions-made-redundant-but-still-accesible" title="Permalink to this heading"></a></h3>
+<section id="functions-made-redundant-but-still-accessible">
+<h3>Functions made redundant but still accessible<a class="headerlink" href="#functions-made-redundant-but-still-accessible" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">makeFACweight()</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">make_fac_weights()</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">adjustParam</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">adjust_parameter_raster()</span></code></p></li>
@@ -219,8 +221,8 @@ by utilizing f(x, y, t) rasters via <code class="docutils literal notranslate"><
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cookbook.html" class="btn btn-neutral float-left" title="Cookbook/Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="custom_types.html" class="btn btn-neutral float-right" title="Custom Types and Formats" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cookbook.html" class="btn btn-neutral float-left" title="Cookbook and Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="functions.html" class="btn btn-neutral float-right" title="Function API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
