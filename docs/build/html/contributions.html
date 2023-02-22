@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contributing Guide &mdash; Flow-Conditioned Parameter Grid Tools 2.0.2 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Publications and Projects" href="publications.html" />
+    <link rel="prev" title="Terrain Engine Reference" href="terrain_engine.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Flow-Conditioned Parameter Grid Tools
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook and Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Function API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_types.html">Custom Types and Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terrain_engine.html">Terrain Engine Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#where-to-start">Where to start?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contributing-code-or-documentation">Contributing Code or Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#git-best-practices">Git Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools-vs-utilities">Tools vs Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#terrain-engines">Terrain Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#custom-types-and-formats">Custom Types and Formats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#input-file-types">Input file types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-a-new-d8-flow-direction-raster-fdr-format">Adding a new D8 Flow Direction Raster (FDR) format</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#issuing-a-release-pypi-maintainers-only">Issuing a release (PyPi maintainers only)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications and Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Flow-Conditioned Parameter Grid Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Contributing Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/contributions.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="contributing-guide">
+<h1>Contributing Guide<a class="headerlink" href="#contributing-guide" title="Permalink to this heading"></a></h1>
+<section id="where-to-start">
+<h2>Where to start?<a class="headerlink" href="#where-to-start" title="Permalink to this heading"></a></h2>
+<p>All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome.</p>
+<p>Get started by looking through the list of <a class="reference external" href="https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/issues">open issues</a> to explore bugs or improvments suggested by others. If an open issue resonates, comment on it and ask how you might help.</p>
+<p>If you have a new suggestion <a class="reference external" href="https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/issues">open a new issue</a> to share your ideas and begin a discussion about potential solutions. If you are reporting a bug, provide enough detail so others can reproduce the bug.</p>
+</section>
+<section id="contributing-code-or-documentation">
+<h2>Contributing Code or Documentation<a class="headerlink" href="#contributing-code-or-documentation" title="Permalink to this heading"></a></h2>
+<p>Once you have identified or created an issue that you would like to address, use Git to create a feature branch to start modifying any file in the repository, whether it is source code, test code, examples, or documenation.</p>
+</section>
+<section id="git-best-practices">
+<h2>Git Best Practices<a class="headerlink" href="#git-best-practices" title="Permalink to this heading"></a></h2>
+<p>Thie project follows <a class="reference external" href="https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow">GitFlow workflow</a> conventions, in which branches serve these specific purposes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">main</span></code> branch reflects the latest release</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">develop</span></code> branch is a functioning candidate for the next release</p></li>
+<li><p>short-lived feature branches are created from <code class="docutils literal notranslate"><span class="pre">develop</span></code> to actively work on an issue.</p></li>
+</ul>
+<p>To contribute, create a feature branch from <code class="docutils literal notranslate"><span class="pre">develop</span></code>, work on your updates, commiting often (at least every couple of hours of work), once your update is working issue a merge request back to the <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch, and ask someone to review your merge request.</p>
+</section>
+<section id="tools-vs-utilities">
+<h2>Tools vs Utilities<a class="headerlink" href="#tools-vs-utilities" title="Permalink to this heading"></a></h2>
+<p>The main functions of FCPGtools exist in two module files, <code class="docutils literal notranslate"><span class="pre">tools.py</span></code> and <code class="docutils literal notranslate"><span class="pre">utilities.py</span></code>. It is important to understand the different purpose of these modules before contributing.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">tools.py</span></code></strong> contains functions for the main workflow used by end-users, including all that read/write files.</p>
+<ul class="simple">
+<li><p>Use from <code class="docutils literal notranslate"><span class="pre">fcpgtools</span></code> namespace</p></li>
+<li><p>Future edits should always be backward compatible for all v2.x releases, to accept the same inputs and provide the same outputs.</p></li>
+</ul>
+<p><strong><code class="docutils literal notranslate"><span class="pre">utilties.py</span></code></strong> contains functions used by <a class="reference external" href="http://tools.py">tools.py</a>, most often repeatedly, and also accessible to the user.</p>
+<ul class="simple">
+<li><p>Use from <code class="docutils literal notranslate"><span class="pre">fcpgtools.utilities</span></code> namespace</p></li>
+<li><p>Future edits could be allowed to break backward compatibility within v2.x releases, as these are primarily intended to be used internally by functions in <a class="reference external" href="http://tools.py">tools.py</a>.</p></li>
+</ul>
+</section>
+<section id="terrain-engines">
+<h2>Terrain Engines<a class="headerlink" href="#terrain-engines" title="Permalink to this heading"></a></h2>
+<p>Adding a new <code class="docutils literal notranslate"><span class="pre">terrain_engine</span></code> or expanding a <code class="docutils literal notranslate"><span class="pre">terrain_engine</span></code>’s functionality requires an understanding of a specific object oriented structural subtyping capability introduced with Python 3.8.</p>
+<p>The TerrainEngine geospatial methods are specified as <a class="reference external" href="https://peps.python.org/pep-0544/">Python Protocols</a> in the <code class="docutils literal notranslate"><span class="pre">terrain_engine/protocols.py</span></code>. These Protocols define the abstract signature of the various geospatial methods to be implemented in separate classes using python geospatial libraries to perform the necessary geospatial operations.</p>
+<p>To add additional TerrainEngines the developer should define a new class and implement the protocols (or a subset) defined in terrain_engine/protocols.py.</p>
+<p>To add additional geospatial functions the developer should first define a new protocol in the terrain_engine/protocols.py file. That protocol will define the abstract signature of the new geospatial method (including function name, arguments, and return type). Once a protocol is defined, a concrete implementation of the protocol can be developed in any of the various TerrainEngines.</p>
+<p>Note a future refactoring should consider leverage a plugin architecture for easier integration of third party TerrainEngines.</p>
+</section>
+<section id="custom-types-and-formats">
+<h2>Custom Types and Formats<a class="headerlink" href="#custom-types-and-formats" title="Permalink to this heading"></a></h2>
+<p>FCPGtools leverages numerous <a class="reference external" href="https://usgs.github.io/water-fcpg-tools/build/html/custom_types.html">custom types and formats</a> that are specified in the <code class="docutils literal notranslate"><span class="pre">custom_types.py</span></code> module.</p>
+<section id="input-file-types">
+<h3>Input file types<a class="headerlink" href="#input-file-types" title="Permalink to this heading"></a></h3>
+<p>To support a new input file type, update either the <code class="docutils literal notranslate"><span class="pre">custom_types.RasterSuffixes</span></code> or <code class="docutils literal notranslate"><span class="pre">custom_types.ShapefileSuffixes</span></code> tuple with the relevant file suffix (i.e., <code class="docutils literal notranslate"><span class="pre">.nc</span></code>). Then add an <code class="docutils literal notranslate"><span class="pre">elif</span></code> statement under <code class="docutils literal notranslate"><span class="pre">tools.load_raster()</span></code> or <code class="docutils literal notranslate"><span class="pre">tools.load_shapefile()</span></code> to handle the new extension type. Similarly, to support saving to new file type, add an <code class="docutils literal notranslate"><span class="pre">elif</span></code> statement to <code class="docutils literal notranslate"><span class="pre">tools.save_raster()</span></code> or <code class="docutils literal notranslate"><span class="pre">tools.save_shapefile()</span></code>.</p>
+</section>
+<section id="adding-a-new-d8-flow-direction-raster-fdr-format">
+<h3>Adding a new D8 Flow Direction Raster (FDR) format<a class="headerlink" href="#adding-a-new-d8-flow-direction-raster-fdr-format" title="Permalink to this heading"></a></h3>
+<p>To support a new D8 Flow Direction Raster (FDR) format, simply add a key-value mapping in <code class="docutils literal notranslate"><span class="pre">custom_types.D8ConversionDicts</span></code> where the key is the new formats name <strong>in lower case</strong>, and the value is a dictionary mapping each cardinal direction + nodata to an integer value.</p>
+</section>
+</section>
+<section id="issuing-a-release-pypi-maintainers-only">
+<h2>Issuing a release (PyPi maintainers only)<a class="headerlink" href="#issuing-a-release-pypi-maintainers-only" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Start with a fresh <code class="docutils literal notranslate"><span class="pre">fcgptools_base</span></code> environment by cloning our <a class="reference external" href="https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/environment.yml"><code class="docutils literal notranslate"><span class="pre">environment.yml</span></code></a> file.</p></li>
+<li><p>Search the entire directory to find references to the version number, and increment appropriately.</p></li>
+<li><p>Make a merge-request on GitLab to merge your feature or develop branch into the master branch. Once successful, switch to the master branch.</p></li>
+<li><p>Using the <code class="docutils literal notranslate"><span class="pre">conda</span></code> terminal, navigate to <code class="docutils literal notranslate"><span class="pre">/FCPGtools</span></code> containing the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> and <code class="docutils literal notranslate"><span class="pre">poetry.lock</span></code> files.</p></li>
+<li><p>Run the following commands in sequence to resolve the environment dependencies, install the updated copy of <code class="docutils literal notranslate"><span class="pre">fcpgtools</span></code> into your environment, then build a local wheel file for distribution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">lock</span>
+<span class="n">poetry</span> <span class="n">install</span>
+<span class="n">poetry</span> <span class="n">build</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>NOTE: The reason we use <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span></code> last is to make sure there are no issues installing the packaged wheel into our recommended virtual environment.</p></li>
+</ul>
+</li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">publish</span> <span class="pre">-u</span> <span class="pre">{YOUR-PyPI-USERNAME}</span> <span class="pre">-p</span> <span class="pre">{YOUR-PyPI-PASSWORD}</span></code> to publish the package to our <a class="reference external" href="https://pypi.org/project/fcpgtools/"><code class="docutils literal notranslate"><span class="pre">PyPI</span></code> distribution</a>.</p></li>
+<li><p>Issue a new release on the GitLab repository <a class="reference external" href="https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/releases">“releases” page</a>. Inform the users of all relevant updates, change to dependencies, and motivation behind the latest release.</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="terrain_engine.html" class="btn btn-neutral float-left" title="Terrain Engine Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="publications.html" class="btn btn-neutral float-right" title="Publications and Projects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Theodore Barnhart, Xavier Nogueira, Seth Siefken, August Raleigh Schultz, Anthony Aufdenkampe, Paul Tomasula, Roy Sando, Peter McCarthy, and Al Rea..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

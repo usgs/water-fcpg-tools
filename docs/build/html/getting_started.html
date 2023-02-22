@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Getting Started &mdash; Flow-Conditioned Parameter Grid Tools 2.0.1 documentation</title>
+  <title>Getting Started &mdash; Flow-Conditioned Parameter Grid Tools 2.0.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
@@ -21,8 +21,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Function Documentation" href="functions.html" />
-    <link rel="prev" title="FCPGtools Documentation Site" href="index.html" /> 
+    <link rel="next" title="Cookbook and Examples" href="cookbook.html" />
+    <link rel="prev" title="Welcome to FCPGtools Documentation!" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -50,10 +50,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#using-fcpgtools">Using FCPGtools</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="functions.html">Function Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook/Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook and Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Function API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_types.html">Custom Types and Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terrain_engine.html">Terrain Engine Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributions.html">Contributing Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="publications.html">Publications and Projects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="z_references.html">References</a></li>
 </ul>
@@ -87,7 +89,11 @@
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> can be installed from <a class="reference external" href="https://pypi.org/project/fcpgtools/"><code class="docutils literal notranslate"><span class="pre">PyPI</span></code></a> into a virtual environment containing <a class="reference external" href="https://anaconda.org/conda-forge/gdal"><code class="docutils literal notranslate"><span class="pre">GDAL</span></code></a>, and for full functionality, <a class="reference external" href="https://anaconda.org/conda-forge/taudem"><code class="docutils literal notranslate"><span class="pre">TauDEM</span></code></a> as well.</p>
-<p><strong>We strongly encourage the following installation workflow:</strong></p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">pysheds</span></code> only quick-start:</strong> If you are planning to only use functions supported by the <code class="docutils literal notranslate"><span class="pre">pysheds</span></code> “terrain engine” you install <code class="docutils literal notranslate"><span class="pre">fcpgtools</span></code> into your virtual environment of choice using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">fcpgtools</span>
+</pre></div>
+</div>
+<p><strong>For full functionality we strongly encourage the following installation workflow:</strong></p>
 <ol class="arabic">
 <li><p>Install the Anaconda Python Distribution or Miniconda</p>
 <ul class="simple">
@@ -108,11 +114,21 @@
 </pre></div>
 </div>
 </li>
+<li><p>(optional) pip install optional libraries required to run our demo notebook (<a class="reference external" href="https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/examples/v2_fcpgtools_demo.ipynb"><code class="docutils literal notranslate"><span class="pre">examples/v2_fcpgtools_demo.ipynb</span></code></a>), and to leverage in-line function completion/type-hints.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">jupyterlab</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">ipympl</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">python</span><span class="o">-</span><span class="n">lsp</span><span class="o">-</span><span class="n">server</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">jupyterlab</span><span class="o">-</span><span class="n">lsp</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">pydaymet</span>
+</pre></div>
+</div>
+</li>
 </ol>
+<p><strong>Caution:</strong> Unfortunately <code class="docutils literal notranslate"><span class="pre">TauDEM</span></code> installs old versions of <code class="docutils literal notranslate"><span class="pre">GDAL</span></code> and <a class="reference external" href="https://proj.org/"><code class="docutils literal notranslate"><span class="pre">PROJ</span></code></a>, which has the potential to cause conflict with libraries that require newer versions said dependencies.</p>
 </section>
 <section id="using-fcpgtools">
 <h2>Using FCPGtools<a class="headerlink" href="#using-fcpgtools" title="Permalink to this heading"></a></h2>
-<p>Version 2.0 of <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> has a “flat” architecture, meaning all functions can be accessed by importing the main <code class="docutils literal notranslate"><span class="pre">fcpgtools</span></code> module as shown in a simple example below:</p>
+<p>Getting started only takes a few lines of code:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># creating an flow accumulation raster from a Flow Direction Raster (FDR)</span>
 <span class="kn">import</span> <span class="nn">fcpgtools</span>
 
@@ -123,9 +139,14 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xarray</span><span class="o">.</span><span class="n">DataArray</span>
 </pre></div>
 </div>
-<p>Note that is you are accustomed to Version 1.0 of <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code>, you may want to
-start by referencing our
-<a class="reference external" href="https://usgs.github.io/water-fcpg-tools/migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a>
+<p>Version 2.0 of <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> has a “flat” architecture, meaning all functions
+can be accessed by importing the main <code class="docutils literal notranslate"><span class="pre">fcpgtools</span></code> module as shown in a simple example above.</p>
+<p>For a more complete demonstration of fucntionality, we suggest walking-through
+our <a class="reference external" href="https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/examples/v2_fcpgtools_demo.ipynb">examples/fcpgtools_v2_demo.ipynb</a>
+Jupyter Notebook and our <a class="reference external" href="https://usgs.github.io/water-fcpg-tools/build/html/cookbook.html">Cookbook and Examples</a>
+page.</p>
+<p>Note that is you are accustomed to Version 1.0 of <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code>, we suggest looking over our
+<a class="reference external" href="https://usgs.github.io/water-fcpg-tools/build/html/migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a>
 page.</p>
 </section>
 </section>
@@ -134,8 +155,8 @@ page.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="FCPGtools Documentation Site" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="functions.html" class="btn btn-neutral float-right" title="Function Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to FCPGtools Documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cookbook.html" class="btn btn-neutral float-right" title="Cookbook and Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

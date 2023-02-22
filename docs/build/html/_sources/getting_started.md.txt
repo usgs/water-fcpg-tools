@@ -3,7 +3,13 @@ Getting Started
 ## Installation
 `FCPGtools` can be installed from [`PyPI`](https://pypi.org/project/fcpgtools/) into a virtual environment containing [`GDAL`](https://anaconda.org/conda-forge/gdal), and for full functionality, [`TauDEM`](https://anaconda.org/conda-forge/taudem) as well.
 
-**We strongly encourage the following installation workflow:**
+**`pysheds` only quick-start:** If you are planning to only use functions supported by the `pysheds` "terrain engine" you install `fcpgtools` into your virtual environment of choice using `pip`:
+```
+pip install fcpgtools
+```
+
+
+**For full functionality we strongly encourage the following installation workflow:**
 
 1. Install the Anaconda Python Distribution or Miniconda
     * [Anaconda Individual Edition](https://www.anaconda.com/products/distribution) - includes `conda`, a complete Python (and R) data science stack, and the helpful Anaconda Navigator GUI.
@@ -18,9 +24,19 @@ Getting Started
     ```
     pip install fcpgtools
     ```
+4. (optional) pip install optional libraries required to run our demo notebook ([`examples/v2_fcpgtools_demo.ipynb`](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/examples/v2_fcpgtools_demo.ipynb)), and to leverage in-line function completion/type-hints.
+    ```
+    pip install jupyterlab
+    pip install ipympl
+    pip install python-lsp-server
+    pip install jupyterlab-lsp
+    pip install pydaymet
+    ```
+
+**Caution:** Unfortunately `TauDEM` installs old versions of `GDAL` and [`PROJ`](https://proj.org/), which has the potential to cause conflict with libraries that require newer versions said dependencies. 
 
 ## Using FCPGtools
-Version 2.0 of `FCPGtools` has a "flat" architecture, meaning all functions can be accessed by importing the main `fcpgtools` module as shown in a simple example below:
+Getting started only takes a few lines of code:
 
 ```python
 # creating an flow accumulation raster from a Flow Direction Raster (FDR)
@@ -33,7 +49,14 @@ flow_accumulation_grid = fcpgtools.accumulate_flow(
 ) -> xarray.DataArray
 ```
 
-Note that is you are accustomed to Version 1.0 of `FCPGtools`, you may want to 
-start by referencing our 
-[Migrating to `FCPGtools` Version 2.0](https://usgs.github.io/water-fcpg-tools/migrating_from_v1.html) 
+Version 2.0 of `FCPGtools` has a "flat" architecture, meaning all functions 
+can be accessed by importing the main `fcpgtools` module as shown in a simple example above.
+
+For a more complete demonstration of fucntionality, we suggest walking-through 
+our [examples/fcpgtools_v2_demo.ipynb](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/examples/v2_fcpgtools_demo.ipynb) 
+Jupyter Notebook and our [Cookbook and Examples](https://usgs.github.io/water-fcpg-tools/build/html/cookbook.html) 
+page.
+
+Note that is you are accustomed to Version 1.0 of `FCPGtools`, we suggest looking over our 
+[Migrating to `FCPGtools` Version 2.0](https://usgs.github.io/water-fcpg-tools/build/html/migrating_from_v1.html) 
 page.
