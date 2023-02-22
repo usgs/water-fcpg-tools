@@ -1,3 +1,13 @@
+"""PySheds terrain engine implementation.
+
+class:PyShedsEngine stores concrete implementation of some terrain engine 
+protocols, PySheds specific helper functions, the engines required D8 format,
+and a dictionary with valid function kwargs.
+
+For more information on PySheds see the projects documentation:
+http://mattbartos.com/pysheds/
+"""
+
 import xarray as xr
 import numpy as np
 from pysheds.grid import Grid

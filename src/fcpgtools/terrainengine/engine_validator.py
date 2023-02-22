@@ -1,3 +1,9 @@
+"""Controls the mapping of tools.py functions to supported engines.
+
+pyfunc:validate_engine is used as a decorator in tools.py to verify 
+whether the terrain engine specified with param:engine in functions 
+requiring one (i.e. accumulate_parameter()) supports the given function.
+"""
 from fcpgtools.terrainengine.taudem_engine import TauDEMEngine
 from fcpgtools.terrainengine.pysheds_engine import PyShedsEngine
 import functools

@@ -1,3 +1,11 @@
+"""Back-end FCPGtools utility functions.
+
+This module stores utility functions that are used repeatably in other modules.
+While some advanced users may find these functions relevant for their use 
+cases, it is worth noting that their backward compatibility is not promised 
+in future bux-fix releases. Additionally, these functions do not take 
+string/path inputs, and do not support saving outputs to a file path.
+"""
 import os
 import warnings
 import xarray as xr

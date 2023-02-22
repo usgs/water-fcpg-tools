@@ -1,3 +1,17 @@
+"""TauDEM terrain engine implementation.
+
+class:TauDEMEngine stores concrete implementation of some terrain engine 
+protocols, TauDEM specific helper functions, the engines required D8 format,
+and a dictionary with valid function kwargs.
+
+Note that when using the TauDEM terrain engine temporary files will be saved 
+to the current working directory. Additionally, in HPC environments one may 
+need to pass in kwargs={'mpiCall': 'alternative command line call'} if 
+'mpiexec' (default) is not a valid command line term.
+
+For more information on TauDEM see the projects documentation:
+https://hydrology.usu.edu/taudem/taudem5/
+"""
 import tempfile
 import subprocess
 import warnings
@@ -96,7 +110,7 @@ class TauDEMEngine:
                     file.unlink()
             except PermissionError:
                 could_not_delete.append(file)
-        
+
         could_not_delete = [f for f in could_not_delete if f.exists()]
         if len(could_not_delete) > 0:
             warnings.warn(
@@ -630,7 +644,7 @@ class TauDEMEngine:
         out_raster.close()
         if weights is not None:
             weights.close()
-        
+
         return out_raster
 
     @staticmethod

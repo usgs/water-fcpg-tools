@@ -6,6 +6,9 @@ All functions can accept inputs either as in memory objects
 Additionally, many functions have a out_path parameter that allows outputs to 
 be saved to a path in addition to the function returning an in-memory object.
 
+See function specific documentation here:
+https://usgs.github.io/water-fcpg-tools/build/html/functions.html
+
 See examples of use here:
 https://usgs.github.io/water-fcpg-tools/build/html/cookbook.html
 """
