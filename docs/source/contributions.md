@@ -32,9 +32,6 @@ The main functions of FCPGtools exist in two module files, `tools.py` and `utili
 - Future edits could be allowed to break backward compatibility within v2.x releases, as these are primarily intended to be used internally by functions in tools.py.
 
 
-## Input file types
-To support a new input file type, update either the `custom_types.RasterSuffixes` or `custom_types.ShapefileSuffixes` tuple with the relevant file suffix (i.e., `.nc`). Then add an `elif` statement under `tools.load_raster()` or `tools.load_shapefile()` to handle the new extension type. Similarly, to support saving to new file type, add an `elif` statement to `tools.save_raster()` or `tools.save_shapefile()`.
-
 ## Terrain Engines
 Adding a new `terrain_engine` or expanding a `terrain_engine`'s functionality requires an understanding of a specific object oriented structural subtyping capability introduced with Python 3.8.
 
@@ -46,8 +43,14 @@ To add additional geospatial functions the developer should first define a new p
 
 Note a future refactoring should consider leverage a plugin architecture for easier integration of third party TerrainEngines.
 
+## Custom Types and Formats
+FCPGtools leverages numerous [custom types and formats](https://usgs.github.io/water-fcpg-tools/build/html/custom_types.html) that are specified in the `custom_types.py` module.
 
-## Adding a new D8 Flow Direction Raster (FDR) format
+### Input file types
+To support a new input file type, update either the `custom_types.RasterSuffixes` or `custom_types.ShapefileSuffixes` tuple with the relevant file suffix (i.e., `.nc`). Then add an `elif` statement under `tools.load_raster()` or `tools.load_shapefile()` to handle the new extension type. Similarly, to support saving to new file type, add an `elif` statement to `tools.save_raster()` or `tools.save_shapefile()`.
+
+
+### Adding a new D8 Flow Direction Raster (FDR) format
 To support a new D8 Flow Direction Raster (FDR) format, simply add a key-value mapping in `custom_types.D8ConversionDicts` where the key is the new formats name **in lower case**, and the value is a dictionary mapping each cardinal direction + nodata to an integer value.
 
 # Issuing a release (PyPi maintainers only)

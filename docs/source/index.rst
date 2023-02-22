@@ -48,9 +48,12 @@ will help justify the continued maintenance of this library.
 
 Publication
 ------------
-Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 
-2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software 
-Release, DOI: https://doi.org/10.5066/P9W8UZ47.
+Barnhart, T.B., Schultz, A.R., Siefken, S.A., Thompson, F., Welborn, T., 
+Sando, T.R., Rea, A.H., McCarthy, P.M., 2021, Flow-Conditioned Parameter 
+Grids for the Contiguous United States: A Pilot, Seamless Basin Characteristic 
+Dataset: U.S. Geological Survey data release, https://doi.org/10.5066/P9HUWM6Q.
+
+
 
 Code Citation
 --------------
@@ -68,7 +71,7 @@ are provided below.
       https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/releases/v1.1.1. 
 * **Version 1.0** (IP-112996) was approved on September 3, 2020.
     * Siefken, S.A., T.B. Barnhart. 2020, Flow-Conditioned Parameter Grid Tools 
-      version 1.0.
+      version 1.0.  https://doi.org/10.5066/P9W8UZ47
 
 If you encounter and issues with this software, please bring it to our attention 
 by filling out a 
