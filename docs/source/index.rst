@@ -1,19 +1,22 @@
+************************************
 Welcome to FCPGtools Documentation!
-==================================
+************************************
 
-Flow-Conditioned Parameter Grid Tools (``FCPGtools``) is a Python 3 library that 
-enables users to quickly create flow-conditioned parameter grids (FCPGs), 
-as well other gridded output datasets, 
-for use in statistical, machine learning, and physical hydrologic modeling. 
+Flow-Conditioned Parameter Grid Tools (``FCPGtools``) is a Python 3 library  
+that enables users to quickly create flow-conditioned parameter grids (FCPGs), 
+as well other gridded output datasets, for use in statistical, 
+machine learning, and physical hydrologic modeling. FCPGtools can be used in 
+a Linux-based high performance computing (HPC) environment or locally on your 
+system.
 
-These tools analyze gridded parameter datasets -- 
+FCPGtools are used to analyze gridded parameter datasets -- 
 such as precipitation, slope, or land use -- relative to a 
 Flow Direction Grid/Raster (FDG/FDR) derived from terrain analysis, 
 to generate seamless FCPG raster outputs. 
 Each cell in these outputs stores a value that statistically summarizes 
 parameter values for all cells that are upstream, upflow, or uphill.
 
-More specifically, a FCPG is a pre-processing method that stores the **upstream 
+More specifically, an FCPG is a pre-processing output that stores the **upstream 
 average of a parameter datasets for each grid cells in a landscape**. 
 These tools allow you to store the upstream maximum and minimum parameter values, 
 or to generate a FCPG with a decay factor that modifies the downstream 
@@ -35,19 +38,37 @@ annual precipitation, land cover class, and latitude.
 
 
 Use and Citation
-------------------
-The FCPG Tools are part of the public domain as they are produced by 
-employees of the U.S. Government in collaboration with private sector contractors. 
-If you use these tools in your work, we request that you cite the latest 
-release of the code using the provided citation. This helps us ensure that the 
+================
+The FCPG Tools released to the public domain as they are produced by 
+employees of the U.S. Government in collaboration with private sector partners. 
+If you use these tools in your work, we request that you cite our publication 
+along with a code citation for the release you are using. This helps us ensure that the 
 contributions of the team behind the FCPG Tools are properly recognized, and 
 will help justify the continued maintenance of this library.
 
-* **Version 2.0** was released in December, 2022.
-    * Barnhart, T.B., Nogueira, X.R., Siefken, S.A., Schultz, A.R., Aufenkampe, A., Tomasula, P., 2023, Flow-Conditioned Parameter Grid Tools Version 2.0.
-* **Version 1.1** was released in September, 2022.
+Publication
+------------
+Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 
+2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software 
+Release, DOI: https://doi.org/10.5066/P9W8UZ47.
+
+Code Citation
+--------------
+`FCPGtools releases <https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/releases>` 
+are commonly assigned authorship in the order of number of contributions. Example citations
+are provided below.
+
+* **Version 2.0.2** was released February, 2023.
+    * Siefken, S.A., X.R. Nogueira, T.B. Barnhart, A.K. Aufenkampe, A.R. Schultz, 
+      P. Tomasula. 2023. Flow-Conditioned Parameter Grid Tools Version 2.0.2. 
+      https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/releases/v2.0.2.
+* **Version 1.1.0** was released September, 2022.  
+    * Siefken, S.A., T.B. Barnhart, A.R. Schultz, A.K. Aufenkampe, X.R. Nogueira. 2023. 
+      Flow-Conditioned Parameter Grid Tools Version 1.1.1. 
+      https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/releases/v1.1.1. 
 * **Version 1.0** (IP-112996) was approved on September 3, 2020.
-    * Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: https://doi.org/10.5066/P9W8UZ47.
+    * Siefken, S.A., T.B. Barnhart. 2020, Flow-Conditioned Parameter Grid Tools 
+      version 1.0.
 
 If you encounter and issues with this software, please bring it to our attention 
 by filling out a 
@@ -55,17 +76,17 @@ by filling out a
 
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents
+    :maxdepth: 2
+    :caption: Contents
 
-   getting_started
-   functions
-   cookbook
-   migrating_from_v1
-   custom_types
-   contributions
-   publications
-   z_references
+    getting_started
+    cookbook
+    migrating_from_v1
+    functions
+    custom_types
+    contributions
+    publications
+    z_references
 
 
 Site Index

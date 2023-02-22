@@ -1,4 +1,4 @@
-Cookbook/Examples
+Cookbook and Examples
 =====================
 
 Here we provide a few example work flows for common FCPG tasks.

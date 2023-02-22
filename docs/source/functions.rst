@@ -1,7 +1,8 @@
 .. _function-label:
 
-Function Documentation
-======================
+************************
+Function API Reference
+************************
 
 .. automodule:: fcpgtools.tools
     :members:

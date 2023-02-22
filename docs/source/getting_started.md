@@ -36,7 +36,7 @@ pip install fcpgtools
 **Caution:** Unfortunately `TauDEM` installs old versions of `GDAL` and [`PROJ`](https://proj.org/), which has the potential to cause conflict with libraries that require newer versions said dependencies. 
 
 ## Using FCPGtools
-Version 2.0 of `FCPGtools` has a "flat" architecture, meaning all functions can be accessed by importing the main `fcpgtools` module as shown in a simple example below:
+Getting started only takes a few lines of code:
 
 ```python
 # creating an flow accumulation raster from a Flow Direction Raster (FDR)
@@ -49,7 +49,14 @@ flow_accumulation_grid = fcpgtools.accumulate_flow(
 ) -> xarray.DataArray
 ```
 
-Note that is you are accustomed to Version 1.0 of `FCPGtools`, you may want to 
-start by referencing our 
-[Migrating to `FCPGtools` Version 2.0](https://usgs.github.io/water-fcpg-tools/migrating_from_v1.html) 
+Version 2.0 of `FCPGtools` has a "flat" architecture, meaning all functions 
+can be accessed by importing the main `fcpgtools` module as shown in a simple example above.
+
+For a more complete demonstration of fucntionality, we suggest walking-through 
+our [examples/fcpgtools_v2_demo.ipynb](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/examples/v2_fcpgtools_demo.ipynb) 
+Jupyter Notebook and our [Cookbook and Examples](https://usgs.github.io/water-fcpg-tools/build/html/cookbook.html) 
+page.
+
+Note that is you are accustomed to Version 1.0 of `FCPGtools`, we suggest looking over our 
+[Migrating to `FCPGtools` Version 2.0](https://usgs.github.io/water-fcpg-tools/build/html/migrating_from_v1.html) 
 page.
