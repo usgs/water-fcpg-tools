@@ -1,14 +1,14 @@
 Contributing Guide
 ===================
 
-# Where to start?
+## Where to start?
 All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome.
 
 Get started by looking through the list of [open issues](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/issues) to explore bugs or improvments suggested by others. If an open issue resonates, comment on it and ask how you might help.
 
 If you have a new suggestion [open a new issue](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/issues) to share your ideas and begin a discussion about potential solutions. If you are reporting a bug, provide enough detail so others can reproduce the bug.
 
-# Contributing Code or Documentation
+## Contributing Code or Documentation
 Once you have identified or created an issue that you would like to address, use Git to create a feature branch to start modifying any file in the repository, whether it is source code, test code, examples, or documenation.
 
 
@@ -53,7 +53,7 @@ To support a new input file type, update either the `custom_types.RasterSuffixes
 ### Adding a new D8 Flow Direction Raster (FDR) format
 To support a new D8 Flow Direction Raster (FDR) format, simply add a key-value mapping in `custom_types.D8ConversionDicts` where the key is the new formats name **in lower case**, and the value is a dictionary mapping each cardinal direction + nodata to an integer value.
 
-# Issuing a release (PyPi maintainers only)
+## Issuing a release (PyPi maintainers only)
 1. Start with a fresh `fcgptools_base` environment by cloning our [`environment.yml`](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/environment.yml) file.
 2. Search the entire directory to find references to the version number, and increment appropriately.
 3. Make a merge-request on GitLab to merge your feature or develop branch into the master branch. Once successful, switch to the master branch.

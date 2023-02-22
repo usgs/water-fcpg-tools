@@ -87,6 +87,7 @@ by filling out a
     migrating_from_v1
     functions
     custom_types
+    terrain_engine
     contributions
     publications
     z_references
