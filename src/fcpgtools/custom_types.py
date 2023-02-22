@@ -1,3 +1,12 @@
+"""Custom types for and statics.
+
+This module contains custom types (i.e. "Raster") that are used repeatably 
+in FCPGtools function as well as supported file formats (i.e. "RasterSuffixes).
+Additionally, this module contains "D8ConversionDicts" which stores all 
+supported D8 Flow Direction Raster (FDR) integer encodings.
+Finally, kwargs and command line input dicts (for TauDEM) are type-specified 
+as typing.TypedDict classes.
+"""
 from pathlib import Path
 from typing import Union, List, Tuple, TypedDict
 from xarray import DataArray
