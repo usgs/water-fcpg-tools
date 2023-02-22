@@ -1,5 +1,12 @@
-"""FCPGtools package
+"""FCPGtools package.
 
+Flow-Conditioned Parameter Grid Tools (FCPGtools) is a Python 3 library that 
+enables users to quickly create flow-conditioned parameter grids (FCPGs), 
+as well other gridded output datasets, for use in statistical, 
+machine learning, and physical hydrologic modeling.
+
+For more information and use examples see our documentation: 
+https://usgs.github.io/water-fcpg-tools/build/html/index.html
 
 """
 
