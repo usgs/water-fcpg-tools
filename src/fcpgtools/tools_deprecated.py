@@ -1,3 +1,12 @@
+"""This module contains deprecated V1 FCPGtools.
+
+In order to support legacy workflows, one can choose to import 
+fcpgtools.tools_deprecated as fcpgtools.
+A deprecation warning will be thrown by default. 
+
+For information on migrating from V1->V2 FCPGtools see:
+https://usgs.github.io/water-fcpg-tools/build/html/migrating_from_v1.html
+"""
 from rasterio.mask import mask
 import datetime
 import gc

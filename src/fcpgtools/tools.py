@@ -1,3 +1,14 @@
+"""Main user-facing FCPGtools functions.
+
+This file contains the user-facing tools imported when one imports fcpgtools.
+All functions can accept inputs either as in memory objects 
+(i.e. xarray.DataArray + geopandas.GeoDataFrame) or string/pathlib.Path inputs.
+Additionally, many functions have a out_path parameter that allows outputs to 
+be saved to a path in addition to the function returning an in-memory object.
+
+See examples of use here:
+https://usgs.github.io/water-fcpg-tools/build/html/cookbook.html
+"""
 from typing import Union, Dict, List, Tuple, Optional
 import warnings
 from pathlib import Path
