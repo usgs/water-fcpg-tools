@@ -15,17 +15,17 @@ NameToTerrainEngineDict = {
 
 
 def validate_engine(protocol):
-    """decorator verify `engine` argument of function matches required protocol
+    """Decorator used to verify that the `engine` argument of function matches required protocol.
 
-        Validation is performed at runtime. In the `engine` argument does not match the 
-        protocol specified, the decorator will raise a TypeError indicting the required
-        engine type for the original function.
+    Validation is performed at runtime. In the `engine` argument does not match the 
+    protocol specified, the decorator will raise a TypeError indicting the required
+    engine type for the original function.
 
-        Example usage:
+    Example usage:
 
-            @validate_engine(SupportsFACtoFDR)
-            def my_func(engine:SupportsFACtoFDR):
-                ...
+        @validate_engine(SupportsFACtoFDR)
+        def my_func(engine:SupportsFACtoFDR):
+            ...
     """
 
     def validator(func, *args, **kwargs) -> callable:
