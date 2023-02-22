@@ -63,6 +63,9 @@ rioxarray = "^0.13.3"
 pysheds = "^0.3.3"
 numba = "^0.56.4"
 
+# fixes strange cffi issue with 1.15.1
+cffi = "1.14.6"
+
 [tool.poetry.group.dev.dependencies]
 llvmlite = "^0.39.1"
 jupyterlab = "*"
