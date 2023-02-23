@@ -2,9 +2,9 @@
 Welcome to FCPGtools Documentation!
 ************************************
 
-Flow-Conditioned Parameter Grid Tools (``FCPGtools``) is a Python 3 library  
-that enables users to quickly create flow-conditioned parameter grids (FCPGs), 
-as well other gridded output datasets, for use in statistical, 
+`Flow-Conditioned Parameter Grid Tools (``FCPGtools``) <https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools>`_ 
+is a Python 3 library that enables users to quickly create a flow-conditioned parameter 
+grids (FCPG), as well other gridded output datasets, for use in statistical, 
 machine learning, and physical hydrologic modeling. FCPGtools can be used in 
 a Linux-based high performance computing (HPC) environment or locally on your 
 system.
@@ -17,7 +17,7 @@ Each cell in these outputs stores a value that statistically summarizes
 parameter values for all cells that are upstream, upflow, or uphill.
 
 More specifically, an FCPG is a pre-processing output that stores the **upstream 
-average of a parameter datasets for each grid cells in a landscape**. 
+statistics of parameter datasets for each grid cell in a landscape**. 
 These tools allow you to store the upstream maximum and minimum parameter values, 
 or to generate a FCPG with a decay factor that modifies the downstream 
 accumulation calculation of the parameter.
@@ -57,7 +57,7 @@ Dataset: U.S. Geological Survey data release, https://doi.org/10.5066/P9HUWM6Q.
 
 Code Citation
 --------------
-`FCPGtools releases <https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/releases>` 
+`FCPGtools releases <https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/releases>`_ 
 are commonly assigned authorship in the order of number of contributions. Example citations
 are provided below.
 
