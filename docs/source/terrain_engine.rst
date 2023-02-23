@@ -10,7 +10,7 @@ Python protocols defining the input/output signature of terrain engine functions
 
 This module stores abstract methods for all tools.py functions that require 
 a terrain engine. Nesting these methods in @runtime_checkable classes that 
-inherit from typing.Protocol allows function signatures to be verified via our 
+inherit from typing. Protocols allows function signatures to be verified via our 
 engine_validator.validate_engine decorator.
 
 For more information on Python Protocols see: https://peps.python.org/pep-0544/

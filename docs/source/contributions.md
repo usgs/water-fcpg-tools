@@ -27,9 +27,9 @@ The main functions of FCPGtools exist in two module files, `tools.py` and `utili
 - Use from `fcpgtools` namespace
 - Future edits should always be backward compatible for all v2.x releases, to accept the same inputs and provide the same outputs.
 
-**`utilties.py`** contains functions used by tools.py, most often repeatedly, and also accessible to the user.
+**`utilties.py`** contains functions used by `tools.py`, most often repeatedly, and also accessible to the user.
 - Use from `fcpgtools.utilities` namespace
-- Future edits could be allowed to break backward compatibility within v2.x releases, as these are primarily intended to be used internally by functions in tools.py.
+- Future edits could be allowed to break backward compatibility within v2.x releases, as these are primarily intended to be used internally by functions in `tools.py`.
 
 
 ## Terrain Engines
