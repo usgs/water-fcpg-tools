@@ -1,5 +1,20 @@
+"""TauDEM terrain engine implementation.
+
+class:TauDEMEngine stores concrete implementation of some terrain engine 
+protocols, TauDEM specific helper functions, the engines required D8 format,
+and a dictionary with valid function kwargs.
+
+Note that when using the TauDEM terrain engine temporary files will be saved 
+to the current working directory. Additionally, in HPC environments one may 
+need to pass in kwargs={'mpiCall': 'alternative command line call'} if 
+'mpiexec' (default) is not a valid command line term.
+
+For more information on TauDEM see the projects documentation:
+https://hydrology.usu.edu/taudem/taudem5/
+"""
 import tempfile
 import subprocess
+import warnings
 import pathlib
 import tempfile
 from typing import List, Dict, Union, Optional
@@ -8,12 +23,21 @@ import numpy as np
 import xarray as xr
 import fcpgtools.tools as tools
 import fcpgtools.utilities as utilities
+import fcpgtools.custom_types as custom_types
 from fcpgtools.custom_types import Raster, TauDEMDict, PourPointValuesDict
 
 
 class TauDEMEngine:
 
     d8_format = 'taudem'
+
+    function_kwargs = {
+        'accumulate_flow': custom_types.TaudemFACInputDict.__annotations__,
+        'accumulate_parameter': custom_types.TaudemFACInputDict.__annotations__,
+        'distance_to_stream': custom_types.TaudemDistance_to_streamInputDict.__annotations__,
+        'extreme_upslope_values': custom_types.TaudemMaxUpslopeInputDict.__annotations__,
+        'decay_accumulation': custom_types.TaudemFACInputDict.__annotations__,
+    }
 
     @staticmethod
     def _taudem_prepper(
@@ -75,7 +99,7 @@ class TauDEMEngine:
             prefixs = [prefixs]
 
         # delete files with matching prefixes
-        could_not_delete = 0
+        could_not_delete = []
         for file in directory.iterdir():
             try:
                 remove = False
@@ -85,11 +109,17 @@ class TauDEMEngine:
                 if remove:
                     file.unlink()
             except PermissionError:
-                could_not_delete += 1
-        if could_not_delete > 0:
-            print(
-                f'WARNING: Could not delete {could_not_delete} temp files in'
-                f' {str(directory)} due to a PermissionError.')
+                could_not_delete.append(file)
+
+        could_not_delete = [f for f in could_not_delete if f.exists()]
+        if len(could_not_delete) > 0:
+            warnings.warn(
+                message=(
+                    f'Could not delete {len(could_not_delete)} temp files in'
+                    f' {str(directory)} due to a PermissionError.'
+                ),
+                category=UserWarning,
+            )
             del could_not_delete
 
     @staticmethod
@@ -118,14 +148,12 @@ class TauDEMEngine:
         """
         d8_fdr_path = TauDEMEngine._taudem_prepper(d8_fdr)
 
-        # get tempoarary files for necessary inputs
+        # get temporary files for necessary inputs
         if upstream_pour_points is None and weights is None:
             weight_path = ''
             wg = ''
         else:
-            if weights is not None:
-                weights = weights
-            else:
+            if weights is None:
                 weights = xr.zeros_like(
                     d8_fdr,
                     dtype=np.dtype('float64'),
@@ -179,7 +207,9 @@ class TauDEMEngine:
 
         if not Path(taudem_dict['outFl']).exists():
             raise FileNotFoundError(
-                'TauDEM areaD8 failed to create an output!')
+                'TauDEM areaD8 failed to create an output! '
+                'Make sure TauDEM is in your virtual environment.'
+            )
 
         out_raster = tools.load_raster(Path(taudem_dict['outFl']))
         out_raster = out_raster.astype(np.float64)
@@ -201,6 +231,8 @@ class TauDEMEngine:
         out_raster.close()
         if weights is None:
             TauDEMEngine._clear_temp_files(prefixs=['fac_temp'])
+        else:
+            weights.close()
 
         return out_raster
 
@@ -275,7 +307,7 @@ class TauDEMEngine:
             out_raster = list(out_dict.items())[0][1]
         out_raster.name = 'accumulate_parameter'
 
-        # save if necessary and remove temp files
+        # save if necessary
         if isinstance(out_path, str):
             out_path = Path(out_path)
         if out_path is not None:
@@ -284,9 +316,16 @@ class TauDEMEngine:
                 out_path,
             )
 
+        # remove temporary files and return output
+        d8_fdr.close()
+        accumulated.close()
+        array.close()
+        parameter_raster.close()
         out_raster.close()
+
         TauDEMEngine._clear_temp_files(
-            prefixs=['taudem_temp_input', 'fac_temp'])
+            prefixs=['taudem_temp_input', 'fac_temp']
+        )
 
         return out_raster
 
@@ -377,8 +416,11 @@ class TauDEMEngine:
         )
 
         # clear temporary files and return the output
+        d8_fdr.close()
         fac_raster.close()
+        streams.close()
         out_raster.close()
+
         TauDEMEngine._clear_temp_files(
             prefixs=['taudem_temp_input', 'distance_to_stream_temp'])
 
@@ -477,7 +519,7 @@ class TauDEMEngine:
         else:
             raster_bands = {(0, 0): parameter_raster}
 
-        # create extream upslope value rasters for each parameter raster band
+        # create extreme upslope value rasters for each parameter raster band
         out_dict = {}
         for index_tuple, array in raster_bands.items():
             i, dim_name = index_tuple
@@ -506,9 +548,13 @@ class TauDEMEngine:
                     np.nan,
                 )
             else:
-                print('WARNING: Stream mask does not align with extream upslope value output! '
-                      'No mask is applied.'
-                      )
+                warnings.warn(
+                    message=(
+                        'Stream mask does not align with extreme upslope value output! '
+                        'No mask is applied.'
+                    ),
+                    category=UserWarning,
+                )
 
         # update nodata values
         out_raster = utilities._change_nodata_value(
@@ -525,10 +571,14 @@ class TauDEMEngine:
 
         # clear temporary files and return the output
         d8_fdr.close()
+        upslope_raster.close()
+        array.close()
         parameter_raster.close()
         out_raster.close()
+
         TauDEMEngine._clear_temp_files(
-            prefixs=['taudem_temp_input', 'ext_upslope_temp'])
+            prefixs=['taudem_temp_input', 'ext_upslope_temp']
+        )
         return out_raster
 
     @staticmethod
@@ -591,8 +641,10 @@ class TauDEMEngine:
             np.nan,
         )
 
-        weights.close()
         out_raster.close()
+        if weights is not None:
+            weights.close()
+
         return out_raster
 
     @staticmethod
@@ -661,7 +713,7 @@ class TauDEMEngine:
             else:
                 raster_bands = {(0, 0): weights}
 
-            # create extream upslope value rasters for each parameter raster band
+            # create extreme upslope value rasters for each parameter raster band
             out_dict = {}
             for index_tuple, array in raster_bands.items():
                 i, dim_name = index_tuple
@@ -711,7 +763,17 @@ class TauDEMEngine:
         # clear temporary files and return the output
         out_raster.close()
         decay_raster.close()
+        array.close()
+        decay_acc_raster.close()
         dinf_fdr.close()
+        d8_fdr.close()
+
+        if weights is not None:
+            weights.close()
+        if parameter_raster is not None:
+            parameter_raster.close()
+
         TauDEMEngine._clear_temp_files(
-            prefixs=['taudem_temp_input', 'decay_accum_temp'])
+            prefixs=['taudem_temp_input', 'decay_accum_temp']
+        )
         return out_raster

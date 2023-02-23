@@ -1,3 +1,13 @@
+"""PySheds terrain engine implementation.
+
+class:PyShedsEngine stores concrete implementation of some terrain engine 
+protocols, PySheds specific helper functions, the engines required D8 format,
+and a dictionary with valid function kwargs.
+
+For more information on PySheds see the projects documentation:
+http://mattbartos.com/pysheds/
+"""
+
 import xarray as xr
 import numpy as np
 from pysheds.grid import Grid
@@ -7,12 +17,18 @@ from pathlib import Path
 from typing import Union, Optional
 import fcpgtools.tools as tools
 import fcpgtools.utilities as utilities
+import fcpgtools.custom_types as custom_types
 from fcpgtools.custom_types import Raster, PyShedsInputDict, PourPointValuesDict
 
 
 class PyShedsEngine:
 
     d8_format = 'esri'
+
+    function_kwargs = {
+        'accumulate_flow': custom_types.PyShedsFACkwargsDict.__annotations__,
+        'accumulate_parameter': custom_types.PyShedsFACkwargsDict.__annotations__,
+    }
 
     @staticmethod
     def _prep_fdr_for_pysheds(
@@ -100,10 +116,13 @@ class PyShedsEngine:
             The output Flow Accumulation Cells (FAC) raster.
         """
         d8_fdr = tools.load_raster(d8_fdr)
+
+        # convert nodata values to 0 for pysheds
         d8_fdr = d8_fdr.where(
             (d8_fdr.values != d8_fdr.rio.nodata),
             0,
         )
+        d8_fdr.rio.write_nodata(0, inplace=True)
         pysheds_input_dict = PyShedsEngine._prep_fdr_for_pysheds(d8_fdr)
 
         # prep kwargs to be passed into accumulate_flow()
@@ -113,7 +132,7 @@ class PyShedsEngine:
         # add weights if necessary
         if weights is not None or upstream_pour_points is not None:
             if weights is not None:
-                weights = weights
+                pass
             elif upstream_pour_points is not None:
                 weights = xr.zeros_like(
                     d8_fdr,

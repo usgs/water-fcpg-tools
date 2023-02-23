@@ -1,4 +1,19 @@
+"""Main user-facing FCPGtools functions.
+
+This file contains the user-facing tools imported when one imports fcpgtools.
+All functions can accept inputs either as in memory objects 
+(i.e. xarray.DataArray + geopandas.GeoDataFrame) or string/pathlib.Path inputs.
+Additionally, many functions have a out_path parameter that allows outputs to 
+be saved to a path in addition to the function returning an in-memory object.
+
+See function specific documentation here:
+https://usgs.github.io/water-fcpg-tools/build/html/functions.html
+
+See examples of use here:
+https://usgs.github.io/water-fcpg-tools/build/html/cookbook.html
+"""
 from typing import Union, Dict, List, Tuple, Optional
+import warnings
 from pathlib import Path
 import xarray as xr
 import rioxarray as rio
@@ -8,21 +23,37 @@ import geopandas as gpd
 from rasterio.enums import Resampling
 import fcpgtools.utilities as utilities
 from fcpgtools.terrainengine import protocols, engine_validator
-from fcpgtools.custom_types import Raster, Shapefile, FDRD8Formats, D8ConversionDicts
+from fcpgtools.custom_types import (
+    Raster,
+    RasterSuffixes,
+    Shapefile,
+    ShapefileSuffixes,
+    D8ConversionDicts,
+)
 from fcpgtools.custom_types import PourPointLocationsDict, PourPointValuesDict
 
 
 def load_raster(
     in_raster: Raster,
 ) -> xr.DataArray:
-    """Loads a raster into a xarray.DataArray object. Can also be used to prep an existing DataArray for processing."""
+    """Loads a raster into a xarray.DataArray object."""
     if isinstance(in_raster, xr.DataArray):
         return utilities._format_nodata(in_raster.squeeze())
     if isinstance(in_raster, str) or in_raster is None:
         in_raster = Path(in_raster)
         if not in_raster.exists():
             raise FileNotFoundError(f'Input path {in_raster} is not found.')
-    return utilities._format_nodata(rio.open_rasterio(in_raster).squeeze())
+    if not isinstance(in_raster, Path):
+        raise TypeError(
+            f'param:in_raster must be of type {Raster}!'
+        )
+    if in_raster.suffix == '.tif':
+        return utilities._format_nodata(rio.open_rasterio(in_raster).squeeze())
+    else:
+        raise ValueError(
+            f'{in_raster.suffix} is not a supported raster type. '
+            f'Please choose from {RasterSuffixes}.'
+        )
 
 
 def load_shapefile(
@@ -35,7 +66,17 @@ def load_shapefile(
         in_shapefile = Path(in_shapefile)
         if not in_shapefile.exists():
             raise FileNotFoundError(f'Input path {in_shapefile} is not found.')
-    return gpd.read_file(in_shapefile)
+    if not isinstance(in_shapefile, Path):
+        raise TypeError(
+            f'param:in_shapefile must be of type {Shapefile}!'
+        )
+    if in_shapefile.suffix == '.shp':
+        return gpd.read_file(in_shapefile)
+    else:
+        raise ValueError(
+            f'{in_shapefile.suffix} is not a supported shapefile type. '
+            f'Please choose from {ShapefileSuffixes}.'
+        )
 
 
 def save_raster(
@@ -47,9 +88,25 @@ def save_raster(
         out_path = Path(out_path)
 
     if Path.exists(out_path):
-        print(f'WARNING: Cannot overwrite {out_path}!')
+        warnings.warn(
+            message=f'Cannot overwrite {out_path}! Saving raster failed.',
+            category=UserWarning,
+        )
         return None
-    out_raster.rio.to_raster(out_path)
+
+    try:
+        if out_path.suffix == '.tif':
+            out_raster.rio.to_raster(out_path)
+        else:
+            raise ValueError(
+                f'{out_raster.suffix} is not a supported raster output file type. '
+                f'Please choose from {RasterSuffixes}.'
+            )
+    except Exception as e:
+        warnings.warn(
+            message=f'Could not save shapefile due to {e}',
+            category=UserWarning,
+        )
 
 
 def save_shapefile(
@@ -61,16 +118,29 @@ def save_shapefile(
         out_path = Path(out_path)
 
     if Path.exists(out_path):
-        print(f'WARNING: Cannot overwrite {out_path}!')
+        warnings.warn(
+            message=f'Cannot overwrite {out_path}! Saving shapefile failed.',
+            category=UserWarning,
+        )
         return None
+
     try:
-        out_shapefile.to_file(out_path)
+        if out_path.suffix == '.shp':
+            out_shapefile.to_file(out_path)
+        else:
+            raise ValueError(
+                f'{out_path.suffix} is not a supported output shapefile type. '
+                f'Please choose from {ShapefileSuffixes}.'
+            )
     except Exception as e:
-        print(e)
+        warnings.warn(
+            message=f'Could not save shapefile due to {e}',
+            category=UserWarning,
+        )
 
 
 def align_raster(
-    in_raster,
+    in_raster: Raster,
     match_raster: Raster,
     resample_method: str = 'nearest',
     out_path: Optional[Union[str, Path]] = None,
@@ -87,6 +157,7 @@ def align_raster(
     Returns:
         The output aligned raster.
     """
+    in_raster = load_raster(in_raster)
 
     out_raster = in_raster.rio.reproject_match(
         match_raster,
@@ -164,7 +235,7 @@ def reproject_raster(
     Args:
         in_raster: Input raster.
         out_crs: A raster or shapefile with the desired CRS to reproject to.
-        resolution: Allows the output resolution to be overriden.
+        resolution: Allows the output resolution to be overridden.
         wkt_string: Allows the user to define the output CRS using a custom valid WKT string.
         out_path: Defines a path to save the output raster.
 
@@ -220,7 +291,7 @@ def reproject_shapefile(
         out_crs = wkt_string
     else:
         raise ValueError(
-            'Must pass in eitehr param:out_crs or param:wkt_string')
+            'Must pass in either param:out_crs or param:wkt_string')
 
     out_shapefile = in_shapefile.to_crs(out_crs)
     if out_path is not None:
@@ -301,20 +372,27 @@ def convert_fdr_formats(
         in_format = utilities._id_d8_format(d8_fdr)
 
     # check that both formats are valid before proceeding
-    if in_format not in FDRD8Formats:
+    d8_formats = list(D8ConversionDicts.keys())
+    if in_format not in d8_formats:
         raise TypeError(
-            f'param:in_format = {in_format} which is not in {FDRD8Formats}'
+            f'param:in_format = {in_format} which is not in {d8_formats}'
         )
 
-    if out_format not in FDRD8Formats:
+    if out_format not in d8_formats:
         raise TypeError(
-            f'param:out_format = {out_format} which is not in {FDRD8Formats}'
+            f'param:out_format = {out_format} which is not in {d8_formats}'
         )
+
+    # remove unexpected d8 values
+    d8_fdr = utilities._remove_unexpected_d8_values(
+        d8_fdr,
+        in_format,
+    )
 
     if in_format == out_format:
         return d8_fdr
 
-    # get the conversion dictionary mappinng
+    # get the conversion dictionary mapping
     mapping = dict(
         zip(
             D8ConversionDicts[in_format].values(),
@@ -322,15 +400,14 @@ def convert_fdr_formats(
         )
     )
 
-    D8ConversionDicts[in_format], D8ConversionDicts[out_format]
-
-    # convert appropriately using pandas (no clean implementation in xarray)
+    # get values in pandas (no clean implementation in xarray)
     in_df = pd.DataFrame()
     out_df = pd.DataFrame()
     in_df[0] = d8_fdr.values.ravel()
+
+    # apply the mapping and convert back to xarray
     out_df[0] = in_df[0].map(mapping)
 
-    # convert back to xarray
     d8_fdr = d8_fdr.copy(
         data=out_df[0].values.reshape(d8_fdr.shape),
     )
@@ -342,9 +419,6 @@ def convert_fdr_formats(
     )
     d8_fdr = d8_fdr.astype('int')
 
-    print(f'Converted the D8 Flow Direction Raster (FDR) from {in_format} format'
-          f' to {out_format}')
-
     if out_path is not None:
         save_raster(
             d8_fdr,
@@ -355,8 +429,8 @@ def convert_fdr_formats(
 
 
 def make_fac_weights(
-    parameter_raster: xr.DataArray,
-    fdr_raster: xr.DataArray,
+    parameter_raster: Raster,
+    fdr_raster: Raster,
     out_of_bounds_value: Union[float, int],
     out_path: Optional[Union[str, Path]] = None,
 ) -> xr.DataArray:
@@ -374,19 +448,26 @@ def make_fac_weights(
     Returns:
         The prepped parameter grid.
     """
+    # intake rasters
+    parameter_raster = load_raster(parameter_raster)
+    fdr_raster = load_raster(fdr_raster)
 
     # check that shapes match
     if not utilities._verify_shape_match(fdr_raster, parameter_raster):
-        raise TypeError('The D8 FDR raster and the parameter raster must have the same shape. '
-                        'Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).')
+        raise TypeError(
+            'The D8 FDR raster and the parameter raster must have the same shape. '
+            'Please run fcpgtools.tools.align_raster(d8_fdr, parameter_raster).'
+        )
 
     # use a where query to replace out of bounds values
     og_nodata = parameter_raster.rio.nodata
     og_crs = utilities._get_crs(parameter_raster)
 
     if not utilities._verify_alignment(parameter_raster, fdr_raster):
-        raise TypeError('param:parameter_raster and param:fdr_raster are not aligned! '
-                        'Please use tools.align_raster() before applying this tool!')
+        raise TypeError(
+            'param:parameter_raster and param:fdr_raster are not aligned! '
+            'Please use tools.align_raster() before applying this tool!'
+        )
 
     parameter_raster = parameter_raster.where(
         fdr_raster.values != fdr_raster.rio.nodata,
@@ -396,22 +477,13 @@ def make_fac_weights(
     # convert in-bounds nodata to 0
     if np.isin(og_nodata, parameter_raster.values):
         parameter_raster = parameter_raster.where(
-            (fdr_raster.values == fdr_raster.rio.nodata) &
             (parameter_raster.values != og_nodata),
             0,
         )
 
     # update nodata and crs
-    parameter_raster.rio.write_nodata(
-        og_nodata,
-        inplace=True,
-    )
-
     parameter_raster.rio.write_crs(og_crs, inplace=True)
-    parameter_raster = utilities._change_nodata_value(
-        parameter_raster,
-        out_of_bounds_value,
-    )
+    parameter_raster.rio.write_nodata(out_of_bounds_value, inplace=True)
 
     # save raster if necessary
     if out_path is not None:
@@ -429,14 +501,16 @@ def adjust_parameter_raster(
     upstream_pour_points: PourPointValuesDict,
     out_path: Optional[Union[str, Path]] = None,
 ) -> xr.DataArray:
-    """Adds values to a parameter raster's at specific pour points / coordinates for use in accumulate_parameter().
+    """Adds values to a parameter raster's at specific coordinates / pour points.
 
-    The main utility of this function is to enable cascading accumulation values from one basin or raster to another.
+    The main utility of this function is to enable cascading accumulation values
+    from one basin or raster to another via accumulate_parameter().
 
     Args:
         parameter_raster: Input parameter raster to update.
         d8_fdr: a D8 Flow Direction Raster.
-        upstream_pour_points: A dictionary with coordinates to update values at, and the values to add.
+        upstream_pour_points: A dictionary with coordinates to update values at,
+            and the values to add.
         out_path: Defines a path to save the output raster.
 
     Returns:
@@ -462,8 +536,13 @@ def adjust_parameter_raster(
 
         # verify coverage
         if not utilities._verify_coords_coverage(parameter_raster, ds_coords):
-            print(
-                f'WARNING: Cell downstream from pour point coords={coords} is out of bounds -> skipped!')
+            warnings.warn(
+                message=(
+                    f'Cell downstream from pour point coords={coords} '
+                    f'is out of bounds -> skipped!'
+                ),
+                category=UserWarning
+            )
             continue
 
         if len(parameter_raster.shape) == 2:
@@ -473,7 +552,7 @@ def adjust_parameter_raster(
             )
         else:
             dim_index_values = parameter_raster[parameter_raster.dims[0]].values
-            for band_index, value in enumerate(dim_index_values):
+            for band_index, _value in enumerate(dim_index_values):
                 parameter_raster[band_index, :, :] = utilities._update_raster_values(
                     in_raster=parameter_raster[band_index, :, :],
                     update_points=[(ds_coords, values_list[band_index])],
@@ -493,16 +572,19 @@ def make_decay_raster(
     decay_factor: Union[int, float],
     out_path: Optional[Union[str, Path]] = None,
 ) -> xr.DataArray:
-    """Creates a decay raster based on distance to stream for use in decay_accumulate().
+    """Creates a decay raster based on distance to stream.
 
+    This function is used to prep for decay_accumulate().
     Grid cell values are computed as the inverse number of grid cells,
-    :code:`np.exp((-1 * distance_to_stream * cell_size) / (cell_size ** k))`, where k is a
-    constant applied to the cell size values.
+    :code:`np.exp((-1 * distance_to_stream * cell_size) / (cell_size ** k))`,
+    where k is a constant applied to the cell size values.
 
     Args:
-        distance_to_stream_raster: A distance to stream raster output from distance_to_stream().
+        distance_to_stream_raster: A distance to stream raster output from 
+            distance_to_stream().
         decay_factor: Dimensionless constant applied to decay factor denominator.
-            NOTE: Set k to 2 for 'moderate' decay; greater than 2 for slower decay; or less than 2 for faster decay.
+            NOTE: Set k to 2 for 'moderate' decay; greater than 2 for slower 
+            decay; or less than 2 for faster decay.
         out_path: Defines a path to save the output raster.
 
     Returns:
@@ -541,11 +623,13 @@ def spatial_mask(
     inverse: bool = False,
     out_path: Optional[Union[str, Path]] = None,
 ) -> xr.DataArray:
-    """Applys a spatial mask via a shapefile to a raster, converting out of bounds values by default to nodata.
+    """Applies a spatial mask via a shapefile to a raster.
 
-    Primarily for masking rasters (i.e., FAC) by basin shapefiles, converting out-of-mask raster
-    values to NoData. A cell value can also be used to create a mask for integer rasters. 
-    Note: default behavior (inverse=False) will make it so cells NOT COVERED by mask_shp -> NoData.
+    Primarily for masking rasters (i.e., FAC) by basin shapefiles, converting 
+    out-of-mask raster values to NoData. A cell value can also be used to 
+    create a mask for integer rasters. 
+    NOTE: default behavior (inverse=False) will make it so cells NOT COVERED 
+    by mask_shp -> NoData.
 
     Args:
         in_raster: Input raster.
@@ -587,9 +671,9 @@ def value_mask(
 ) -> xr.DataArray:
     """"Mask a raster via a value threshold.
 
-    Primary use case is to identify high acumulation zones / stream cells.
+    Primary use case is to identify high accumulation zones / stream cells.
     Cells included in the mask are given a value of 1, all other cells are given a value of 0 (unless out_mask_value!=None).
-    Note: this function generalizes V1:pyfunc:makeStreams() functionality.
+    NOTE: this function generalizes V1:pyfunc:makeStreams() functionality.
 
     Args:
         in_raster: Input raster.
@@ -611,8 +695,12 @@ def value_mask(
 
     # build conditionals
     if equals and 'float' in str(in_raster.dtype):
-        print(
-            f'WARNING: Applying an equality mask to a {in_raster.dtype} raster'
+        warnings.warn(
+            message=(
+                f'Applying an equality mask to a {in_raster.dtype} raster. '
+                f'This is ill-advised!'
+            ),
+            category=UserWarning,
         )
 
     if equals and not inverse_equals:
@@ -745,13 +833,15 @@ def binarize_categorical_raster(
 ) -> xr.DataArray:
     """Converts a single band categorical raster into a binary multi-band binary raster.
 
-    Each output band represent a unique category, where 1 encodes cells belonging the the category,
-    and 0 encodes cells belonging to any other category. This function is used to prep a categorical
-    raster for parameter_accumulate().
+    Each output band represent a unique category, where 1 encodes cells 
+    belonging the the category, and 0 encodes cells belonging to any other category. 
+    This function is used to prep a categorical raster for parameter_accumulate().
 
     Args:
-        cat_raster: A categorical (dtype=int) raster with N unique categories (i.e., land cover classes).
-        categogies_dict: A dictionary assigning string names (values) to integer raster values (keys).
+        cat_raster: A categorical (dtype=int) raster with N unique categories 
+            (i.e., land cover classes).
+        categories_dict: A dictionary assigning string names (values) to 
+            integer raster values (keys).
         ignore_categories: Category cell values not include in the output raster.
         out_path: Defines a path to save the output raster.
 
@@ -774,25 +864,26 @@ def binarize_categorical_raster(
 
     combine_dict = {}
     count = 0
-    for i, cat in enumerate(categories):
-        if cat not in ignore_categories:
-            if cat in list(categories_dict.keys()):
-                index = categories_dict[cat]
-            else:
-                index = cat
+    for cat in categories:
+        if cat in ignore_categories:
+            continue
+        if cat in list(categories_dict.keys()):
+            index = categories_dict[cat]
+        else:
+            index = cat
 
-            out_layer = cat_raster.where(
-                cat_raster == cat,
-                0,
-            ).astype(cat_dtype)
+        out_layer = cat_raster.where(
+            cat_raster == cat,
+            0,
+        ).astype(cat_dtype)
 
-            out_layer = out_layer.where(
-                out_layer == 0,
-                1,
-            ).astype('uint8')
+        out_layer = out_layer.where(
+            out_layer == 0,
+            1,
+        ).astype('uint8')
 
-            combine_dict[(count, index)] = out_layer
-            count += 1
+        combine_dict[(count, index)] = out_layer
+        count += 1
 
     out_raster = utilities._combine_split_bands(combine_dict)
 
@@ -862,7 +953,7 @@ def find_basin_pour_points(
         fac_raster: A Flow Accumulation Cell raster (FAC).
         basins_shp: A .shp shapefile containing basin geometries.
         basin_id_field: Default behavior is for each GeoDataFrame row to be a unique basin.
-            However, if one wants to use a higher level basin id that is shared acrcoss rows,
+            However, if one wants to use a higher level basin id that is shared across rows,
             this should be set to the column header storing the higher level basin id.
         use_huc4: Either 'HUC4' or 'HUC12'.
 
@@ -876,7 +967,8 @@ def find_basin_pour_points(
     if basin_id_field is not None:
         if basin_id_field not in list(basins_shp.columns):
             raise ValueError(
-                f'param:basin_id_field = {basin_id_field} is not in param:basins_shp')
+                f'param:basin_id_field = {basin_id_field} is not in param:basins_shp'
+            )
 
     # convert basin levels if necessary PourPointLocationsDict
     pour_point_locations_dict = {}
@@ -884,7 +976,6 @@ def find_basin_pour_points(
     pour_point_locations_dict['pour_point_coords'] = []
 
     if use_huc4 and basin_id_field == 'HUC12':
-        print('Using HUC4 level flow basins, converting from HUC12')
         basins_shp['HUC4'] = basins_shp[basin_id_field].str[:4]
         sub_basin_id = 'HUC4'
     else:
@@ -898,8 +989,13 @@ def find_basin_pour_points(
 
         # check extents of shapefile bbox and make sure all overlap the FAC raster extent
         if not utilities._verify_basin_coverage(fac_raster, sub_shp):
-            print(f'WARNING: sub basin with {sub_basin_id} == {basin} is not'
-                  ' completely enclosed by param:raster! Some relevant areas may be missing.')
+            warnings.warn(
+                message=(
+                    f'Sub basin with {sub_basin_id} == {basin} is not'
+                    ' completely enclosed by param:raster! Some relevant areas may be missing.'
+                ),
+                category=UserWarning,
+            )
 
         # apply spatial mask and find max accumulation value
         sub_raster = spatial_mask(
@@ -943,16 +1039,19 @@ def get_pour_point_values(
     pour_points_dict: PourPointLocationsDict,
     accumulation_raster: Raster,
 ) -> PourPointValuesDict:
-    """Get the accumlation raster values from downstream pour points.
+    """Get the accumulation raster values from downstream pour points.
 
-    Note: This function is intended to feed into accumulate_flow() or parameter_accumlate() param:upstream_pour_points.
+    NOTE: This function is intended to feed into accumulate_flow() or 
+    parameter_accumulate() param:upstream_pour_points.
 
     Args:
-        pour_points_dict: A dictionary of form fcpgtools.custom_types.PourPointValuesDict.
-        accumulation_raster: A Flow Accumulation Cell raster (FAC) or a parameter accumulation raster.
+        pour_points_dict: A dictionary of form custom_types.PourPointValuesDict.
+        accumulation_raster: A Flow Accumulation Cell raster (FAC) or a 
+            parameter accumulation raster.
 
     Returns:
-        A list of tuples (one for each pour point) storing their coordinates [0] and accumulation value [1].
+        A list of tuples (one for each pour point) storing their coordinates [0]
+            and accumulation value [1].
     """
     # pull in the accumulation raster
     accumulation_raster = load_raster(accumulation_raster)
@@ -990,7 +1089,7 @@ def make_fcpg(
     fac_raster: Raster,
     out_path: Optional[Union[str, Path]] = None,
 ) -> xr.DataArray:
-    """Creates a Flow Conditioned Parameter Grid raster by dividing a paramater accumulation raster by a Flow Accumulation Cell (FAC) raster.
+    """Creates a Flow Conditioned Parameter Grid raster by dividing a parameter accumulation raster by a Flow Accumulation Cell (FAC) raster.
 
     Args:
         param_accum_raster: (xr.DataArray or str raster path)
@@ -1017,6 +1116,42 @@ def make_fcpg(
     return fcpg_raster
 
 
+def check_function_kwargs(
+    function: callable,
+    engine: str,
+) -> Dict[str, Union[str, int, float]]:
+    """Provides a dictionary of allowed kwargs keywords + input types for a function.
+
+    NOTE: This function will raise a ValueError if a non-terrain_engine
+        function is provided as the input.
+
+    Args:
+        function: A function belonging to a terrain_engine class.
+        engine: The name of the engine being used.
+
+    Returns:
+        A dictionary with allowed kwargs as keys, and allowed input types as values.
+    """
+
+    engine = engine.lower()
+    if engine not in engine_validator.NameToTerrainEngineDict.keys():
+        raise ValueError(
+            f'engine:{engine} is not a valid engine! Please choose from '
+            f'{list(engine_validator.NameToTerrainEngineDict.keys())}'
+        )
+    else:
+        engine_class = engine_validator.NameToTerrainEngineDict[engine]
+        kwargs_dict = engine_class.function_kwargs
+
+    if function.__name__ not in kwargs_dict.keys():
+        raise ValueError(
+            f'Function:{function.__name__} does not take kwargs or is not '
+            f'valid for terrain_engine={engine}!'
+        )
+    else:
+        return kwargs_dict[function.__name__]
+
+
 @engine_validator.validate_engine(protocols.SupportsAccumulateFlow)
 def accumulate_flow(
     d8_fdr: Raster,
@@ -1031,10 +1166,12 @@ def accumulate_flow(
     Args:
         d8_fdr: A  D8 Flow Direction Raster (dtype=Int).
         engine: A terrain engine class that supports flow accumulation.
-        upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],
-            and updated cell values as the second [1].
-            This allows the FAC to be made with boundary conditions such as upstream basin pour points.
-        weights: A grid defining the value to accumulate from each cell. Default is a grid of 1s.
+        upstream_pour_points: A list of lists each with with coordinate tuples 
+            as the first item [0], and updated cell values as the second [1].
+            This allows the FAC to be made with boundary conditions such as 
+            upstream basin pour points.
+        weights: A grid defining the value to accumulate from each cell. 
+            Default is a grid of 1s.
         out_path: Defines a path to save the output raster.
         **kwargs: keyword arguments, specific options depend on the engine being used.
 
@@ -1063,18 +1200,21 @@ def accumulate_parameter(
     out_path: Optional[Union[str, Path]] = None,
     **kwargs,
 ) -> xr.DataArray:
-    """Create a parameter accumulation raster from a D8 Flow Direction Raster and a parameter raster.
+    """Create a parameter accumulation raster from a D8 FDR and a parameter raster.
 
-    A key aspect of this function is that the output DataArray will have dimensions matching param:parameter_raster.
+    A key aspect of this function is that the output DataArray will have 
+    dimensions matching param:parameter_raster.
 
     Args:
         d8_fdr: A D8 Flow Direction Raster (dtype=Int).
-        parameter_raster: A parameter raster aligned via tools.align_raster() with the us_fdr. 
-            This can be multi-dimensional (i.e. f(x, y, t)), and if so, a multi-dimensional output is returned.
+        parameter_raster: A parameter raster aligned via tools.align_raster()
+            with the us_fdr. This can be multi-dimensional (i.e. f(x, y, t)), 
+            and if so, a multi-dimensional output is returned.
         engine: A terrain engine class that supports parameter accumulation.
-        upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],
-            and updated cell values as the second [1].
-            This allows the FAC to be made with boundary conditions such as upstream basin pour points.
+        upstream_pour_points: A list of lists each with with coordinate tuples 
+            as the first item [0], and updated cell values as the second [1].
+            This allows the FAC to be made with boundary conditions such as 
+            upstream basin pour points.
         out_path: Defines a path to save the output raster.
         **kwargs: keyword arguments, specific options depend on the engine being used.
 
@@ -1104,9 +1244,9 @@ def extreme_upslope_values(
     get_min_upslope: bool = False,
     **kwargs,
 ) -> xr.DataArray:
-    """Finds the max (or min if get_min_upslope=True) value of a parameter grid upstream from each cell in a D8 FDR raster.
+    """Finds the max(default)/min value of a parameter grid upstream from each cell.
 
-    NOTE: Replaces tools.ExtremeUpslopeValue() from V1 FCPGtools.
+    NOTE: Replaces tools.ExtremeUpslopeValue() from V1 FCPGtools. 
 
     Args:
         d8_fdr: A flow direction raster .
@@ -1144,7 +1284,7 @@ def distance_to_stream(
     out_path: Optional[Union[str, Path]] = None,
     **kwargs,
 ) -> xr.DataArray:
-    """Calculates distance each cell is from a stream (as defined by a cell accumulation threshold).
+    """Calculates cell distances from accumulation threshold defined streams.
 
     NOTE: Replaces tools.dist2stream() from V1 FCPGtools.
 
@@ -1182,19 +1322,24 @@ def decay_accumulation(
     out_path: Optional[Union[str, Path]] = None,
     **kwargs,
 ) -> xr.DataArray:
-    """Creates a D-Infinity based accumulation raster (parameter or cell accumulation) while applying decay via a multiplier_raster.
+    """Creates a "decayed" D-Infinity based accumulation raster via a decay raster.
 
-    NOTE: Replaces tools.decayAccum() from V1 FCPGtools.
+    NOTE: Replaces tools.decayAccum() from V1 FCPGtools. This can be used
+    to accumulate a parameter or just cells counts.
 
     Args:
-        dinf_fdr: A flow direction raster in D-Infinity format. This input can be made with tools.d8_to_dinfinity().
-        decay_raster: A decay 'multiplier' raster calculated from distance to stream via tools.make_decay_raster().
+        dinf_fdr: A flow direction raster in D-Infinity format. 
+            This input can be made with d8_to_dinfinity().
+        decay_raster: A decay 'multiplier' raster calculated from distance 
+            to stream via make_decay_raster().
         engine: A terrain engine class that supports decayed accumulation.
-        upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],
-            and updated cell values as the second [1].
-            This allows the FAC to be made with boundary conditions such as upstream basin pour points.
-        parameter_raster: A parameter raster aligned via tools.align_raster() with the us_fdr. 
-            This can be multi-dimensional (i.e. f(x, y, t)), and if so, a multi-dimensional output is returned.
+        upstream_pour_points: A list of lists each with with coordinate tuples 
+            as the first item [0], and updated cell values as the second [1].
+            This allows the FAC to be made with boundary conditions such as 
+            upstream basin pour points.
+        parameter_raster: A parameter raster aligned via align_raster() with the us_fdr. 
+            This can be multi-dimensional (i.e. f(x, y, t)), and if so, 
+            a multi-dimensional output is returned.
         out_path: Defines a path to save the output raster.
         **kwargs: keyword arguments, specific options depend on the engine being used.
 

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fcpgtools.terrainengine.protocols &mdash; Flow-Conditioned Parameter Grid Tools 2.0.2 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Flow-Conditioned Parameter Grid Tools
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cookbook.html">Cookbook and Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../functions.html">Function API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom_types.html">Custom Types and Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../terrain_engine.html">Terrain Engine Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributions.html">Contributing Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../publications.html">Publications and Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../z_references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Flow-Conditioned Parameter Grid Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">fcpgtools.terrainengine.protocols</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for fcpgtools.terrainengine.protocols</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">runtime_checkable</span>
+<span class="kn">from</span> <span class="nn">fcpgtools.custom_types</span> <span class="kn">import</span> <span class="n">Raster</span><span class="p">,</span> <span class="n">PourPointValuesDict</span>
+
+<div class="viewcode-block" id="SupportsAccumulateFlow"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsAccumulateFlow">[docs]</a><span class="nd">@runtime_checkable</span>
+<span class="k">class</span> <span class="nc">SupportsAccumulateFlow</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SupportsAccumulateFlow.accumulate_flow"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsAccumulateFlow.accumulate_flow">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">accumulate_flow</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PourPointValuesDict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">weights</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a Flow Accumulation Cell (FAC) raster from a D8 Flow Direction Raster.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            d8_fdr: A  D8 Flow Direction Raster (dtype=Int).</span>
+<span class="sd">            upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],</span>
+<span class="sd">                and updated cell values as the second [1].</span>
+<span class="sd">                This allows the FAC to be made with boundary conditions such as upstream basin pour points.</span>
+<span class="sd">            weights: A grid defining the value to accumulate from each cell. Default is a grid of 1s.</span>
+<span class="sd">            out_path: Defines a path to save the output raster.</span>
+<span class="sd">            **kwargs: keyword arguments, specific options depend on the engine being used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The output Flow Accumulation Cells (FAC) raster.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+<div class="viewcode-block" id="SupportsAccumulateParameter"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsAccumulateParameter">[docs]</a><span class="nd">@runtime_checkable</span>
+<span class="k">class</span> <span class="nc">SupportsAccumulateParameter</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SupportsAccumulateParameter.accumulate_parameter"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsAccumulateParameter.accumulate_parameter">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">accumulate_parameter</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PourPointValuesDict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a parameter accumulation raster from a D8 Flow Direction Raster and a parameter raster.</span>
+
+<span class="sd">        A key aspect of this function is that the output DataArray will have dimensions matching param:parameter_raster.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            d8_fdr: A D8 Flow Direction Raster (dtype=Int).</span>
+<span class="sd">            parameter_raster: A parameter raster aligned via tools.align_raster() with the us_fdr. </span>
+<span class="sd">                This can be multi-dimensional (i.e. f(x, y, t)), and if so, a multi-dimensional output is returned.</span>
+<span class="sd">            upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],</span>
+<span class="sd">                and updated cell values as the second [1].</span>
+<span class="sd">                This allows the FAC to be made with boundary conditions such as upstream basin pour points.</span>
+<span class="sd">            out_path: Defines a path to save the output raster.</span>
+<span class="sd">            **kwargs: keyword arguments, specific options depend on the engine being used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The output parameter accumulation raster.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+<div class="viewcode-block" id="SupportsExtremeUpslopeValues"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsExtremeUpslopeValues">[docs]</a><span class="nd">@runtime_checkable</span>
+<span class="k">class</span> <span class="nc">SupportsExtremeUpslopeValues</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SupportsExtremeUpslopeValues.extreme_upslope_values"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsExtremeUpslopeValues.extreme_upslope_values">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">extreme_upslope_values</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">mask_streams</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Raster</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">get_min_upslope</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds the max (or min if get_min_upslope=True) value of a parameter grid upstream from each cell in a D8 FDR raster.</span>
+
+<span class="sd">        NOTE: Replaces tools.ExtremeUpslopeValue() from V1 FCPGtools.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            d8_fdr: A flow direction raster .</span>
+<span class="sd">            parameter_raster: A parameter raster to find the max values from.</span>
+<span class="sd">            mask_streams: A stream mask raster from tools.mask_streams(). If provided, the output will be masked to only stream cells.</span>
+<span class="sd">            out_path: Defines a path to save the output raster.</span>
+<span class="sd">            get_min_upslope: If True, the minimum upslope value is assigned to each cell.</span>
+<span class="sd">            **kwargs: keyword arguments, specific options depend on the engine being used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A raster with max (or min) upstream value of the parameter grid as each cell&#39;s value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+<div class="viewcode-block" id="SupportsDistanceToStream"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsDistanceToStream">[docs]</a><span class="nd">@runtime_checkable</span>
+<span class="k">class</span> <span class="nc">SupportsDistanceToStream</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SupportsDistanceToStream.distance_to_stream"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsDistanceToStream.distance_to_stream">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">distance_to_stream</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">fac_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">accum_threshold</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates distance each cell is from a stream (as defined by a cell accumulation threshold).</span>
+
+<span class="sd">        NOTE: Replaces tools.dist2stream() from V1 FCPGtools.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            d8_fdr: A D8 Flow Direction Raster (dtype=Int).</span>
+<span class="sd">            fac_raster: A Flow Accumulation Cell (FAC) raster output from accumulate_flow().</span>
+<span class="sd">            accum_threshold: The # of upstream/accumulated cells to consider a cell a stream.</span>
+<span class="sd">            out_path: Defines a path to save the output raster.</span>
+<span class="sd">            **kwargs: keyword arguments, specific options depend on the engine being used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A raster with values of D8 flow distance from each cell to the nearest stream.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+<div class="viewcode-block" id="SupportsDecayAccumulation"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsDecayAccumulation">[docs]</a><span class="nd">@runtime_checkable</span>
+<span class="k">class</span> <span class="nc">SupportsDecayAccumulation</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SupportsDecayAccumulation.decay_accumulation"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.protocols.SupportsDecayAccumulation.decay_accumulation">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">decay_accumulation</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">decay_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PourPointValuesDict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Raster</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a D-Infinity based accumulation raster (parameter or cell accumulation) while applying decay via a multiplier_raster.</span>
+
+<span class="sd">        NOTE: Replaces tools.decayAccum() from V1 FCPGtools.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dinf_fdr: A flow direction raster in D-Infinity format. This input can be made with tools.d8_to_dinfinity().</span>
+<span class="sd">            decay_raster: A decay &#39;multiplier&#39; raster calculated from distance to stream via tools.make_decay_raster().</span>
+<span class="sd">            upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],</span>
+<span class="sd">                and updated cell values as the second [1].</span>
+<span class="sd">                This allows the FAC to be made with boundary conditions such as upstream basin pour points.</span>
+<span class="sd">            parameter_raster: A parameter raster aligned via tools.align_raster() with the us_fdr. </span>
+<span class="sd">                This can be multi-dimensional (i.e. f(x, y, t)), and if so, a multi-dimensional output is returned.</span>
+<span class="sd">            out_path: Defines a path to save the output raster.</span>
+<span class="sd">            **kwargs: keyword arguments, specific options depend on the engine being used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The output decayed accumulation raster.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Theodore Barnhart, Xavier Nogueira, Seth Siefken, August Raleigh Schultz, Anthony Aufdenkampe, Paul Tomasula, Roy Sando, Peter McCarthy, and Al Rea..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

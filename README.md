@@ -25,6 +25,14 @@ Please log any issues or feature requests using [this form](https://code.usgs.go
     ```
     pip install fcpgtools
     ```
+4. (optional) pip install optional libraries required to run our demo notebook ([`examples/v2_fcpgtools_demo.ipynb`](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/blob/master/examples/v2_fcpgtools_demo.ipynb)), and to leverage in-line function completion/type-hints.
+    ```
+    pip install jupyterlab
+    pip install ipympl
+    pip install python-lsp-server
+    pip install jupyterlab-lsp
+    pip install pydaymet
+    ```
 
 
 

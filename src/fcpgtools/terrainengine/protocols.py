@@ -1,8 +1,20 @@
+"""Python protocols defining the input/output signature of terrain engine functions.
+
+This module stores abstract methods for all tools.py functions that require 
+a terrain engine. Nesting these methods in @runtime_checkable classes that 
+inherit from typing.Protocol allows function signatures to be verified via our 
+engine_validator.validate_engine decorator.
+
+For more information on Python Protocols see:
+https://peps.python.org/pep-0544/
+"""
+
 import abc
 from pathlib import Path
 import xarray as xr
 from typing import Protocol, Union, Optional, runtime_checkable
 from fcpgtools.custom_types import Raster, PourPointValuesDict
+
 
 @runtime_checkable
 class SupportsAccumulateFlow(Protocol):
@@ -30,6 +42,7 @@ class SupportsAccumulateFlow(Protocol):
             The output Flow Accumulation Cells (FAC) raster.
         """
         raise NotImplementedError
+
 
 @runtime_checkable
 class SupportsAccumulateParameter(Protocol):
@@ -61,6 +74,7 @@ class SupportsAccumulateParameter(Protocol):
         """
         raise NotImplementedError
 
+
 @runtime_checkable
 class SupportsExtremeUpslopeValues(Protocol):
 
@@ -90,6 +104,7 @@ class SupportsExtremeUpslopeValues(Protocol):
         """
         raise NotImplementedError
 
+
 @runtime_checkable
 class SupportsDistanceToStream(Protocol):
 
@@ -116,6 +131,7 @@ class SupportsDistanceToStream(Protocol):
             A raster with values of D8 flow distance from each cell to the nearest stream.
         """
         raise NotImplementedError
+
 
 @runtime_checkable
 class SupportsDecayAccumulation(Protocol):

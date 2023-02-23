@@ -12,9 +12,9 @@ Version 2.0 of `FCPGtools` is a complete rebuild of Version 1.0. Backwards compa
 * Multi-band parameter grids are now supported!
     * For example, passing a 12-month precipitation raster (where each month is a raster band) into [`fcpgtools.accumulate_parameter()`](https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_parameter) will output a 12-band [`xarray.DataArray`](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray) object.
 * Conversion of flow direction raster (FDR) formats (i.e. ESRI -> TauDEM) is now automated behind-the-scenes.
-* Support for multiple "terrain engines" gives users additional optionality and increases the resiliance to dependency deprecation (see [below](#using-the-engine-parameter)). 
+* Support for multiple "terrain engines" gives users additional optionality and increases the resilience to dependency deprecation (see [below](#using-the-engine-parameter)). 
     * Where necessary users can set `param:engine` to [`taudem`](https://hydrology.usu.edu/taudem/taudem5/) (default) or [`pysheds`](https://github.com/mdbartos/pysheds).
-    * Note that the `pysheds` terrain engine is signifcantly more performant, but currently only supports [`accumulate_flow()`](https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_flow) and [`accumulate_parameter()`](https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_parameter).
+    * Note that the `pysheds` terrain engine is significantly more performant, but currently only supports [`accumulate_flow()`](https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_flow) and [`accumulate_parameter()`](https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_parameter).
 
 
 ### Using the `engine` parameter
@@ -52,7 +52,7 @@ which uses a basin shapefile to find outflow points.
     is appended with the pour point values within `get_pour_point_values()`. 
     
 ------------
-### Functions made redundant but still accesible
+### Functions made redundant but still accessible
 * `makeFACweight()` -> `make_fac_weights()`
 * `adjustParam` -> `adjust_parameter_raster()`
 * `d8todinfinity()` -> `d8_to_dinfinity()`

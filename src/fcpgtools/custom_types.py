@@ -1,3 +1,12 @@
+"""Custom types for and statics.
+
+This module contains custom types (i.e. "Raster") that are used repeatably 
+in FCPGtools function as well as supported file formats (i.e. "RasterSuffixes).
+Additionally, this module contains "D8ConversionDicts" which stores all 
+supported D8 Flow Direction Raster (FDR) integer encodings.
+Finally, kwargs and command line input dicts (for TauDEM) are type-specified 
+as typing.TypedDict classes.
+"""
 from pathlib import Path
 from typing import Union, List, Tuple, TypedDict
 from xarray import DataArray
@@ -9,10 +18,8 @@ from pysheds.view import Raster as PyShedsRaster
 
 Raster = Union[DataArray, str, Path]
 Shapefile = Union[GeoDataFrame, str, Path]
-Engines = ('taudem', 'pysheds')
 RasterSuffixes = ('.tif')
 ShapefileSuffixes = ('.shp')
-FDRD8Formats = ('esri', 'taudem')
 
 # create D8 conversion dictionaries
 D8ConversionDicts = {
@@ -56,7 +63,7 @@ class PourPointValuesDict(PourPointLocationsDict):
     """Custom type hint dict for storing pour point accumulation values.
 
     Attributes: 
-        pour_point_values: A list of N lists, eaching storing values associated with the
+        pour_point_values: A list of N lists, each storing values associated with the
             list's index location in PourPointLocationsDict['pour_point_ids'].
             The length of each list is equal to the # of bands in the accumulation raster.
     """
@@ -69,6 +76,17 @@ class PyShedsInputDict(TypedDict):
     grid: Grid
 
 
+class PyShedsFACkwargsDict(TypedDict):
+    fdir: PyShedsRaster
+    weights: PyShedsRaster
+    dirmap: Tuple[int, int, int, int, int, int, int, int]
+    efficiency: PyShedsRaster
+    nodata_out: Union[int, float]
+    routing: str
+    cycle_size: int
+    algorithm: str
+
+
 class TaudemFACInputDict(TypedDict):
     fdr: str
     outFl: str
@@ -77,7 +95,7 @@ class TaudemFACInputDict(TypedDict):
     mpiArg: str
 
 
-class Taudemdistance_to_streamInputDict(TypedDict):
+class TaudemDistance_to_streamInputDict(TypedDict):
     fdr: str
     fac: str
     outRast: str
@@ -99,6 +117,6 @@ class TaudemMaxUpslopeInputDict(TypedDict):
 
 TauDEMDict = Union[
     TaudemFACInputDict,
-    Taudemdistance_to_streamInputDict,
+    TaudemDistance_to_streamInputDict,
     TaudemMaxUpslopeInputDict,
 ]

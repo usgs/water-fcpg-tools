@@ -1,12 +1,26 @@
+"""Back-end FCPGtools utility functions.
+
+This module stores utility functions that are used repeatably in other modules.
+While some advanced users may find these functions relevant for their use 
+cases, it is worth noting that their backward compatibility is not promised 
+in future bux-fix releases. Additionally, these functions do not take 
+string/path inputs, and do not support saving outputs to a file path.
+"""
 import os
+import warnings
 import xarray as xr
 import numpy as np
 import pandas as pd
 import geopandas as gpd
 from typing import Union, List, Tuple, Dict
 import fcpgtools.tools as tools
-from fcpgtools.custom_types import Raster, Shapefile
-from fcpgtools.custom_types import RasterSuffixes, ShapefileSuffixes, D8ConversionDicts
+from fcpgtools.custom_types import (
+    Raster,
+    Shapefile,
+    RasterSuffixes,
+    ShapefileSuffixes,
+    D8ConversionDicts,
+)
 
 
 def _id_d8_format(
@@ -15,13 +29,53 @@ def _id_d8_format(
     """Identifies the D8 flow direction raster and returns one of the string keys in custom_types.D8ConversionDicts (i.e. 'taudem' or 'esri')"""
     d8_fdr = tools.load_raster(d8_fdr)
     uniques = np.unique(d8_fdr.values)
-    if np.max(uniques) > 8:
+    if np.nanmax(uniques) > 8:
         return 'esri'
-    elif np.max(uniques) <= 8:
+    elif np.nanmax(uniques) <= 8:
         return 'taudem'
     else:
-        raise TypeError('Cant recognize D8 Flow Direction Raster format '
-                        'as either ESRI or TauDEM. Please use the param:in_format for pyfunc:convert_fdr_formats()')
+        raise TypeError(
+            'Cant recognize D8 Flow Direction Raster format '
+            'as either ESRI or TauDEM. Please use the param:in_format for '
+            'pyfunc:convert_fdr_formats()'
+        )
+
+
+def _remove_unexpected_d8_values(
+    d8_fdr: xr.DataArray,
+    d8_format: str,
+) -> xr.DataArray:
+    """Removes unexpected values from a D8 format. Most often nodata"""
+    d8_values = D8ConversionDicts[d8_format].values()
+    unexpected = [i for i in np.unique(d8_fdr.values) if i not in d8_values]
+
+    if len(unexpected) > 0:
+        nodata = D8ConversionDicts[d8_format]['nodata']
+        warnings.warn(
+            message=(
+                f'Found unexpected values in the input {d8_format} D8-FDR: '
+                f'{unexpected}. Converting to nodata={nodata}.'
+            ),
+            category=UserWarning,
+        )
+
+        # replace the values w/ pandas (no clean xarray implementation)
+        df = pd.DataFrame()
+        df[0] = d8_fdr.values.ravel()
+        df[0].loc[(~df[0].isin(d8_values))] = nodata
+
+        # write back to xarray
+        d8_fdr = d8_fdr.copy(
+            data=df[0].values.reshape(d8_fdr.shape),
+        )
+
+        # update nodata value if necessary
+        d8_fdr.rio.write_nodata(
+            nodata,
+            inplace=True,
+        )
+        d8_fdr = d8_fdr.astype('int')
+    return d8_fdr
 
 
 def _match_d8_format(
@@ -30,6 +84,10 @@ def _match_d8_format(
 ) -> xr.DataArray:
     """Matches the D8 format to the appropriate terrain engine"""
     d8_format = _id_d8_format(d8_fdr)
+
+    # get rid of any unexpected values
+    d8_fdr = _remove_unexpected_d8_values(d8_fdr, d8_format)
+
     try:
         if d8_format != engine.d8_format:
             d8_fdr = tools.convert_fdr_formats(
@@ -43,6 +101,15 @@ def _match_d8_format(
     except KeyError:
         raise KeyError(
             f'd8_format: {d8_format} is missing from fcpgtools.custom_types.D8ConversionDicts.keys()!')
+    except TypeError:
+        warnings.warn(
+            message=(
+                f'Could not ID the D8 format automatically! '
+                f'Please make sure its in {engine.d8_format} format '
+                f'for param:engine={engine.__name__}.'
+            ),
+            category=UserWarning,
+        )
     return d8_fdr
 
 
@@ -50,7 +117,7 @@ def _update_raster_values(
     in_raster: Union[xr.DataArray, str],
     update_points: List[Tuple[Tuple[float, float], Union[float, int]]],
 ) -> xr.DataArray:
-    """Update a specific raster cell's value based on it's coordindates.
+    """Update a specific raster cell's value based on it's coordinates.
 
     This is primarily used to add upstream accumulation values as boundary conditions before making a FAC or FCPG.
 
@@ -66,7 +133,7 @@ def _update_raster_values(
 
     for update_tuple in update_points:
         if update_tuple[-1] != np.nan:
-            _update_cell_value_(
+            _update_cell_value(
                 out_raster,
                 coords=update_tuple[0],
                 value=update_tuple[-1],
@@ -149,7 +216,7 @@ def _change_nodata_value(
     return in_raster
 
 
-def _intake_ambigous(
+def _intake_ambiguous(
     in_data: Union[Raster, Shapefile],
 ) -> Union[xr.DataArray, gpd.GeoDataFrame]:
     """A somewhat less performant intake function when the input can be either a Raster or Shapefile"""
@@ -189,7 +256,7 @@ def _get_crs(
     out_crs: Union[Raster, Shapefile],
 ) -> str:
     """Gets the Coordinate Reference System of a raster or a shapefile as a WKT string."""
-    crs_data = _intake_ambigous(out_crs)
+    crs_data = _intake_ambiguous(out_crs)
 
     if isinstance(crs_data, xr.DataArray):
         return crs_data.rio.crs.to_wkt()
@@ -217,7 +284,7 @@ def _verify_dtype(
         return True
 
 
-def _update_cell_value_(
+def _update_cell_value(
     raster: xr.DataArray,
     coords: Tuple[float, float],
     value: Union[float, int],
@@ -333,7 +400,8 @@ def _find_downstream_cell(
         coords: The input (lat:float, lon:float) to find the next cell downstream from.
 
     Returns:
-        An output (lat:float, lon:float) representing the cell center coorindates downstream from the cell defined via :param:coords.
+        An output (lat:float, lon:float) representing the cell center coordinates 
+            downstream from the cell defined via :param:coords.
     """
     # identify d8 fdr format
     d8_format = _id_d8_format(d8_fdr)
@@ -373,7 +441,7 @@ def _verify_coords_coverage(
     """Returns True if an x, y coordinate is in the bounds of a raster."""
     bbox = list(raster.rio.bounds())
 
-    # check if x, y coordaintes are within bounds
+    # check if x, y coordinates are within bounds
     if coords[0] > bbox[0] and coords[0] < bbox[2]:
         if coords[1] > bbox[1] and coords[1] < bbox[3]:
             return True

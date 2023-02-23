@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fcpgtools.terrainengine.taudem_engine &mdash; Flow-Conditioned Parameter Grid Tools 2.0.2 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Flow-Conditioned Parameter Grid Tools
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cookbook.html">Cookbook and Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../migrating_from_v1.html">Migrating to <code class="docutils literal notranslate"><span class="pre">FCPGtools</span></code> Version 2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../functions.html">Function API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom_types.html">Custom Types and Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../terrain_engine.html">Terrain Engine Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributions.html">Contributing Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../publications.html">Publications and Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../z_references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Flow-Conditioned Parameter Grid Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">fcpgtools.terrainengine.taudem_engine</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for fcpgtools.terrainengine.taudem_engine</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">fcpgtools.tools</span> <span class="k">as</span> <span class="nn">tools</span>
+<span class="kn">import</span> <span class="nn">fcpgtools.utilities</span> <span class="k">as</span> <span class="nn">utilities</span>
+<span class="kn">import</span> <span class="nn">fcpgtools.custom_types</span> <span class="k">as</span> <span class="nn">custom_types</span>
+<span class="kn">from</span> <span class="nn">fcpgtools.custom_types</span> <span class="kn">import</span> <span class="n">Raster</span><span class="p">,</span> <span class="n">TauDEMDict</span><span class="p">,</span> <span class="n">PourPointValuesDict</span>
+
+
+<div class="viewcode-block" id="TauDEMEngine"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine">[docs]</a><span class="k">class</span> <span class="nc">TauDEMEngine</span><span class="p">:</span>
+
+    <span class="n">d8_format</span> <span class="o">=</span> <span class="s1">&#39;taudem&#39;</span>
+
+    <span class="n">function_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;accumulate_flow&#39;</span><span class="p">:</span> <span class="n">custom_types</span><span class="o">.</span><span class="n">TaudemFACInputDict</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">,</span>
+        <span class="s1">&#39;accumulate_parameter&#39;</span><span class="p">:</span> <span class="n">custom_types</span><span class="o">.</span><span class="n">TaudemFACInputDict</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">,</span>
+        <span class="s1">&#39;distance_to_stream&#39;</span><span class="p">:</span> <span class="n">custom_types</span><span class="o">.</span><span class="n">TaudemDistance_to_streamInputDict</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">,</span>
+        <span class="s1">&#39;extreme_upslope_values&#39;</span><span class="p">:</span> <span class="n">custom_types</span><span class="o">.</span><span class="n">TaudemMaxUpslopeInputDict</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">,</span>
+        <span class="s1">&#39;decay_accumulation&#39;</span><span class="p">:</span> <span class="n">custom_types</span><span class="o">.</span><span class="n">TaudemFACInputDict</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_taudem_prepper</span><span class="p">(</span>
+        <span class="n">in_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts an input raster into a TauDEM compatible path string.  Creates a temp file if necessary.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_raster</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">):</span>
+            <span class="n">temp_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+                <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span>
+                    <span class="nb">dir</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">(),</span>
+                    <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;taudem_temp_input&#39;</span><span class="p">,</span>
+                    <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.tif&#39;</span><span class="p">,</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">)</span>
+            <span class="n">tools</span><span class="o">.</span><span class="n">save_raster</span><span class="p">(</span>
+                <span class="n">in_raster</span><span class="p">,</span>
+                <span class="n">temp_path</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">in_raster</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">temp_path</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_raster</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>
+            <span class="n">in_raster</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">in_raster</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;param:d8_fdr must be a xr.DataArray of a PathLike object.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">temp_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">in_raster</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s1">&#39;Failed to create temporary file!&#39;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_update_taudem_dict</span><span class="p">(</span>
+        <span class="n">taudem_dict</span><span class="p">:</span> <span class="n">TauDEMDict</span><span class="p">,</span>
+        <span class="n">kwargs_dict</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TauDEMDict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;kwargs&#39;</span> <span class="ow">in</span> <span class="n">kwargs_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">kwargs_dict</span> <span class="o">=</span> <span class="n">kwargs_dict</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs_dict</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">taudem_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">taudem_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WARNING: Kwarg argument </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> is invalid.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">taudem_dict</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_clear_temp_files</span><span class="p">(</span>
+        <span class="n">prefixs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">directory</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">(),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deletes all files with a given prefix(s) in a directory path.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">directory</span> <span class="o">!=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">directory</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;param:dir=</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="si">}</span><span class="s1"> is not a valid directory!&#39;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prefixs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">prefixs</span> <span class="o">=</span> <span class="p">[</span><span class="n">prefixs</span><span class="p">]</span>
+
+        <span class="c1"># delete files with matching prefixes</span>
+        <span class="n">could_not_delete</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">directory</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">remove</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">prefixs</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+                        <span class="n">remove</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="n">remove</span><span class="p">:</span>
+                    <span class="n">file</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>
+                <span class="n">could_not_delete</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        
+        <span class="n">could_not_delete</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">could_not_delete</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">exists</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">could_not_delete</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Could not delete </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">could_not_delete</span><span class="p">)</span><span class="si">}</span><span class="s1"> temp files in&#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="si">}</span><span class="s1"> due to a PermissionError.&#39;</span>
+                <span class="p">),</span>
+                <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">del</span> <span class="n">could_not_delete</span>
+
+<div class="viewcode-block" id="TauDEMEngine.accumulate_flow"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine.accumulate_flow">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">accumulate_flow</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PourPointValuesDict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">weights</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a Flow Accumulation Cell (FAC) raster from a TauDEM format D8 Flow Direction Raster.</span>
+
+<span class="sd">        NOTE: this is a command line wrapper of TauDEM:aread8 and replaces tools.tauFlowAccum() from V1 FCPGtools.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            d8_fdr: A TauDEM format D8 Flow Direction Raster (dtype=Int).</span>
+<span class="sd">            upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],</span>
+<span class="sd">                and updated cell values as the second [1].</span>
+<span class="sd">                This allows the FAC to be made with boundary conditions such as upstream basin pour points.</span>
+<span class="sd">            weights: A grid defining the value to accumulate from each cell. Default is a grid of 1s.</span>
+<span class="sd">            out_path: Defines a path to save the output raster.</span>
+<span class="sd">            **kwargs: Can pass in optional TauDEM:aread8 parameter values using &quot;cores&quot;, &quot;mpiCall&quot;, or &quot;mpiArg&quot; as keys.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The output Flow Accumulation Cells (FAC) raster.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d8_fdr_path</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_taudem_prepper</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">)</span>
+
+        <span class="c1"># get temporary files for necessary inputs</span>
+        <span class="k">if</span> <span class="n">upstream_pour_points</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weight_path</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">wg</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span>
+                    <span class="n">d8_fdr</span><span class="p">,</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;float64&#39;</span><span class="p">),</span>
+                <span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">adjust_parameter_raster</span><span class="p">(</span>
+                    <span class="n">weights</span><span class="p">,</span>
+                    <span class="n">d8_fdr</span><span class="p">,</span>
+                    <span class="n">upstream_pour_points</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">make_fac_weights</span><span class="p">(</span>
+                    <span class="n">weights</span><span class="p">,</span>
+                    <span class="n">d8_fdr</span><span class="p">,</span>
+                    <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">weight_path</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_taudem_prepper</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+            <span class="n">wg</span> <span class="o">=</span> <span class="s1">&#39;-wg &#39;</span>
+
+        <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+                <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span>
+                    <span class="nb">dir</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">(),</span>
+                    <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;fac_temp&#39;</span><span class="p">,</span>
+                    <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.tif&#39;</span><span class="p">,</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+
+        <span class="n">taudem_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;fdr&#39;</span><span class="p">:</span> <span class="n">d8_fdr_path</span><span class="p">,</span>
+            <span class="s1">&#39;outFl&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_path</span><span class="p">),</span>
+            <span class="s1">&#39;cores&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;mpiCall&#39;</span><span class="p">:</span> <span class="s1">&#39;mpiexec&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;mpiArg&#39;</span><span class="p">:</span> <span class="s1">&#39;-n&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">wg</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">taudem_dict</span><span class="p">[</span><span class="s1">&#39;finalArg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wg</span><span class="si">}{</span><span class="nb">str</span><span class="p">(</span><span class="n">weight_path</span><span class="p">)</span><span class="si">}</span><span class="s1"> -nc&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">taudem_dict</span><span class="p">[</span><span class="s1">&#39;finalArg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;-nc&#39;</span>
+
+        <span class="n">taudem_dict</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_update_taudem_dict</span><span class="p">(</span>
+            <span class="n">taudem_dict</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># use TauDEM via subprocess to make a Flow Accumulation Raster</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{mpiCall}</span><span class="s1"> </span><span class="si">{mpiArg}</span><span class="s1"> </span><span class="si">{cores}</span><span class="s1"> aread8 -p </span><span class="si">{fdr}</span><span class="s1"> -ad8 </span><span class="si">{outFl}</span><span class="s1"> </span><span class="si">{finalArg}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">taudem_dict</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">taudem_dict</span><span class="p">[</span><span class="s1">&#39;outFl&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="s1">&#39;TauDEM areaD8 failed to create an output! &#39;</span>
+                <span class="s1">&#39;Make sure TauDEM is in your virtual environment.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">load_raster</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">taudem_dict</span><span class="p">[</span><span class="s1">&#39;outFl&#39;</span><span class="p">]))</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">out_raster</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="c1"># convert out of bounds values to np.nan, in bounds nan to 0, and update nodata</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">out_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">out_raster</span> <span class="o">!=</span> <span class="n">out_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">out_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_nodata</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">out_raster</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">out_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">d8_fdr</span><span class="o">.</span><span class="n">values</span> <span class="o">!=</span> <span class="n">d8_fdr</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># remove temporary files and return output</span>
+        <span class="n">d8_fdr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">out_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_clear_temp_files</span><span class="p">(</span><span class="n">prefixs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;fac_temp&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weights</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">out_raster</span></div>
+
+<div class="viewcode-block" id="TauDEMEngine.accumulate_parameter"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine.accumulate_parameter">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">accumulate_parameter</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PourPointValuesDict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a parameter accumulation raster from a TauDEM format D8 Flow Direction Raster and a parameter raster.</span>
+
+<span class="sd">        A key aspect of this function is that the output DataArray will have dimensions matching param:parameter_raster.</span>
+<span class="sd">        NOTE: This is a command line wrapper of TauDEM:aread8 and replaces tools.accumulateParam() from V1 FCPGtools.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            d8_fdr: A TauDEM format D8 Flow Direction Raster (dtype=Int).</span>
+<span class="sd">            parameter_raster: A parameter raster aligned via tools.align_raster() with the us_fdr. </span>
+<span class="sd">                This can be multi-dimensional (i.e. f(x, y, t)), and if so, a multi-dimensional output is returned.</span>
+<span class="sd">            upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],</span>
+<span class="sd">                and updated cell values as the second [1].</span>
+<span class="sd">                This allows the FAC to be made with boundary conditions such as upstream basin pour points.</span>
+<span class="sd">            out_path: Defines a path to save the output raster.</span>
+<span class="sd">            **kwargs: Can pass in optional TauDEM:aread8 parameter values using &quot;cores&quot;, &quot;mpiCall&quot;, or &quot;mpiArg&quot; as keys.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The output parameter accumulation raster.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d8_fdr</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">load_raster</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">)</span>
+        <span class="n">parameter_raster</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">make_fac_weights</span><span class="p">(</span>
+            <span class="n">parameter_raster</span><span class="o">=</span><span class="n">parameter_raster</span><span class="p">,</span>
+            <span class="n">fdr_raster</span><span class="o">=</span><span class="n">d8_fdr</span><span class="p">,</span>
+            <span class="n">out_of_bounds_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># add any pour point accumulation via utilities.utilities.adjust_parameter_raster()</span>
+        <span class="k">if</span> <span class="n">upstream_pour_points</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parameter_raster</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">adjust_parameter_raster</span><span class="p">(</span>
+                <span class="n">parameter_raster</span><span class="p">,</span>
+                <span class="n">d8_fdr</span><span class="p">,</span>
+                <span class="n">upstream_pour_points</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># prep kwargs to be passed into accumulate_flow()</span>
+        <span class="k">if</span> <span class="s1">&#39;kwargs&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">]</span>
+
+        <span class="c1"># split if multi-dimensional</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameter_raster</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">raster_bands</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_split_bands</span><span class="p">(</span><span class="n">parameter_raster</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">raster_bands</span> <span class="o">=</span> <span class="p">{(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="n">parameter_raster</span><span class="p">}</span>
+
+        <span class="c1"># create weighted accumulation rasters</span>
+        <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">index_tuple</span><span class="p">,</span> <span class="n">array</span> <span class="ow">in</span> <span class="n">raster_bands</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">i</span><span class="p">,</span> <span class="n">dim_name</span> <span class="o">=</span> <span class="n">index_tuple</span>
+
+            <span class="n">accumulated</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">accumulate_flow</span><span class="p">(</span>
+                <span class="n">d8_fdr</span><span class="p">,</span>
+                <span class="n">weights</span><span class="o">=</span><span class="n">array</span><span class="p">,</span>
+                <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">out_dict</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">dim_name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">accumulated</span>
+
+        <span class="c1"># re-combine into DataArray</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">out_raster</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_combine_split_bands</span><span class="p">(</span><span class="n">out_dict</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out_raster</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">out_dict</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">out_raster</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;accumulate_parameter&#39;</span>
+
+        <span class="c1"># save if necessary</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tools</span><span class="o">.</span><span class="n">save_raster</span><span class="p">(</span>
+                <span class="n">out_raster</span><span class="p">,</span>
+                <span class="n">out_path</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># remove temporary files and return output</span>
+        <span class="n">d8_fdr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">accumulated</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">array</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">parameter_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">out_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_clear_temp_files</span><span class="p">(</span>
+            <span class="n">prefixs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;taudem_temp_input&#39;</span><span class="p">,</span> <span class="s1">&#39;fac_temp&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">out_raster</span></div>
+
+<div class="viewcode-block" id="TauDEMEngine.distance_to_stream"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine.distance_to_stream">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">distance_to_stream</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">fac_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">accum_threshold</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates distance each cell is from a stream (as defined by a cell accumulation threshold).</span>
+
+<span class="sd">        NOTE: this is a command line wrapper of TauDEM:D8HDistTostrm and replaces tools.dist2stream() from V1 FCPGtools.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            d8_fdr: A TauDEM format D8 Flow Direction Raster (dtype=Int).</span>
+<span class="sd">            fac_raster: A Flow Accumulation Cell (FAC) raster output from accumulate_flow().</span>
+<span class="sd">            accum_threshold: The # of upstream/accumulated cells to consider a cell a stream.</span>
+<span class="sd">            out_path: Defines a path to save the output raster.</span>
+<span class="sd">            **kwargs: Can pass in optional TauDEM:D8HDistTostrm parameter values using &quot;cores&quot;, &quot;mpiCall&quot;, or &quot;mpiArg&quot; as keys.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A raster with values of D8 flow distance from each cell to the nearest stream.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d8_fdr_path</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_taudem_prepper</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">)</span>
+
+        <span class="c1"># get stream grid as a taudem tempfile</span>
+        <span class="n">fac_raster</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">load_raster</span><span class="p">(</span><span class="n">fac_raster</span><span class="p">)</span>
+        <span class="n">fac_raster</span> <span class="o">=</span> <span class="n">fac_raster</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">fac_raster</span> <span class="o">=</span> <span class="n">fac_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_nodata</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">fac_raster</span> <span class="o">=</span> <span class="n">fac_raster</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+        <span class="n">fac_path</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_taudem_prepper</span><span class="p">(</span><span class="n">fac_raster</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+                <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span>
+                    <span class="nb">dir</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">(),</span>
+                    <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;distance_to_stream_temp&#39;</span><span class="p">,</span>
+                    <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.tif&#39;</span><span class="p">,</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+
+        <span class="n">taudem_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;fdr&#39;</span><span class="p">:</span> <span class="n">d8_fdr_path</span><span class="p">,</span>
+            <span class="s1">&#39;fac&#39;</span><span class="p">:</span> <span class="n">fac_path</span><span class="p">,</span>
+            <span class="s1">&#39;outRast&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_path</span><span class="p">),</span>
+            <span class="s1">&#39;thresh&#39;</span><span class="p">:</span> <span class="n">accum_threshold</span><span class="p">,</span>
+            <span class="s1">&#39;cores&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;mpiCall&#39;</span><span class="p">:</span> <span class="s1">&#39;mpiexec&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;mpiArg&#39;</span><span class="p">:</span> <span class="s1">&#39;-n&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">taudem_dict</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_update_taudem_dict</span><span class="p">(</span>
+            <span class="n">taudem_dict</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{mpiCall}</span><span class="s1"> </span><span class="si">{mpiArg}</span><span class="s1"> </span><span class="si">{cores}</span><span class="s1"> D8HDistTostrm -p </span><span class="si">{fdr}</span><span class="s1"> -src </span><span class="si">{fac}</span><span class="s1"> -dist </span><span class="si">{outRast}</span><span class="s1"> -thresh </span><span class="si">{thresh}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">taudem_dict</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">taudem_dict</span><span class="p">[</span><span class="s1">&#39;outRast&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="s1">&#39;TauDEM D8HDistTostrm failed to create an output!&#39;</span><span class="p">)</span>
+
+        <span class="c1"># update nodata values</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">load_raster</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_change_nodata_value</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># convert 0.1 (minimum) values to np.nan and convert streams to 0</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">value_mask</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">thresh</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">streams</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">mask_streams</span><span class="p">(</span>
+            <span class="n">fac_raster</span><span class="p">,</span>
+            <span class="n">accum_threshold</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">out_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">streams</span><span class="o">.</span><span class="n">values</span><span class="p">)),</span>
+            <span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># clear temporary files and return the output</span>
+        <span class="n">d8_fdr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">fac_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">streams</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">out_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_clear_temp_files</span><span class="p">(</span>
+            <span class="n">prefixs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;taudem_temp_input&#39;</span><span class="p">,</span> <span class="s1">&#39;distance_to_stream_temp&#39;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">out_raster</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_ext_upslope_cmd</span><span class="p">(</span>
+        <span class="n">d8_fdr_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span>
+        <span class="n">accum_type_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Back end function that makes the command line call for TauDEM:D8FlowPathExtremeUp&quot;&quot;&quot;</span>
+
+        <span class="n">parameter_raster_path</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_taudem_prepper</span><span class="p">(</span><span class="n">parameter_raster</span><span class="p">)</span>
+
+        <span class="c1"># make temporary output path</span>
+        <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+            <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span>
+                <span class="nb">dir</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">(),</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;ext_upslope_temp&#39;</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.tif&#39;</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">)</span>
+
+        <span class="n">taudem_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;fdr&#39;</span><span class="p">:</span> <span class="n">d8_fdr_path</span><span class="p">,</span>
+            <span class="s1">&#39;param&#39;</span><span class="p">:</span> <span class="n">parameter_raster_path</span><span class="p">,</span>
+            <span class="s1">&#39;outRast&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_path</span><span class="p">),</span>
+            <span class="s1">&#39;accum_type&#39;</span><span class="p">:</span> <span class="n">accum_type_str</span><span class="p">,</span>
+            <span class="s1">&#39;cores&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;mpiCall&#39;</span><span class="p">:</span> <span class="s1">&#39;mpiexec&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;mpiArg&#39;</span><span class="p">:</span> <span class="s1">&#39;-n&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">taudem_dict</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_update_taudem_dict</span><span class="p">(</span><span class="n">taudem_dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{mpiCall}</span><span class="s1"> </span><span class="si">{mpiArg}</span><span class="s1"> </span><span class="si">{cores}</span><span class="s1"> D8FlowPathExtremeUp -p </span><span class="si">{fdr}</span><span class="s1"> -sa </span><span class="si">{param}</span><span class="s1"> -ssa </span><span class="si">{outRast}</span><span class="s1"> </span><span class="si">{accum_type}</span><span class="s1"> -nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">taudem_dict</span><span class="p">)</span>  <span class="c1"># Create string of tauDEM shell command</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">taudem_dict</span><span class="p">[</span><span class="s1">&#39;outRast&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="s1">&#39;TauDEM D8FlowPathExtremeUp failed to create an output!&#39;</span><span class="p">)</span>
+
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">load_raster</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">taudem_dict</span><span class="p">[</span><span class="s1">&#39;outRast&#39;</span><span class="p">]))</span>
+
+        <span class="c1"># update nodata and convert -9999 values to nodata</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">out_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">out_raster</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">9999</span><span class="p">),</span>
+            <span class="n">out_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_change_nodata_value</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">out_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">out_raster</span>
+
+<div class="viewcode-block" id="TauDEMEngine.extreme_upslope_values"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine.extreme_upslope_values">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">extreme_upslope_values</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">mask_streams</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Raster</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">get_min_upslope</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds the max (or min if get_min_upslope=True) value of a parameter grid upstream from each cell in a D8 FDR raster.</span>
+
+<span class="sd">        NOTE: This is a wrapper for the TauDEM:d8flowpathextremeup and replaces tools.ExtremeUpslopeValue() from V1 FCPGtools.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            d8_fdr: A flow direction raster in TauDEM format.</span>
+<span class="sd">            parameter_raster: A parameter raster to find the max values from.</span>
+<span class="sd">            mask_streams: A stream mask raster from tools.mask_streams(). If provided, the output will be masked to only stream cells.</span>
+<span class="sd">            out_path: Defines a path to save the output raster.</span>
+<span class="sd">            get_min_upslope: If True, the minimum upslope value is assigned to each cell.</span>
+<span class="sd">            **kwargs: Can pass in optional TauDEM:d8flowpathextremeup parameter values using &quot;cores&quot;, &quot;mpiCall&quot;, or &quot;mpiArg&quot; as keys.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A raster with max (or min) upstream value of the parameter grid as each cell&#39;s value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d8_fdr_path</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_taudem_prepper</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">)</span>
+        <span class="n">parameter_raster</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">load_raster</span><span class="p">(</span><span class="n">parameter_raster</span><span class="p">)</span>
+        <span class="n">accum_type_str</span> <span class="o">=</span> <span class="s1">&#39;-min&#39;</span> <span class="k">if</span> <span class="n">get_min_upslope</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># prep kwargs to be passed into accumulate_flow()</span>
+        <span class="k">if</span> <span class="s1">&#39;kwargs&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">]</span>
+
+        <span class="c1"># split if multi-dimensional</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameter_raster</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">raster_bands</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_split_bands</span><span class="p">(</span><span class="n">parameter_raster</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">raster_bands</span> <span class="o">=</span> <span class="p">{(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="n">parameter_raster</span><span class="p">}</span>
+
+        <span class="c1"># create extreme upslope value rasters for each parameter raster band</span>
+        <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">index_tuple</span><span class="p">,</span> <span class="n">array</span> <span class="ow">in</span> <span class="n">raster_bands</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">i</span><span class="p">,</span> <span class="n">dim_name</span> <span class="o">=</span> <span class="n">index_tuple</span>
+
+            <span class="n">upslope_raster</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_ext_upslope_cmd</span><span class="p">(</span>
+                <span class="n">d8_fdr_path</span><span class="p">,</span>
+                <span class="n">array</span><span class="p">,</span>
+                <span class="n">accum_type_str</span><span class="p">,</span>
+                <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">out_dict</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">dim_name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">upslope_raster</span>
+
+        <span class="c1"># re-combine into DataArray</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">out_raster</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_combine_split_bands</span><span class="p">(</span><span class="n">out_dict</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out_raster</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">out_dict</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">out_raster</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">accum_type_str</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s1">_upslope_values&#39;</span>
+
+        <span class="c1"># apply stream mask if necessary</span>
+        <span class="k">if</span> <span class="n">mask_streams</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_verify_alignment</span><span class="p">(</span><span class="n">out_raster</span><span class="p">,</span> <span class="n">mask_streams</span><span class="p">):</span>
+                <span class="n">out_raster</span> <span class="o">=</span> <span class="n">out_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">mask_streams</span> <span class="o">!=</span> <span class="n">mask_streams</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span><span class="p">),</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+                        <span class="s1">&#39;Stream mask does not align with extreme upslope value output! &#39;</span>
+                        <span class="s1">&#39;No mask is applied.&#39;</span>
+                    <span class="p">),</span>
+                    <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="c1"># update nodata values</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_change_nodata_value</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># save if necessary</span>
+        <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tools</span><span class="o">.</span><span class="n">save_raster</span><span class="p">(</span>
+                <span class="n">out_raster</span><span class="p">,</span>
+                <span class="n">out_path</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># clear temporary files and return the output</span>
+        <span class="n">d8_fdr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">upslope_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">array</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">parameter_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">out_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_clear_temp_files</span><span class="p">(</span>
+            <span class="n">prefixs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;taudem_temp_input&#39;</span><span class="p">,</span> <span class="s1">&#39;ext_upslope_temp&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">out_raster</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_decay_accumulation_cmd</span><span class="p">(</span>
+        <span class="n">dinf_fdr_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">decay_raster_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">weights</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+
+        <span class="n">weights_path</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_taudem_prepper</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+
+        <span class="c1"># make temporary output path</span>
+        <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+            <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span>
+                <span class="nb">dir</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">(),</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;decay_accum_temp&#39;</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.tif&#39;</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">)</span>
+
+        <span class="c1"># build the input dictionary</span>
+        <span class="n">taudem_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;dinf_fdr_path&#39;</span><span class="p">:</span> <span class="n">dinf_fdr_path</span><span class="p">,</span>
+            <span class="s1">&#39;dm&#39;</span><span class="p">:</span> <span class="n">decay_raster_path</span><span class="p">,</span>
+            <span class="s1">&#39;dsca&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_path</span><span class="p">),</span>
+            <span class="s1">&#39;cores&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;mpiCall&#39;</span><span class="p">:</span> <span class="s1">&#39;mpiexec&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;mpiArg&#39;</span><span class="p">:</span> <span class="s1">&#39;-n&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">taudem_dict</span><span class="p">[</span><span class="s1">&#39;finalArg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;-wg </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">weights_path</span><span class="p">)</span><span class="si">}</span><span class="s1"> -nc&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">taudem_dict</span><span class="p">[</span><span class="s1">&#39;finalArg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;-nc&#39;</span>
+
+        <span class="n">taudem_dict</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_update_taudem_dict</span><span class="p">(</span>
+            <span class="n">taudem_dict</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># use TauDEM via subprocess to make a decay accumulation raster</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{mpiCall}</span><span class="s1"> </span><span class="si">{mpiArg}</span><span class="s1"> </span><span class="si">{cores}</span><span class="s1"> dinfdecayaccum -ang </span><span class="si">{dinf_fdr_path}</span><span class="s1"> -dm </span><span class="si">{dm}</span><span class="s1"> -dsca </span><span class="si">{dsca}</span><span class="s1"> </span><span class="si">{finalArg}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">taudem_dict</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">taudem_dict</span><span class="p">[</span><span class="s1">&#39;dsca&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="s1">&#39;TauDEM dinfdecayaccum failed to create an output!&#39;</span><span class="p">)</span>
+
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">load_raster</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">taudem_dict</span><span class="p">[</span><span class="s1">&#39;dsca&#39;</span><span class="p">]))</span>
+
+        <span class="c1"># update nodata and convert -9999 values to nodata</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">out_raster</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">out_raster</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">9999</span><span class="p">),</span>
+            <span class="n">out_raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_change_nodata_value</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">out_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weights</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="n">out_raster</span>
+
+<div class="viewcode-block" id="TauDEMEngine.decay_accumulation"><a class="viewcode-back" href="../../../terrain_engine.html#fcpgtools.terrainengine.taudem_engine.TauDEMEngine.decay_accumulation">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">decay_accumulation</span><span class="p">(</span>
+        <span class="n">d8_fdr</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">decay_raster</span><span class="p">:</span> <span class="n">Raster</span><span class="p">,</span>
+        <span class="n">upstream_pour_points</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PourPointValuesDict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">parameter_raster</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Raster</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">out_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a D-Infinity based accumulation raster (parameter or cell accumulation) while applying decay via a multiplier_raster.</span>
+
+<span class="sd">        NOTE: This is a command line wrapper of TauDEM:DinfDecayAccum and replaces tools.decayAccum() from V1 FCPGtools.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dinf_fdr: A flow direction raster in D-Infinity format. This input can be made with tools.tools.d8_to_dinfinity().</span>
+<span class="sd">            decay_raster: A decay &#39;multiplier&#39; raster calculated from distance to stream via tools.make_decay_raster().</span>
+<span class="sd">            upstream_pour_points: A list of lists each with with coordinate tuples as the first item [0],</span>
+<span class="sd">                and updated cell values as the second [1].</span>
+<span class="sd">                This allows the FAC to be made with boundary conditions such as upstream basin pour points.</span>
+<span class="sd">            parameter_raster: A parameter raster aligned via tools.align_raster() with the us_fdr. </span>
+<span class="sd">                This can be multi-dimensional (i.e. f(x, y, t)), and if so, a multi-dimensional output is returned.</span>
+<span class="sd">            out_path: Defines a path to save the output raster.</span>
+<span class="sd">            **kwargs: Can pass in optional TauDEM:DinfDecayAccum parameter values using &quot;cores&quot;, &quot;mpiCall&quot;, or &quot;mpiArg&quot; as keys.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The output decayed accumulation raster.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># prep data for taudem</span>
+        <span class="n">d8_fdr</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">load_raster</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">)</span>
+        <span class="n">dinf_fdr</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">d8_to_dinfinity</span><span class="p">(</span><span class="n">d8_fdr</span><span class="p">)</span>
+
+        <span class="n">dinf_fdr_path</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_taudem_prepper</span><span class="p">(</span><span class="n">dinf_fdr</span><span class="p">)</span>
+        <span class="n">decay_raster_path</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_taudem_prepper</span><span class="p">(</span><span class="n">decay_raster</span><span class="p">)</span>
+
+        <span class="c1"># prep kwargs to be passed into accumulate_flow()</span>
+        <span class="k">if</span> <span class="s1">&#39;kwargs&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">]</span>
+
+        <span class="c1"># prep parameter raster and boundary conditions</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">parameter_raster</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">load_raster</span><span class="p">(</span><span class="n">parameter_raster</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">upstream_pour_points</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span>
+                <span class="n">dinf_fdr</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;float64&#39;</span><span class="p">),</span>
+            <span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">upstream_pour_points</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">adjust_parameter_raster</span><span class="p">(</span>
+                    <span class="n">weights</span><span class="p">,</span>
+                    <span class="n">d8_fdr</span><span class="p">,</span>
+                    <span class="n">upstream_pour_points</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">make_fac_weights</span><span class="p">(</span>
+                <span class="n">weights</span><span class="p">,</span>
+                <span class="n">dinf_fdr</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># calculate decay raster and split if multi-dimensional</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">raster_bands</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_split_bands</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">raster_bands</span> <span class="o">=</span> <span class="p">{(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="n">weights</span><span class="p">}</span>
+
+            <span class="c1"># create extreme upslope value rasters for each parameter raster band</span>
+            <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">index_tuple</span><span class="p">,</span> <span class="n">array</span> <span class="ow">in</span> <span class="n">raster_bands</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">i</span><span class="p">,</span> <span class="n">dim_name</span> <span class="o">=</span> <span class="n">index_tuple</span>
+
+                <span class="n">decay_acc_raster</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_decay_accumulation_cmd</span><span class="p">(</span>
+                    <span class="n">dinf_fdr_path</span><span class="p">,</span>
+                    <span class="n">decay_raster_path</span><span class="p">,</span>
+                    <span class="n">array</span><span class="p">,</span>
+                    <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">out_dict</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">dim_name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">decay_acc_raster</span>
+
+            <span class="c1"># re-combine into DataArray</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">out_raster</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_combine_split_bands</span><span class="p">(</span><span class="n">out_dict</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">out_raster</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">out_dict</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out_raster</span> <span class="o">=</span> <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_decay_accumulation_cmd</span><span class="p">(</span>
+                <span class="n">dinf_fdr_path</span><span class="p">,</span>
+                <span class="n">decay_raster_path</span><span class="p">,</span>
+                <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">out_raster</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;decay_accumulation_raster&#39;</span>
+
+        <span class="c1"># update nodata values</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">make_fac_weights</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">d8_fdr</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">out_raster</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">_change_nodata_value</span><span class="p">(</span>
+            <span class="n">out_raster</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># save if necessary</span>
+        <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tools</span><span class="o">.</span><span class="n">save_raster</span><span class="p">(</span>
+                <span class="n">out_raster</span><span class="p">,</span>
+                <span class="n">out_path</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># clear temporary files and return the output</span>
+        <span class="n">out_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">decay_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">array</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">decay_acc_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">dinf_fdr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">d8_fdr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weights</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">parameter_raster</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parameter_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">TauDEMEngine</span><span class="o">.</span><span class="n">_clear_temp_files</span><span class="p">(</span>
+            <span class="n">prefixs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;taudem_temp_input&#39;</span><span class="p">,</span> <span class="s1">&#39;decay_accum_temp&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">out_raster</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Theodore Barnhart, Xavier Nogueira, Seth Siefken, August Raleigh Schultz, Anthony Aufdenkampe, Paul Tomasula, Roy Sando, Peter McCarthy, and Al Rea..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

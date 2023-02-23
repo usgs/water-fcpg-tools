@@ -1,3 +1,9 @@
+"""Controls the mapping of tools.py functions to supported engines.
+
+pyfunc:validate_engine is used as a decorator in tools.py to verify 
+whether the terrain engine specified with param:engine in functions 
+requiring one (i.e. accumulate_parameter()) supports the given function.
+"""
 from fcpgtools.terrainengine.taudem_engine import TauDEMEngine
 from fcpgtools.terrainengine.pysheds_engine import PyShedsEngine
 import functools
@@ -9,17 +15,17 @@ NameToTerrainEngineDict = {
 
 
 def validate_engine(protocol):
-    """decorator verify `engine` argument of function matches required protocol
+    """Decorator used to verify that the `engine` argument of function matches required protocol.
 
-        Validation is performed at runtime. In the `engine` argument does not match the 
-        protocol specified, the decorator will raise a TypeError indicting the required
-        engine type for the original function.
+    Validation is performed at runtime. In the `engine` argument does not match the 
+    protocol specified, the decorator will raise a TypeError indicting the required
+    engine type for the original function.
 
-        Example usage:
+    Example usage:
 
-            @validate_engine(SupportsFACtoFDR)
-            def my_func(engine:SupportsFACtoFDR):
-                ...
+        @validate_engine(SupportsFACtoFDR)
+        def my_func(engine:SupportsFACtoFDR):
+            ...
     """
 
     def validator(func, *args, **kwargs) -> callable:
