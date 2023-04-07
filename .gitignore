@@ -21,10 +21,6 @@
 # Byte-compiled / optimized / DLL files
 *.pyc
 
-# Testing environments
-environment_test.yml
-environment_test_no_cffi.yml
-
 # Unit test / coverage reports
 
 # Sphinx documentation
