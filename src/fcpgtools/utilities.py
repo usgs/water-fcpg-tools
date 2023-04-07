@@ -24,10 +24,9 @@ from fcpgtools.custom_types import (
 
 
 def _id_d8_format(
-    d8_fdr: Raster,
+    d8_fdr: xr.DataArray,
 ) -> str:
     """Identifies the D8 flow direction raster and returns one of the string keys in custom_types.D8ConversionDicts (i.e. 'taudem' or 'esri')"""
-    d8_fdr = tools.load_raster(d8_fdr)
     uniques = np.unique(d8_fdr.values)
     if np.nanmax(uniques) > 8:
         return 'esri'
@@ -83,6 +82,7 @@ def _match_d8_format(
     engine: object,
 ) -> xr.DataArray:
     """Matches the D8 format to the appropriate terrain engine"""
+    d8_fdr = tools.load_raster(d8_fdr)
     d8_format = _id_d8_format(d8_fdr)
 
     # get rid of any unexpected values
