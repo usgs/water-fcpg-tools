@@ -2,7 +2,7 @@ Flow-Conditioned Parameter Grid (FCPG) Tools Documentation
 ===============================================================
 
 
-**For detailed documentation please reference our [ReadTheDocs site](https://usgs.github.io/water-fcpg-tools/build/html/index.html)!** 
+**For detailed documentation please reference our [ReadTheDocs site](https://fcpgtools.readthedocs.io/en/latest/)!** 
 
 Please log any issues or feature requests using [this form](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/issues/new?issuable_template=bug).
 
@@ -50,7 +50,7 @@ flow_accumulation_grid = fcpgtools.accumulate_flow(
 ) -> xarray.DataArray
 ```
 
-Please refer to our documentation's [Cookbook](https://usgs.github.io/water-fcpg-tools/cookbook.html) page for more intricate examples of usage.
+Please refer to our documentation's [Cookbook](https://fcpgtools.readthedocs.io/en/latest/cookbook.html) page for more intricate examples of usage.
 
 # Citation
 * **Version 2.0** was released in January, 2023.
@@ -60,7 +60,7 @@ Please refer to our documentation's [Cookbook](https://usgs.github.io/water-fcpg
     * Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: https://doi.org/10.5066/P9W8UZ47.
 
 # Migrating from Version 1.0
-Version 2.0 of `FCPGtools` is a ground-up refactor and rebuild of Version 1.0. Backwards compatibility is broken, and many work-flows have been significantly streamlined. We strongly suggest that any users accustomed to Version 1.0 reference our [updated documentation site](https://usgs.github.io/water-fcpg-tools/index.html).
+Version 2.0 of `FCPGtools` is a ground-up refactor and rebuild of Version 1.0. Backwards compatibility is broken, and many work-flows have been significantly streamlined. We strongly suggest that any users accustomed to Version 1.0 reference our [updated documentation site](https://fcpgtools.readthedocs.io/en/latest/index.html).
 
 **A non-exhaustive list of key updates is below:**
 * All functions output an in-memory [`xarray.DataArray`](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray) object, allowing for functions to be strung together into performance oriented pipelines.
