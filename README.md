@@ -68,11 +68,11 @@ Version 2.0 of `FCPGtools` is a ground-up refactor and rebuild of Version 1.0. B
     * Rasters can still be saved to a local GeoTIFF file by providing a valid `.tif` path to `param:out_path`.
 * All functions can now accept either local string paths, local [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html) objects, or in-memory [`xarray.DataArray`](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray) objects.
 * Multi-band parameter grids are now supported!
-    * Example: Passing a 12-month precipitation raster (where each month is a raster band) into [`fcpgtools.accumulate_parameter()`](https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_parameter) will output a 12-band [`xarray.DataArray`](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray) object.
+    * Example: Passing a 12-month precipitation raster (where each month is a raster band) into [`fcpgtools.accumulate_parameter()`](https://fcpgtools.readthedocs.io/en/latest/functions.html#fcpgtools.tools.accumulate_parameter) will output a 12-band [`xarray.DataArray`](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray) object.
 * Flow Direction Raster format conversion (i.e. ESRI -> TauDEM) is now automated behind-the-scenes.
 * Support for multiple "terrain engines" gives users optionality and increases dependency deprecation resiliancy. 
     * Where necessary users can set `param:engine` to [`taudem`](https://hydrology.usu.edu/taudem/taudem5/) (default) or [`pysheds`](https://github.com/mdbartos/pysheds).
-    * Note that the `pysheds` terrain engine is signifcantly more performant, however it currently only supports [`accumulate_flow()`](https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_flow) and [`accumulate_parameter()`](https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_parameter).
+    * Note that the `pysheds` terrain engine is signifcantly more performant, however it currently only supports [`accumulate_flow()`](https://fcpgtools.readthedocs.io/en/latest/functions.html#fcpgtools.tools.accumulate_flow) and [`accumulate_parameter()`](https://fcpgtools.readthedocs.io/en/latest/functions.html#fcpgtools.tools.accumulate_parameter).
 
 **Please reference our markdown [`refactored_names`](examples/refactored_names.md) document for a complete mapping of Version 1.1 to Version 2.0 function names.**
 
