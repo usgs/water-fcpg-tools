@@ -4,6 +4,8 @@ Flow-Conditioned Parameter Grid (FCPG) Tools Documentation
 
 **For detailed documentation please reference our [ReadTheDocs site](https://fcpgtools.readthedocs.io/en/latest/)!** 
 
+Note that the most recent version of this repository is available on [GitLab](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools). While mirrored on GitHub, the repos can get out of sync.
+
 Please log any issues or feature requests using [this form](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/issues/new?issuable_template=bug).
 
 # Getting Started
