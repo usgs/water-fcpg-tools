@@ -10,7 +10,7 @@ https://usgs.github.io/water-fcpg-tools/build/html/index.html
 
 """
 
-__version__ = '2.0.3'
+__version__ = '2.0.4'
 
 from fcpgtools.tools import (
     accumulate_flow,
