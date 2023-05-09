@@ -40,7 +40,7 @@ copyright = f'2022, {author}'
 version = '2.0'
 
 # The full version, including alpha/beta/rc tags
-release = '2.0.3'
+release = '2.0.4'
 
 
 # -- General configuration ---------------------------------------------------
