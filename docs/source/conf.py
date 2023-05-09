@@ -14,8 +14,10 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../'))
-sys.path.insert(0, os.path.abspath('../src/fcpgtools'))
+#sys.path.insert(0, os.path.abspath('../'))
+#sys.path.insert(0, os.path.abspath('../../src/fcpgtools')) # readthedocs sphinx cannot find fcpgtools
+sys.path.insert(0, os.path.abspath('../../src'))
+print(sys.path)
 
 # -- Project information -----------------------------------------------------
 
@@ -33,14 +35,14 @@ author = (
     'and Al Rea.'
 )
 
-copyright = f'2022, {author}'
+copyright = f'2023, {author}'
 
 
 # The short X.Y version
 version = '2.0'
 
 # The full version, including alpha/beta/rc tags
-release = '2.0.4'
+release = '2.0.3'
 
 
 # -- General configuration ---------------------------------------------------

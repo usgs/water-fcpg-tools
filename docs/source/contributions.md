@@ -44,7 +44,7 @@ To add additional geospatial functions the developer should first define a new p
 Note a future refactoring should consider leverage a plugin architecture for easier integration of third party TerrainEngines.
 
 ## Custom Types and Formats
-FCPGtools leverages numerous [custom types and formats](https://usgs.github.io/water-fcpg-tools/build/html/custom_types.html) that are specified in the `custom_types.py` module.
+FCPGtools leverages numerous [custom types and formats](https://fcpgtools.readthedocs.io/en/latest/custom_types.html) that are specified in the `custom_types.py` module.
 
 ### Input file types
 To support a new input file type, update either the `custom_types.RasterSuffixes` or `custom_types.ShapefileSuffixes` tuple with the relevant file suffix (i.e., `.nc`). Then add an `elif` statement under `tools.load_raster()` or `tools.load_shapefile()` to handle the new extension type. Similarly, to support saving to new file type, add an `elif` statement to `tools.save_raster()` or `tools.save_shapefile()`.

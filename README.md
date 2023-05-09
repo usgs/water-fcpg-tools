@@ -2,7 +2,9 @@ Flow-Conditioned Parameter Grid (FCPG) Tools Documentation
 ===============================================================
 
 
-**For detailed documentation please reference our [ReadTheDocs site](https://usgs.github.io/water-fcpg-tools/build/html/index.html)!** 
+**For detailed documentation please reference our [ReadTheDocs site](https://fcpgtools.readthedocs.io/en/latest/)!** 
+
+Note that the most recent version of this repository is available on [GitLab](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools). While mirrored on GitHub, the repos can get out of sync.
 
 Please log any issues or feature requests using [this form](https://code.usgs.gov/StreamStats/data-preparation/cpg/FCPGtools/-/issues/new?issuable_template=bug).
 
@@ -50,7 +52,7 @@ flow_accumulation_grid = fcpgtools.accumulate_flow(
 ) -> xarray.DataArray
 ```
 
-Please refer to our documentation's [Cookbook](https://usgs.github.io/water-fcpg-tools/cookbook.html) page for more intricate examples of usage.
+Please refer to our documentation's [Cookbook](https://fcpgtools.readthedocs.io/en/latest/cookbook.html) page for more intricate examples of usage.
 
 # Citation
 * **Version 2.0** was released in January, 2023.
@@ -60,7 +62,7 @@ Please refer to our documentation's [Cookbook](https://usgs.github.io/water-fcpg
     * Barnhart, T.B., Sando, R., Siefken, S.A., McCarthy, P.M., and Rea, A.H., 2020, Flow-Conditioned Parameter Grid Tools: U.S. Geological Survey Software Release, DOI: https://doi.org/10.5066/P9W8UZ47.
 
 # Migrating from Version 1.0
-Version 2.0 of `FCPGtools` is a ground-up refactor and rebuild of Version 1.0. Backwards compatibility is broken, and many work-flows have been significantly streamlined. We strongly suggest that any users accustomed to Version 1.0 reference our [updated documentation site](https://usgs.github.io/water-fcpg-tools/index.html).
+Version 2.0 of `FCPGtools` is a ground-up refactor and rebuild of Version 1.0. Backwards compatibility is broken, and many work-flows have been significantly streamlined. We strongly suggest that any users accustomed to Version 1.0 reference our [updated documentation site](https://fcpgtools.readthedocs.io/en/latest/index.html).
 
 **A non-exhaustive list of key updates is below:**
 * All functions output an in-memory [`xarray.DataArray`](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray) object, allowing for functions to be strung together into performance oriented pipelines.
@@ -68,11 +70,11 @@ Version 2.0 of `FCPGtools` is a ground-up refactor and rebuild of Version 1.0. B
     * Rasters can still be saved to a local GeoTIFF file by providing a valid `.tif` path to `param:out_path`.
 * All functions can now accept either local string paths, local [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html) objects, or in-memory [`xarray.DataArray`](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray) objects.
 * Multi-band parameter grids are now supported!
-    * Example: Passing a 12-month precipitation raster (where each month is a raster band) into [`fcpgtools.accumulate_parameter()`](https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_parameter) will output a 12-band [`xarray.DataArray`](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray) object.
+    * Example: Passing a 12-month precipitation raster (where each month is a raster band) into [`fcpgtools.accumulate_parameter()`](https://fcpgtools.readthedocs.io/en/latest/functions.html#fcpgtools.tools.accumulate_parameter) will output a 12-band [`xarray.DataArray`](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray) object.
 * Flow Direction Raster format conversion (i.e. ESRI -> TauDEM) is now automated behind-the-scenes.
 * Support for multiple "terrain engines" gives users optionality and increases dependency deprecation resiliancy. 
     * Where necessary users can set `param:engine` to [`taudem`](https://hydrology.usu.edu/taudem/taudem5/) (default) or [`pysheds`](https://github.com/mdbartos/pysheds).
-    * Note that the `pysheds` terrain engine is signifcantly more performant, however it currently only supports [`accumulate_flow()`](https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_flow) and [`accumulate_parameter()`](https://usgs.github.io/water-fcpg-tools/functions.html#fcpgtools.tools.accumulate_parameter).
+    * Note that the `pysheds` terrain engine is signifcantly more performant, however it currently only supports [`accumulate_flow()`](https://fcpgtools.readthedocs.io/en/latest/functions.html#fcpgtools.tools.accumulate_flow) and [`accumulate_parameter()`](https://fcpgtools.readthedocs.io/en/latest/functions.html#fcpgtools.tools.accumulate_parameter).
 
 **Please reference our markdown [`refactored_names`](examples/refactored_names.md) document for a complete mapping of Version 1.1 to Version 2.0 function names.**
 
