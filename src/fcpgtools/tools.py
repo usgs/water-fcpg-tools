@@ -7,10 +7,10 @@ Additionally, many functions have a out_path parameter that allows outputs to
 be saved to a path in addition to the function returning an in-memory object.
 
 See function specific documentation here:
-https://usgs.github.io/water-fcpg-tools/build/html/functions.html
+https://fcpgtools.readthedocs.io/en/latest/functions.html
 
 See examples of use here:
-https://usgs.github.io/water-fcpg-tools/build/html/cookbook.html
+https://fcpgtools.readthedocs.io/en/latest/cookbook.html
 """
 from typing import Union, Dict, List, Tuple, Optional
 import warnings
