@@ -46,7 +46,7 @@ class TauDEMEngine:
         """Converts an input raster into a TauDEM compatible path string.  Creates a temp file if necessary."""
         if isinstance(in_raster, xr.DataArray):
             temp_path = Path(
-                tempfile.TemporaryFile(
+                tempfile.NamedTemporaryFile(
                     dir=Path.cwd(),
                     prefix='taudem_temp_input',
                     suffix='.tif',
@@ -173,7 +173,7 @@ class TauDEMEngine:
 
         if out_path is None:
             out_path = Path(
-                tempfile.TemporaryFile(
+                tempfile.NamedTemporaryFile(
                     dir=Path.cwd(),
                     prefix='fac_temp',
                     suffix='.tif',
@@ -362,7 +362,7 @@ class TauDEMEngine:
 
         if out_path is None:
             out_path = Path(
-                tempfile.TemporaryFile(
+                tempfile.NamedTemporaryFile(
                     dir=Path.cwd(),
                     prefix='distance_to_stream_temp',
                     suffix='.tif',
@@ -439,7 +439,7 @@ class TauDEMEngine:
 
         # make temporary output path
         out_path = Path(
-            tempfile.TemporaryFile(
+            tempfile.NamedTemporaryFile(
                 dir=Path.cwd(),
                 prefix='ext_upslope_temp',
                 suffix='.tif',
@@ -593,7 +593,7 @@ class TauDEMEngine:
 
         # make temporary output path
         out_path = Path(
-            tempfile.TemporaryFile(
+            tempfile.NamedTemporaryFile(
                 dir=Path.cwd(),
                 prefix='decay_accum_temp',
                 suffix='.tif',
