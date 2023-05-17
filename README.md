@@ -1,3 +1,5 @@
+[![PyPI](https://img.shields.io/pypi/v/fcpgtools)](https://pypi.org/project/fcpgtools/)
+
 Flow-Conditioned Parameter Grid (FCPG) Tools Documentation
 ===============================================================
 
