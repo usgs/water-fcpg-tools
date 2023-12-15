@@ -284,7 +284,7 @@ def reproject_shapefile(
     Returns:
         The input shapefile reprojected to match the desired Coordinate Reference System (CRS).
     """
-    in_shapefile = load_raster(in_shapefile)
+    in_shapefile = load_shapefile(in_shapefile)
     if out_crs is not None:
         out_crs = utilities._get_crs(out_crs)
     elif wkt_string is not None:
